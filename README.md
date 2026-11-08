@@ -1,4 +1,4 @@
-[gemini-code-1794153220238.html](https://github.com/user-attachments/files/34546625/gemini-code-1794153220238.html)
+[Uploading gemini-code-1794153220238.html…]()
 <!DOCTYPE html>
 <html lang="id">
 <head>
