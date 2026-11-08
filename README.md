@@ -1,4 +1,3 @@
-[Uploading Monitoring 2026.html…]()
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -232,6 +231,7 @@
         .badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #fff; }
         .badge-in { background: var(--success); }
         .badge-out { background: var(--danger); }
+        .badge-warning { background: var(--warning); color: #000; }
 
         .log-list { list-style: none; }
         .log-item {
@@ -393,7 +393,7 @@
                     <button class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
                     <button class="btn btn-primary" onclick="exportMCPToCSV()"><i class="fas fa-file-csv"></i> Rekap MCP (.CSV)</button>
                     <button class="btn btn-warning" onclick="exportCutiToCSV()"><i class="fas fa-file-alt"></i> Rekap Izin/Cuti (.CSV)</button>
-                    <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-print"></i> Cetak Laporan PDF</button>
+                    <button class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
                 </div>
             </div>
 
@@ -403,7 +403,7 @@
                     <div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
                     <div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
                     <div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
-                    <div class="module-item" onclick="showModule(4)"><div class="module-icon"><i class="fas fa-calendar-alt"></i></div><div class="module-label">Jadwal Shift</div></div>
+                    <div class="module-item" onclick="showModule(4)" style="border: 1px solid var(--gold-accent); background: #fef3c7;"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label" style="font-weight:700;">MR (Req)</div></div>
                     <div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin & Cuti</div></div>
                     <div class="module-item" onclick="showModule(6)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
                     <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
@@ -412,7 +412,7 @@
                     <div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
                     <div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label">Outstanding</div></div>
                     <div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI & News</div></div>
-                    <div class="module-item" onclick="showModule(13)" style="background:#fef3c7; border:1px solid #f59e0b;"><div class="module-icon" style="background:#d97706; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#b45309; font-weight:bold;">Modul Sync</div></div>
+                    <div class="module-item" onclick="showModule(13)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
                 </div>
             </div>
         </div>
@@ -477,24 +477,61 @@
             </div>
         </div>
 
-        <!-- MODUL 4: JADWAL SHIFT -->
+        <!-- MODUL 4: REVISI - MR (MARKET REQUEST) -->
         <div id="mod-4" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-calendar-alt"></i> Input Pengaturan Shift Kerja</div>
+                <div class="card-title" style="color:var(--gold-accent);"><i class="fas fa-file-invoice-dollar"></i> Input MR (Market Request)</div>
+                
                 <div class="form-group">
-                    <label>Pilih Shift Kerja</label>
-                    <select id="shift-select" class="form-control">
-                        <option>Shift 1 (Pagi): 07.00 - 15.00 WIB</option>
-                        <option>Shift 2 (Siang): 15.00 - 23.00 WIB</option>
-                        <option>Shift 3 (Malam): 23.00 - 07.00 WIB</option>
+                    <label>Nomor Permintaan (Auto-Generated)</label>
+                    <input type="text" id="mr-number" class="form-control" style="background:#f1f5f9; font-weight:bold;" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Kategori Kebutuhan Lapangan</label>
+                    <select id="mr-category" class="form-control">
+                        <option>Pengadaan Alat / Peralatan Operasional</option>
+                        <option>Bahan Kebersihan / Konsumabel (Chemical, dll)</option>
+                        <option>Personil Tambahan (Extra Mobile Crew)</option>
+                        <option>Perbaikan Sarana & Prasaran Site</option>
+                        <option>Lain-lain / Mendesak</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Upload Lampiran File Shift (.CSV / Gambar)</label><input type="file" class="form-control"></div>
-                <button class="btn btn-primary" onclick="alert('Jadwal shift berhasil diperbarui!')"><i class="fas fa-save"></i> Simpan Shift</button>
+
+                <div class="form-group">
+                    <label>Rincian Kebutuhan</label>
+                    <textarea id="mr-details" class="form-control" placeholder="Tulis rincian barang, jumlah, dan alasan kebutuhan secara detail..." style="height:70px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Estimasi Biaya / Jumlah Kebutuhan (Rp)</label>
+                    <input type="text" id="mr-cost" class="form-control" placeholder="Contoh: Rp 450.000 atau 5 Pcs">
+                </div>
+
+                <div class="form-group">
+                    <label>Tingkat Prioritas</label>
+                    <select id="mr-priority" class="form-control">
+                        <option value="BIASA">Biasa (Bisa Ditunda)</option>
+                        <option value="SEGERA">Segera (Dikerjakan Minggu Ini)</option>
+                        <option value="DARURAT">Darurat (Butuh Segera Hari Ini!)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Lampiran Dokumen / Bukti / Nota (Opsional)</label>
+                    <input type="file" id="mr-file" class="form-control" onchange="loadMRFile(event)">
+                </div>
+
+                <button class="btn btn-warning" onclick="submitMarketRequest()"><i class="fas fa-paper-plane"></i> KIRIM PERMINTAAN MR</button>
             </div>
+
             <div class="card">
-                <div class="card-title"><i class="fas fa-table"></i> Output Kalender Shift Active</div>
-                <p style="font-size:11px; color:var(--text-muted);">Shift Aktif Anda: <strong>Shift 1 Pagi (07.00 - 15.00 WIB)</strong> - Site PLN Central</p>
+                <div class="card-title"><i class="fas fa-clipboard-list"></i> Riwayat & Approval MR Lapangan</div>
+                <div style="font-size:10px; background:#f8fafc; padding:8px; border-radius:6px; margin-bottom:10px; border-left:3px solid var(--gold-accent);">
+                    <strong>Alur Persetujuan (Approval Tracking):</strong><br>
+                    Draft $\rightarrow$ Diajukan $\rightarrow$ Diperiksa Korlap $\rightarrow$ Disetujui Admin/Pusat.
+                </div>
+                <ul id="mr-log-list" class="log-list"></ul>
             </div>
         </div>
 
@@ -628,7 +665,7 @@
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync"></i> Push Offline Queue ke Supabase</div>
-                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Data absensi & MCP yang tersimpan di HP dapat didorong sekaligus ke server terpusat.</p>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Data absensi, MCP, dan Market Request yang tersimpan di HP dapat didorong sekaligus ke server terpusat.</p>
                 <button class="btn btn-warning" onclick="syncAllToSupabase()"><i class="fas fa-cloud-upload-alt"></i> SINKRONKAN SEMUA DATA SEKARANG</button>
             </div>
 
@@ -644,7 +681,7 @@
         <div class="bottom-nav">
             <div class="nav-link active" onclick="showModule(1)"><i class="fas fa-home"></i>Dashboard</div>
             <div class="nav-link" onclick="showModule(3)"><i class="fas fa-camera"></i>Absensi</div>
-            <div class="nav-link" onclick="showModule(6)"><i class="fas fa-broom"></i>MCP</div>
+            <div class="nav-link" onclick="showModule(4)"><i class="fas fa-file-invoice-dollar"></i>MR (Req)</div>
             <div class="nav-link" onclick="showModule(2)"><i class="fas fa-user-shield"></i>Profil</div>
         </div>
 
@@ -670,9 +707,11 @@
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
     let MCP_LOGS_DB = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || [];
     let LEAVE_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_LEAVE_REQUESTS')) || [];
+    let MARKET_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_MARKET_REQUESTS')) || [];
 
     let currentUser = null;
     let currentPhotoBase64 = '';
+    let currentMRFileBase64 = '';
     let supabaseClient = null;
 
     // AUTO INIT SUPABASE UPON LOAD
@@ -789,6 +828,15 @@
         } else { alert('PIN Lama Salah!'); }
     }
 
+    function generateMRNumber() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const random = Math.floor(100 + Math.random() * 900);
+        return `MR-${year}${month}${day}-${random}`;
+    }
+
     function processLogin() {
         const idInput = document.getElementById('login-id').value.trim().toUpperCase();
         const pinInput = document.getElementById('login-pin').value.trim();
@@ -805,10 +853,14 @@
             document.getElementById('prof-name').innerText = currentUser.name;
             document.getElementById('prof-id').innerText = `ID: ${currentUser.id}`;
 
+            // Generate MR ID Otomatis
+            document.getElementById('mr-number').value = generateMRNumber();
+
             renderAttendanceLogs();
             renderUserDirectory();
             renderLeaveLogs();
             renderMCPLogs();
+            renderMarketRequests();
             alert(`Selamat Datang, ${currentUser.name}!`);
         } else {
             alert('ID Karyawan / PIN Salah!');
@@ -826,6 +878,12 @@
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
         const target = document.getElementById('mod-' + modId);
         if(target) target.classList.add('active');
+
+        // Nav active highlight
+        const navIndex = { 1: 0, 3: 1, 4: 2, 2: 3 };
+        if(navIndex[modId] !== undefined) {
+            document.querySelectorAll('.bottom-nav .nav-link')[navIndex[modId]].classList.add('active');
+        }
     }
 
     async function startWebcam() {
@@ -906,7 +964,6 @@
         localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
         renderAttendanceLogs();
 
-        // PUSH KE SUPABASE JIKA ONLINE
         if (supabaseClient) {
             writeLog(`Mengirim data absensi (${type}) ke Supabase...`);
             try {
@@ -924,7 +981,7 @@
     function renderAttendanceLogs() {
         const logList = document.getElementById('attendance-log');
         logList.innerHTML = '';
-        const filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id || l.id === currentUser.id);
+        const filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
 
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
 
@@ -935,7 +992,7 @@
                 <div style="display:flex; align-items:center; gap:8px;">
                     <img src="${log.photo}" class="log-thumb">
                     <div>
-                        <strong>${log.name} (${log.user_id||log.id})</strong>
+                        <strong>${log.name} (${log.user_id})</strong>
                         <p style="color:var(--text-muted); font-size:9.5px;"><i class="fas fa-clock"></i> ${log.date} - ${log.time}</p>
                         <p style="color:var(--navy-primary); font-size:9px;"><i class="fas fa-map-marker-alt"></i> ${(log.gps||'').substring(0, 28)}...</p>
                     </div>
@@ -943,6 +1000,124 @@
                 <span class="badge ${log.type === 'IN' ? 'badge-in' : 'badge-out'}">${log.type === 'IN' ? 'CHECK-IN' : 'CHECK-OUT'}</span>
             `;
             logList.appendChild(li);
+        });
+    }
+
+    // MODUL 4: REVISI - FITUR MR (MARKET REQUEST)
+    function loadMRFile(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                currentMRFileBase64 = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    async function submitMarketRequest() {
+        const mrNo = document.getElementById('mr-number').value;
+        const category = document.getElementById('mr-category').value;
+        const details = document.getElementById('mr-details').value.trim();
+        const cost = document.getElementById('mr-cost').value.trim();
+        const priority = document.getElementById('mr-priority').value;
+
+        if(!details || !cost) { alert('Rincian Kebutuhan & Estimasi Biaya/Jumlah wajib diisi!'); return; }
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('id-ID');
+        const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+        const record = {
+            mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
+            category: category, details: details, cost: cost, priority: priority, date: dateStr, time: timeStr,
+            approval_korlap: "Diajukan", approval_pusat: "Pending Review", file: currentMRFileBase64 || null
+        };
+
+        MARKET_REQUESTS_DB.unshift(record);
+        localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
+        renderMarketRequests();
+
+        // push offline queue to supabase
+        if(supabaseClient) {
+            writeLog(`Mengirim MR (${mrNo}) ke Supabase...`);
+            try {
+                const { error } = await supabaseClient.from('market_requests').insert([record]);
+                if (error) throw error;
+                writeLog(`✓ MR ${mrNo} berhasil masuk ke server terpusat.`);
+            } catch (err) { writeLog(`⚠ Tersimpan di HP (Offline Queue): ${err.message}`); }
+        }
+
+        alert(`Market Request ${mrNo} Berhasil Dikirim!`);
+        document.getElementById('mr-details').value = '';
+        document.getElementById('mr-cost').value = '';
+        document.getElementById('mr-file').value = '';
+        document.getElementById('mr-number').value = generateMRNumber(); // reset number
+    }
+
+    function approveMR(id, roleApprove) {
+        MARKET_REQUESTS_DB.forEach(mr => {
+            if(mr.mr_id === id) {
+                if(roleApprove === 'Korlap') mr.approval_korlap = 'Disetujui Korlap';
+                if(roleApprove === 'Pusat') {
+                    mr.approval_korlap = 'Selesai';
+                    mr.approval_pusat = 'Verified & Approved';
+                }
+            }
+        });
+        localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
+        renderMarketRequests();
+        alert('Status MR berhasil diperbarui!');
+    }
+
+    function renderMarketRequests() {
+        const list = document.getElementById('mr-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+
+        const filtered = MARKET_REQUESTS_DB.filter(r => {
+            if(currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') return true;
+            if(currentUser.role === 'Korlap') return true; // Korlap bisa lihat semua req dari timnya
+            return r.user_id === currentUser.id;
+        });
+
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan MR.</li>`; return; }
+
+        filtered.forEach(r => {
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.style.flexDirection = 'column';
+            li.style.alignItems = 'flex-start';
+            li.style.gap = '6px';
+            li.style.borderBottom = '2px solid #cbd5e1';
+            li.style.padding = '10px';
+
+            let actionBtn = '';
+            // Tombol persetujuan khusus Korlap / admin
+            if(currentUser.role === 'Korlap' && r.approval_korlap === 'Diajukan') {
+                actionBtn = `<button class="btn btn-warning" style="padding: 2px 6px; font-size: 8px; margin-top:4px;" onclick="approveMR('${r.mr_id}', 'Korlap')">✔ Setujui (Korlap)</button>`;
+            } else if(currentUser.role === 'HeadOfOp' && r.approval_pusat === 'Pending Review') {
+                actionBtn = `<button class="btn btn-success" style="padding: 2px 6px; font-size: 8px; margin-top:4px;" onclick="approveMR('${r.mr_id}', 'Pusat')">👑 Approve & Cairkan (Admin)</button>`;
+            }
+
+            li.innerHTML = `
+                <div style="display:flex; justify-content:space-between; width:100%; border-bottom:1px dashed #cbd5e1; padding-bottom:4px;">
+                    <span style="font-weight:bold; color:var(--navy-primary);">${r.mr_id}</span>
+                    <span class="badge ${r.priority === 'DARURAT' ? 'badge-out' : 'badge-warning'}">${r.priority}</span>
+                </div>
+                <div style="font-size:9.5px; color:var(--text-main);">
+                    <strong>Pengaju:</strong> ${r.name} (${r.user_id}) | Site ${r.site}<br>
+                    <strong>Kategori:</strong> ${r.category}<br>
+                    <strong>Kebutuhan:</strong> ${r.details}<br>
+                    <strong>Estimasi:</strong> <span style="color:var(--gold-accent); font-weight:bold;">${r.cost}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:8.5px; margin-top:4px;">
+                    <div>K: <span class="badge badge-in" style="font-size:8px;">${r.approval_korlap}</span> P: <span class="badge badge-warning" style="font-size:8px;">${r.approval_pusat}</span></div>
+                    <span>${r.date} - ${r.time}</span>
+                </div>
+                ${actionBtn}
+            `;
+            list.appendChild(li);
         });
     }
 
@@ -984,7 +1159,7 @@
         MCP_LOGS_DB.forEach(log => {
             const li = document.createElement('li');
             li.className = 'log-item';
-            li.innerHTML = `<div><strong>${log.name} (${log.user_id||log.id||'TAD'})</strong><p style="font-size:9px;">Waktu: ${log.time}</p></div><span class="badge badge-in">${log.percent}% SELESAI</span>`;
+            li.innerHTML = `<div><strong>${log.name} (${log.user_id||'TAD'})</strong><p style="font-size:9px;">Waktu: ${log.time}</p></div><span class="badge badge-in">${log.percent}% SELESAI</span>`;
             list.appendChild(li);
         });
     }
@@ -1011,6 +1186,12 @@
                 const { error: err2 } = await supabaseClient.from('mcp_logs').upsert(MCP_LOGS_DB);
                 if (err2) throw err2;
                 writeLog(`✓ ${MCP_LOGS_DB.length} data MCP berhasil disinkronkan.`);
+            }
+
+            if (MARKET_REQUESTS_DB.length > 0) {
+                const { error: err3 } = await supabaseClient.from('market_requests').upsert(MARKET_REQUESTS_DB);
+                if (err3) throw err3;
+                writeLog(`✓ ${MARKET_REQUESTS_DB.length} data MR berhasil disinkronkan.`);
             }
 
             alert('Sinkronisasi Data ke Supabase Berhasil!');
@@ -1076,6 +1257,12 @@
         let csv = "data:text/csv;charset=utf-8,ID,Nama,Jenis Izin,Alasan\n";
         LEAVE_REQUESTS_DB.forEach(r => { csv += `${r.id},${r.name},${r.type},"${r.reason}"\n`; });
         downloadCSV(csv, `Rekap_Izin_Cuti_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    function exportMRToCSV() {
+        let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status Korlap,Status Pusat,Tanggal\n";
+        MARKET_REQUESTS_DB.forEach(r => { csv += `${r.mr_id},${r.name},${r.site},${r.category},${r.priority},"${r.details}",${r.cost},${r.approval_korlap},${r.approval_pusat},${r.date}\n`; });
+        downloadCSV(csv, `Rekap_Market_Request_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function downloadCSV(csvData, filename) {
