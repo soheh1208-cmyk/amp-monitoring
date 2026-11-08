@@ -1,10 +1,15 @@
-[gemini-code-1794150542974.html](https://github.com/user-attachments/files/34546229/gemini-code-1794150542974.html)
+[gemini-code-1794153220238.html](https://github.com/user-attachments/files/34546625/gemini-code-1794153220238.html)
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMP Operation Monitoring V3.1 - Synchronized Engine</title>
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a192f">
+    <meta name="description" content="Sistem Monitoring Operasional PT Ardina Mulya Perkasa">
+    
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Supabase JS Client v2 -->
@@ -84,24 +89,26 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .auth-screen {
+        /* TAMPILAN ASLI AUTH LOGIN SCREEN (KEMBALI KE SEMULA) */
+        .auth-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 25, 47, 0.95);
+            z-index: 9999;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--navy-primary), var(--blue-accent));
-            color: #fff;
+            justify-content: center;
             padding: 20px;
         }
 
-        .auth-card {
+        .auth-card-asli {
             background: #ffffff;
-            color: var(--text-main);
             width: 100%;
-            padding: 22px;
+            max-width: 360px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
         }
 
         .screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
@@ -225,7 +232,7 @@
         .btn-danger { background: var(--danger); color: var(--white); }
         .btn-outline { background: transparent; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
 
-        .form-group { margin-bottom: 10px; }
+        .form-group { margin-bottom: 10px; text-align: left; }
         .form-group label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 4px; color: var(--text-main); }
         .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
 
@@ -276,21 +283,18 @@
 
 <div class="app-container">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="auth-screen">
-        <div style="text-align:center; margin-bottom:18px;">
-            <svg class="logo-svg" viewBox="0 0 200 200" style="width:65px; height:65px;">
+    <!-- MODAL AUTH LOGIN SLIDE ASLI SEMULA -->
+    <div id="auth-modal-overlay" class="auth-overlay">
+        <!-- FORM LOGIN ASLI -->
+        <div id="login-box-asli" class="auth-card-asli">
+            <svg class="logo-svg" viewBox="0 0 200 200" style="width:60px; height:60px; margin-bottom:6px;">
                 <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
                 <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
-            <h2 style="font-size:16px; font-weight:bold; margin-top:8px;">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:10px; color:var(--gold-accent);">AMP Operation Monitoring V3.1</p>
-        </div>
+            <h2 style="font-size:15px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
+            <p style="font-size:9.5px; color:var(--gold-accent); font-weight:bold; margin-bottom:14px;">AMP Operation Monitoring V3.1</p>
 
-        <div class="auth-card">
-            <h3 style="font-size:13px; margin-bottom:12px; text-align:center; color:var(--navy-primary);">Masuk ke Akun Karyawan</h3>
-            
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
                 <input type="text" id="login-id" class="form-control" placeholder="Contoh: TAD001, KOR001, AMP001">
@@ -302,53 +306,49 @@
             </div>
 
             <button class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK SYSTEM</button>
-            <button class="btn btn-outline" onclick="switchAuthView('register')"><i class="fas fa-user-plus"></i> BELUM PUNYA AKUN? DAFTAR BARU</button>
-            <button class="btn btn-outline" onclick="switchAuthView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
+            <button class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
+            <button class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
 
-            <div style="margin-top:10px; background:#f8fafc; padding:8px; border-radius:8px; font-size:9px; color:var(--text-muted);">
-                <strong>Akun Default Uji Coba:</strong><br>
-                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh - Head of Op)<br>
-                • <code>KOR001</code> / PIN <code>123456</code> (Ahmad Korlap)<br>
-                • <code>TAD001</code> / PIN <code>123456</code> (Budi Santoso - TAD)
+            <div style="margin-top:10px; background:#f8fafc; padding:8px; border-radius:8px; font-size:8.5px; color:var(--text-muted); text-align:left;">
+                <strong>Akun Uji Coba:</strong><br>
+                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh)<br>
+                • <code>KOR001</code> / PIN <code>123456</code> (Korlap)<br>
+                • <code>TAD001</code> / PIN <code>123456</code> (TAD)
             </div>
         </div>
-    </div>
 
-    <!-- REGISTER SCREEN -->
-    <div id="register-screen" class="auth-screen" style="display:none;">
-        <div class="auth-card">
-            <h3 style="font-size:13px; margin-bottom:12px; text-align:center; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Akun Karyawan Baru</h3>
+        <!-- FORM REGISTER ASLI -->
+        <div id="register-box-asli" class="auth-card-asli" style="display:none;">
+            <h3 style="font-size:13px; margin-bottom:12px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
             <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
             <div class="form-group"><label>ID Karyawan Baru (NIP)</label><input type="text" id="reg-id" class="form-control" placeholder="ID (Contoh: TAD002)"></div>
             <div class="form-group">
-                <label>Peran / Role Access</label>
+                <label>Peran / Role</label>
                 <select id="reg-role" class="form-control">
                     <option value="TAD">Staf Operasional (TAD)</option>
                     <option value="Korlap">Koordinator Lapangan (Korlap)</option>
                     <option value="HeadOfOp">Head of Operation / Admin</option>
                 </select>
             </div>
-            <div class="form-group"><label>Penempatan Site Kerja</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: PLN Unit Gambir"></div>
+            <div class="form-group"><label>Penempatan Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: PLN Unit Gambir"></div>
             <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
             <button class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
-            <button class="btn btn-outline" onclick="switchAuthView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
+            <button class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
         </div>
-    </div>
 
-    <!-- RESET PIN SCREEN -->
-    <div id="reset-pin-screen" class="auth-screen" style="display:none;">
-        <div class="auth-card">
-            <h3 style="font-size:13px; margin-bottom:12px; text-align:center; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
+        <!-- FORM RESET PIN ASLI -->
+        <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
+            <h3 style="font-size:13px; margin-bottom:12px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
             <div class="form-group"><label>ID Karyawan</label><input type="text" id="reset-id" class="form-control" placeholder="ID Karyawan"></div>
-            <div class="form-group"><label>PIN Lama / Master PIN (123456)</label><input type="password" id="reset-old-pin" class="form-control"></div>
+            <div class="form-group"><label>PIN Lama (Default: 123456)</label><input type="password" id="reset-old-pin" class="form-control"></div>
             <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
             <button class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
-            <button class="btn btn-outline" onclick="switchAuthView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
         </div>
     </div>
 
     <!-- MAIN APP WRAPPER -->
-    <div id="main-app" style="display:none;">
+    <div id="main-app" style="display:block;">
 
         <div class="app-header">
             <div class="brand-box">
@@ -478,7 +478,7 @@
             </div>
         </div>
 
-        <!-- MODUL 4: REVISI - MR (MARKET REQUEST) -->
+        <!-- MODUL 4: REVISI - FITUR MR (MARKET REQUEST) -->
         <div id="mod-4" class="screen-panel">
             <div class="card">
                 <div class="card-title" style="color:var(--gold-accent);"><i class="fas fa-file-invoice-dollar"></i> Input MR (Market Request)</div>
@@ -774,14 +774,14 @@
         logBox.scrollTop = logBox.scrollHeight;
     }
 
-    function switchAuthView(view) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('register-screen').style.display = 'none';
-        document.getElementById('reset-pin-screen').style.display = 'none';
+    function switchAuthSubView(view) {
+        document.getElementById('login-box-asli').style.display = 'none';
+        document.getElementById('register-box-asli').style.display = 'none';
+        document.getElementById('reset-box-asli').style.display = 'none';
 
-        if(view === 'login') document.getElementById('login-screen').style.display = 'flex';
-        if(view === 'register') document.getElementById('register-screen').style.display = 'flex';
-        if(view === 'reset-pin') document.getElementById('reset-pin-screen').style.display = 'flex';
+        if(view === 'login') document.getElementById('login-box-asli').style.display = 'block';
+        if(view === 'register') document.getElementById('register-box-asli').style.display = 'block';
+        if(view === 'reset-pin') document.getElementById('reset-box-asli').style.display = 'block';
     }
 
     function processRegister() {
@@ -797,7 +797,7 @@
         USER_DATABASE[id] = { id, name, role, pin, site };
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
         alert(`Akun Baru Berhasil Dibuat!\nID: ${id}\nNama: ${name}`);
-        switchAuthView('login');
+        switchAuthSubView('login');
     }
 
     function processResetPIN() {
@@ -812,7 +812,7 @@
             USER_DATABASE[id].pin = newPin;
             localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
             alert(`PIN Akun ${id} Berhasil Diperbarui!`);
-            switchAuthView('login');
+            switchAuthSubView('login');
         } else { alert('PIN Lama Salah!'); }
     }
 
@@ -844,8 +844,7 @@
 
         if (USER_DATABASE[idInput] && USER_DATABASE[idInput].pin === pinInput) {
             currentUser = USER_DATABASE[idInput];
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('auth-modal-overlay').style.display = 'none';
             
             document.getElementById('header-user-id').innerText = currentUser.id;
             document.getElementById('dash-user-name').innerText = currentUser.name;
@@ -870,8 +869,8 @@
 
     function logout() {
         currentUser = null;
-        document.getElementById('main-app').style.display = 'none';
-        switchAuthView('login');
+        document.getElementById('auth-modal-overlay').style.display = 'flex';
+        switchAuthSubView('login');
     }
 
     function showModule(modId) {
@@ -1078,7 +1077,7 @@
 
         const filtered = MARKET_REQUESTS_DB.filter(r => {
             if(currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') return true;
-            if(currentUser.role === 'Korlap') return true; // Korlap bisa lihat semua req dari timnya
+            if(currentUser.role === 'Korlap') return true;
             return r.user_id === currentUser.id;
         });
 
@@ -1094,7 +1093,6 @@
             li.style.padding = '10px';
 
             let actionBtn = '';
-            // Tombol persetujuan khusus Korlap / admin
             if(currentUser.role === 'Korlap' && r.approval_korlap === 'Diajukan') {
                 actionBtn = `<button class="btn btn-warning" style="padding: 2px 6px; font-size: 8px; margin-top:4px;" onclick="approveMR('${r.mr_id}', 'Korlap')">✔ Setujui (Korlap)</button>`;
             } else if(currentUser.role === 'HeadOfOp' && r.approval_pusat === 'Pending Review') {
