@@ -309,7 +309,7 @@
 
             <div style="margin-top:10px; background:#f8fafc; padding:8px; border-radius:8px; font-size:8.5px; color:var(--text-muted); text-align:left;">
                 <strong>Akun Uji Coba:</strong><br>
-                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh)<br>
+                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh - Admin)<br>
                 • <code>KOR001</code> / PIN <code>123456</code> (Korlap)<br>
                 • <code>TAD001</code> / PIN <code>123456</code> (TAD)
             </div>
@@ -803,7 +803,11 @@
 
         USER_DATABASE[id] = { id, name, role: "TAD", jabatan, pin, site, phone };
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-        alert(`Akun Baru Berhasil Dibuat!\nNIP: ${id}\nNama: ${name}`);
+        
+        // Otomatis perbarui direktori tim
+        renderUserDirectory();
+
+        alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}`);
         switchAuthSubView('login');
     }
 
@@ -839,7 +843,7 @@
         USER_DATABASE[currentUser.id] = currentUser;
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
 
-        // Update tampilan profil
+        // Update tampilan profil di layar
         document.getElementById('prof-name').innerText = currentUser.name;
         document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan}`;
         document.getElementById('prof-site').innerText = currentUser.site;
@@ -849,6 +853,7 @@
         document.getElementById('dash-user-role').innerText = currentUser.jabatan;
         document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
 
+        renderUserDirectory();
         alert('Profil Anda berhasil diperbarui!');
     }
 
@@ -1276,7 +1281,7 @@
             const u = USER_DATABASE[id];
             const li = document.createElement('li');
             li.className = 'log-item';
-            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | Site: ${u.site}</p></div><span class="badge badge-in">AKTIF</span>`;
+            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | Site: ${u.site} | Telp: ${u.phone || '-'}</p></div><span class="badge badge-in">AKTIF</span>`;
             dirList.appendChild(li);
         });
     }
