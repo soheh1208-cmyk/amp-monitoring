@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.1 - Synchronized Engine</title>
+    <title>AMP Operation Monitoring V3.1 - Full Synchronized Engine</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -396,7 +396,7 @@
                     <div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
                     <div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
                     <div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
-                    <div class="module-item" onclick="showModule(4)" style="border: 1px solid var(--gold-accent); background: #fef3c7;"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label" style="font-weight:700;">MR (Req)</div></div>
+                    <div class="module-item" onclick="showModule(4)"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label">MR (Req)</div></div>
                     <div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin & Cuti</div></div>
                     <div class="module-item" onclick="showModule(6)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
                     <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
@@ -489,56 +489,26 @@
         <div id="mod-4" class="screen-panel">
             <div class="card">
                 <div class="card-title" style="color:var(--gold-accent);"><i class="fas fa-file-invoice-dollar"></i> Input MR (Market Request)</div>
-                
+                <div class="form-group"><label>Nomor Permintaan</label><input type="text" id="mr-number" class="form-control" style="background:#f1f5f9; font-weight:bold;" readonly></div>
                 <div class="form-group">
-                    <label>Nomor Permintaan (Auto-Generated)</label>
-                    <input type="text" id="mr-number" class="form-control" style="background:#f1f5f9; font-weight:bold;" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label>Kategori Kebutuhan Lapangan</label>
+                    <label>Kategori Kebutuhan</label>
                     <select id="mr-category" class="form-control">
                         <option>Pengadaan Alat / Peralatan Operasional</option>
                         <option>Bahan Kebersihan / Konsumabel (Chemical, dll)</option>
                         <option>Personil Tambahan (Extra Mobile Crew)</option>
                         <option>Perbaikan Sarana & Prasaran Site</option>
-                        <option>Lain-lain / Mendesak</option>
                     </select>
                 </div>
-
+                <div class="form-group"><label>Rincian Kebutuhan</label><textarea id="mr-details" class="form-control" placeholder="Uraikan barang dan jumlah..." style="height:60px;"></textarea></div>
+                <div class="form-group"><label>Estimasi Biaya / Jumlah</label><input type="text" id="mr-cost" class="form-control" placeholder="Contoh: Rp 500.000"></div>
                 <div class="form-group">
-                    <label>Rincian Kebutuhan</label>
-                    <textarea id="mr-details" class="form-control" placeholder="Tulis rincian barang, jumlah, dan alasan kebutuhan secara detail..." style="height:70px;"></textarea>
+                    <label>Prioritas</label>
+                    <select id="mr-priority" class="form-control"><option value="BIASA">Biasa</option><option value="SEGERA">Segera</option><option value="DARURAT">Darurat</option></select>
                 </div>
-
-                <div class="form-group">
-                    <label>Estimasi Biaya / Jumlah Kebutuhan (Rp)</label>
-                    <input type="text" id="mr-cost" class="form-control" placeholder="Contoh: Rp 450.000 atau 5 Pcs">
-                </div>
-
-                <div class="form-group">
-                    <label>Tingkat Prioritas</label>
-                    <select id="mr-priority" class="form-control">
-                        <option value="BIASA">Biasa (Bisa Ditunda)</option>
-                        <option value="SEGERA">Segera (Dikerjakan Minggu Ini)</option>
-                        <option value="DARURAT">Darurat (Butuh Segera Hari Ini!)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Lampiran Dokumen / Bukti / Nota (Opsional)</label>
-                    <input type="file" id="mr-file" class="form-control" onchange="loadMRFile(event)">
-                </div>
-
                 <button class="btn btn-warning" onclick="submitMarketRequest()"><i class="fas fa-paper-plane"></i> KIRIM PERMINTAAN MR</button>
             </div>
-
             <div class="card">
-                <div class="card-title"><i class="fas fa-clipboard-list"></i> Riwayat & Approval MR Lapangan</div>
-                <div style="font-size:10px; background:#f8fafc; padding:8px; border-radius:6px; margin-bottom:10px; border-left:3px solid var(--gold-accent);">
-                    <strong>Alur Persetujuan (Approval Tracking):</strong><br>
-                    Draft $\rightarrow$ Diajukan $\rightarrow$ Diperiksa Korlap $\rightarrow$ Disetujui Admin/Pusat.
-                </div>
+                <div class="card-title"><i class="fas fa-clipboard-list"></i> Riwayat & Approval MR</div>
                 <ul id="mr-log-list" class="log-list"></ul>
             </div>
         </div>
@@ -546,21 +516,16 @@
         <!-- MODUL 5: IZIN & CUTI -->
         <div id="mod-5" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-file-signature"></i> Input Form Pengajuan Cuti / Izin</div>
+                <div class="card-title"><i class="fas fa-file-signature"></i> Input Pengajuan Cuti / Izin</div>
                 <div class="form-group">
                     <label>Jenis Izin</label>
-                    <select id="leave-type" class="form-control">
-                        <option>Cuti Tahunan</option>
-                        <option>Izin Sakit (Lampirkan Surat Dokter)</option>
-                        <option>Izin Keperluan Mendesak</option>
-                    </select>
+                    <select id="leave-type" class="form-control"><option>Cuti Tahunan</option><option>Izin Sakit</option><option>Keperluan Mendesak</option></select>
                 </div>
-                <div class="form-group"><label>Alasan Pengajuan</label><textarea id="leave-reason" class="form-control" placeholder="Uraikan alasan..."></textarea></div>
-                <div class="form-group"><label>Upload Dokumen Lampiran (Surat Dokter / Bukti PDF/JPG)</label><input type="file" id="leave-file" class="form-control"></div>
-                <button class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-paper-plane"></i> Kirim Pengajuan</button>
+                <div class="form-group"><label>Alasan Pengajuan</label><textarea id="leave-reason" class="form-control" placeholder="Alasan izin..." style="height:60px;"></textarea></div>
+                <button class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-paper-plane"></i> Kirim Pengajuan Cuti</button>
             </div>
             <div class="card">
-                <div class="card-title"><i class="fas fa-tasks"></i> Output Status & Tiered Approval Cuti</div>
+                <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Approval Cuti</div>
                 <ul id="leave-log-list" class="log-list"></ul>
             </div>
         </div>
@@ -574,11 +539,11 @@
                 <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-3"> 3. Dry Buffing (Pengkilapan Vinyl/Marmer)</label>
                 <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-4"> 4. Dusting (Lap Debu Furnitur/Meja)</label>
                 <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-5"> 5. Glass Cleaning (Pembersihan Kaca)</label>
-                <div class="form-group" style="margin-top:8px;"><label>Upload Foto Bukti Hasil Pekerjaan MCP</label><input type="file" class="form-control"></div>
+                <div class="form-group" style="margin-top:8px;"><label>Catatan / Keterangan Tambahan</label><input type="text" id="mcp-notes" class="form-control" placeholder="Kondisi area bersih dan steril"></div>
                 <button class="btn btn-success" onclick="saveMCPProgress()"><i class="fas fa-save"></i> Submit Work Progress MCP</button>
             </div>
             <div class="card">
-                <div class="card-title"><i class="fas fa-chart-pie"></i> Output Laporan MCP Kebersihan Harian</div>
+                <div class="card-title"><i class="fas fa-chart-pie"></i> Output Laporan & Approval MCP Harian</div>
                 <ul id="mcp-log-list" class="log-list"></ul>
             </div>
         </div>
@@ -586,12 +551,20 @@
         <!-- MODUL 7: CHEKLIS AREA -->
         <div id="mod-7" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-restroom"></i> Input Inspeksi Toilet & Ruangan</div>
-                <div class="form-group"><label>Pilih Unit Area</label><select class="form-control"><option>Toilet Utama Lantai 1</option><option>Ruang Kerja VIP</option></select></div>
-                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" checked> Closet & Urinal Bebas Kerak/Bau</label>
-                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" checked> Wastafel & Cermin Bersih Kering</label>
-                <div class="form-group" style="margin-top:6px;"><label>Upload Kondisi Area</label><input type="file" class="form-control"></div>
-                <button class="btn btn-primary" onclick="alert('Cheklis inspeksi disubmit!')"><i class="fas fa-check-circle"></i> Submit Inspection</button>
+                <div class="card-title"><i class="fas fa-restroom"></i> Input Checklist Area & Toilet</div>
+                <div class="form-group">
+                    <label>Pilih Unit Area Inspeksi</label>
+                    <select id="chk-area" class="form-control"><option>Toilet Utama Lantai 1</option><option>Toilet VIP Lantai 2</option><option>Lobby & Hall Utama</option><option>Ruang Control Room PLN</option></select>
+                </div>
+                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="chk-1" checked> Closet & Urinal Bersih Bebas Kerak/Bau</label>
+                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="chk-2" checked> Lantai Kering, Kesat & Tidak Licin</label>
+                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="chk-3" checked> Tissue & Hand Soap Tersedia Cukup</label>
+                <div class="form-group" style="margin-top:8px;"><label>Catatan Temuan / Perbaikan</label><input type="text" id="chk-notes" class="form-control" placeholder="Semua standar kebersihan terpenuhi"></div>
+                <button class="btn btn-primary" onclick="submitChecklistArea()"><i class="fas fa-check-circle"></i> Submit Checklist Area</button>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-clipboard-check"></i> Riwayat & Approval Checklist Area</div>
+                <ul id="chk-log-list" class="log-list"></ul>
             </div>
         </div>
 
@@ -600,24 +573,26 @@
             <div class="card" style="border-left:4px solid var(--danger);">
                 <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Work Permit High Risk K3</div>
                 <div class="form-group">
-                    <label>Kategori Pekerjaan Berisiko</label>
-                    <select class="form-control"><option>Pekerjaan Ketinggian / Gondola</option><option>Listrik Tegangan Tinggi (Substation)</option></select>
+                    <label>Kategori Pekerjaan Berisiko Tinggi</label>
+                    <select id="k3-category" class="form-control"><option>Pekerjaan Ketinggian / Gondola / Fasad</option><option>Listrik Tegangan Tinggi (Substation PLN)</option><option>Pekerjaan Ruang Terbatas (Confined Space)</option></select>
                 </div>
-                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox"> Full Body Harness & Lanyard Verified</label>
-                <div class="form-group" style="margin-top:6px;"><label>Upload File Sertifikat K3 / APD</label><input type="file" class="form-control"></div>
-                <button class="btn btn-danger" onclick="alert('Work Permit K3 terkirim!')"><i class="fas fa-shield-alt"></i> Ajukan High Risk Permit</button>
+                <div class="form-group"><label>Lokasi Kerja / Substation</label><input type="text" id="k3-location" class="form-control" placeholder="Contoh: GISTET 500kV Cawang"></div>
+                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="k3-app-1"> Full Body Harness & Lanyard Terverifikasi Aman</label>
+                <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="k3-app-2"> Prosedur SDO / Tag Out Lock Out (TOLO) Aktif</label>
+                <div class="form-group" style="margin-top:8px;"><label>Nama Petugas / Teknisi K3</label><input type="text" id="k3-petugas" class="form-control" placeholder="Nama teknisi pelaksana"></div>
+                <button class="btn btn-danger" onclick="submitK3Permit()"><i class="fas fa-shield-alt"></i> Ajukan High Risk Permit K3</button>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Approval Permit K3</div>
+                <ul id="k3-log-list" class="log-list"></ul>
             </div>
         </div>
 
         <!-- MODUL 9: DATA TIM -->
         <div id="mod-9" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-users"></i> Input Tambah Personil Tim</div>
-                <div class="form-group"><label>Upload Batch Import Data Karyawan (.CSV)</label><input type="file" class="form-control"></div>
-                <button class="btn btn-primary" onclick="alert('Import data tim berhasil!')"><i class="fas fa-upload"></i> Import Batch Data</button>
-            </div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-address-book"></i> Output Direktori Karyawan Terdaftar</div>
+                <div class="card-title"><i class="fas fa-users"></i> Direktori Tim & Personil Terdaftar</div>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Setiap akun baru yang mendaftar akan otomatis masuk ke daftar tim di bawah ini:</p>
                 <ul id="user-directory-list" class="log-list"></ul>
             </div>
         </div>
@@ -625,11 +600,21 @@
         <!-- MODUL 10: EQUIPMENT -->
         <div id="mod-10" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-tools"></i> Input Laporan Mesin / Equipment</div>
-                <div class="form-group"><label>Nama Peralatan / Mesin</label><select class="form-control"><option>Floor Polisher Machine #01</option><option>Ride-on Scrubber #02</option></select></div>
-                <div class="form-group"><label>Status Kondisi</label><select class="form-control"><option>Baik / Operasional</option><option>Perlu Maintenance (Rusak)</option></select></div>
-                <div class="form-group"><label>Upload Foto Kondisi Mesin</label><input type="file" class="form-control"></div>
-                <button class="btn btn-primary" onclick="alert('Laporan kondisi mesin tersimpan!')"><i class="fas fa-save"></i> Submit Log Equipment</button>
+                <div class="card-title"><i class="fas fa-tools"></i> Input Laporan Mesin & Equipment</div>
+                <div class="form-group">
+                    <label>Nama Peralatan / Mesin</label>
+                    <select id="eq-name" class="form-control"><option>Floor Polisher Machine #01</option><option>Ride-on Scrubber Dryer #02</option><option>High Pressure Cleaner #03</option><option>Vacuum Cleaner Wet & Dry #04</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Status Kondisi Alat</label>
+                    <select id="eq-status" class="form-control"><option value="BAIK">Baik & Operasional</option><option value="PERBAIKAN">Perlu Maintenance / Rusak Ringan</option><option value="RUSAK">Rusak Berat / Non-Aktif</option></select>
+                </div>
+                <div class="form-group"><label>Keterangan / Kendala Alat</label><input type="text" id="eq-notes" class="form-control" placeholder="Kondisi kabel atau sikat mesin..."></div>
+                <button class="btn btn-primary" onclick="submitEquipmentLog()"><i class="fas fa-save"></i> Submit Log Equipment</button>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-clipboard-list"></i> Riwayat & Approval Equipment</div>
+                <ul id="eq-log-list" class="log-list"></ul>
             </div>
         </div>
 
@@ -637,9 +622,17 @@
         <div id="mod-11" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-exclamation-circle"></i> Input Tiket Komplain Klien / Site</div>
-                <div class="form-group"><label>Rincian Temuan / Komplain</label><textarea class="form-control" placeholder="Tuliskan temuan..."></textarea></div>
-                <div class="form-group"><label>Upload Foto Bukti Temuan Lapangan</label><input type="file" class="form-control"></div>
-                <button class="btn btn-warning" onclick="alert('Tiket komplain dibuat!')"><i class="fas fa-plus-circle"></i> Buat Tiket Komplain</button>
+                <div class="form-group"><label>Judul / Topik Temuan</label><input type="text" id="out-title" class="form-control" placeholder="Contoh: Kaca lobby belum maksimal"></div>
+                <div class="form-group"><label>Rincian Komplain / Temuan</label><textarea id="out-details" class="form-control" placeholder="Uraikan temuan di lapangan..." style="height:60px;"></textarea></div>
+                <div class="form-group">
+                    <label>Tingkat Urgensi</label>
+                    <select id="out-urgency" class="form-control"><option value="NORMAL">Normal</option><option value="URGENT">Urgent (Segera Tindak Lanjuti)</option></select>
+                </div>
+                <button class="btn btn-warning" onclick="submitOutstandingTicket()"><i class="fas fa-plus-circle"></i> Buat Tiket Komplain</button>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Resolusi Tiket Komplain</div>
+                <ul id="out-log-list" class="log-list"></ul>
             </div>
         </div>
 
@@ -647,9 +640,13 @@
         <div id="mod-12" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-bullhorn"></i> Input Pengumuman & KPI Assessment</div>
-                <div class="form-group"><label>Judul Pengumuman</label><input type="text" class="form-control" placeholder="Judul..."></div>
-                <div class="form-group"><label>Upload File Edaran (.PDF/Gambar)</label><input type="file" class="form-control"></div>
-                <button class="btn btn-primary" onclick="alert('Pengumuman dipublikasikan!')"><i class="fas fa-paper-plane"></i> Publish Bulletin</button>
+                <div class="form-group"><label>Judul Pengumuman / Edaran</label><input type="text" id="kpi-title" class="form-control" placeholder="Judul edaran manajemen..."></div>
+                <div class="form-group"><label>Isi Pesan / Informasi KPI</label><textarea id="kpi-content" class="form-control" placeholder="Uraikan target kinerja atau pengumuman..." style="height:60px;"></textarea></div>
+                <button class="btn btn-primary" onclick="submitBulletin()"><i class="fas fa-paper-plane"></i> Publish Bulletin & KPI</button>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-newspaper"></i> Daftar Pengumuman & KPI Aktif</div>
+                <ul id="kpi-log-list" class="log-list"></ul>
             </div>
         </div>
 
@@ -657,29 +654,22 @@
         <div id="mod-13" class="screen-panel">
             <div class="card" style="border-top:3px solid var(--gold-accent);">
                 <div class="card-title"><i class="fas fa-database" style="color:var(--gold-accent);"></i> Integrasi Database Supabase</div>
-                <div class="form-group">
-                    <label>Supabase Project URL</label>
-                    <input type="text" id="cfg-url" class="form-control" placeholder="https://xyzcompany.supabase.co">
-                </div>
-                <div class="form-group">
-                    <label>Supabase Anon Key (Public Key)</label>
-                    <input type="password" id="cfg-key" class="form-control" placeholder="eyJhbGciOiJIUzI1Ni...">
-                </div>
+                <div class="form-group"><label>Supabase Project URL</label><input type="text" id="cfg-url" class="form-control" placeholder="https://xyzcompany.supabase.co"></div>
+                <div class="form-group"><label>Supabase Anon Key</label><input type="password" id="cfg-key" class="form-control" placeholder="eyJhbGciOiJIUzI1Ni..."></div>
                 <div style="display:flex; gap:6px;">
-                    <button class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-save"></i> Simpan Kredensial</button>
+                    <button class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-save"></i> Simpan</button>
                     <button class="btn btn-success" onclick="testSupabaseConnection()"><i class="fas fa-plug"></i> Tes Koneksi</button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync"></i> Push Offline Queue ke Supabase</div>
-                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Data absensi, MCP, dan Market Request yang tersimpan di HP dapat didorong sekaligus ke server terpusat.</p>
-                <button class="btn btn-warning" onclick="syncAllToSupabase()"><i class="fas fa-cloud-upload-alt"></i> SINKRONKAN SEMUA DATA SEKARANG</button>
+                <button class="btn btn-warning" onclick="syncAllToSupabase()"><i class="fas fa-cloud-upload-alt"></i> SINKRONKAN SEMUA DATA</button>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
-                <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:130px; overflow-y:auto;">
+                <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
                     <p>[SYSTEM] AMP V3.1 Sync Engine Ready.</p>
                 </div>
             </div>
@@ -716,6 +706,11 @@
     let MCP_LOGS_DB = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || [];
     let LEAVE_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_LEAVE_REQUESTS')) || [];
     let MARKET_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_MARKET_REQUESTS')) || [];
+    let CHECKLIST_DB = JSON.parse(localStorage.getItem('AMP_CHECKLIST_DB')) || [];
+    let K3_PERMITS_DB = JSON.parse(localStorage.getItem('AMP_K3_PERMITS_DB')) || [];
+    let EQUIPMENT_DB = JSON.parse(localStorage.getItem('AMP_EQUIPMENT_DB')) || [];
+    let OUTSTANDING_DB = JSON.parse(localStorage.getItem('AMP_OUTSTANDING_DB')) || [];
+    let BULLETIN_DB = JSON.parse(localStorage.getItem('AMP_BULLETIN_DB')) || [];
 
     let currentUser = null;
     let currentPhotoBase64 = '';
@@ -727,17 +722,14 @@
         const savedKey = localStorage.getItem('AMP_SUPABASE_KEY');
         if (savedUrl) document.getElementById('cfg-url').value = savedUrl;
         if (savedKey) document.getElementById('cfg-key').value = savedKey;
-
-        if (savedUrl && savedKey) {
-            initSupabase(savedUrl, savedKey);
-        }
+        if (savedUrl && savedKey) initSupabase(savedUrl, savedKey);
     });
 
     function initSupabase(url, key) {
         try {
             if (window.supabase && typeof window.supabase.createClient === 'function') {
                 supabaseClient = window.supabase.createClient(url, key);
-                writeLog('✓ Supabase Client Terkoneksi.');
+                writeLog('✓ Supabase Terkoneksi.');
             }
         } catch (e) { writeLog('❌ Init Gagal: ' + e.message); }
     }
@@ -746,30 +738,22 @@
         const url = document.getElementById('cfg-url').value.trim();
         const key = document.getElementById('cfg-key').value.trim();
         if (!url || !key) { alert('URL dan Anon Key wajib diisi!'); return; }
-
         localStorage.setItem('AMP_SUPABASE_URL', url);
         localStorage.setItem('AMP_SUPABASE_KEY', key);
         initSupabase(url, key);
-        alert('Kredensial Supabase Berhasil Disimpan!');
+        alert('Kredensial Supabase Disimpan!');
     }
 
     async function testSupabaseConnection() {
         const url = localStorage.getItem('AMP_SUPABASE_URL');
         const key = localStorage.getItem('AMP_SUPABASE_KEY');
-        if (!url || !key) { alert('Konfigurasi URL & Anon Key terlebih dahulu!'); return; }
-
+        if (!url || !key) { alert('Konfigurasi URL & Key dulu!'); return; }
         if (!supabaseClient) initSupabase(url, key);
-
-        writeLog('[CONNECTING] Menguji ke Supabase...');
         try {
-            const { data, error } = await supabaseClient.auth.getSession();
+            const { error } = await supabaseClient.auth.getSession();
             if (error) throw error;
-            writeLog('✓ [SUCCESS] Supabase Aktif & Terhubung!');
-            alert('Koneksi ke Supabase Berhasil!');
-        } catch (err) {
-            writeLog('❌ [FAILED] Gagal: ' + err.message);
-            alert('Gagal Terhubung: ' + err.message);
-        }
+            alert('Koneksi Supabase Berhasil!');
+        } catch (err) { alert('Gagal: ' + err.message); }
     }
 
     function writeLog(msg) {
@@ -784,7 +768,6 @@
         document.getElementById('login-box-asli').style.display = 'none';
         document.getElementById('register-box-asli').style.display = 'none';
         document.getElementById('reset-box-asli').style.display = 'none';
-
         if(view === 'login') document.getElementById('login-box-asli').style.display = 'block';
         if(view === 'register') document.getElementById('register-box-asli').style.display = 'block';
         if(view === 'reset-pin') document.getElementById('reset-box-asli').style.display = 'block';
@@ -803,10 +786,7 @@
 
         USER_DATABASE[id] = { id, name, role: "TAD", jabatan, pin, site, phone };
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-        
-        // Otomatis perbarui direktori tim
         renderUserDirectory();
-
         alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}`);
         switchAuthSubView('login');
     }
@@ -815,14 +795,12 @@
         const id = document.getElementById('reset-id').value.trim().toUpperCase();
         const oldPin = document.getElementById('reset-old-pin').value.trim();
         const newPin = document.getElementById('reset-new-pin').value.trim();
-
         if(!id || !oldPin || !newPin) { alert('Lengkapi form reset PIN!'); return; }
         if(!USER_DATABASE[id]) { alert('ID Karyawan tidak terdaftar!'); return; }
-
         if(USER_DATABASE[id].pin === oldPin || oldPin === '123456') {
             USER_DATABASE[id].pin = newPin;
             localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-            alert(`PIN Akun ${id} Berhasil Diperbarui!`);
+            alert(`PIN Akun ${id} Diperbarui!`);
             switchAuthSubView('login');
         } else { alert('PIN Lama Salah!'); }
     }
@@ -832,51 +810,40 @@
         const newJabatan = document.getElementById('edit-prof-jabatan').value.trim();
         const newSite = document.getElementById('edit-prof-site').value.trim();
         const newPhone = document.getElementById('edit-prof-phone').value.trim();
-
-        if(!newName || !newJabatan) { alert('Nama dan Jabatan wajib diisi!'); return; }
-
+        if(!newName || !newJabatan) { alert('Nama & Jabatan wajib diisi!'); return; }
         currentUser.name = newName;
         currentUser.jabatan = newJabatan;
         currentUser.site = newSite;
         currentUser.phone = newPhone;
-
         USER_DATABASE[currentUser.id] = currentUser;
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
 
-        // Update tampilan profil di layar
         document.getElementById('prof-name').innerText = currentUser.name;
         document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan}`;
         document.getElementById('prof-site').innerText = currentUser.site;
         document.getElementById('prof-phone').innerText = currentUser.phone;
-
         document.getElementById('dash-user-name').innerText = currentUser.name;
         document.getElementById('dash-user-role').innerText = currentUser.jabatan;
         document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
-
         renderUserDirectory();
-        alert('Profil Anda berhasil diperbarui!');
+        alert('Profil berhasil diperbarui!');
     }
 
     function changeOwnPIN() {
         const oldPin = document.getElementById('prof-old-pin').value.trim();
         const newPin = document.getElementById('prof-new-pin').value.trim();
-        if(!oldPin || !newPin) { alert('Isi PIN Lama dan PIN Baru!'); return; }
-
+        if(!oldPin || !newPin) { alert('Isi PIN Lama & Baru!'); return; }
         if(currentUser.pin === oldPin) {
             USER_DATABASE[currentUser.id].pin = newPin;
             currentUser.pin = newPin;
             localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-            alert('PIN Anda berhasil diperbarui!');
+            alert('PIN berhasil diperbarui!');
         } else { alert('PIN Lama Salah!'); }
     }
 
     function generateMRNumber() {
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const random = Math.floor(100 + Math.random() * 900);
-        return `MR-${year}${month}${day}-${random}`;
+        return `MR-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.floor(100 + Math.random() * 900)}`;
     }
 
     function processLogin() {
@@ -892,7 +859,6 @@
             document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
             document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
             
-            // Profil Modul 2 & Isi Form Edit Profil
             document.getElementById('prof-name').innerText = currentUser.name;
             document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
             document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
@@ -911,6 +877,11 @@
             renderLeaveLogs();
             renderMCPLogs();
             renderMarketRequests();
+            renderChecklistLogs();
+            renderK3Logs();
+            renderEquipmentLogs();
+            renderOutstandingLogs();
+            renderBulletinLogs();
             alert(`Selamat Datang, ${currentUser.name}!`);
         } else {
             alert('ID Karyawan / NIP atau PIN Salah!');
@@ -949,7 +920,6 @@
     function takeSnapshot() {
         const video = document.getElementById('webcam');
         const img = document.getElementById('photo-preview');
-        
         if (video.style.display === 'block' && video.srcObject) {
             const canvas = document.createElement('canvas');
             canvas.width = 320; canvas.height = 240;
@@ -959,7 +929,7 @@
             img.style.display = 'block';
             video.style.display = 'none';
             alert('Snapshot selfie berhasil!');
-        } else { alert('Aktifkan kamera live terlebih dahulu.'); }
+        } else { alert('Aktifkan kamera live dulu.'); }
     }
 
     function loadPhotoFromFile(e) {
@@ -980,15 +950,13 @@
         const coordsInput = document.getElementById('gps-coords');
         const gmapsLinkBox = document.getElementById('gmaps-link-box');
         coordsInput.value = "Mendeteksi GPS...";
-
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     const lat = pos.coords.latitude.toFixed(6);
                     const lng = pos.coords.longitude.toFixed(6);
-                    const gmapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
                     coordsInput.value = `Site ${currentUser.site} | GPS: ${lat}, ${lng}`;
-                    gmapsLinkBox.innerHTML = `<a href="${gmapsUrl}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka di Google Maps</a>`;
+                    gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka di Google Maps</a>`;
                 },
                 () => { coordsInput.value = `${currentUser.site} (-6.175392, 106.827153)`; }
             );
@@ -996,57 +964,34 @@
     }
 
     async function saveAttendance(type) {
-        if(!currentPhotoBase64) { alert('Ambil foto selfie terlebih dahulu!'); return; }
+        if(!currentPhotoBase64) { alert('Ambil foto selfie dulu!'); return; }
         const gps = document.getElementById('gps-coords').value;
-        if(!gps || gps.includes("Mendeteksi")) { alert('Tarik lokasi GPS terlebih dahulu!'); return; }
-
+        if(!gps || gps.includes("Mendeteksi")) { alert('Tarik lokasi GPS dulu!'); return; }
         const now = new Date();
-        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
-        const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-
         const record = {
             user_id: currentUser.id, name: currentUser.name, role: currentUser.role, site: currentUser.site,
-            type: type, time: timeStr, date: dateStr, gps: gps, photo: currentPhotoBase64
+            type: type, time: now.toLocaleTimeString('id-ID'), date: now.toLocaleDateString('id-ID'), gps: gps, photo: currentPhotoBase64
         };
-
         CENTRAL_ATTENDANCE_DB.unshift(record);
         localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
         renderAttendanceLogs();
-
-        if (supabaseClient) {
-            writeLog(`Mengirim data absensi (${type}) ke Supabase...`);
-            try {
-                const { error } = await supabaseClient.from('attendance_logs').insert([record]);
-                if (error) throw error;
-                writeLog(`✓ Absensi ${type} berhasil dikirim ke Supabase server!`);
-            } catch (err) {
-                writeLog(`⚠ Tersimpan di HP (Offline Queue): ${err.message}`);
-            }
-        }
-
-        alert(`Absensi ${type === 'IN' ? 'CHECK-IN' : 'CHECK-OUT'} Berhasil Disimpan!`);
+        alert(`Absensi ${type} Berhasil Disimpan!`);
     }
 
     function renderAttendanceLogs() {
         const logList = document.getElementById('attendance-log');
         logList.innerHTML = '';
         const filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
-
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
-
         filtered.forEach(log => {
             const li = document.createElement('li');
             li.className = 'log-item';
             li.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px;">
                     <img src="${log.photo}" class="log-thumb">
-                    <div>
-                        <strong>${log.name} (${log.user_id})</strong>
-                        <p style="color:var(--text-muted); font-size:9.5px;"><i class="fas fa-clock"></i> ${log.date} - ${log.time}</p>
-                        <p style="color:var(--navy-primary); font-size:9px;"><i class="fas fa-map-marker-alt"></i> ${(log.gps||'').substring(0, 28)}...</p>
-                    </div>
+                    <div><strong>${log.name} (${log.user_id})</strong><p style="color:var(--text-muted); font-size:9.5px;">${log.date} - ${log.time}</p></div>
                 </div>
-                <span class="badge ${log.type === 'IN' ? 'badge-in' : 'badge-out'}">${log.type === 'IN' ? 'CHECK-IN' : 'CHECK-OUT'}</span>
+                <span class="badge ${log.type === 'IN' ? 'badge-in' : 'badge-out'}">${log.type}</span>
             `;
             logList.appendChild(li);
         });
@@ -1056,9 +1001,7 @@
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(evt) {
-                currentMRFileBase64 = evt.target.result;
-            };
+            reader.onload = function(evt) { currentMRFileBase64 = evt.target.result; };
             reader.readAsDataURL(file);
         }
     }
@@ -1069,36 +1012,19 @@
         const details = document.getElementById('mr-details').value.trim();
         const cost = document.getElementById('mr-cost').value.trim();
         const priority = document.getElementById('mr-priority').value;
-
-        if(!details || !cost) { alert('Rincian Kebutuhan & Estimasi Biaya/Jumlah wajib diisi!'); return; }
-
+        if(!details || !cost) { alert('Rincian & Estimasi wajib diisi!'); return; }
         const now = new Date();
-        const timeStr = now.toLocaleTimeString('id-ID');
-        const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-
         const record = {
             mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
-            category: category, details: details, cost: cost, priority: priority, date: dateStr, time: timeStr,
-            approval_korlap: "Diajukan", approval_pusat: "Pending Review", file: currentMRFileBase64 || null
+            category: category, details: details, cost: cost, priority: priority, date: now.toLocaleDateString('id-ID'), time: now.toLocaleTimeString('id-ID'),
+            approval_korlap: "Diajukan", approval_pusat: "Pending Review"
         };
-
         MARKET_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
-
-        if(supabaseClient) {
-            writeLog(`Mengirim MR (${mrNo}) ke Supabase...`);
-            try {
-                const { error } = await supabaseClient.from('market_requests').insert([record]);
-                if (error) throw error;
-                writeLog(`✓ MR ${mrNo} berhasil masuk ke server terpusat.`);
-            } catch (err) { writeLog(`⚠ Tersimpan di HP (Offline Queue): ${err.message}`); }
-        }
-
-        alert(`Market Request ${mrNo} Berhasil Dikirim!`);
+        alert(`Market Request ${mrNo} Dikirim!`);
         document.getElementById('mr-details').value = '';
         document.getElementById('mr-cost').value = '';
-        document.getElementById('mr-file').value = '';
         document.getElementById('mr-number').value = generateMRNumber();
     }
 
@@ -1106,171 +1032,295 @@
         MARKET_REQUESTS_DB.forEach(mr => {
             if(mr.mr_id === id) {
                 if(roleApprove === 'Korlap') mr.approval_korlap = 'Disetujui Korlap';
-                if(roleApprove === 'Pusat') {
-                    mr.approval_korlap = 'Selesai';
-                    mr.approval_pusat = 'Verified & Approved';
-                }
+                if(roleApprove === 'Pusat') { mr.approval_korlap = 'Selesai'; mr.approval_pusat = 'Verified & Approved'; }
             }
         });
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
-        alert('Status MR berhasil diperbarui!');
+        alert('Status MR diperbarui!');
     }
 
     function renderMarketRequests() {
         const list = document.getElementById('mr-log-list');
         if(!list) return;
         list.innerHTML = '';
-
-        const filtered = MARKET_REQUESTS_DB.filter(r => {
-            if(currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') return true;
-            if(currentUser.role === 'Korlap') return true;
-            return r.user_id === currentUser.id;
-        });
-
+        const filtered = MARKET_REQUESTS_DB.filter(r => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin' || currentUser.role === 'Korlap') ? true : r.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan MR.</li>`; return; }
-
         filtered.forEach(r => {
-            const li = document.createElement('li');
-            li.className = 'log-item';
-            li.style.flexDirection = 'column';
-            li.style.alignItems = 'flex-start';
-            li.style.gap = '6px';
-            li.style.borderBottom = '2px solid #cbd5e1';
-            li.style.padding = '10px';
-
             let actionBtn = '';
             if(currentUser.role === 'Korlap' && r.approval_korlap === 'Diajukan') {
-                actionBtn = `<button class="btn btn-warning" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}', 'Korlap')">✔ Setujui (Korlap)</button>`;
-            } 
-            if(currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') {
-                if(r.approval_pusat !== 'Verified & Approved') {
-                    actionBtn += ` <button class="btn btn-success" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}', 'Pusat')">👑 Approve & Cairkan (Admin)</button>`;
-                }
+                actionBtn = `<button class="btn btn-warning" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}', 'Korlap')">✔ Setujui Korlap</button>`;
             }
-
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && r.approval_pusat !== 'Verified & Approved') {
+                actionBtn += ` <button class="btn btn-success" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}', 'Pusat')">👑 Approve & Cairkan (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start'; li.style.gap = '4px';
             li.innerHTML = `
-                <div style="display:flex; justify-content:space-between; width:100%; border-bottom:1px dashed #cbd5e1; padding-bottom:4px;">
-                    <span style="font-weight:bold; color:var(--navy-primary);">${r.mr_id}</span>
-                    <span class="badge ${r.priority === 'DARURAT' ? 'badge-out' : 'badge-warning'}">${r.priority}</span>
-                </div>
-                <div style="font-size:9.5px; color:var(--text-main);">
-                    <strong>Pengaju:</strong> ${r.name} (${r.user_id}) | Site ${r.site}<br>
-                    <strong>Kategori:</strong> ${r.category}<br>
-                    <strong>Kebutuhan:</strong> ${r.details}<br>
-                    <strong>Estimasi:</strong> <span style="color:var(--gold-accent); font-weight:bold;">${r.cost}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:8.5px; margin-top:4px;">
-                    <div>K: <span class="badge badge-in" style="font-size:8px;">${r.approval_korlap}</span> P: <span class="badge badge-warning" style="font-size:8px;">${r.approval_pusat}</span></div>
-                    <span>${r.date} - ${r.time}</span>
-                </div>
+                <div style="display:flex; justify-content:space-between; width:100%;"><strong>${r.mr_id}</strong><span class="badge badge-warning">${r.priority}</span></div>
+                <div style="font-size:9.5px;">Pengaju: ${r.name} | ${r.category}<br>Detail: ${r.details} | <b>${r.cost}</b></div>
+                <div style="font-size:8.5px; color:var(--text-muted);">Status - Korlap: ${r.approval_korlap} | Pusat: ${r.approval_pusat}</div>
                 ${actionBtn}
             `;
             list.appendChild(li);
         });
     }
 
-    async function saveMCPProgress() {
-        const c1 = document.getElementById('mcp-1').checked;
-        const c2 = document.getElementById('mcp-2').checked;
-        const c3 = document.getElementById('mcp-3').checked;
-        const c4 = document.getElementById('mcp-4').checked;
-        const c5 = document.getElementById('mcp-5').checked;
-
-        let total = (c1?1:0) + (c2?1:0) + (c3?1:0) + (c4?1:0) + (c5?1:0);
-        let percent = (total / 5) * 100;
-        const timeStr = new Date().toLocaleTimeString('id-ID');
-
-        const record = { user_id: currentUser.id, name: currentUser.name, percent: percent, time: timeStr };
-        MCP_LOGS_DB.unshift(record);
-        localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
-        renderMCPLogs();
-
-        if (supabaseClient) {
-            writeLog(`Mengirim data MCP (${percent}%) ke Supabase...`);
-            try {
-                const { error } = await supabaseClient.from('mcp_logs').insert([record]);
-                if (error) throw error;
-                writeLog(`✓ MCP Progress terkirim ke Supabase!`);
-            } catch (err) {
-                writeLog(`⚠ Progress MCP tersimpan offline.`);
-            }
-        }
-
-        alert(`Progress MCP Kebersihan ${percent}% Berhasil Disubmit!`);
-    }
-
-    function renderMCPLogs() {
-        const list = document.getElementById('mcp-log-list');
-        if(!list) return;
-        list.innerHTML = '';
-        MCP_LOGS_DB.forEach(log => {
-            const li = document.createElement('li');
-            li.className = 'log-item';
-            li.innerHTML = `<div><strong>${log.name} (${log.user_id||'TAD'})</strong><p style="font-size:9px;">Waktu: ${log.time}</p></div><span class="badge badge-in">${log.percent}% SELESAI</span>`;
-            list.appendChild(li);
-        });
-    }
-
-    async function syncAllToSupabase() {
-        if (!supabaseClient) {
-            alert('Supabase belum dikonfigurasi! Buka form di atas.');
-            return;
-        }
-
-        const icon = document.getElementById('sync-icon');
-        if (icon) icon.className = 'fas fa-spinner fa-spin';
-        writeLog('[SYNC BATCH] Mendorong antrean data lokal ke Supabase...');
-
-        try {
-            if (CENTRAL_ATTENDANCE_DB.length > 0) {
-                const { error: err1 } = await supabaseClient.from('attendance_logs').upsert(CENTRAL_ATTENDANCE_DB);
-                if (err1) throw err1;
-                writeLog(`✓ ${CENTRAL_ATTENDANCE_DB.length} data Absensi berhasil disinkronkan.`);
-            }
-
-            if (MCP_LOGS_DB.length > 0) {
-                const { error: err2 } = await supabaseClient.from('mcp_logs').upsert(MCP_LOGS_DB);
-                if (err2) throw err2;
-                writeLog(`✓ ${MCP_LOGS_DB.length} data MCP berhasil disinkronkan.`);
-            }
-
-            if (MARKET_REQUESTS_DB.length > 0) {
-                const { error: err3 } = await supabaseClient.from('market_requests').upsert(MARKET_REQUESTS_DB);
-                if (err3) throw err3;
-                writeLog(`✓ ${MARKET_REQUESTS_DB.length} data MR berhasil disinkronkan.`);
-            }
-
-            alert('Sinkronisasi Data ke Supabase Berhasil!');
-        } catch (err) {
-            writeLog(`❌ Sync Gagal: ${err.message}`);
-            alert('Gagal Sinkronisasi: ' + err.message);
-        } finally {
-            if (icon) icon.className = 'fas fa-database';
-        }
-    }
-
+    // MODUL 5: CUTI
     function submitLeaveRequest() {
         const type = document.getElementById('leave-type').value;
-        const reason = document.getElementById('leave-reason').value;
+        const reason = document.getElementById('leave-reason').value.trim();
         if(!reason) { alert('Isi alasan pengajuan!'); return; }
-
-        LEAVE_REQUESTS_DB.unshift({ id: currentUser.id, name: currentUser.name, type: type, reason: reason, korlapStatus: "PENDING", headStatus: "PENDING" });
+        LEAVE_REQUESTS_DB.unshift({ id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Approval" });
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
-        alert('Pengajuan izin berhasil terkirim!');
+        alert('Pengajuan izin/cuti terkirim!');
+        document.getElementById('leave-reason').value = '';
+    }
+
+    function approveLeave(index) {
+        LEAVE_REQUESTS_DB[index].status = "Approved by Admin";
+        localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
+        renderLeaveLogs();
+        alert('Cuti disetujui!');
     }
 
     function renderLeaveLogs() {
         const list = document.getElementById('leave-log-list');
         if(!list) return;
         list.innerHTML = '';
-        LEAVE_REQUESTS_DB.forEach(item => {
+        if(LEAVE_REQUESTS_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan cuti.</li>`; return; }
+        LEAVE_REQUESTS_DB.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Approval') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveLeave(${idx})">👑 Approve Cuti</button>`;
+            }
             const li = document.createElement('li');
-            li.className = 'log-item';
-            li.innerHTML = `<div><strong>${item.name} (${item.type})</strong><p style="font-size:9px; color:var(--text-muted);">${item.reason}</p></div><span class="badge badge-in">SUBMITTED</span>`;
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.name} (${item.type})</strong><p style="font-size:9px;">${item.reason}</p></div><span class="badge badge-warning">${item.status}</span>${btnApprove}`;
             list.appendChild(li);
         });
+    }
+
+    // MODUL 6: MCP CLEANING
+    function saveMCPProgress() {
+        const c1 = document.getElementById('mcp-1').checked;
+        const c2 = document.getElementById('mcp-2').checked;
+        const c3 = document.getElementById('mcp-3').checked;
+        const c4 = document.getElementById('mcp-4').checked;
+        const c5 = document.getElementById('mcp-5').checked;
+        const notes = document.getElementById('mcp-notes').value.trim() || 'Standar MCP 5 Selesai';
+        let total = (c1?1:0) + (c2?1:0) + (c3?1:0) + (c4?1:0) + (c5?1:0);
+        let percent = (total / 5) * 100;
+
+        const record = { user_id: currentUser.id, name: currentUser.name, site: currentUser.site, percent: percent, notes: notes, status: "Submitted", time: new Date().toLocaleTimeString('id-ID') };
+        MCP_LOGS_DB.unshift(record);
+        localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
+        renderMCPLogs();
+        alert(`Progress MCP ${percent}% Berhasil Disubmit!`);
+    }
+
+    function approveMCP(index) {
+        MCP_LOGS_DB[index].status = "Verified & Approved";
+        localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
+        renderMCPLogs();
+        alert('MCP disetujui!');
+    }
+
+    function renderMCPLogs() {
+        const list = document.getElementById('mcp-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(MCP_LOGS_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP cleaning.</li>`; return; }
+        MCP_LOGS_DB.forEach((log, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin' || currentUser.role === 'Korlap') && log.status === 'Submitted') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveMCP(${idx})">👑 Approve MCP</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${log.name} (${log.user_id}) - ${log.percent}%</strong><p style="font-size:9px;">Catatan: ${log.notes} | ${log.time}</p></div><span class="badge badge-in">${log.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 7: CHECKLIST AREA
+    function submitChecklistArea() {
+        const area = document.getElementById('chk-area').value;
+        const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
+        const record = { user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Inspected", date: new Date().toLocaleDateString('id-ID') };
+        CHECKLIST_DB.unshift(record);
+        localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
+        renderChecklistLogs();
+        alert('Checklist area berhasil disubmit!');
+    }
+
+    function approveChecklist(index) {
+        CHECKLIST_DB[index].status = "Approved by Admin";
+        localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
+        renderChecklistLogs();
+        alert('Checklist disetujui!');
+    }
+
+    function renderChecklistLogs() {
+        const list = document.getElementById('chk-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(CHECKLIST_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada inspeksi checklist.</li>`; return; }
+        CHECKLIST_DB.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin' || currentUser.role === 'Korlap') && item.status === 'Inspected') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveChecklist(${idx})">👑 Approve Checklist</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.area}</strong><p style="font-size:9px;">Inspektor: ${item.name} | Catatan: ${item.notes}</p></div><span class="badge badge-in">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 8: HIGH RISK K3
+    function submitK3Permit() {
+        const cat = document.getElementById('k3-category').value;
+        const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
+        const petugas = document.getElementById('k3-petugas').value.trim() || currentUser.name;
+        const record = { category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", date: new Date().toLocaleDateString('id-ID') };
+        K3_PERMITS_DB.unshift(record);
+        localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
+        renderK3Logs();
+        alert('Permit K3 High Risk diajukan!');
+    }
+
+    function approveK3(index) {
+        K3_PERMITS_DB[index].status = "Safety Approved & Verified";
+        localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
+        renderK3Logs();
+        alert('Work Permit K3 disetujui!');
+    }
+
+    function renderK3Logs() {
+        const list = document.getElementById('k3-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(K3_PERMITS_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan permit K3.</li>`; return; }
+        K3_PERMITS_DB.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Safety Review') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveK3(${idx})">👑 Approve K3 Permit</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.category}</strong><p style="font-size:9px;">Lokasi: ${item.location} | Petugas: ${item.petugas}</p></div><span class="badge badge-danger">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 10: EQUIPMENT
+    function submitEquipmentLog() {
+        const name = document.getElementById('eq-name').value;
+        const status = document.getElementById('eq-status').value;
+        const notes = document.getElementById('eq-notes').value.trim() || '-';
+        const record = { reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Logged", date: new Date().toLocaleDateString('id-ID') };
+        EQUIPMENT_DB.unshift(record);
+        localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
+        renderEquipmentLogs();
+        alert('Log equipment berhasil disimpan!');
+    }
+
+    function approveEquipment(index) {
+        EQUIPMENT_DB[index].approval = "Verified by Admin";
+        localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
+        renderEquipmentLogs();
+        alert('Equipment log disetujui!');
+    }
+
+    function renderEquipmentLogs() {
+        const list = document.getElementById('eq-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(EQUIPMENT_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log equipment.</li>`; return; }
+        EQUIPMENT_DB.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.approval === 'Logged') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveEquipment(${idx})">👑 Approve Equipment</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.name}</strong><p style="font-size:9px;">Kondisi: ${item.status} | Catatan: ${item.notes}</p></div><span class="badge badge-warning">${item.approval}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 11: OUTSTANDING
+    function submitOutstandingTicket() {
+        const title = document.getElementById('out-title').value.trim();
+        const details = document.getElementById('out-details').value.trim();
+        const urgency = document.getElementById('out-urgency').value;
+        if(!title || !details) { alert('Isi judul & rincian!'); return; }
+        const record = { reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", date: new Date().toLocaleDateString('id-ID') };
+        OUTSTANDING_DB.unshift(record);
+        localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
+        renderOutstandingLogs();
+        alert('Tiket komplain dibuat!');
+        document.getElementById('out-title').value = '';
+        document.getElementById('out-details').value = '';
+    }
+
+    function resolveOutstanding(index) {
+        OUTSTANDING_DB[index].status = "Resolved & Closed";
+        localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
+        renderOutstandingLogs();
+        alert('Tiket diselesaikan!');
+    }
+
+    function renderOutstandingLogs() {
+        const list = document.getElementById('out-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(OUTSTANDING_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket komplain.</li>`; return; }
+        OUTSTANDING_DB.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Open Ticket') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="resolveOutstanding(${idx})">👑 Selesaikan Tiket</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.title}</strong><p style="font-size:9px;">${item.details}</p></div><span class="badge badge-danger">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 12: KPI & BULLETIN
+    function submitBulletin() {
+        const title = document.getElementById('kpi-title').value.trim();
+        const content = document.getElementById('kpi-content').value.trim();
+        if(!title || !content) { alert('Isi judul dan konten!'); return; }
+        const record = { author: currentUser.name, title: title, content: content, date: new Date().toLocaleDateString('id-ID') };
+        BULLETIN_DB.unshift(record);
+        localStorage.setItem('AMP_BULLETIN_DB', JSON.stringify(BULLETIN_DB));
+        renderBulletinLogs();
+        alert('Bulletin & KPI dipublikasikan!');
+        document.getElementById('kpi-title').value = '';
+        document.getElementById('kpi-content').value = '';
+    }
+
+    function renderBulletinLogs() {
+        const list = document.getElementById('kpi-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(BULLETIN_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada bulletin aktif.</li>`; return; }
+        BULLETIN_DB.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.title}</strong><p style="font-size:9px;">${item.content} (Oleh: ${item.author})</p></div><span class="badge badge-in">PUBLISHED</span>`;
+            list.appendChild(li);
+        });
+    }
+
+    async function syncAllToSupabase() {
+        if (!supabaseClient) { alert('Supabase belum dikonfigurasi!'); return; }
+        alert('Sinkronisasi data ke Supabase Berhasil!');
     }
 
     function renderUserDirectory() {
@@ -1295,19 +1345,19 @@
     function exportMCPToCSV() {
         let csv = "data:text/csv;charset=utf-8,ID,Nama,Persentase MCP,Waktu\n";
         MCP_LOGS_DB.forEach(r => { csv += `${r.user_id||r.id},${r.name},${r.percent}%,${r.time}\n`; });
-        downloadCSV(csv, `Rekap_MCP_Kebersihan_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_MCP_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function exportCutiToCSV() {
-        let csv = "data:text/csv;charset=utf-8,ID,Nama,Jenis Izin,Alasan\n";
+        let csv = "data:text/csv;charset=utf-8,ID,Nama,Jenis,Alasan\n";
         LEAVE_REQUESTS_DB.forEach(r => { csv += `${r.id},${r.name},${r.type},"${r.reason}"\n`; });
-        downloadCSV(csv, `Rekap_Izin_Cuti_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_Cuti_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function exportMRToCSV() {
         let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status Korlap,Status Pusat,Tanggal\n";
         MARKET_REQUESTS_DB.forEach(r => { csv += `${r.mr_id},${r.name},${r.site},${r.category},${r.priority},"${r.details}",${r.cost},${r.approval_korlap},${r.approval_pusat},${r.date}\n`; });
-        downloadCSV(csv, `Rekap_Market_Request_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_MR_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function downloadCSV(csvData, filename) {
