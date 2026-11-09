@@ -88,7 +88,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* TAMPILAN AUTH LOGIN SCREEN ASLI */
         .auth-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -259,7 +258,7 @@
             height: 60px;
             background: var(--navy-primary);
             display: flex;
-            justify-around;
+            justify-content: space-around;
             align-items: center;
             border-top: 2px solid var(--gold-accent);
             z-index: 200;
@@ -320,16 +319,10 @@
         <div id="register-box-asli" class="auth-card-asli" style="display:none;">
             <h3 style="font-size:13px; margin-bottom:12px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
             <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-            <div class="form-group"><label>ID Karyawan Baru (NIP)</label><input type="text" id="reg-id" class="form-control" placeholder="ID (Contoh: TAD002)"></div>
-            <div class="form-group">
-                <label>Peran / Role</label>
-                <select id="reg-role" class="form-control">
-                    <option value="TAD">Staf Operasional (TAD)</option>
-                    <option value="Korlap">Koordinator Lapangan (Korlap)</option>
-                    <option value="HeadOfOp">Head of Operation / Admin</option>
-                </select>
-            </div>
-            <div class="form-group"><label>Penempatan Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: PLN Unit Gambir"></div>
+            <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: TAD002)"></div>
+            <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Head Of Operation / Korlap / TAD"></div>
+            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit Gambir"></div>
+            <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
             <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
             <button class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
             <button class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
@@ -380,7 +373,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <h2 id="dash-user-name" style="font-size:15px;">M. Soheh</h2>
-                        <p id="dash-user-role" style="font-size:10px; color:#d97706;">Head of Operation / Admin</p>
+                        <p id="dash-user-role" style="font-size:10px; color:#d97706;">Head Of Operation</p>
                         <p id="dash-user-site" style="font-size:9px; opacity:0.8; margin-top:4px;"><i class="fas fa-building"></i> Site: Pusat / All Sites</p>
                     </div>
                     <i class="fas fa-id-badge fa-3x" style="color:#d97706; opacity:0.5;"></i>
@@ -420,14 +413,19 @@
         <!-- MODUL 2: PROFIL -->
         <div id="mod-2" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-id-card"></i> Identitas & Digital ID Card</div>
+                <div class="card-title"><i class="fas fa-id-card"></i> Identitas & Digital ID Card Karyawan</div>
                 <div style="text-align:center; padding:10px;">
                     <div style="width:70px; height:70px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 10px;">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user-tie"></i>
                     </div>
-                    <h3 id="prof-name">M. Soheh</h3>
-                    <p id="prof-id" style="font-size:11px; color:var(--text-muted);">ID: AMP001</p>
-                    <p id="prof-role-tag" style="font-size:10px; color:var(--gold-accent); font-weight:bold; margin-top:2px;">PT ARDINA MULYA PERKASA</p>
+                    <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M. Soheh</h3>
+                    <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">NIP: AMP001</p>
+                    <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Jabatan: Head Of Operation</p>
+                </div>
+                
+                <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
+                    <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Lokasi Kerja:</strong> <span id="prof-site">Pusat / All Sites</span></p>
+                    <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
                 </div>
             </div>
 
@@ -699,9 +697,9 @@
     }, 1000);
 
     let USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || {
-        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", pin: "123456", site: "Pusat / All Sites" },
-        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", pin: "123456", site: "PLN Area Jakarta Central" },
-        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", pin: "123456", site: "PLN Unit Gambir" }
+        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789" },
+        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566" },
+        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899" }
     };
 
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
@@ -714,7 +712,6 @@
     let currentMRFileBase64 = '';
     let supabaseClient = null;
 
-    // AUTO INIT SUPABASE UPON LOAD
     window.addEventListener('DOMContentLoaded', () => {
         const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
         const savedKey = localStorage.getItem('AMP_SUPABASE_KEY');
@@ -786,16 +783,17 @@
     function processRegister() {
         const name = document.getElementById('reg-name').value.trim();
         const id = document.getElementById('reg-id').value.trim().toUpperCase();
-        const role = document.getElementById('reg-role').value;
+        const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
         const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
+        const phone = document.getElementById('reg-phone').value.trim() || '-';
         const pin = document.getElementById('reg-pin').value.trim();
 
-        if(!name || !id || !pin) { alert('Lengkapi seluruh form pendaftaran!'); return; }
-        if(USER_DATABASE[id]) { alert('ID Karyawan sudah terdaftar!'); return; }
+        if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
+        if(USER_DATABASE[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
 
-        USER_DATABASE[id] = { id, name, role, pin, site };
+        USER_DATABASE[id] = { id, name, role: "TAD", jabatan, pin, site, phone };
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-        alert(`Akun Baru Berhasil Dibuat!\nID: ${id}\nNama: ${name}`);
+        alert(`Akun Baru Berhasil Dibuat!\nNIP: ${id}\nNama: ${name}`);
         switchAuthSubView('login');
     }
 
@@ -847,10 +845,15 @@
             
             document.getElementById('header-user-id').innerText = currentUser.id;
             document.getElementById('dash-user-name').innerText = currentUser.name;
-            document.getElementById('dash-user-role').innerText = currentUser.role;
+            document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
             document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
+            
+            // Profil Modul 2
             document.getElementById('prof-name').innerText = currentUser.name;
-            document.getElementById('prof-id').innerText = `ID: ${currentUser.id}`;
+            document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
+            document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
+            document.getElementById('prof-site').innerText = currentUser.site;
+            document.getElementById('prof-phone').innerText = currentUser.phone || '-';
 
             document.getElementById('mr-number').value = generateMRNumber();
 
@@ -861,7 +864,7 @@
             renderMarketRequests();
             alert(`Selamat Datang, ${currentUser.name}!`);
         } else {
-            alert('ID Karyawan / PIN Salah!');
+            alert('ID Karyawan / NIP atau PIN Salah!');
         }
     }
 
@@ -1000,7 +1003,6 @@
         });
     }
 
-    // MODUL 4: FITUR MR (MARKET REQUEST)
     function loadMRFile(e) {
         const file = e.target.files[0];
         if (file) {
@@ -1230,7 +1232,7 @@
             const u = USER_DATABASE[id];
             const li = document.createElement('li');
             li.className = 'log-item';
-            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.role} | Site: ${u.site}</p></div><span class="badge badge-in">AKTIF</span>`;
+            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | Site: ${u.site}</p></div><span class="badge badge-in">AKTIF</span>`;
             dirList.appendChild(li);
         });
     }
@@ -1269,37 +1271,3 @@
 </script>
 </body>
 </html>
-function processRegister() {
-    const name = document.getElementById('reg-name').value.trim();
-    const id = document.getElementById('reg-id').value.trim().toUpperCase();
-    const role = document.getElementById('reg-role').value;
-    const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
-    const pin = document.getElementById('reg-pin').value.trim();
-
-    if(!name || !id || !pin) { alert('Lengkapi seluruh form pendaftaran!'); return; }
-    if(USER_DATABASE[id]) { alert('ID Karyawan sudah terdaftar!'); return; }
-
-    // 1. Masukkan ke database objek
-    USER_DATABASE[id] = { id, name, role, pin, site };
-    
-    // 2. Simpan otomatis ke memori lokal browser agar langsung masuk ke Data Tim
-    localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-    
-    alert(`Akun Baru Berhasil Dibuat & Ditambahkan ke Tim!\nID: ${id}\nNama: ${name}`);
-    switchAuthSubView('login');
-}
-
-function renderUserDirectory() {
-    const dirList = document.getElementById('user-directory-list');
-    if(!dirList) return;
-    dirList.innerHTML = '';
-    
-    // Memuat otomatis seluruh data tim terbaru dari USER_DATABASE
-    Object.keys(USER_DATABASE).forEach(id => {
-        const u = USER_DATABASE[id];
-        const li = document.createElement('li');
-        li.className = 'log-item';
-        li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.role} | Site: ${u.site}</p></div><span class="badge badge-in">AKTIF</span>`;
-        dirList.appendChild(li);
-    });
-}
