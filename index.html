@@ -429,8 +429,18 @@
                 </div>
             </div>
 
+            <!-- FORM EDIT PROFIL MANDIRI -->
             <div class="card">
-                <div class="card-title"><i class="fas fa-key"></i> Input Ganti PIN Keamanan</div>
+                <div class="card-title"><i class="fas fa-user-edit"></i> Edit Profil Saya</div>
+                <div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control"></div>
+                <div class="form-group"><label>Jabatan</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
+                <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="edit-prof-site" class="form-control"></div>
+                <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control"></div>
+                <button class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN PROFIL</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
                 <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control"></div>
                 <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control"></div>
                 <button class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN SAYA</button>
@@ -813,6 +823,35 @@
         } else { alert('PIN Lama Salah!'); }
     }
 
+    function updateOwnProfile() {
+        const newName = document.getElementById('edit-prof-name').value.trim();
+        const newJabatan = document.getElementById('edit-prof-jabatan').value.trim();
+        const newSite = document.getElementById('edit-prof-site').value.trim();
+        const newPhone = document.getElementById('edit-prof-phone').value.trim();
+
+        if(!newName || !newJabatan) { alert('Nama dan Jabatan wajib diisi!'); return; }
+
+        currentUser.name = newName;
+        currentUser.jabatan = newJabatan;
+        currentUser.site = newSite;
+        currentUser.phone = newPhone;
+
+        USER_DATABASE[currentUser.id] = currentUser;
+        localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+        // Update tampilan profil
+        document.getElementById('prof-name').innerText = currentUser.name;
+        document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan}`;
+        document.getElementById('prof-site').innerText = currentUser.site;
+        document.getElementById('prof-phone').innerText = currentUser.phone;
+
+        document.getElementById('dash-user-name').innerText = currentUser.name;
+        document.getElementById('dash-user-role').innerText = currentUser.jabatan;
+        document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
+
+        alert('Profil Anda berhasil diperbarui!');
+    }
+
     function changeOwnPIN() {
         const oldPin = document.getElementById('prof-old-pin').value.trim();
         const newPin = document.getElementById('prof-new-pin').value.trim();
@@ -848,12 +887,17 @@
             document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
             document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
             
-            // Profil Modul 2
+            // Profil Modul 2 & Isi Form Edit Profil
             document.getElementById('prof-name').innerText = currentUser.name;
             document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
             document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
             document.getElementById('prof-site').innerText = currentUser.site;
             document.getElementById('prof-phone').innerText = currentUser.phone || '-';
+
+            document.getElementById('edit-prof-name').value = currentUser.name;
+            document.getElementById('edit-prof-jabatan').value = currentUser.jabatan || currentUser.role;
+            document.getElementById('edit-prof-site').value = currentUser.site;
+            document.getElementById('edit-prof-phone').value = currentUser.phone || '';
 
             document.getElementById('mr-number').value = generateMRNumber();
 
