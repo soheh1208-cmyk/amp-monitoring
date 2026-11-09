@@ -1269,3 +1269,37 @@
 </script>
 </body>
 </html>
+function processRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const id = document.getElementById('reg-id').value.trim().toUpperCase();
+    const role = document.getElementById('reg-role').value;
+    const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
+    const pin = document.getElementById('reg-pin').value.trim();
+
+    if(!name || !id || !pin) { alert('Lengkapi seluruh form pendaftaran!'); return; }
+    if(USER_DATABASE[id]) { alert('ID Karyawan sudah terdaftar!'); return; }
+
+    // 1. Masukkan ke database objek
+    USER_DATABASE[id] = { id, name, role, pin, site };
+    
+    // 2. Simpan otomatis ke memori lokal browser agar langsung masuk ke Data Tim
+    localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+    
+    alert(`Akun Baru Berhasil Dibuat & Ditambahkan ke Tim!\nID: ${id}\nNama: ${name}`);
+    switchAuthSubView('login');
+}
+
+function renderUserDirectory() {
+    const dirList = document.getElementById('user-directory-list');
+    if(!dirList) return;
+    dirList.innerHTML = '';
+    
+    // Memuat otomatis seluruh data tim terbaru dari USER_DATABASE
+    Object.keys(USER_DATABASE).forEach(id => {
+        const u = USER_DATABASE[id];
+        const li = document.createElement('li');
+        li.className = 'log-item';
+        li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.role} | Site: ${u.site}</p></div><span class="badge badge-in">AKTIF</span>`;
+        dirList.appendChild(li);
+    });
+}
