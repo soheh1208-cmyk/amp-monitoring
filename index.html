@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.1 - Full Cloud Synchronized</title>
+    <title>AMP Operation Monitoring V3.1 - Full Integrated Role Engine</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -309,9 +309,9 @@
 
             <div style="margin-top:10px; background:#f8fafc; padding:8px; border-radius:8px; font-size:8.5px; color:var(--text-muted); text-align:left;">
                 <strong>Akun Uji Coba:</strong><br>
-                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh - Admin)<br>
-                • <code>KOR001</code> / PIN <code>123456</code> (Korlap)<br>
-                • <code>TAD001</code> / PIN <code>123456</code> (TAD)
+                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh - Admin / HeadOfOp)<br>
+                • <code>KOR001</code> / PIN <code>123456</code> (Ahmad - Korlap)<br>
+                • <code>TAD001</code> / PIN <code>123456</code> (Budi - TAD)
             </div>
         </div>
 
@@ -320,8 +320,8 @@
             <h3 style="font-size:13px; margin-bottom:12px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
             <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
             <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: TAD002)"></div>
-            <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Head Of Operation / Korlap / TAD"></div>
-            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit Gambir"></div>
+            <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / TAD / Staf"></div>
+            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit"></div>
             <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
             <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
             <button class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
@@ -714,7 +714,6 @@
 
     let currentUser = null;
     let currentPhotoBase64 = '';
-    let currentMRFileBase64 = '';
     let supabaseClient = null;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -723,6 +722,7 @@
         if (savedUrl) document.getElementById('cfg-url').value = savedUrl;
         if (savedKey) document.getElementById('cfg-key').value = savedKey;
         if (savedUrl && savedKey) initSupabase(savedUrl, savedKey);
+        renderUserDirectory();
     });
 
     function initSupabase(url, key) {
@@ -784,7 +784,14 @@
         if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
         if(USER_DATABASE[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
 
-        USER_DATABASE[id] = { id, name, role: "TAD", jabatan, pin, site, phone };
+        let roleAssigned = "TAD";
+        if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
+            roleAssigned = "Korlap";
+        } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
+            roleAssigned = "HeadOfOp";
+        }
+
+        USER_DATABASE[id] = { id, name, role: roleAssigned, jabatan, pin, site, phone };
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
         renderUserDirectory();
         alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}`);
@@ -882,7 +889,7 @@
             renderEquipmentLogs();
             renderOutstandingLogs();
             renderBulletinLogs();
-            alert(`Selamat Datang, ${currentUser.name}!`);
+            alert(`Selamat Datang, ${currentUser.name}! (${currentUser.role})`);
         } else {
             alert('ID Karyawan / NIP atau PIN Salah!');
         }
@@ -978,13 +985,14 @@
 
         if(supabaseClient) {
             try { await supabaseClient.from('attendance_logs').insert([record]); writeLog('✓ Absensi terkirim ke Supabase'); }
-            catch(e) { writeLog('⚠ Absensi tersimpan offline'); }
+            catch(e) { writeLog('⚠ Absensi tersimpan lokal'); }
         }
         alert(`Absensi ${type} Berhasil Disimpan!`);
     }
 
     function renderAttendanceLogs() {
         const logList = document.getElementById('attendance-log');
+        if(!logList) return;
         logList.innerHTML = '';
         const filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
@@ -1002,15 +1010,7 @@
         });
     }
 
-    function loadMRFile(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(evt) { currentMRFileBase64 = evt.target.result; };
-            reader.readAsDataURL(file);
-        }
-    }
-
+    // MODUL 4: MARKET REQUEST (MR)
     async function submitMarketRequest() {
         const mrNo = document.getElementById('mr-number').value;
         const category = document.getElementById('mr-category').value;
@@ -1022,67 +1022,61 @@
         const record = {
             mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
             category: category, details: details, cost: cost, priority: priority, date: now.toLocaleDateString('id-ID'), time: now.toLocaleTimeString('id-ID'),
-            approval_korlap: "Diajukan", approval_pusat: "Pending Review"
+            status: "Pending Admin Approval"
         };
         MARKET_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('market_requests').insert([record]); writeLog('✓ MR terkirim ke Supabase'); }
-            catch(e) { writeLog('⚠ MR tersimpan offline'); }
+            try { await supabaseClient.from('market_requests').insert([record]); writeLog('✓ MR terkirim ke Supabase'); } catch(e) {}
         }
-        alert(`Market Request ${mrNo} Dikirim!`);
+        alert(`Market Request ${mrNo} Dikirim! Menunggu Approve Admin.`);
         document.getElementById('mr-details').value = '';
         document.getElementById('mr-cost').value = '';
         document.getElementById('mr-number').value = generateMRNumber();
     }
 
-    function approveMR(id, roleApprove) {
+    function approveMR(id) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak! Hanya Admin / Head of Operation yang dapat melakukan approve.'); return; }
         MARKET_REQUESTS_DB.forEach(mr => {
-            if(mr.mr_id === id) {
-                if(roleApprove === 'Korlap') mr.approval_korlap = 'Disetujui Korlap';
-                if(roleApprove === 'Pusat') { mr.approval_korlap = 'Selesai'; mr.approval_pusat = 'Verified & Approved'; }
-            }
+            if(mr.mr_id === id) { mr.status = 'Approved & Verified by Admin'; }
         });
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
-        alert('Status MR diperbarui!');
+        alert('Market Request berhasil disetujui (Approved)!');
     }
 
     function renderMarketRequests() {
         const list = document.getElementById('mr-log-list');
         if(!list) return;
         list.innerHTML = '';
-        const filtered = MARKET_REQUESTS_DB.filter(r => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin' || currentUser.role === 'Korlap') ? true : r.user_id === currentUser.id);
+        const filtered = MARKET_REQUESTS_DB.filter(r => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : r.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan MR.</li>`; return; }
         filtered.forEach(r => {
             let actionBtn = '';
-            if(currentUser.role === 'Korlap' && r.approval_korlap === 'Diajukan') {
-                actionBtn = `<button class="btn btn-warning" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}', 'Korlap')">✔ Setujui Korlap</button>`;
-            }
-            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && r.approval_pusat !== 'Verified & Approved') {
-                actionBtn += ` <button class="btn btn-success" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}', 'Pusat')">👑 Approve & Cairkan (Admin)</button>`;
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && r.status === 'Pending Admin Approval') {
+                actionBtn = `<button class="btn btn-success" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}')">👑 Approve (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item';
             li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start'; li.style.gap = '4px';
             li.innerHTML = `
                 <div style="display:flex; justify-content:space-between; width:100%;"><strong>${r.mr_id}</strong><span class="badge badge-warning">${r.priority}</span></div>
-                <div style="font-size:9.5px;">Pengaju: ${r.name} | ${r.category}<br>Detail: ${r.details} | <b>${r.cost}</b></div>
-                <div style="font-size:8.5px; color:var(--text-muted);">Status - Korlap: ${r.approval_korlap} | Pusat: ${r.approval_pusat}</div>
+                <div style="font-size:9.5px;">Pengaju: ${r.name} (${r.user_id}) | ${r.category}<br>Detail: ${r.details} | <b>${r.cost}</b></div>
+                <div style="font-size:8.5px; color:var(--text-muted);">Status: ${r.status}</div>
                 ${actionBtn}
             `;
             list.appendChild(li);
         });
     }
 
-    // MODUL 5: CUTI
+    // MODUL 5: IZIN & CUTI
     async function submitLeaveRequest() {
         const type = document.getElementById('leave-type').value;
         const reason = document.getElementById('leave-reason').value.trim();
         if(!reason) { alert('Isi alasan pengajuan!'); return; }
-        const record = { id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Approval", date: new Date().toLocaleDateString('id-ID') };
+        const record = { id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         LEAVE_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
@@ -1090,26 +1084,28 @@
         if(supabaseClient) {
             try { await supabaseClient.from('leave_requests').insert([record]); writeLog('✓ Cuti terkirim ke Supabase'); } catch(e) {}
         }
-        alert('Pengajuan izin/cuti terkirim!');
+        alert('Pengajuan izin/cuti terkirim! Menunggu Approve Admin.');
         document.getElementById('leave-reason').value = '';
     }
 
     function approveLeave(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak! Hanya Admin / Head of Operation yang dapat approve.'); return; }
         LEAVE_REQUESTS_DB[index].status = "Approved by Admin";
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
-        alert('Cuti disetujui!');
+        alert('Cuti disetujui (Approved)!');
     }
 
     function renderLeaveLogs() {
         const list = document.getElementById('leave-log-list');
         if(!list) return;
         list.innerHTML = '';
-        if(LEAVE_REQUESTS_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan cuti.</li>`; return; }
-        LEAVE_REQUESTS_DB.forEach((item, idx) => {
+        const filtered = LEAVE_REQUESTS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan cuti.</li>`; return; }
+        filtered.forEach((item, idx) => {
             let btnApprove = '';
-            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Approval') {
-                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveLeave(${idx})">👑 Approve Cuti</button>`;
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Admin Approval') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveLeave(${idx})">👑 Approve Cuti (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
@@ -1129,7 +1125,7 @@
         let total = (c1?1:0) + (c2?1:0) + (c3?1:0) + (c4?1:0) + (c5?1:0);
         let percent = (total / 5) * 100;
 
-        const record = { user_id: currentUser.id, name: currentUser.name, site: currentUser.site, percent: percent, notes: notes, status: "Submitted", time: new Date().toLocaleTimeString('id-ID') };
+        const record = { user_id: currentUser.id, name: currentUser.name, site: currentUser.site, percent: percent, notes: notes, status: "Pending Admin Approval", time: new Date().toLocaleTimeString('id-ID') };
         MCP_LOGS_DB.unshift(record);
         localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
         renderMCPLogs();
@@ -1137,25 +1133,27 @@
         if(supabaseClient) {
             try { await supabaseClient.from('mcp_logs').insert([record]); writeLog('✓ MCP terkirim ke Supabase'); } catch(e) {}
         }
-        alert(`Progress MCP ${percent}% Berhasil Disubmit!`);
+        alert(`Progress MCP ${percent}% Berhasil Disubmit! Menunggu Approve Admin.`);
     }
 
     function approveMCP(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         MCP_LOGS_DB[index].status = "Verified & Approved";
         localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
         renderMCPLogs();
-        alert('MCP disetujui!');
+        alert('MCP disetujui (Approved)!');
     }
 
     function renderMCPLogs() {
         const list = document.getElementById('mcp-log-list');
         if(!list) return;
         list.innerHTML = '';
-        if(MCP_LOGS_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP cleaning.</li>`; return; }
-        MCP_LOGS_DB.forEach((log, idx) => {
+        const filtered = MCP_LOGS_DB.filter(log => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : log.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP cleaning.</li>`; return; }
+        filtered.forEach((log, idx) => {
             let btnApprove = '';
-            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin' || currentUser.role === 'Korlap') && log.status === 'Submitted') {
-                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveMCP(${idx})">👑 Approve MCP</button>`;
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && log.status === 'Pending Admin Approval') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveMCP(${idx})">👑 Approve MCP (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
@@ -1168,7 +1166,7 @@
     async function submitChecklistArea() {
         const area = document.getElementById('chk-area').value;
         const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
-        const record = { user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Inspected", date: new Date().toLocaleDateString('id-ID') };
+        const record = { user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         CHECKLIST_DB.unshift(record);
         localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
         renderChecklistLogs();
@@ -1176,25 +1174,27 @@
         if(supabaseClient) {
             try { await supabaseClient.from('checklist_logs').insert([record]); writeLog('✓ Checklist terkirim ke Supabase'); } catch(e) {}
         }
-        alert('Checklist area berhasil disubmit!');
+        alert('Checklist area berhasil disubmit! Menunggu Approve Admin.');
     }
 
     function approveChecklist(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         CHECKLIST_DB[index].status = "Approved by Admin";
         localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
         renderChecklistLogs();
-        alert('Checklist disetujui!');
+        alert('Checklist disetujui (Approved)!');
     }
 
     function renderChecklistLogs() {
         const list = document.getElementById('chk-log-list');
         if(!list) return;
         list.innerHTML = '';
-        if(CHECKLIST_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada inspeksi checklist.</li>`; return; }
-        CHECKLIST_DB.forEach((item, idx) => {
+        const filtered = CHECKLIST_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada inspeksi checklist.</li>`; return; }
+        filtered.forEach((item, idx) => {
             let btnApprove = '';
-            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin' || currentUser.role === 'Korlap') && item.status === 'Inspected') {
-                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveChecklist(${idx})">👑 Approve Checklist</button>`;
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Admin Approval') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveChecklist(${idx})">👑 Approve Checklist (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
@@ -1208,7 +1208,7 @@
         const cat = document.getElementById('k3-category').value;
         const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
         const petugas = document.getElementById('k3-petugas').value.trim() || currentUser.name;
-        const record = { category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", date: new Date().toLocaleDateString('id-ID') };
+        const record = { user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", date: new Date().toLocaleDateString('id-ID') };
         K3_PERMITS_DB.unshift(record);
         localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
         renderK3Logs();
@@ -1216,25 +1216,27 @@
         if(supabaseClient) {
             try { await supabaseClient.from('k3_permits').insert([record]); writeLog('✓ K3 Permit terkirim ke Supabase'); } catch(e) {}
         }
-        alert('Permit K3 High Risk diajukan!');
+        alert('Permit K3 High Risk diajukan! Menunggu Approve Admin.');
     }
 
     function approveK3(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         K3_PERMITS_DB[index].status = "Safety Approved & Verified";
         localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
         renderK3Logs();
-        alert('Work Permit K3 disetujui!');
+        alert('Work Permit K3 disetujui (Approved)!');
     }
 
     function renderK3Logs() {
         const list = document.getElementById('k3-log-list');
         if(!list) return;
         list.innerHTML = '';
-        if(K3_PERMITS_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan permit K3.</li>`; return; }
-        K3_PERMITS_DB.forEach((item, idx) => {
+        const filtered = K3_PERMITS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan permit K3.</li>`; return; }
+        filtered.forEach((item, idx) => {
             let btnApprove = '';
             if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Safety Review') {
-                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveK3(${idx})">👑 Approve K3 Permit</button>`;
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveK3(${idx})">👑 Approve K3 Permit (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
@@ -1248,7 +1250,7 @@
         const name = document.getElementById('eq-name').value;
         const status = document.getElementById('eq-status').value;
         const notes = document.getElementById('eq-notes').value.trim() || '-';
-        const record = { reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Logged", date: new Date().toLocaleDateString('id-ID') };
+        const record = { user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         EQUIPMENT_DB.unshift(record);
         localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
         renderEquipmentLogs();
@@ -1256,25 +1258,27 @@
         if(supabaseClient) {
             try { await supabaseClient.from('equipment_logs').insert([record]); writeLog('✓ Equipment log terkirim ke Supabase'); } catch(e) {}
         }
-        alert('Log equipment berhasil disimpan!');
+        alert('Log equipment berhasil disimpan! Menunggu Approve Admin.');
     }
 
     function approveEquipment(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         EQUIPMENT_DB[index].approval = "Verified by Admin";
         localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
         renderEquipmentLogs();
-        alert('Equipment log disetujui!');
+        alert('Equipment log disetujui (Approved)!');
     }
 
     function renderEquipmentLogs() {
         const list = document.getElementById('eq-log-list');
         if(!list) return;
         list.innerHTML = '';
-        if(EQUIPMENT_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log equipment.</li>`; return; }
-        EQUIPMENT_DB.forEach((item, idx) => {
+        const filtered = EQUIPMENT_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log equipment.</li>`; return; }
+        filtered.forEach((item, idx) => {
             let btnApprove = '';
-            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.approval === 'Logged') {
-                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveEquipment(${idx})">👑 Approve Equipment</button>`;
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.approval === 'Pending Admin Approval') {
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveEquipment(${idx})">👑 Approve Equipment (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
@@ -1289,7 +1293,7 @@
         const details = document.getElementById('out-details').value.trim();
         const urgency = document.getElementById('out-urgency').value;
         if(!title || !details) { alert('Isi judul & rincian!'); return; }
-        const record = { reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", date: new Date().toLocaleDateString('id-ID') };
+        const record = { user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", date: new Date().toLocaleDateString('id-ID') };
         OUTSTANDING_DB.unshift(record);
         localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
         renderOutstandingLogs();
@@ -1303,6 +1307,7 @@
     }
 
     function resolveOutstanding(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         OUTSTANDING_DB[index].status = "Resolved & Closed";
         localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
         renderOutstandingLogs();
@@ -1313,11 +1318,12 @@
         const list = document.getElementById('out-log-list');
         if(!list) return;
         list.innerHTML = '';
-        if(OUTSTANDING_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket komplain.</li>`; return; }
-        OUTSTANDING_DB.forEach((item, idx) => {
+        const filtered = OUTSTANDING_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket komplain.</li>`; return; }
+        filtered.forEach((item, idx) => {
             let btnApprove = '';
             if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Open Ticket') {
-                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="resolveOutstanding(${idx})">👑 Selesaikan Tiket</button>`;
+                btnApprove = `<button class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="resolveOutstanding(${idx})">👑 Selesaikan Tiket (Admin)</button>`;
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
@@ -1328,6 +1334,9 @@
 
     // MODUL 12: KPI & BULLETIN
     async function submitBulletin() {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin' && currentUser.role !== 'Korlap') {
+            alert('Hanya Admin dan Korlap yang dapat mempublikasikan bulletin.'); return;
+        }
         const title = document.getElementById('kpi-title').value.trim();
         const content = document.getElementById('kpi-content').value.trim();
         if(!title || !content) { alert('Isi judul dan konten!'); return; }
@@ -1410,8 +1419,8 @@
     }
 
     function exportMRToCSV() {
-        let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status Korlap,Status Pusat,Tanggal\n";
-        MARKET_REQUESTS_DB.forEach(r => { csv += `${r.mr_id},${r.name},${r.site},${r.category},${r.priority},"${r.details}",${r.cost},${r.approval_korlap},${r.approval_pusat},${r.date}\n`; });
+        let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status,Tanggal\n";
+        MARKET_REQUESTS_DB.forEach(r => { csv += `${r.mr_id},${r.name},${r.site},${r.category},${r.priority},"${r.details}",${r.cost},${r.status},${r.date}\n`; });
         downloadCSV(csv, `Rekap_MR_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
