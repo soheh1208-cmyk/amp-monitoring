@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.1 - Full Integrated Role Engine</title>
+    <title>AMP Operation Monitoring V3.1 - Full Cloud Synchronized</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -1076,7 +1076,7 @@
         const type = document.getElementById('leave-type').value;
         const reason = document.getElementById('leave-reason').value.trim();
         if(!reason) { alert('Isi alasan pengajuan!'); return; }
-        const record = { id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
+        const record = { user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         LEAVE_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
@@ -1100,7 +1100,7 @@
         const list = document.getElementById('leave-log-list');
         if(!list) return;
         list.innerHTML = '';
-        const filtered = LEAVE_REQUESTS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.id === currentUser.id);
+        const filtered = LEAVE_REQUESTS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan cuti.</li>`; return; }
         filtered.forEach((item, idx) => {
             let btnApprove = '';
@@ -1414,7 +1414,7 @@
 
     function exportCutiToCSV() {
         let csv = "data:text/csv;charset=utf-8,ID,Nama,Jenis,Alasan\n";
-        LEAVE_REQUESTS_DB.forEach(r => { csv += `${r.id},${r.name},${r.type},"${r.reason}"\n`; });
+        LEAVE_REQUESTS_DB.forEach(r => { csv += `${r.user_id||r.id},${r.name},${r.type},"${r.reason}"\n`; });
         downloadCSV(csv, `Rekap_Cuti_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
