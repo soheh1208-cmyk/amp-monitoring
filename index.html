@@ -736,7 +736,6 @@
     };
 
     let USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
-    // Pastikan akun default selalu ada jika terhapus
     if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
 
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
@@ -899,7 +898,6 @@
         renderUserDirectory();
         alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}\nSilakan Login menggunakan NIP dan PIN Anda.`);
         
-        // Bersihkan form & arahkan ke login dengan NIP terisi otomatis
         document.getElementById('reg-name').value = '';
         document.getElementById('reg-id').value = '';
         document.getElementById('reg-pin').value = '';
@@ -971,11 +969,9 @@
             return;
         }
 
-        // Muat ulang database lokal terbaru sebelum validasi
         USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
         if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
 
-        // Jika ID belum ada di lokal tapi Supabase aktif, coba tarik dari cloud dulu
         if (!USER_DATABASE[idInput] && supabaseClient) {
             await pullUsersFromSupabase(true);
         }
@@ -1117,9 +1113,27 @@
         const logList = document.getElementById('attendance-log');
         if(!logList) return;
         logList.innerHTML = '';
-        const filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
+        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
+        
+        // Urutkan dari terlama ke terbaru berdasarkan waktu & tanggal
+        filtered.sort((a, b) => {
+            let tA = a.time || '00:00:00';
+            let tB = b.time || '00:00:00';
+            return new Date(a.date.split('/').reverse().join('-') + ' ' + tA) - new Date(b.date.split('/').reverse().join('-') + ' ' + tB);
+        });
+
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
+        
+        let lastDate = '';
         filtered.forEach(log => {
+            if (log.date !== lastDate) {
+                lastDate = log.date;
+                const dividerLi = document.createElement('li');
+                dividerLi.style.cssText = "background: #e2e8f0; font-weight: bold; font-size: 10px; padding: 6px 10px; color: var(--navy-primary); border-top: 2px solid var(--gold-accent); text-align: center; margin-top: 6px;";
+                dividerLi.innerHTML = `<i class="fas fa-calendar-alt">&nbsp;</i> Tanggal: ${lastDate}`;
+                logList.appendChild(dividerLi);
+            }
+
             const li = document.createElement('li');
             li.className = 'log-item';
             li.innerHTML = `
