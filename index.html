@@ -812,22 +812,44 @@
     }
 
     function processRegister() {
-        const name = document.getElementById('reg-name').value.trim();
-        const id = document.getElementById('reg-id').value.trim().toUpperCase();
-        const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
-        const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
-        const phone = document.getElementById('reg-phone').value.trim() || '-';
-        const pin = document.getElementById('reg-pin').value.trim();
+       async function processRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const id = document.getElementById('reg-id').value.trim().toUpperCase();
+    const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
+    const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
+    const phone = document.getElementById('reg-phone').value.trim() || '-';
+    const pin = document.getElementById('reg-pin').value.trim();
 
-        if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
-        if(USER_DATABASE[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
+    if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
+    if(USER_DATABASE[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
 
-        let roleAssigned = "TAD";
-        if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
-            roleAssigned = "Korlap";
-        } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
-            roleAssigned = "HeadOfOp";
+    let roleAssigned = "TAD";
+    if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
+        roleAssigned = "Korlap";
+    } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
+        roleAssigned = "HeadOfOp";
+    }
+
+    const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone };
+
+    // 1. Simpan ke local storage perangkat lokal
+    USER_DATABASE[id] = newUser;
+    localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+    // 2. SIMPAN KE CLOUD SUPABASE AGAR BISA DIAKSES PERANGKAT LAIN
+    if(supabaseClient) {
+        try {
+            await supabaseClient.from('user_directory').upsert([newUser]);
+            writeLog(`✓ Akun ${id} berhasil disinkronkan ke Cloud Supabase.`);
+        } catch(err) {
+            writeLog(`⚠ Gagal sinkron cloud: ${err.message}`);
         }
+    }
+
+    renderUserDirectory();
+    alert(`Akun Baru Berhasil Dibuat & Terdaftar ke Sistem!\nNIP: ${id}\nNama: ${name}`);
+    switchAuthSubView('login');
+}
 
         USER_DATABASE[id] = { id, name, role: roleAssigned, jabatan, pin, site, phone };
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
