@@ -1655,10 +1655,32 @@
     }
 
     function exportToExcel() {
-        let csv = "data:text/csv;charset=utf-8,ID,Nama,Role,Site,Tipe,Tanggal,Waktu,GPS\n";
-        CENTRAL_ATTENDANCE_DB.forEach(r => { csv += `${r.user_id||r.id},${r.name},${r.role},${r.site||'PLN'},${r.type},${r.date},${r.time},"${r.gps}"\n`; });
-        downloadCSV(csv, `Rekap_Absensi_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    // Validasi Keamanan: Hanya HeadOfOp atau Admin yang diizinkan mengunduh rekap lengkap
+    if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
+        alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap absensi seluruh tim.');
+        return;
     }
+
+    // Ambil data terbaru dari localStorage
+    const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
+
+    if (allAttendance.length === 0) {
+        alert('Belum ada data absensi yang tercatat di sistem.');
+        return;
+    }
+
+    // Buat header file CSV
+    let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Lengkap,Jabatan/Role,Site/Lokasi,Tipe Absen,Tanggal,Waktu,Koordinat GPS\n";
+    
+    // Masukkan seluruh baris data absensi dari semua korlap & TAD
+    allAttendance.forEach(r => {
+        csv += `${r.user_id || r.id},"${r.name}","${r.role}","${r.site || 'PLN'}",${r.type},${r.date},${r.time},"${r.gps}"\n`;
+    });
+
+    // Proses unduh file .CSV
+    downloadCSV(csv, `Rekap_Absensi_Semua_Korlap_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    writeLog('✓ Admin berhasil mengunduh rekap absensi lengkap seluruh korlap.');
+}
 
     function exportMCPToCSV() {
         let csv = "data:text/csv;charset=utf-8,ID,Nama,Tanggal,Jumlah Item,Status\n";
