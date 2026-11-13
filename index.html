@@ -97,6 +97,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .auth-card-asli {
@@ -104,9 +105,11 @@
             width: 100%;
             max-width: 360px;
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
@@ -222,6 +225,8 @@
             gap: 6px;
             margin-bottom: 6px;
             transition: 0.2s;
+            position: relative;
+            z-index: 10;
         }
 
         .btn-primary { background: var(--navy-primary); color: var(--white); }
@@ -230,9 +235,9 @@
         .btn-danger { background: var(--danger); color: var(--white); }
         .btn-outline { background: transparent; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
 
-        .form-group { margin-bottom: 10px; text-align: left; }
-        .form-group label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 4px; color: var(--text-main); }
-        .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
+        .form-group { margin-bottom: 8px; text-align: left; }
+        .form-group label { display: block; font-size: 10.5px; font-weight: 600; margin-bottom: 3px; color: var(--text-main); }
+        .form-control { width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
 
         .badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #fff; }
         .badge-in { background: var(--success); }
@@ -285,13 +290,13 @@
     <div id="auth-modal-overlay" class="auth-overlay">
         <!-- FORM LOGIN -->
         <div id="login-box-asli" class="auth-card-asli">
-            <svg class="logo-svg" viewBox="0 0 200 200" style="width:60px; height:60px; margin-bottom:6px;">
+            <svg class="logo-svg" viewBox="0 0 200 200" style="width:50px; height:50px; margin-bottom:4px;">
                 <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
                 <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
-            <h2 style="font-size:15px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9.5px; color:var(--gold-accent); font-weight:bold; margin-bottom:14px;">AMP Operation Monitoring V3.1</p>
+            <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.1</p>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -307,17 +312,15 @@
             <button class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
             <button class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
 
-            <div style="margin-top:10px; background:#f8fafc; padding:8px; border-radius:8px; font-size:8.5px; color:var(--text-muted); text-align:left;">
-                <strong>Akun Uji Coba:</strong><br>
-                • <code>AMP001</code> / PIN <code>123456</code> (M. Soheh - Admin / HeadOfOp)<br>
-                • <code>KOR001</code> / PIN <code>123456</code> (Ahmad - Korlap)<br>
-                • <code>TAD001</code> / PIN <code>123456</code> (Budi - TAD)
+            <div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
+                <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin)<br>
+                <code>KOR001</code> / PIN <code>123456</code> (Korlap)
             </div>
         </div>
 
         <!-- FORM REGISTER -->
         <div id="register-box-asli" class="auth-card-asli" style="display:none;">
-            <h3 style="font-size:13px; margin-bottom:12px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
+            <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
             <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
             <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: TAD002)"></div>
             <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / TAD / Staf"></div>
@@ -330,7 +333,7 @@
 
         <!-- FORM RESET PIN -->
         <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
-            <h3 style="font-size:13px; margin-bottom:12px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
+            <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
             <div class="form-group"><label>ID Karyawan</label><input type="text" id="reset-id" class="form-control" placeholder="ID Karyawan"></div>
             <div class="form-group"><label>PIN Lama (Default: 123456)</label><input type="password" id="reset-old-pin" class="form-control"></div>
             <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
@@ -530,7 +533,7 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MCP CLEANING (SESUAI MASTER EXCEL TERLAMPIR) -->
+        <!-- MODUL 6: MCP CLEANING (BERBASIS MASTER EXCEL TERLAMPIR) -->
         <div id="mod-6" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-broom"></i> Master Cleaning Program (MCP) & Checklist Harian</div>
@@ -614,7 +617,7 @@
         <div id="mod-9" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-users"></i> Direktori Tim & Personil Terdaftar</div>
-                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Setiap akun baru yang mendaftar akan otomatis masuk ke daftar tim di bawah ini. Admin dapat menghapus akun yang sudah tidak aktif:</p>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Setiap akun baru yang mendaftar akan otomatis masuk ke daftar tim di bawah ini:</p>
                 <ul id="user-directory-list" class="log-list"></ul>
             </div>
         </div>
@@ -811,48 +814,34 @@
         if(view === 'reset-pin') document.getElementById('reset-box-asli').style.display = 'block';
     }
 
-    function processRegister() {
-       async function processRegister() {
-    const name = document.getElementById('reg-name').value.trim();
-    const id = document.getElementById('reg-id').value.trim().toUpperCase();
-    const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
-    const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
-    const phone = document.getElementById('reg-phone').value.trim() || '-';
-    const pin = document.getElementById('reg-pin').value.trim();
+    async function processRegister() {
+        const name = document.getElementById('reg-name').value.trim();
+        const id = document.getElementById('reg-id').value.trim().toUpperCase();
+        const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
+        const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
+        const phone = document.getElementById('reg-phone').value.trim() || '-';
+        const pin = document.getElementById('reg-pin').value.trim();
 
-    if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
-    if(USER_DATABASE[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
+        if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
+        if(USER_DATABASE[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
 
-    let roleAssigned = "TAD";
-    if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
-        roleAssigned = "Korlap";
-    } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
-        roleAssigned = "HeadOfOp";
-    }
-
-    const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone };
-
-    // 1. Simpan ke local storage perangkat lokal
-    USER_DATABASE[id] = newUser;
-    localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
-
-    // 2. SIMPAN KE CLOUD SUPABASE AGAR BISA DIAKSES PERANGKAT LAIN
-    if(supabaseClient) {
-        try {
-            await supabaseClient.from('user_directory').upsert([newUser]);
-            writeLog(`✓ Akun ${id} berhasil disinkronkan ke Cloud Supabase.`);
-        } catch(err) {
-            writeLog(`⚠ Gagal sinkron cloud: ${err.message}`);
+        let roleAssigned = "TAD";
+        if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
+            roleAssigned = "Korlap";
+        } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
+            roleAssigned = "HeadOfOp";
         }
-    }
 
-    renderUserDirectory();
-    alert(`Akun Baru Berhasil Dibuat & Terdaftar ke Sistem!\nNIP: ${id}\nNama: ${name}`);
-    switchAuthSubView('login');
-}
-
-        USER_DATABASE[id] = { id, name, role: roleAssigned, jabatan, pin, site, phone };
+        const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone };
+        USER_DATABASE[id] = newUser;
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+        if(supabaseClient) {
+            try {
+                await supabaseClient.from('user_directory').upsert([newUser]);
+            } catch(e) {}
+        }
+
         renderUserDirectory();
         alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}`);
         switchAuthSubView('login');
@@ -1044,8 +1033,7 @@
         renderAttendanceLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('attendance_logs').insert([record]); writeLog('✓ Absensi terkirim ke Supabase'); }
-            catch(e) { writeLog('⚠ Absensi tersimpan lokal'); }
+            try { await supabaseClient.from('attendance_logs').insert([record]); } catch(e) {}
         }
         alert(`Absensi ${type} Berhasil Disimpan!`);
     }
@@ -1089,7 +1077,7 @@
         renderMarketRequests();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('market_requests').insert([record]); writeLog('✓ MR terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('market_requests').insert([record]); } catch(e) {}
         }
         alert(`Market Request ${mrNo} Dikirim! Menunggu Approve Admin.`);
         document.getElementById('mr-details').value = '';
@@ -1098,13 +1086,13 @@
     }
 
     function approveMR(id) {
-        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak! Hanya Admin / Head of Operation yang dapat melakukan approve.'); return; }
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         MARKET_REQUESTS_DB.forEach(mr => {
             if(mr.mr_id === id) { mr.status = 'Approved & Verified by Admin'; }
         });
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
-        alert('Market Request berhasil disetujui (Approved)!');
+        alert('Market Request disetujui (Approved)!');
     }
 
     function renderMarketRequests() {
@@ -1142,14 +1130,14 @@
         renderLeaveLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('leave_requests').insert([record]); writeLog('✓ Cuti terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('leave_requests').insert([record]); } catch(e) {}
         }
         alert('Pengajuan izin/cuti terkirim! Menunggu Approve Admin.');
         document.getElementById('leave-reason').value = '';
     }
 
     function approveLeave(index) {
-        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak! Hanya Admin / Head of Operation yang dapat approve.'); return; }
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
         LEAVE_REQUESTS_DB[index].status = "Approved by Admin";
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
@@ -1174,7 +1162,7 @@
         });
     }
 
-    // MODUL 6: MCP CLEANING (BERBASIS MASTER EXCEL TERLAMPIR)
+    // MODUL 6: MCP CLEANING
     function renderMCPMasterTable() {
         const tbody = document.getElementById('mcp-master-tbody');
         if (!tbody) return;
@@ -1209,7 +1197,7 @@
         renderMCPLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('mcp_logs').insert([record]); writeLog('✓ MCP terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('mcp_logs').insert([record]); } catch(e) {}
         }
         alert('Checklist MCP berhasil dikirim ke Admin untuk divalidasi!');
         document.getElementById('mcp-notes').value = '';
@@ -1255,7 +1243,7 @@
         renderChecklistLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('checklist_logs').insert([record]); writeLog('✓ Checklist terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('checklist_logs').insert([record]); } catch(e) {}
         }
         alert('Checklist area berhasil disubmit! Menunggu Approve Admin.');
     }
@@ -1297,7 +1285,7 @@
         renderK3Logs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('k3_permits').insert([record]); writeLog('✓ K3 Permit terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('k3_permits').insert([record]); } catch(e) {}
         }
         alert('Permit K3 High Risk diajukan! Menunggu Approve Admin.');
     }
@@ -1328,10 +1316,10 @@
         });
     }
 
-    // MODUL 9: DATA TIM & HAPUS AKUN NON-AKTIF
+    // MODUL 9: DATA TIM & HAPUS AKUN
     function deleteUserFromDirectory(userId) {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses ditolak! Hanya Admin / Head of Operation yang dapat menghapus akun dari tim.');
+            alert('Akses ditolak!');
             return;
         }
         if (userId === currentUser.id) {
@@ -1342,7 +1330,7 @@
             delete USER_DATABASE[userId];
             localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
             renderUserDirectory();
-            alert(`Akun ${userId} berhasil dihapus dari sistem!`);
+            alert(`Akun ${userId} berhasil dihapus!`);
         }
     }
 
@@ -1383,7 +1371,7 @@
         renderEquipmentLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('equipment_logs').insert([record]); writeLog('✓ Equipment log terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('equipment_logs').insert([record]); } catch(e) {}
         }
         alert('Log equipment berhasil disimpan! Menunggu Approve Admin.');
     }
@@ -1426,7 +1414,7 @@
         renderOutstandingLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('outstanding_tickets').insert([record]); writeLog('✓ Komplain terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('outstanding_tickets').insert([record]); } catch(e) {}
         }
         alert('Tiket komplain dibuat!');
         document.getElementById('out-title').value = '';
@@ -1462,7 +1450,7 @@
     // MODUL 12: KPI & BULLETIN
     async function submitBulletin() {
         if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin' && currentUser.role !== 'Korlap') {
-            alert('Hanya Admin dan Korlap yang dapat mempublikasikan bulletin.'); return;
+            alert('Akses ditolak!'); return;
         }
         const title = document.getElementById('kpi-title').value.trim();
         const content = document.getElementById('kpi-content').value.trim();
@@ -1473,7 +1461,7 @@
         renderBulletinLogs();
 
         if(supabaseClient) {
-            try { await supabaseClient.from('bulletin_logs').insert([record]); writeLog('✓ Buletin terkirim ke Supabase'); } catch(e) {}
+            try { await supabaseClient.from('bulletin_logs').insert([record]); } catch(e) {}
         }
         alert('Bulletin & KPI dipublikasikan!');
         document.getElementById('kpi-title').value = '';
