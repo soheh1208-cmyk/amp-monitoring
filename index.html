@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.1 - Full Cloud Synchronized</title>
+    <title>AMP Operation Monitoring V3.1 - Full Integrated MCP & Cloud Sync</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -530,20 +530,38 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MCP CLEANING -->
+        <!-- MODUL 6: MCP CLEANING (SESUAI MASTER EXCEL TERLAMPIR) -->
         <div id="mod-6" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-broom"></i> Input MCP - 5 Basic Cleaning</div>
-                <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-1"> 1. Sweeping (Sapu Koridor & Ruangan)</label>
-                <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-2"> 2. Mopping (Pengepelan Disinfektan)</label>
-                <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-3"> 3. Dry Buffing (Pengkilapan Vinyl/Marmer)</label>
-                <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-4"> 4. Dusting (Lap Debu Furnitur/Meja)</label>
-                <label style="display:block; font-size:11px; margin-bottom:6px;"><input type="checkbox" id="mcp-5"> 5. Glass Cleaning (Pembersihan Kaca)</label>
-                <div class="form-group" style="margin-top:8px;"><label>Catatan / Keterangan Tambahan</label><input type="text" id="mcp-notes" class="form-control" placeholder="Kondisi area bersih dan steril"></div>
-                <button class="btn btn-success" onclick="saveMCPProgress()"><i class="fas fa-save"></i> Submit Work Progress MCP</button>
+                <div class="card-title"><i class="fas fa-broom"></i> Master Cleaning Program (MCP) & Checklist Harian</div>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Pilih tanggal pengerjaan & centang item checklist sesuai Master Program:</p>
+                <div class="form-group">
+                    <label>Tanggal Pelaksanaan</label>
+                    <input type="date" id="mcp-date" class="form-control">
+                </div>
+                
+                <div style="max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; margin-bottom: 8px;">
+                    <table style="width:100%; font-size:9.5px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background:var(--navy-primary); color:#fff; text-align:left;">
+                                <th style="padding:4px; text-align:center;">Cek</th>
+                                <th style="padding:4px;">Item / Area</th>
+                                <th style="padding:4px;">Job Description</th>
+                                <th style="padding:4px;">Freq</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mcp-master-tbody">
+                            <!-- Render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group"><label>Catatan Lapangan Korlap</label><input type="text" id="mcp-notes" class="form-control" placeholder="Kondisi area bersih tuntas"></div>
+                <button class="btn btn-success" onclick="submitMCPChecklist()"><i class="fas fa-paper-plane"></i> Kirim Checklist MCP ke Admin</button>
             </div>
+
             <div class="card">
-                <div class="card-title"><i class="fas fa-chart-pie"></i> Output Laporan & Approval MCP Harian</div>
+                <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Validasi MCP (Admin / Head of Ops)</div>
                 <ul id="mcp-log-list" class="log-list"></ul>
             </div>
         </div>
@@ -574,7 +592,11 @@
                 <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Work Permit High Risk K3</div>
                 <div class="form-group">
                     <label>Kategori Pekerjaan Berisiko Tinggi</label>
-                    <select id="k3-category" class="form-control"><option>Pekerjaan Ketinggian / Gondola / Fasad</option><option>Listrik Tegangan Tinggi (Substation PLN)</option><option>Pekerjaan Ruang Terbatas (Confined Space)</option></select>
+                    <select id="k3-category" class="form-control">
+                        <option>Pekerjaan Ketinggian - Rope Access / Gondola</option>
+                        <option>Listrik Tegangan Tinggi (Substation PLN)</option>
+                        <option>Pekerjaan Ruang Terbatas (Confined Space)</option>
+                    </select>
                 </div>
                 <div class="form-group"><label>Lokasi Kerja / Substation</label><input type="text" id="k3-location" class="form-control" placeholder="Contoh: GISTET 500kV Cawang"></div>
                 <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="k3-app-1"> Full Body Harness & Lanyard Terverifikasi Aman</label>
@@ -712,6 +734,19 @@
     let OUTSTANDING_DB = JSON.parse(localStorage.getItem('AMP_OUTSTANDING_DB')) || [];
     let BULLETIN_DB = JSON.parse(localStorage.getItem('AMP_BULLETIN_DB')) || [];
 
+    // Master Data MCP sesuai Format Excel Terlampir
+    const MCP_MASTER_ITEMS = [
+        { id: "MCP01", area: "CORRIDOR", item: "Ceiling (Beton & Gipsum)", job: "Cleaning Cob Web", freq: "Weekly" },
+        { id: "MCP02", area: "CORRIDOR", item: "Cup Lampu (Besi)", job: "Dusting", freq: "Monthly" },
+        { id: "MCP03", area: "CORRIDOR", item: "Smoke Detector (Plastik)", job: "Dusting", freq: "Monthly" },
+        { id: "MCP04", area: "CORRIDOR", item: "Ac Grill & Box Ac", job: "Dusting", freq: "Weekly" },
+        { id: "MCP05", area: "CORRIDOR", item: "Dinding Keramik", job: "Wall Cleaning / Spotting", freq: "Weekly" },
+        { id: "MCP06", area: "CORRIDOR", item: "Pintu Kaca", job: "Glass Cleaning", freq: "Daily" },
+        { id: "MCP07", area: "CORRIDOR", item: "Frame Kaca", job: "Spotting & Polishing", freq: "Monthly" },
+        { id: "MCP08", area: "CORRIDOR", item: "Tangga / Anak Tangga", job: "Sweeping & Mopping", freq: "Daily" },
+        { id: "MCP09", area: "CORRIDOR", item: "Hydrant & Apar", job: "Dusting", freq: "Daily" }
+    ];
+
     let currentUser = null;
     let currentPhotoBase64 = '';
     let supabaseClient = null;
@@ -722,6 +757,9 @@
         if (savedUrl) document.getElementById('cfg-url').value = savedUrl;
         if (savedKey) document.getElementById('cfg-key').value = savedKey;
         if (savedUrl && savedKey) initSupabase(savedUrl, savedKey);
+        
+        document.getElementById('mcp-date').value = new Date().toISOString().slice(0, 10);
+        renderMCPMasterTable();
         renderUserDirectory();
     });
 
@@ -1114,18 +1152,36 @@
         });
     }
 
-    // MODUL 6: MCP CLEANING
-    async function saveMCPProgress() {
-        const c1 = document.getElementById('mcp-1').checked;
-        const c2 = document.getElementById('mcp-2').checked;
-        const c3 = document.getElementById('mcp-3').checked;
-        const c4 = document.getElementById('mcp-4').checked;
-        const c5 = document.getElementById('mcp-5').checked;
-        const notes = document.getElementById('mcp-notes').value.trim() || 'Standar MCP 5 Selesai';
-        let total = (c1?1:0) + (c2?1:0) + (c3?1:0) + (c4?1:0) + (c5?1:0);
-        let percent = (total / 5) * 100;
+    // MODUL 6: MCP CLEANING (BERBASIS MASTER EXCEL TERLAMPIR)
+    function renderMCPMasterTable() {
+        const tbody = document.getElementById('mcp-master-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        MCP_MASTER_ITEMS.forEach(m => {
+            tbody.innerHTML += `
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:4px; text-align:center;"><input type="checkbox" class="mcp-item-check" value="${m.id}"></td>
+                    <td style="padding:4px;"><b>${m.item}</b></td>
+                    <td style="padding:4px;">${m.job}</td>
+                    <td style="padding:4px;"><span class="badge badge-warning" style="font-size:8px;">${m.freq}</span></td>
+                </tr>
+            `;
+        });
+    }
 
-        const record = { user_id: currentUser.id, name: currentUser.name, site: currentUser.site, percent: percent, notes: notes, status: "Pending Admin Approval", time: new Date().toLocaleTimeString('id-ID') };
+    async function submitMCPChecklist() {
+        const dateVal = document.getElementById('mcp-date').value;
+        const notes = document.getElementById('mcp-notes').value.trim() || 'Selesai';
+        const checkedIds = [];
+        document.querySelectorAll('.mcp-item-check:checked').forEach(cb => { checkedIds.push(cb.value); });
+
+        if(checkedIds.length === 0) { alert('Pilih minimal 1 checklist pekerjaan MCP!'); return; }
+
+        const record = {
+            user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
+            date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", timestamp: new Date().toLocaleTimeString('id-ID')
+        };
+
         MCP_LOGS_DB.unshift(record);
         localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
         renderMCPLogs();
@@ -1133,7 +1189,8 @@
         if(supabaseClient) {
             try { await supabaseClient.from('mcp_logs').insert([record]); writeLog('✓ MCP terkirim ke Supabase'); } catch(e) {}
         }
-        alert(`Progress MCP ${percent}% Berhasil Disubmit! Menunggu Approve Admin.`);
+        alert('Checklist MCP berhasil dikirim ke Admin untuk divalidasi!');
+        document.getElementById('mcp-notes').value = '';
     }
 
     function approveMCP(index) {
@@ -1157,7 +1214,11 @@
             }
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
-            li.innerHTML = `<div><strong>${log.name} (${log.user_id}) - ${log.percent}%</strong><p style="font-size:9px;">Catatan: ${log.notes} | ${log.time}</p></div><span class="badge badge-in">${log.status}</span>${btnApprove}`;
+            li.innerHTML = `
+                <div><strong>${log.name} (${log.user_id}) - Tgl: ${log.date}</strong>
+                <p style="font-size:9px;">Item Dikerjakan: ${log.items.length} Item | Catatan: ${log.notes} | ${log.timestamp}</p></div>
+                <span class="badge badge-in">${log.status}</span>${btnApprove}
+            `;
             list.appendChild(li);
         });
     }
@@ -1407,8 +1468,8 @@
     }
 
     function exportMCPToCSV() {
-        let csv = "data:text/csv;charset=utf-8,ID,Nama,Persentase MCP,Waktu\n";
-        MCP_LOGS_DB.forEach(r => { csv += `${r.user_id||r.id},${r.name},${r.percent}%,${r.time}\n`; });
+        let csv = "data:text/csv;charset=utf-8,ID,Nama,Tanggal,Jumlah Item,Status\n";
+        MCP_LOGS_DB.forEach(r => { csv += `${r.user_id},${r.name},${r.date},${r.items.length},${r.status}\n`; });
         downloadCSV(csv, `Rekap_MCP_AMP_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
