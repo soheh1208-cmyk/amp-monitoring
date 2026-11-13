@@ -1102,11 +1102,11 @@
             role: currentUser.role, 
             site: currentUser.site,
             type: type, 
-            time: now.toLocaleTimeString('id-ID'), 
-            date: now.toLocaleDateString('id-ID'), 
+            time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB", 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
             gps: gps, 
             photo: currentPhotoBase64,
-            created_at: now.toISOString() // <- Format waktu standar untuk database Supabase
+            created_at: now.toISOString() // Format waktu ISO baku untuk pengurutan akurat
         };
         
         CENTRAL_ATTENDANCE_DB.unshift(record);
@@ -1125,11 +1125,11 @@
         logList.innerHTML = '';
         let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
         
-        // Urutkan dari terlama ke terbaru berdasarkan waktu & tanggal
+        // PENGURUTAN MUTLAK: Dari yang terlama (atas) ke terbaru (bawah) berdasarkan created_at
         filtered.sort((a, b) => {
-            let tA = a.created_at || a.time || '00:00:00';
-            let tB = b.created_at || b.time || '00:00:00';
-            return new Date(tA) - new Date(tB);
+            let timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            let timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            return timeA - timeB; // Ascending: Terlama -> Terbaru
         });
 
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
@@ -1168,7 +1168,9 @@
         const now = new Date();
         const record = {
             mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
-            category: category, details: details, cost: cost, priority: priority, date: now.toLocaleDateString('id-ID'), time: now.toLocaleTimeString('id-ID'),
+            category: category, details: details, cost: cost, priority: priority, 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(),
+            time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB",
             status: "Pending Admin Approval", created_at: now.toISOString()
         };
         MARKET_REQUESTS_DB.unshift(record);
@@ -1224,7 +1226,11 @@
         const reason = document.getElementById('leave-reason').value.trim();
         if(!reason) { alert('Isi alasan pengajuan!'); return; }
         const now = new Date();
-        const record = { user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", date: now.toLocaleDateString('id-ID'), created_at: now.toISOString() };
+        const record = { 
+            user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            created_at: now.toISOString() 
+        };
         LEAVE_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
@@ -1290,7 +1296,9 @@
         const now = new Date();
         const record = {
             user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
-            date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", timestamp: now.toLocaleTimeString('id-ID'), created_at: now.toISOString()
+            date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", 
+            timestamp: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB", 
+            created_at: now.toISOString()
         };
 
         MCP_LOGS_DB.unshift(record);
@@ -1339,7 +1347,11 @@
         const area = document.getElementById('chk-area').value;
         const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
         const now = new Date();
-        const record = { user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", date: now.toLocaleDateString('id-ID'), created_at: now.toISOString() };
+        const record = { 
+            user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            created_at: now.toISOString() 
+        };
         CHECKLIST_DB.unshift(record);
         localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
         renderChecklistLogs();
@@ -1382,7 +1394,11 @@
         const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
         const petugas = document.getElementById('k3-petugas').value.trim() || currentUser.name;
         const now = new Date();
-        const record = { user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", date: now.toLocaleDateString('id-ID'), created_at: now.toISOString() };
+        const record = { 
+            user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            created_at: now.toISOString() 
+        };
         K3_PERMITS_DB.unshift(record);
         localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
         renderK3Logs();
@@ -1473,7 +1489,11 @@
         const status = document.getElementById('eq-status').value;
         const notes = document.getElementById('eq-notes').value.trim() || '-';
         const now = new Date();
-        const record = { user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", date: now.toLocaleDateString('id-ID'), created_at: now.toISOString() };
+        const record = { 
+            user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            created_at: now.toISOString() 
+        };
         EQUIPMENT_DB.unshift(record);
         localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
         renderEquipmentLogs();
@@ -1517,7 +1537,11 @@
         const urgency = document.getElementById('out-urgency').value;
         if(!title || !details) { alert('Isi judul & rincian!'); return; }
         const now = new Date();
-        const record = { user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", date: now.toLocaleDateString('id-ID'), created_at: now.toISOString() };
+        const record = { 
+            user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            created_at: now.toISOString() 
+        };
         OUTSTANDING_DB.unshift(record);
         localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
         renderOutstandingLogs();
@@ -1565,7 +1589,11 @@
         const content = document.getElementById('kpi-content').value.trim();
         if(!title || !content) { alert('Isi judul dan konten!'); return; }
         const now = new Date();
-        const record = { author: currentUser.name, title: title, content: content, date: now.toLocaleDateString('id-ID'), created_at: now.toISOString() };
+        const record = { 
+            author: currentUser.name, title: title, content: content, 
+            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            created_at: now.toISOString() 
+        };
         BULLETIN_DB.unshift(record);
         localStorage.setItem('AMP_BULLETIN_DB', JSON.stringify(BULLETIN_DB));
         renderBulletinLogs();
