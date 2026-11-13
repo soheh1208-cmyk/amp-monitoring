@@ -108,8 +108,10 @@
             padding: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             text-align: center;
-            max-height: 90vh;
+            max-height: 92vh;
             overflow-y: auto;
+            position: relative;
+            z-index: 10000;
         }
 
         .screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
@@ -213,7 +215,7 @@
 
         .btn {
             width: 100%;
-            padding: 9px 12px;
+            padding: 10px 12px;
             border: none;
             border-radius: 8px;
             font-weight: 700;
@@ -226,9 +228,11 @@
             margin-bottom: 6px;
             transition: 0.2s;
             position: relative;
-            z-index: 10;
+            z-index: 20;
+            touch-action: manipulation;
         }
 
+        .btn:active { transform: scale(0.98); }
         .btn-primary { background: var(--navy-primary); color: var(--white); }
         .btn-success { background: var(--success); color: var(--white); }
         .btn-warning { background: var(--gold-accent); color: var(--white); }
@@ -237,7 +241,7 @@
 
         .form-group { margin-bottom: 8px; text-align: left; }
         .form-group label { display: block; font-size: 10.5px; font-weight: 600; margin-bottom: 3px; color: var(--text-main); }
-        .form-control { width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
+        .form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
 
         .badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #fff; }
         .badge-in { background: var(--success); }
@@ -308,13 +312,13 @@
                 <input type="password" id="login-pin" class="form-control" placeholder="Masukkan 6 Digit PIN">
             </div>
 
-            <button class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK SYSTEM</button>
-            <button class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
-            <button class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
+            <button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK SYSTEM</button>
+            <button type="button" class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
+            <button type="button" class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
 
             <div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
                 <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin)<br>
-                <code>KOR001</code> / PIN <code>123456</code> (Korlap)
+                <code>KOR001</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
             </div>
         </div>
 
@@ -327,8 +331,8 @@
             <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit"></div>
             <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
             <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
-            <button class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
-            <button class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
+            <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
+            <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
         </div>
 
         <!-- FORM RESET PIN -->
@@ -337,8 +341,8 @@
             <div class="form-group"><label>ID Karyawan</label><input type="text" id="reset-id" class="form-control" placeholder="ID Karyawan"></div>
             <div class="form-group"><label>PIN Lama (Default: 123456)</label><input type="password" id="reset-old-pin" class="form-control"></div>
             <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
-            <button class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
-            <button class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
+            <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
         </div>
     </div>
 
@@ -386,10 +390,10 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-download"></i> Output & Download Rekap Sistem</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
-                    <button class="btn btn-primary" onclick="exportMCPToCSV()"><i class="fas fa-file-csv"></i> Rekap MCP (.CSV)</button>
-                    <button class="btn btn-warning" onclick="exportCutiToCSV()"><i class="fas fa-file-alt"></i> Rekap Izin/Cuti (.CSV)</button>
-                    <button class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
+                    <button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
+                    <button type="button" class="btn btn-primary" onclick="exportMCPToCSV()"><i class="fas fa-file-csv"></i> Rekap MCP (.CSV)</button>
+                    <button type="button" class="btn btn-warning" onclick="exportCutiToCSV()"><i class="fas fa-file-alt"></i> Rekap Izin/Cuti (.CSV)</button>
+                    <button type="button" class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
                 </div>
             </div>
 
@@ -439,14 +443,14 @@
                 <div class="form-group"><label>Jabatan</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
                 <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="edit-prof-site" class="form-control"></div>
                 <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control"></div>
-                <button class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN PROFIL</button>
+                <button type="button" class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN PROFIL</button>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
                 <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control"></div>
                 <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control"></div>
-                <button class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN SAYA</button>
+                <button type="button" class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN SAYA</button>
             </div>
         </div>
 
@@ -466,19 +470,19 @@
                     <div class="camera-overlay"></div>
                 </div>
 
-                <button class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Aktifkan Kamera Live</button>
-                <button class="btn btn-primary" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Snapshot Selfie</button>
+                <button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Aktifkan Kamera Live</button>
+                <button type="button" class="btn btn-primary" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Snapshot Selfie</button>
                 <input type="file" id="file-photo" accept="image/*" capture="user" class="form-control" onchange="loadPhotoFromFile(event)">
 
                 <div style="margin-top:10px;" class="form-group">
-                    <button class="btn btn-warning" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> Tarik GPS Real-Time (Google Maps)</button>
+                    <button type="button" class="btn btn-warning" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> Tarik GPS Real-Time (Google Maps)</button>
                     <input type="text" id="gps-coords" class="form-control" placeholder="Koordinat GPS & Alamat Google Maps..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold;">
                     <div id="gmaps-link-box" style="margin-top:4px; text-align:center;"></div>
                 </div>
 
                 <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button class="btn btn-success" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
-                    <button class="btn btn-danger" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
+                    <button type="button" class="btn btn-success" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
+                    <button type="button" class="btn btn-danger" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
                 </div>
             </div>
 
@@ -508,7 +512,7 @@
                     <label>Prioritas</label>
                     <select id="mr-priority" class="form-control"><option value="BIASA">Biasa</option><option value="SEGERA">Segera</option><option value="DARURAT">Darurat</option></select>
                 </div>
-                <button class="btn btn-warning" onclick="submitMarketRequest()"><i class="fas fa-paper-plane"></i> KIRIM PERMINTAAN MR</button>
+                <button type="button" class="btn btn-warning" onclick="submitMarketRequest()"><i class="fas fa-paper-plane"></i> KIRIM PERMINTAAN MR</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-clipboard-list"></i> Riwayat & Approval MR</div>
@@ -525,7 +529,7 @@
                     <select id="leave-type" class="form-control"><option>Cuti Tahunan</option><option>Izin Sakit</option><option>Keperluan Mendesak</option></select>
                 </div>
                 <div class="form-group"><label>Alasan Pengajuan</label><textarea id="leave-reason" class="form-control" placeholder="Alasan izin..." style="height:60px;"></textarea></div>
-                <button class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-paper-plane"></i> Kirim Pengajuan Cuti</button>
+                <button type="button" class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-paper-plane"></i> Kirim Pengajuan Cuti</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Approval Cuti</div>
@@ -533,7 +537,7 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MCP CLEANING (BERBASIS MASTER EXCEL TERLAMPIR) -->
+        <!-- MODUL 6: MCP CLEANING -->
         <div id="mod-6" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-broom"></i> Master Cleaning Program (MCP) & Checklist Harian</div>
@@ -560,7 +564,7 @@
                 </div>
 
                 <div class="form-group"><label>Catatan Lapangan Korlap</label><input type="text" id="mcp-notes" class="form-control" placeholder="Kondisi area bersih tuntas"></div>
-                <button class="btn btn-success" onclick="submitMCPChecklist()"><i class="fas fa-paper-plane"></i> Kirim Checklist MCP ke Admin</button>
+                <button type="button" class="btn btn-success" onclick="submitMCPChecklist()"><i class="fas fa-paper-plane"></i> Kirim Checklist MCP ke Admin</button>
             </div>
 
             <div class="card">
@@ -581,7 +585,7 @@
                 <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="chk-2" checked> Lantai Kering, Kesat & Tidak Licin</label>
                 <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="chk-3" checked> Tissue & Hand Soap Tersedia Cukup</label>
                 <div class="form-group" style="margin-top:8px;"><label>Catatan Temuan / Perbaikan</label><input type="text" id="chk-notes" class="form-control" placeholder="Semua standar kebersihan terpenuhi"></div>
-                <button class="btn btn-primary" onclick="submitChecklistArea()"><i class="fas fa-check-circle"></i> Submit Checklist Area</button>
+                <button type="button" class="btn btn-primary" onclick="submitChecklistArea()"><i class="fas fa-check-circle"></i> Submit Checklist Area</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-clipboard-check"></i> Riwayat & Approval Checklist Area</div>
@@ -605,7 +609,7 @@
                 <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="k3-app-1"> Full Body Harness & Lanyard Terverifikasi Aman</label>
                 <label style="display:block; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="k3-app-2"> Prosedur SDO / Tag Out Lock Out (TOLO) Aktif</label>
                 <div class="form-group" style="margin-top:8px;"><label>Nama Petugas / Teknisi K3</label><input type="text" id="k3-petugas" class="form-control" placeholder="Nama teknisi pelaksana"></div>
-                <button class="btn btn-danger" onclick="submitK3Permit()"><i class="fas fa-shield-alt"></i> Ajukan High Risk Permit K3</button>
+                <button type="button" class="btn btn-danger" onclick="submitK3Permit()"><i class="fas fa-shield-alt"></i> Ajukan High Risk Permit K3</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Approval Permit K3</div>
@@ -616,7 +620,10 @@
         <!-- MODUL 9: DATA TIM -->
         <div id="mod-9" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-users"></i> Direktori Tim & Personil Terdaftar</div>
+                <div class="card-title">
+                    <span><i class="fas fa-users"></i> Direktori Tim & Personil</span>
+                    <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="pullUsersFromSupabase()"><i class="fas fa-sync"></i> Tarik Cloud</button>
+                </div>
                 <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Setiap akun baru yang mendaftar akan otomatis masuk ke daftar tim di bawah ini:</p>
                 <ul id="user-directory-list" class="log-list"></ul>
             </div>
@@ -635,7 +642,7 @@
                     <select id="eq-status" class="form-control"><option value="BAIK">Baik & Operasional</option><option value="PERBAIKAN">Perlu Maintenance / Rusak Ringan</option><option value="RUSAK">Rusak Berat / Non-Aktif</option></select>
                 </div>
                 <div class="form-group"><label>Keterangan / Kendala Alat</label><input type="text" id="eq-notes" class="form-control" placeholder="Kondisi kabel atau sikat mesin..."></div>
-                <button class="btn btn-primary" onclick="submitEquipmentLog()"><i class="fas fa-save"></i> Submit Log Equipment</button>
+                <button type="button" class="btn btn-primary" onclick="submitEquipmentLog()"><i class="fas fa-save"></i> Submit Log Equipment</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-clipboard-list"></i> Riwayat & Approval Equipment</div>
@@ -653,7 +660,7 @@
                     <label>Tingkat Urgensi</label>
                     <select id="out-urgency" class="form-control"><option value="NORMAL">Normal</option><option value="URGENT">Urgent (Segera Tindak Lanjuti)</option></select>
                 </div>
-                <button class="btn btn-warning" onclick="submitOutstandingTicket()"><i class="fas fa-plus-circle"></i> Buat Tiket Komplain</button>
+                <button type="button" class="btn btn-warning" onclick="submitOutstandingTicket()"><i class="fas fa-plus-circle"></i> Buat Tiket Komplain</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-tasks"></i> Riwayat & Resolusi Tiket Komplain</div>
@@ -667,7 +674,7 @@
                 <div class="card-title"><i class="fas fa-bullhorn"></i> Input Pengumuman & KPI Assessment</div>
                 <div class="form-group"><label>Judul Pengumuman / Edaran</label><input type="text" id="kpi-title" class="form-control" placeholder="Judul edaran manajemen..."></div>
                 <div class="form-group"><label>Isi Pesan / Informasi KPI</label><textarea id="kpi-content" class="form-control" placeholder="Uraikan target kinerja atau pengumuman..." style="height:60px;"></textarea></div>
-                <button class="btn btn-primary" onclick="submitBulletin()"><i class="fas fa-paper-plane"></i> Publish Bulletin & KPI</button>
+                <button type="button" class="btn btn-primary" onclick="submitBulletin()"><i class="fas fa-paper-plane"></i> Publish Bulletin & KPI</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-newspaper"></i> Daftar Pengumuman & KPI Aktif</div>
@@ -682,14 +689,15 @@
                 <div class="form-group"><label>Supabase Project URL</label><input type="text" id="cfg-url" class="form-control" placeholder="https://xyzcompany.supabase.co"></div>
                 <div class="form-group"><label>Supabase Anon Key</label><input type="password" id="cfg-key" class="form-control" placeholder="eyJhbGciOiJIUzI1Ni..."></div>
                 <div style="display:flex; gap:6px;">
-                    <button class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-save"></i> Simpan</button>
-                    <button class="btn btn-success" onclick="testSupabaseConnection()"><i class="fas fa-plug"></i> Tes Koneksi</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-save"></i> Simpan</button>
+                    <button type="button" class="btn btn-success" onclick="testSupabaseConnection()"><i class="fas fa-plug"></i> Tes Koneksi</button>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-title"><i class="fas fa-sync"></i> Push Semua Data ke Supabase</div>
-                <button class="btn btn-warning" onclick="syncAllToSupabase()"><i class="fas fa-cloud-upload-alt"></i> SINKRONKAN SEMUA DATA SEKARANG</button>
+                <div class="card-title"><i class="fas fa-sync"></i> Sinkronisasi Data Lintas Perangkat</div>
+                <button type="button" class="btn btn-warning" onclick="syncAllToSupabase()"><i class="fas fa-cloud-upload-alt"></i> PUSH SEMUA DATA KE SUPABASE</button>
+                <button type="button" class="btn btn-outline" onclick="pullUsersFromSupabase()"><i class="fas fa-cloud-download-alt"></i> TARIK DATA TIM TERBARU DARI CLOUD</button>
             </div>
 
             <div class="card">
@@ -721,11 +729,15 @@
         if(clockEl) clockEl.innerText = clockStr;
     }, 1000);
 
-    let USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || {
+    const DEFAULT_USERS = {
         "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789" },
         "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566" },
         "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899" }
     };
+
+    let USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
+    // Pastikan akun default selalu ada jika terhapus
+    if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
 
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
     let MCP_LOGS_DB = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || [];
@@ -737,7 +749,871 @@
     let OUTSTANDING_DB = JSON.parse(localStorage.getItem('AMP_OUTSTANDING_DB')) || [];
     let BULLETIN_DB = JSON.parse(localStorage.getItem('AMP_BULLETIN_DB')) || [];
 
-    // Master Data MCP sesuai Format Excel Terlampir
     const MCP_MASTER_ITEMS = [
         { id: "MCP01", area: "CORRIDOR", item: "Ceiling (Beton & Gipsum)", job: "Cleaning Cob Web", freq: "Weekly" },
-        { id: "MCP02", area
+        { id: "MCP02", area: "CORRIDOR", item: "Cup Lampu (Besi)", job: "Dusting", freq: "Monthly" },
+        { id: "MCP03", area: "CORRIDOR", item: "Smoke Detector (Plastik)", job: "Dusting", freq: "Monthly" },
+        { id: "MCP04", area: "CORRIDOR", item: "Ac Grill & Box Ac", job: "Dusting", freq: "Weekly" },
+        { id: "MCP05", area: "CORRIDOR", item: "Dinding Keramik", job: "Wall Cleaning / Spotting", freq: "Weekly" },
+        { id: "MCP06", area: "CORRIDOR", item: "Pintu Kaca", job: "Glass Cleaning", freq: "Daily" },
+        { id: "MCP07", area: "CORRIDOR", item: "Frame Kaca", job: "Spotting & Polishing", freq: "Monthly" },
+        { id: "MCP08", area: "CORRIDOR", item: "Tangga / Anak Tangga", job: "Sweeping & Mopping", freq: "Daily" },
+        { id: "MCP09", area: "CORRIDOR", item: "Hydrant & Apar", job: "Dusting", freq: "Daily" }
+    ];
+
+    let currentUser = null;
+    let currentPhotoBase64 = '';
+    let supabaseClient = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
+        const savedKey = localStorage.getItem('AMP_SUPABASE_KEY');
+        if (savedUrl) document.getElementById('cfg-url').value = savedUrl;
+        if (savedKey) document.getElementById('cfg-key').value = savedKey;
+        if (savedUrl && savedKey) {
+            initSupabase(savedUrl, savedKey);
+            await pullUsersFromSupabase(true);
+        }
+        
+        const mcpDateEl = document.getElementById('mcp-date');
+        if (mcpDateEl) mcpDateEl.value = new Date().toISOString().slice(0, 10);
+        renderMCPMasterTable();
+        renderUserDirectory();
+    });
+
+    function initSupabase(url, key) {
+        try {
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                supabaseClient = window.supabase.createClient(url, key);
+                writeLog('✓ Supabase Terkoneksi.');
+            }
+        } catch (e) { writeLog('❌ Init Gagal: ' + e.message); }
+    }
+
+    function saveSupabaseConfig() {
+        const url = document.getElementById('cfg-url').value.trim();
+        const key = document.getElementById('cfg-key').value.trim();
+        if (!url || !key) { alert('URL dan Anon Key wajib diisi!'); return; }
+        localStorage.setItem('AMP_SUPABASE_URL', url);
+        localStorage.setItem('AMP_SUPABASE_KEY', key);
+        initSupabase(url, key);
+        alert('Kredensial Supabase Disimpan!');
+    }
+
+    async function testSupabaseConnection() {
+        const url = localStorage.getItem('AMP_SUPABASE_URL');
+        const key = localStorage.getItem('AMP_SUPABASE_KEY');
+        if (!url || !key) { alert('Konfigurasi URL & Key dulu!'); return; }
+        if (!supabaseClient) initSupabase(url, key);
+        try {
+            const { error } = await supabaseClient.auth.getSession();
+            if (error) throw error;
+            alert('Koneksi Supabase Berhasil!');
+        } catch (err) { alert('Gagal: ' + err.message); }
+    }
+
+    async function pullUsersFromSupabase(silent = false) {
+        if (!supabaseClient) {
+            if (!silent) alert('Supabase belum dikonfigurasi di Modul 13!');
+            return;
+        }
+        try {
+            const { data, error } = await supabaseClient.from('user_directory').select('*');
+            if (error) throw error;
+            if (data && data.length > 0) {
+                let currentDB = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+                data.forEach(u => {
+                    if (u.id) currentDB[u.id.toUpperCase()] = u;
+                });
+                USER_DATABASE = currentDB;
+                localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+                renderUserDirectory();
+                writeLog(`✓ Berhasil menarik ${data.length} data personil dari Cloud.`);
+                if (!silent) alert(`Sinkronisasi Tim Berhasil! ${data.length} akun termuat.`);
+            } else {
+                if (!silent) alert('Belum ada data tim tambahan di server Cloud.');
+            }
+        } catch (err) {
+            writeLog('⚠ Gagal menarik user cloud: ' + err.message);
+            if (!silent) alert('Gagal menarik data: ' + err.message);
+        }
+    }
+
+    function writeLog(msg) {
+        const logBox = document.getElementById('sync-log');
+        if (!logBox) return;
+        const time = new Date().toLocaleTimeString();
+        logBox.innerHTML += `<p>[${time}] ${msg}</p>`;
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function switchAuthSubView(view) {
+        document.getElementById('login-box-asli').style.display = 'none';
+        document.getElementById('register-box-asli').style.display = 'none';
+        document.getElementById('reset-box-asli').style.display = 'none';
+        if(view === 'login') document.getElementById('login-box-asli').style.display = 'block';
+        if(view === 'register') document.getElementById('register-box-asli').style.display = 'block';
+        if(view === 'reset-pin') document.getElementById('reset-box-asli').style.display = 'block';
+    }
+
+    async function processRegister() {
+        const name = document.getElementById('reg-name').value.trim();
+        const id = document.getElementById('reg-id').value.trim().toUpperCase();
+        const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
+        const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
+        const phone = document.getElementById('reg-phone').value.trim() || '-';
+        const pin = document.getElementById('reg-pin').value.trim();
+
+        if(!name || !id || !pin) { 
+            alert('Lengkapi Nama, NIP/ID, dan PIN terlebih dahulu!'); 
+            return; 
+        }
+
+        let currentDB = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+        if(currentDB[id]) { 
+            alert('ID Karyawan / NIP sudah terdaftar!'); 
+            return; 
+        }
+
+        let roleAssigned = "TAD";
+        if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
+            roleAssigned = "Korlap";
+        } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
+            roleAssigned = "HeadOfOp";
+        }
+
+        const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone };
+        currentDB[id] = newUser;
+        USER_DATABASE = currentDB;
+        localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+        if(supabaseClient) {
+            try {
+                await supabaseClient.from('user_directory').upsert([newUser]);
+                writeLog(`✓ Akun baru ${id} terkirim ke Cloud Supabase.`);
+            } catch(e) {
+                writeLog(`⚠ Gagal kirim cloud: ${e.message}`);
+            }
+        }
+
+        renderUserDirectory();
+        alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}\nSilakan Login menggunakan NIP dan PIN Anda.`);
+        
+        // Bersihkan form & arahkan ke login dengan NIP terisi otomatis
+        document.getElementById('reg-name').value = '';
+        document.getElementById('reg-id').value = '';
+        document.getElementById('reg-pin').value = '';
+        document.getElementById('login-id').value = id;
+        switchAuthSubView('login');
+    }
+
+    function processResetPIN() {
+        const id = document.getElementById('reset-id').value.trim().toUpperCase();
+        const oldPin = document.getElementById('reset-old-pin').value.trim();
+        const newPin = document.getElementById('reset-new-pin').value.trim();
+        if(!id || !oldPin || !newPin) { alert('Lengkapi form reset PIN!'); return; }
+        if(!USER_DATABASE[id]) { alert('ID Karyawan tidak terdaftar!'); return; }
+        if(USER_DATABASE[id].pin === oldPin || oldPin === '123456') {
+            USER_DATABASE[id].pin = newPin;
+            localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+            alert(`PIN Akun ${id} Diperbarui!`);
+            switchAuthSubView('login');
+        } else { alert('PIN Lama Salah!'); }
+    }
+
+    function updateOwnProfile() {
+        const newName = document.getElementById('edit-prof-name').value.trim();
+        const newJabatan = document.getElementById('edit-prof-jabatan').value.trim();
+        const newSite = document.getElementById('edit-prof-site').value.trim();
+        const newPhone = document.getElementById('edit-prof-phone').value.trim();
+        if(!newName || !newJabatan) { alert('Nama & Jabatan wajib diisi!'); return; }
+        currentUser.name = newName;
+        currentUser.jabatan = newJabatan;
+        currentUser.site = newSite;
+        currentUser.phone = newPhone;
+        USER_DATABASE[currentUser.id] = currentUser;
+        localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+        document.getElementById('prof-name').innerText = currentUser.name;
+        document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan}`;
+        document.getElementById('prof-site').innerText = currentUser.site;
+        document.getElementById('prof-phone').innerText = currentUser.phone;
+        document.getElementById('dash-user-name').innerText = currentUser.name;
+        document.getElementById('dash-user-role').innerText = currentUser.jabatan;
+        document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
+        renderUserDirectory();
+        alert('Profil berhasil diperbarui!');
+    }
+
+    function changeOwnPIN() {
+        const oldPin = document.getElementById('prof-old-pin').value.trim();
+        const newPin = document.getElementById('prof-new-pin').value.trim();
+        if(!oldPin || !newPin) { alert('Isi PIN Lama & Baru!'); return; }
+        if(currentUser.pin === oldPin) {
+            USER_DATABASE[currentUser.id].pin = newPin;
+            currentUser.pin = newPin;
+            localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+            alert('PIN berhasil diperbarui!');
+        } else { alert('PIN Lama Salah!'); }
+    }
+
+    function generateMRNumber() {
+        const now = new Date();
+        return `MR-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.floor(100 + Math.random() * 900)}`;
+    }
+
+    async function processLogin() {
+        const idInput = document.getElementById('login-id').value.trim().toUpperCase();
+        const pinInput = document.getElementById('login-pin').value.trim();
+
+        if (!idInput || !pinInput) {
+            alert('Masukkan ID Karyawan / NIP dan PIN terlebih dahulu!');
+            return;
+        }
+
+        // Muat ulang database lokal terbaru sebelum validasi
+        USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
+        if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
+
+        // Jika ID belum ada di lokal tapi Supabase aktif, coba tarik dari cloud dulu
+        if (!USER_DATABASE[idInput] && supabaseClient) {
+            await pullUsersFromSupabase(true);
+        }
+
+        if (USER_DATABASE[idInput] && USER_DATABASE[idInput].pin === pinInput) {
+            currentUser = USER_DATABASE[idInput];
+            document.getElementById('auth-modal-overlay').style.display = 'none';
+            
+            document.getElementById('header-user-id').innerText = currentUser.id;
+            document.getElementById('dash-user-name').innerText = currentUser.name;
+            document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
+            document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
+            
+            document.getElementById('prof-name').innerText = currentUser.name;
+            document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
+            document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
+            document.getElementById('prof-site').innerText = currentUser.site;
+            document.getElementById('prof-phone').innerText = currentUser.phone || '-';
+
+            document.getElementById('edit-prof-name').value = currentUser.name;
+            document.getElementById('edit-prof-jabatan').value = currentUser.jabatan || currentUser.role;
+            document.getElementById('edit-prof-site').value = currentUser.site;
+            document.getElementById('edit-prof-phone').value = currentUser.phone || '';
+
+            document.getElementById('mr-number').value = generateMRNumber();
+
+            renderAttendanceLogs();
+            renderUserDirectory();
+            renderLeaveLogs();
+            renderMCPLogs();
+            renderMarketRequests();
+            renderChecklistLogs();
+            renderK3Logs();
+            renderEquipmentLogs();
+            renderOutstandingLogs();
+            renderBulletinLogs();
+        } else {
+            alert('ID Karyawan / NIP atau PIN Salah! Pastikan huruf dan angka sesuai.');
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('auth-modal-overlay').style.display = 'flex';
+        switchAuthSubView('login');
+    }
+
+    function showModule(modId) {
+        document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        const target = document.getElementById('mod-' + modId);
+        if(target) target.classList.add('active');
+
+        if(modId === 9) renderUserDirectory();
+
+        const navIndex = { 1: 0, 3: 1, 4: 2, 2: 3 };
+        if(navIndex[modId] !== undefined) {
+            document.querySelectorAll('.bottom-nav .nav-link')[navIndex[modId]].classList.add('active');
+        }
+    }
+
+    async function startWebcam() {
+        const video = document.getElementById('webcam');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            document.getElementById('camera-placeholder').style.display = 'none';
+            document.getElementById('photo-preview').style.display = 'none';
+        } catch (err) { alert('Gunakan tombol Upload Foto HP.'); }
+    }
+
+    function takeSnapshot() {
+        const video = document.getElementById('webcam');
+        const img = document.getElementById('photo-preview');
+        if (video.style.display === 'block' && video.srcObject) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 320; canvas.height = 240;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
+            img.src = currentPhotoBase64;
+            img.style.display = 'block';
+            video.style.display = 'none';
+            alert('Snapshot selfie berhasil!');
+        } else { alert('Aktifkan kamera live dulu.'); }
+    }
+
+    function loadPhotoFromFile(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                currentPhotoBase64 = evt.target.result;
+                document.getElementById('photo-preview').src = currentPhotoBase64;
+                document.getElementById('photo-preview').style.display = 'block';
+                document.getElementById('camera-placeholder').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function getRealtimeGPS() {
+        const coordsInput = document.getElementById('gps-coords');
+        const gmapsLinkBox = document.getElementById('gmaps-link-box');
+        coordsInput.value = "Mendeteksi GPS...";
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude.toFixed(6);
+                    const lng = pos.coords.longitude.toFixed(6);
+                    coordsInput.value = `Site ${currentUser.site} | GPS: ${lat}, ${lng}`;
+                    gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka di Google Maps</a>`;
+                },
+                () => { coordsInput.value = `${currentUser.site} (-6.175392, 106.827153)`; }
+            );
+        } else { coordsInput.value = `${currentUser.site} (-6.175392, 106.827153)`; }
+    }
+
+    async function saveAttendance(type) {
+        if(!currentPhotoBase64) { alert('Ambil foto selfie dulu!'); return; }
+        const gps = document.getElementById('gps-coords').value;
+        if(!gps || gps.includes("Mendeteksi")) { alert('Tarik lokasi GPS dulu!'); return; }
+        const now = new Date();
+        const record = {
+            user_id: currentUser.id, name: currentUser.name, role: currentUser.role, site: currentUser.site,
+            type: type, time: now.toLocaleTimeString('id-ID'), date: now.toLocaleDateString('id-ID'), gps: gps, photo: currentPhotoBase64
+        };
+        CENTRAL_ATTENDANCE_DB.unshift(record);
+        localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
+        renderAttendanceLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('attendance_logs').insert([record]); } catch(e) {}
+        }
+        alert(`Absensi ${type} Berhasil Disimpan!`);
+    }
+
+    function renderAttendanceLogs() {
+        const logList = document.getElementById('attendance-log');
+        if(!logList) return;
+        logList.innerHTML = '';
+        const filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
+        if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
+        filtered.forEach(log => {
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <img src="${log.photo}" class="log-thumb">
+                    <div><strong>${log.name} (${log.user_id})</strong><p style="color:var(--text-muted); font-size:9.5px;">${log.date} - ${log.time}</p></div>
+                </div>
+                <span class="badge ${log.type === 'IN' ? 'badge-in' : 'badge-out'}">${log.type}</span>
+            `;
+            logList.appendChild(li);
+        });
+    }
+
+    // MODUL 4: MARKET REQUEST (MR)
+    async function submitMarketRequest() {
+        const mrNo = document.getElementById('mr-number').value;
+        const category = document.getElementById('mr-category').value;
+        const details = document.getElementById('mr-details').value.trim();
+        const cost = document.getElementById('mr-cost').value.trim();
+        const priority = document.getElementById('mr-priority').value;
+        if(!details || !cost) { alert('Rincian & Estimasi wajib diisi!'); return; }
+        const now = new Date();
+        const record = {
+            mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
+            category: category, details: details, cost: cost, priority: priority, date: now.toLocaleDateString('id-ID'), time: now.toLocaleTimeString('id-ID'),
+            status: "Pending Admin Approval"
+        };
+        MARKET_REQUESTS_DB.unshift(record);
+        localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
+        renderMarketRequests();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('market_requests').insert([record]); } catch(e) {}
+        }
+        alert(`Market Request ${mrNo} Dikirim! Menunggu Approve Admin.`);
+        document.getElementById('mr-details').value = '';
+        document.getElementById('mr-cost').value = '';
+        document.getElementById('mr-number').value = generateMRNumber();
+    }
+
+    function approveMR(id) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        MARKET_REQUESTS_DB.forEach(mr => {
+            if(mr.mr_id === id) { mr.status = 'Approved & Verified by Admin'; }
+        });
+        localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
+        renderMarketRequests();
+        alert('Market Request disetujui (Approved)!');
+    }
+
+    function renderMarketRequests() {
+        const list = document.getElementById('mr-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = MARKET_REQUESTS_DB.filter(r => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : r.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan MR.</li>`; return; }
+        filtered.forEach(r => {
+            let actionBtn = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && r.status === 'Pending Admin Approval') {
+                actionBtn = `<button type="button" class="btn btn-success" style="padding: 4px 8px; font-size: 9px; margin-top:6px;" onclick="approveMR('${r.mr_id}')">👑 Approve (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start'; li.style.gap = '4px';
+            li.innerHTML = `
+                <div style="display:flex; justify-content:space-between; width:100%;"><strong>${r.mr_id}</strong><span class="badge badge-warning">${r.priority}</span></div>
+                <div style="font-size:9.5px;">Pengaju: ${r.name} (${r.user_id}) | ${r.category}<br>Detail: ${r.details} | <b>${r.cost}</b></div>
+                <div style="font-size:8.5px; color:var(--text-muted);">Status: ${r.status}</div>
+                ${actionBtn}
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 5: IZIN & CUTI
+    async function submitLeaveRequest() {
+        const type = document.getElementById('leave-type').value;
+        const reason = document.getElementById('leave-reason').value.trim();
+        if(!reason) { alert('Isi alasan pengajuan!'); return; }
+        const record = { user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
+        LEAVE_REQUESTS_DB.unshift(record);
+        localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
+        renderLeaveLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('leave_requests').insert([record]); } catch(e) {}
+        }
+        alert('Pengajuan izin/cuti terkirim! Menunggu Approve Admin.');
+        document.getElementById('leave-reason').value = '';
+    }
+
+    function approveLeave(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        LEAVE_REQUESTS_DB[index].status = "Approved by Admin";
+        localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
+        renderLeaveLogs();
+        alert('Cuti disetujui (Approved)!');
+    }
+
+    function renderLeaveLogs() {
+        const list = document.getElementById('leave-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = LEAVE_REQUESTS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan cuti.</li>`; return; }
+        filtered.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Admin Approval') {
+                btnApprove = `<button type="button" class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveLeave(${idx})">👑 Approve Cuti (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.name} (${item.type})</strong><p style="font-size:9px;">${item.reason}</p></div><span class="badge badge-warning">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 6: MCP CLEANING
+    function renderMCPMasterTable() {
+        const tbody = document.getElementById('mcp-master-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        MCP_MASTER_ITEMS.forEach(m => {
+            tbody.innerHTML += `
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:4px; text-align:center;"><input type="checkbox" class="mcp-item-check" value="${m.id}"></td>
+                    <td style="padding:4px;"><b>${m.item}</b></td>
+                    <td style="padding:4px;">${m.job}</td>
+                    <td style="padding:4px;"><span class="badge badge-warning" style="font-size:8px;">${m.freq}</span></td>
+                </tr>
+            `;
+        });
+    }
+
+    async function submitMCPChecklist() {
+        const dateVal = document.getElementById('mcp-date').value;
+        const notes = document.getElementById('mcp-notes').value.trim() || 'Selesai';
+        const checkedIds = [];
+        document.querySelectorAll('.mcp-item-check:checked').forEach(cb => { checkedIds.push(cb.value); });
+
+        if(checkedIds.length === 0) { alert('Pilih minimal 1 checklist pekerjaan MCP!'); return; }
+
+        const record = {
+            user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
+            date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", timestamp: new Date().toLocaleTimeString('id-ID')
+        };
+
+        MCP_LOGS_DB.unshift(record);
+        localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
+        renderMCPLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('mcp_logs').insert([record]); } catch(e) {}
+        }
+        alert('Checklist MCP berhasil dikirim ke Admin untuk divalidasi!');
+        document.getElementById('mcp-notes').value = '';
+    }
+
+    function approveMCP(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        MCP_LOGS_DB[index].status = "Verified & Approved";
+        localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
+        renderMCPLogs();
+        alert('MCP disetujui (Approved)!');
+    }
+
+    function renderMCPLogs() {
+        const list = document.getElementById('mcp-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = MCP_LOGS_DB.filter(log => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : log.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP cleaning.</li>`; return; }
+        filtered.forEach((log, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && log.status === 'Pending Admin Approval') {
+                btnApprove = `<button type="button" class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveMCP(${idx})">👑 Approve MCP (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `
+                <div><strong>${log.name} (${log.user_id}) - Tgl: ${log.date}</strong>
+                <p style="font-size:9px;">Item Dikerjakan: ${log.items.length} Item | Catatan: ${log.notes} | ${log.timestamp}</p></div>
+                <span class="badge badge-in">${log.status}</span>${btnApprove}
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 7: CHECKLIST AREA
+    async function submitChecklistArea() {
+        const area = document.getElementById('chk-area').value;
+        const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
+        const record = { user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
+        CHECKLIST_DB.unshift(record);
+        localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
+        renderChecklistLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('checklist_logs').insert([record]); } catch(e) {}
+        }
+        alert('Checklist area berhasil disubmit! Menunggu Approve Admin.');
+    }
+
+    function approveChecklist(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        CHECKLIST_DB[index].status = "Approved by Admin";
+        localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
+        renderChecklistLogs();
+        alert('Checklist disetujui (Approved)!');
+    }
+
+    function renderChecklistLogs() {
+        const list = document.getElementById('chk-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = CHECKLIST_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada inspeksi checklist.</li>`; return; }
+        filtered.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Admin Approval') {
+                btnApprove = `<button type="button" class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveChecklist(${idx})">👑 Approve Checklist (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.area}</strong><p style="font-size:9px;">Inspektor: ${item.name} | Catatan: ${item.notes}</p></div><span class="badge badge-in">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 8: HIGH RISK K3
+    async function submitK3Permit() {
+        const cat = document.getElementById('k3-category').value;
+        const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
+        const petugas = document.getElementById('k3-petugas').value.trim() || currentUser.name;
+        const record = { user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", date: new Date().toLocaleDateString('id-ID') };
+        K3_PERMITS_DB.unshift(record);
+        localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
+        renderK3Logs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('k3_permits').insert([record]); } catch(e) {}
+        }
+        alert('Permit K3 High Risk diajukan! Menunggu Approve Admin.');
+    }
+
+    function approveK3(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        K3_PERMITS_DB[index].status = "Safety Approved & Verified";
+        localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
+        renderK3Logs();
+        alert('Work Permit K3 disetujui (Approved)!');
+    }
+
+    function renderK3Logs() {
+        const list = document.getElementById('k3-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = K3_PERMITS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada pengajuan permit K3.</li>`; return; }
+        filtered.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Pending Safety Review') {
+                btnApprove = `<button type="button" class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveK3(${idx})">👑 Approve K3 Permit (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.category}</strong><p style="font-size:9px;">Lokasi: ${item.location} | Petugas: ${item.petugas}</p></div><span class="badge badge-danger">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 9: DATA TIM & HAPUS AKUN
+    async function deleteUserFromDirectory(userId) {
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
+            alert('Akses ditolak! Hanya Admin yang dapat menghapus akun.');
+            return;
+        }
+        if (userId === currentUser.id || userId === 'AMP001') {
+            alert('Akun utama Admin tidak dapat dihapus!');
+            return;
+        }
+        if (confirm(`Apakah Anda yakin ingin menghapus akun/ID ${userId} (${USER_DATABASE[userId].name}) dari Data Tim?`)) {
+            delete USER_DATABASE[userId];
+            localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+            if (supabaseClient) {
+                try { await supabaseClient.from('user_directory').delete().eq('id', userId); } catch(e) {}
+            }
+            renderUserDirectory();
+            alert(`Akun ${userId} berhasil dihapus!`);
+        }
+    }
+
+    function renderUserDirectory() {
+        const dirList = document.getElementById('user-directory-list');
+        if(!dirList) return;
+        let activeDB = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+        dirList.innerHTML = '';
+        Object.keys(activeDB).forEach(id => {
+            const u = activeDB[id];
+            let deleteBtn = '';
+            if (currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && id !== currentUser.id && id !== 'AMP001') {
+                deleteBtn = `<button type="button" class="btn btn-danger" style="width:auto; padding:4px 8px; font-size:9px; margin-bottom:0;" onclick="deleteUserFromDirectory('${id}')"><i class="fas fa-trash"></i> Hapus</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.innerHTML = `
+                <div>
+                    <strong>${u.name} (${u.id})</strong>
+                    <p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | Site: ${u.site} | Telp: ${u.phone || '-'}</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="badge badge-in">AKTIF</span>
+                    ${deleteBtn}
+                </div>
+            `;
+            dirList.appendChild(li);
+        });
+    }
+
+    // MODUL 10: EQUIPMENT
+    async function submitEquipmentLog() {
+        const name = document.getElementById('eq-name').value;
+        const status = document.getElementById('eq-status').value;
+        const notes = document.getElementById('eq-notes').value.trim() || '-';
+        const record = { user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
+        EQUIPMENT_DB.unshift(record);
+        localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
+        renderEquipmentLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('equipment_logs').insert([record]); } catch(e) {}
+        }
+        alert('Log equipment berhasil disimpan! Menunggu Approve Admin.');
+    }
+
+    function approveEquipment(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        EQUIPMENT_DB[index].approval = "Verified by Admin";
+        localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
+        renderEquipmentLogs();
+        alert('Equipment log disetujui (Approved)!');
+    }
+
+    function renderEquipmentLogs() {
+        const list = document.getElementById('eq-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = EQUIPMENT_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log equipment.</li>`; return; }
+        filtered.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.approval === 'Pending Admin Approval') {
+                btnApprove = `<button type="button" class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="approveEquipment(${idx})">👑 Approve Equipment (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.name}</strong><p style="font-size:9px;">Kondisi: ${item.status} | Catatan: ${item.notes}</p></div><span class="badge badge-warning">${item.approval}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 11: OUTSTANDING
+    async function submitOutstandingTicket() {
+        const title = document.getElementById('out-title').value.trim();
+        const details = document.getElementById('out-details').value.trim();
+        const urgency = document.getElementById('out-urgency').value;
+        if(!title || !details) { alert('Isi judul & rincian!'); return; }
+        const record = { user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", date: new Date().toLocaleDateString('id-ID') };
+        OUTSTANDING_DB.unshift(record);
+        localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
+        renderOutstandingLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('outstanding_tickets').insert([record]); } catch(e) {}
+        }
+        alert('Tiket komplain dibuat!');
+        document.getElementById('out-title').value = '';
+        document.getElementById('out-details').value = '';
+    }
+
+    function resolveOutstanding(index) {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') { alert('Akses ditolak!'); return; }
+        OUTSTANDING_DB[index].status = "Resolved & Closed";
+        localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
+        renderOutstandingLogs();
+        alert('Tiket diselesaikan!');
+    }
+
+    function renderOutstandingLogs() {
+        const list = document.getElementById('out-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        const filtered = OUTSTANDING_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket komplain.</li>`; return; }
+        filtered.forEach((item, idx) => {
+            let btnApprove = '';
+            if((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && item.status === 'Open Ticket') {
+                btnApprove = `<button type="button" class="btn btn-success" style="padding:4px 8px; font-size:9px; margin-top:4px;" onclick="resolveOutstanding(${idx})">👑 Selesaikan Tiket (Admin)</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.title}</strong><p style="font-size:9px;">${item.details}</p></div><span class="badge badge-danger">${item.status}</span>${btnApprove}`;
+            list.appendChild(li);
+        });
+    }
+
+    // MODUL 12: KPI & BULLETIN
+    async function submitBulletin() {
+        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin' && currentUser.role !== 'Korlap') {
+            alert('Akses ditolak!'); return;
+        }
+        const title = document.getElementById('kpi-title').value.trim();
+        const content = document.getElementById('kpi-content').value.trim();
+        if(!title || !content) { alert('Isi judul dan konten!'); return; }
+        const record = { author: currentUser.name, title: title, content: content, date: new Date().toLocaleDateString('id-ID') };
+        BULLETIN_DB.unshift(record);
+        localStorage.setItem('AMP_BULLETIN_DB', JSON.stringify(BULLETIN_DB));
+        renderBulletinLogs();
+
+        if(supabaseClient) {
+            try { await supabaseClient.from('bulletin_logs').insert([record]); } catch(e) {}
+        }
+        alert('Bulletin & KPI dipublikasikan!');
+        document.getElementById('kpi-title').value = '';
+        document.getElementById('kpi-content').value = '';
+    }
+
+    function renderBulletinLogs() {
+        const list = document.getElementById('kpi-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        if(BULLETIN_DB.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada bulletin aktif.</li>`; return; }
+        BULLETIN_DB.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
+            li.innerHTML = `<div><strong>${item.title}</strong><p style="font-size:9px;">${item.content} (Oleh: ${item.author})</p></div><span class="badge badge-in">PUBLISHED</span>`;
+            list.appendChild(li);
+        });
+    }
+
+    async function syncAllToSupabase() {
+        if (!supabaseClient) { alert('Supabase belum dikonfigurasi!'); return; }
+        writeLog('[SYNC] Mendorong seluruh antrean data lokal ke Supabase...');
+        try {
+            const usersArr = Object.values(USER_DATABASE);
+            if(usersArr.length) await supabaseClient.from('user_directory').upsert(usersArr);
+            if(CENTRAL_ATTENDANCE_DB.length) await supabaseClient.from('attendance_logs').upsert(CENTRAL_ATTENDANCE_DB);
+            if(MARKET_REQUESTS_DB.length) await supabaseClient.from('market_requests').upsert(MARKET_REQUESTS_DB);
+            if(LEAVE_REQUESTS_DB.length) await supabaseClient.from('leave_requests').upsert(LEAVE_REQUESTS_DB);
+            if(MCP_LOGS_DB.length) await supabaseClient.from('mcp_logs').upsert(MCP_LOGS_DB);
+            if(CHECKLIST_DB.length) await supabaseClient.from('checklist_logs').upsert(CHECKLIST_DB);
+            if(K3_PERMITS_DB.length) await supabaseClient.from('k3_permits').upsert(K3_PERMITS_DB);
+            if(EQUIPMENT_DB.length) await supabaseClient.from('equipment_logs').upsert(EQUIPMENT_DB);
+            if(OUTSTANDING_DB.length) await supabaseClient.from('outstanding_tickets').upsert(OUTSTANDING_DB);
+            if(BULLETIN_DB.length) await supabaseClient.from('bulletin_logs').upsert(BULLETIN_DB);
+            writeLog('✓ Semua data berhasil disinkronkan ke Supabase!');
+            alert('Sinkronisasi Semua Data Berhasil!');
+        } catch(e) {
+            writeLog('❌ Error Sync: ' + e.message);
+            alert('Gagal Sinkronisasi: ' + e.message);
+        }
+    }
+
+    function exportToExcel() {
+        let csv = "data:text/csv;charset=utf-8,ID,Nama,Role,Site,Tipe,Tanggal,Waktu,GPS\n";
+        CENTRAL_ATTENDANCE_DB.forEach(r => { csv += `${r.user_id||r.id},${r.name},${r.role},${r.site||'PLN'},${r.type},${r.date},${r.time},"${r.gps}"\n`; });
+        downloadCSV(csv, `Rekap_Absensi_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    function exportMCPToCSV() {
+        let csv = "data:text/csv;charset=utf-8,ID,Nama,Tanggal,Jumlah Item,Status\n";
+        MCP_LOGS_DB.forEach(r => { csv += `${r.user_id},${r.name},${r.date},${r.items.length},${r.status}\n`; });
+        downloadCSV(csv, `Rekap_MCP_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    function exportCutiToCSV() {
+        let csv = "data:text/csv;charset=utf-8,ID,Nama,Jenis,Alasan\n";
+        LEAVE_REQUESTS_DB.forEach(r => { csv += `${r.user_id||r.id},${r.name},${r.type},"${r.reason}"\n`; });
+        downloadCSV(csv, `Rekap_Cuti_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    function exportMRToCSV() {
+        let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status,Tanggal\n";
+        MARKET_REQUESTS_DB.forEach(r => { csv += `${r.mr_id},${r.name},${r.site},${r.category},${r.priority},"${r.details}",${r.cost},${r.status},${r.date}\n`; });
+        downloadCSV(csv, `Rekap_MR_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    function downloadCSV(csvData, filename) {
+        const link = document.createElement("a");
+        link.setAttribute("href", encodeURI(csvData));
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+    }
+</script>
+</body>
+</html>
