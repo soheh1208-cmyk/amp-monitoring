@@ -724,7 +724,9 @@
     // Digital Clock Engine
     setInterval(() => {
         const now = new Date();
-        const clockStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
+        const clockStr = String(now.getHours()).padStart(2, '0') + '.' + 
+                         String(now.getMinutes()).padStart(2, '0') + '.' + 
+                         String(now.getSeconds()).padStart(2, '0') + " WIB";
         const clockEl = document.getElementById('live-clock');
         if(clockEl) clockEl.innerText = clockStr;
     }, 1000);
@@ -1090,23 +1092,39 @@
         } else { coordsInput.value = `${currentUser.site} (-6.175392, 106.827153)`; }
     }
 
+    // Generator Tanggal & Jam Mutlak Seragam (DD/MM/YYYY & HH.mm.ss WIB)
+    function getStrictTimestamp() {
+        const now = new Date();
+        const d = String(now.getDate()).padStart(2, '0');
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const y = now.getFullYear();
+        const dateStr = `${d}/${m}/${y}`;
+        
+        const h = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        const timeStr = `${h}.${min}.${s} WIB`;
+
+        return { date: dateStr, time: timeStr, created_at: now.toISOString() };
+    }
+
     async function saveAttendance(type) {
         if(!currentPhotoBase64) { alert('Ambil foto selfie dulu!'); return; }
         const gps = document.getElementById('gps-coords').value;
         if(!gps || gps.includes("Mendeteksi")) { alert('Tarik lokasi GPS dulu!'); return; }
         
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = {
             user_id: currentUser.id, 
             name: currentUser.name, 
             role: currentUser.role, 
             site: currentUser.site,
             type: type, 
-            time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB", 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
+            time: ts.time, 
+            date: ts.date, 
             gps: gps, 
             photo: currentPhotoBase64,
-            created_at: now.toISOString() // Format waktu ISO baku untuk pengurutan akurat
+            created_at: ts.created_at
         };
         
         CENTRAL_ATTENDANCE_DB.unshift(record);
@@ -1129,7 +1147,7 @@
         filtered.sort((a, b) => {
             let timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
             let timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
-            return timeA - timeB; // Ascending: Terlama -> Terbaru
+            return timeA - timeB; 
         });
 
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
@@ -1165,13 +1183,13 @@
         const cost = document.getElementById('mr-cost').value.trim();
         const priority = document.getElementById('mr-priority').value;
         if(!details || !cost) { alert('Rincian & Estimasi wajib diisi!'); return; }
-        const now = new Date();
+        
+        const ts = getStrictTimestamp();
         const record = {
             mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
             category: category, details: details, cost: cost, priority: priority, 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(),
-            time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB",
-            status: "Pending Admin Approval", created_at: now.toISOString()
+            date: ts.date, time: ts.time,
+            status: "Pending Admin Approval", created_at: ts.created_at
         };
         MARKET_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
@@ -1225,11 +1243,11 @@
         const type = document.getElementById('leave-type').value;
         const reason = document.getElementById('leave-reason').value.trim();
         if(!reason) { alert('Isi alasan pengajuan!'); return; }
-        const now = new Date();
+        
+        const ts = getStrictTimestamp();
         const record = { 
             user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
-            created_at: now.toISOString() 
+            date: ts.date, created_at: ts.created_at 
         };
         LEAVE_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
@@ -1293,12 +1311,11 @@
 
         if(checkedIds.length === 0) { alert('Pilih minimal 1 checklist pekerjaan MCP!'); return; }
 
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = {
             user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
             date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", 
-            timestamp: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB", 
-            created_at: now.toISOString()
+            timestamp: ts.time, created_at: ts.created_at
         };
 
         MCP_LOGS_DB.unshift(record);
@@ -1346,11 +1363,10 @@
     async function submitChecklistArea() {
         const area = document.getElementById('chk-area').value;
         const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = { 
             user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
-            created_at: now.toISOString() 
+            date: ts.date, created_at: ts.created_at 
         };
         CHECKLIST_DB.unshift(record);
         localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
@@ -1393,11 +1409,10 @@
         const cat = document.getElementById('k3-category').value;
         const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
         const petugas = document.getElementById('k3-petugas').value.trim() || currentUser.name;
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = { 
             user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
-            created_at: now.toISOString() 
+            date: ts.date, created_at: ts.created_at 
         };
         K3_PERMITS_DB.unshift(record);
         localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
@@ -1488,11 +1503,10 @@
         const name = document.getElementById('eq-name').value;
         const status = document.getElementById('eq-status').value;
         const notes = document.getElementById('eq-notes').value.trim() || '-';
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = { 
             user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
-            created_at: now.toISOString() 
+            date: ts.date, created_at: ts.created_at 
         };
         EQUIPMENT_DB.unshift(record);
         localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
@@ -1536,11 +1550,10 @@
         const details = document.getElementById('out-details').value.trim();
         const urgency = document.getElementById('out-urgency').value;
         if(!title || !details) { alert('Isi judul & rincian!'); return; }
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = { 
             user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
-            created_at: now.toISOString() 
+            date: ts.date, created_at: ts.created_at 
         };
         OUTSTANDING_DB.unshift(record);
         localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
@@ -1588,11 +1601,10 @@
         const title = document.getElementById('kpi-title').value.trim();
         const content = document.getElementById('kpi-content').value.trim();
         if(!title || !content) { alert('Isi judul dan konten!'); return; }
-        const now = new Date();
+        const ts = getStrictTimestamp();
         const record = { 
             author: currentUser.name, title: title, content: content, 
-            date: String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear(), 
-            created_at: now.toISOString() 
+            date: ts.date, created_at: ts.created_at 
         };
         BULLETIN_DB.unshift(record);
         localStorage.setItem('AMP_BULLETIN_DB', JSON.stringify(BULLETIN_DB));
