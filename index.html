@@ -530,7 +530,7 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MCP CLEANING (BERBASIS MASTER EXCEL TERLAMPIR) -->
+        <!-- MODUL 6: MCP CLEANING (SESUAI MASTER EXCEL TERLAMPIR) -->
         <div id="mod-6" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-broom"></i> Master Cleaning Program (MCP) & Checklist Harian</div>
@@ -614,7 +614,7 @@
         <div id="mod-9" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-users"></i> Direktori Tim & Personil Terdaftar</div>
-                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Setiap akun baru yang mendaftar akan otomatis masuk ke daftar tim di bawah ini:</p>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Setiap akun baru yang mendaftar akan otomatis masuk ke daftar tim di bawah ini. Admin dapat menghapus akun yang sudah tidak aktif:</p>
                 <ul id="user-directory-list" class="log-list"></ul>
             </div>
         </div>
@@ -1306,6 +1306,50 @@
         });
     }
 
+    // MODUL 9: DATA TIM & HAPUS AKUN NON-AKTIF
+    function deleteUserFromDirectory(userId) {
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
+            alert('Akses ditolak! Hanya Admin / Head of Operation yang dapat menghapus akun dari tim.');
+            return;
+        }
+        if (userId === currentUser.id) {
+            alert('Anda tidak dapat menghapus akun Anda sendiri!');
+            return;
+        }
+        if (confirm(`Apakah Anda yakin ingin menghapus akun/ID ${userId} (${USER_DATABASE[userId].name}) dari Data Tim?`)) {
+            delete USER_DATABASE[userId];
+            localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+            renderUserDirectory();
+            alert(`Akun ${userId} berhasil dihapus dari sistem!`);
+        }
+    }
+
+    function renderUserDirectory() {
+        const dirList = document.getElementById('user-directory-list');
+        if(!dirList) return;
+        dirList.innerHTML = '';
+        Object.keys(USER_DATABASE).forEach(id => {
+            const u = USER_DATABASE[id];
+            let deleteBtn = '';
+            if (currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && id !== currentUser.id) {
+                deleteBtn = `<button class="btn btn-danger" style="width:auto; padding:4px 8px; font-size:9px; margin-bottom:0;" onclick="deleteUserFromDirectory('${id}')"><i class="fas fa-trash"></i> Hapus</button>`;
+            }
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.innerHTML = `
+                <div>
+                    <strong>${u.name} (${u.id})</strong>
+                    <p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | Site: ${u.site} | Telp: ${u.phone || '-'}</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="badge badge-in">AKTIF</span>
+                    ${deleteBtn}
+                </div>
+            `;
+            dirList.appendChild(li);
+        });
+    }
+
     // MODUL 10: EQUIPMENT
     async function submitEquipmentLog() {
         const name = document.getElementById('eq-name').value;
@@ -1446,19 +1490,6 @@
             writeLog('❌ Error Sync: ' + e.message);
             alert('Gagal Sinkronisasi: ' + e.message);
         }
-    }
-
-    function renderUserDirectory() {
-        const dirList = document.getElementById('user-directory-list');
-        if(!dirList) return;
-        dirList.innerHTML = '';
-        Object.keys(USER_DATABASE).forEach(id => {
-            const u = USER_DATABASE[id];
-            const li = document.createElement('li');
-            li.className = 'log-item';
-            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | Site: ${u.site} | Telp: ${u.phone || '-'}</p></div><span class="badge badge-in">AKTIF</span>`;
-            dirList.appendChild(li);
-        });
     }
 
     function exportToExcel() {
