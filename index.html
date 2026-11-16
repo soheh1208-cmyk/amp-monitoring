@@ -724,9 +724,7 @@
     // Digital Clock Engine
     setInterval(() => {
         const now = new Date();
-        const clockStr = String(now.getHours()).padStart(2, '0') + '.' + 
-                         String(now.getMinutes()).padStart(2, '0') + '.' + 
-                         String(now.getSeconds()).padStart(2, '0') + " WIB";
+        const clockStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
         const clockEl = document.getElementById('live-clock');
         if(clockEl) clockEl.innerText = clockStr;
     }, 1000);
@@ -1075,58 +1073,51 @@
         }
     }
 
+    // PERBAIKAN GPS YANG KOKOH & ANTI GAGAL
     function getRealtimeGPS() {
         const coordsInput = document.getElementById('gps-coords');
         const gmapsLinkBox = document.getElementById('gmaps-link-box');
-        coordsInput.value = "Mendeteksi GPS...";
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const lat = pos.coords.latitude.toFixed(6);
-                    const lng = pos.coords.longitude.toFixed(6);
-                    coordsInput.value = `Site ${currentUser.site} | GPS: ${lat}, ${lng}`;
-                    gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka di Google Maps</a>`;
-                },
-                () => { coordsInput.value = `${currentUser.site} (-6.175392, 106.827153)`; }
-            );
-        } else { coordsInput.value = `${currentUser.site} (-6.175392, 106.827153)`; }
-    }
+        coordsInput.value = "Mendeteksi Lokasi GPS...";
+        gmapsLinkBox.innerHTML = "";
 
-    // Generator Tanggal & Jam Mutlak Seragam (DD/MM/YYYY & HH.mm.ss WIB)
-    function getStrictTimestamp() {
-        const now = new Date();
-        const d = String(now.getDate()).padStart(2, '0');
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const y = now.getFullYear();
-        const dateStr = `${d}/${m}/${y}`;
-        
-        const h = String(now.getHours()).padStart(2, '0');
-        const min = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        const timeStr = `${h}.${min}.${s} WIB`;
+        if (!navigator.geolocation) {
+            coordsInput.value = `Site ${currentUser.site} (GPS Tidak Didukung Browser)`;
+            gmapsLinkBox.innerHTML = `<span style="color:red; font-size:9px;">Browser Anda tidak mendukung geolokasi. Menggunakan data site default.</span>`;
+            return;
+        }
 
-        return { date: dateStr, time: timeStr, created_at: now.toISOString() };
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude.toFixed(6);
+                const lng = pos.coords.longitude.toFixed(6);
+                coordsInput.value = `Site ${currentUser.site} | GPS: ${lat}, ${lng}`;
+                gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka di Google Maps</a>`;
+            },
+            (error) => {
+                console.warn("GPS Error code: " + error.code + " - " + error.message);
+                // Fallback menggunakan lokasi default site jika izin ditolak / timeout
+                coordsInput.value = `Site ${currentUser.site} (-6.175392, 106.827153)`;
+                gmapsLinkBox.innerHTML = `<span style="color:var(--warning); font-size:9px;">⚠ GPS gagal mendeteksi akurasi tinggi (Izin/Sinyal). Menggunakan koordinat standar site.</span>`;
+            },
+            options
+        );
     }
 
     async function saveAttendance(type) {
         if(!currentPhotoBase64) { alert('Ambil foto selfie dulu!'); return; }
         const gps = document.getElementById('gps-coords').value;
         if(!gps || gps.includes("Mendeteksi")) { alert('Tarik lokasi GPS dulu!'); return; }
-        
-        const ts = getStrictTimestamp();
+        const now = new Date();
         const record = {
-            user_id: currentUser.id, 
-            name: currentUser.name, 
-            role: currentUser.role, 
-            site: currentUser.site,
-            type: type, 
-            time: ts.time, 
-            date: ts.date, 
-            gps: gps, 
-            photo: currentPhotoBase64,
-            created_at: ts.created_at
+            user_id: currentUser.id, name: currentUser.name, role: currentUser.role, site: currentUser.site,
+            type: type, time: now.toLocaleTimeString('id-ID'), date: now.toLocaleDateString('id-ID'), gps: gps, photo: currentPhotoBase64
         };
-        
         CENTRAL_ATTENDANCE_DB.unshift(record);
         localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
         renderAttendanceLogs();
@@ -1143,11 +1134,10 @@
         logList.innerHTML = '';
         let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
         
-        // PENGURUTAN MUTLAK: Dari yang terlama (atas) ke terbaru (bawah) berdasarkan created_at
         filtered.sort((a, b) => {
-            let timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
-            let timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
-            return timeA - timeB; 
+            let tA = a.time || '00:00:00';
+            let tB = b.time || '00:00:00';
+            return new Date(a.date.split('/').reverse().join('-') + ' ' + tA) - new Date(b.date.split('/').reverse().join('-') + ' ' + tB);
         });
 
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada data absensi.</li>`; return; }
@@ -1183,13 +1173,11 @@
         const cost = document.getElementById('mr-cost').value.trim();
         const priority = document.getElementById('mr-priority').value;
         if(!details || !cost) { alert('Rincian & Estimasi wajib diisi!'); return; }
-        
-        const ts = getStrictTimestamp();
+        const now = new Date();
         const record = {
             mr_id: mrNo, user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
-            category: category, details: details, cost: cost, priority: priority, 
-            date: ts.date, time: ts.time,
-            status: "Pending Admin Approval", created_at: ts.created_at
+            category: category, details: details, cost: cost, priority: priority, date: now.toLocaleDateString('id-ID'), time: now.toLocaleTimeString('id-ID'),
+            status: "Pending Admin Approval"
         };
         MARKET_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
@@ -1243,12 +1231,7 @@
         const type = document.getElementById('leave-type').value;
         const reason = document.getElementById('leave-reason').value.trim();
         if(!reason) { alert('Isi alasan pengajuan!'); return; }
-        
-        const ts = getStrictTimestamp();
-        const record = { 
-            user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", 
-            date: ts.date, created_at: ts.created_at 
-        };
+        const record = { user_id: currentUser.id, name: currentUser.name, type: type, reason: reason, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         LEAVE_REQUESTS_DB.unshift(record);
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
@@ -1311,11 +1294,9 @@
 
         if(checkedIds.length === 0) { alert('Pilih minimal 1 checklist pekerjaan MCP!'); return; }
 
-        const ts = getStrictTimestamp();
         const record = {
             user_id: currentUser.id, name: currentUser.name, site: currentUser.site,
-            date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", 
-            timestamp: ts.time, created_at: ts.created_at
+            date: dateVal, items: checkedIds, notes: notes, status: "Pending Admin Approval", timestamp: new Date().toLocaleTimeString('id-ID')
         };
 
         MCP_LOGS_DB.unshift(record);
@@ -1363,11 +1344,7 @@
     async function submitChecklistArea() {
         const area = document.getElementById('chk-area').value;
         const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
-        const ts = getStrictTimestamp();
-        const record = { 
-            user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", 
-            date: ts.date, created_at: ts.created_at 
-        };
+        const record = { user_id: currentUser.id, name: currentUser.name, area: area, notes: notes, status: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         CHECKLIST_DB.unshift(record);
         localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
         renderChecklistLogs();
@@ -1409,11 +1386,7 @@
         const cat = document.getElementById('k3-category').value;
         const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
         const petugas = document.getElementById('k3-petugas').value.trim() || currentUser.name;
-        const ts = getStrictTimestamp();
-        const record = { 
-            user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", 
-            date: ts.date, created_at: ts.created_at 
-        };
+        const record = { user_id: currentUser.id, category: cat, location: loc, petugas: petugas, status: "Pending Safety Review", date: new Date().toLocaleDateString('id-ID') };
         K3_PERMITS_DB.unshift(record);
         localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
         renderK3Logs();
@@ -1503,11 +1476,7 @@
         const name = document.getElementById('eq-name').value;
         const status = document.getElementById('eq-status').value;
         const notes = document.getElementById('eq-notes').value.trim() || '-';
-        const ts = getStrictTimestamp();
-        const record = { 
-            user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", 
-            date: ts.date, created_at: ts.created_at 
-        };
+        const record = { user_id: currentUser.id, reporter: currentUser.name, name: name, status: status, notes: notes, approval: "Pending Admin Approval", date: new Date().toLocaleDateString('id-ID') };
         EQUIPMENT_DB.unshift(record);
         localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
         renderEquipmentLogs();
@@ -1550,11 +1519,7 @@
         const details = document.getElementById('out-details').value.trim();
         const urgency = document.getElementById('out-urgency').value;
         if(!title || !details) { alert('Isi judul & rincian!'); return; }
-        const ts = getStrictTimestamp();
-        const record = { 
-            user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", 
-            date: ts.date, created_at: ts.created_at 
-        };
+        const record = { user_id: currentUser.id, reporter: currentUser.name, title: title, details: details, urgency: urgency, status: "Open Ticket", date: new Date().toLocaleDateString('id-ID') };
         OUTSTANDING_DB.unshift(record);
         localStorage.setItem('AMP_OUTSTANDING_DB', JSON.stringify(OUTSTANDING_DB));
         renderOutstandingLogs();
@@ -1601,11 +1566,7 @@
         const title = document.getElementById('kpi-title').value.trim();
         const content = document.getElementById('kpi-content').value.trim();
         if(!title || !content) { alert('Isi judul dan konten!'); return; }
-        const ts = getStrictTimestamp();
-        const record = { 
-            author: currentUser.name, title: title, content: content, 
-            date: ts.date, created_at: ts.created_at 
-        };
+        const record = { author: currentUser.name, title: title, content: content, date: new Date().toLocaleDateString('id-ID') };
         BULLETIN_DB.unshift(record);
         localStorage.setItem('AMP_BULLETIN_DB', JSON.stringify(BULLETIN_DB));
         renderBulletinLogs();
@@ -1654,33 +1615,29 @@
         }
     }
 
+    // FUNGSI REKAP ABSENSI KHUSUS ADMIN (MENAMPUNG SEMUA KORLAP/KARYAWAN)
     function exportToExcel() {
-    // Validasi Keamanan: Hanya HeadOfOp atau Admin yang diizinkan mengunduh rekap lengkap
-    if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-        alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap absensi seluruh tim.');
-        return;
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
+            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap absensi seluruh tim.');
+            return;
+        }
+
+        const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
+
+        if (allAttendance.length === 0) {
+            alert('Belum ada data absensi yang tercatat di sistem.');
+            return;
+        }
+
+        let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Lengkap,Jabatan/Role,Site/Lokasi,Tipe Absen,Tanggal,Waktu,Koordinat GPS\n";
+        
+        allAttendance.forEach(r => {
+            csv += `${r.user_id || r.id},"${r.name}","${r.role}","${r.site || 'PLN'}",${r.type},${r.date},${r.time},"${r.gps}"\n`;
+        });
+
+        downloadCSV(csv, `Rekap_Absensi_Semua_Korlap_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        writeLog('✓ Admin berhasil mengunduh rekap absensi lengkap seluruh korlap.');
     }
-
-    // Ambil data terbaru dari localStorage
-    const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
-
-    if (allAttendance.length === 0) {
-        alert('Belum ada data absensi yang tercatat di sistem.');
-        return;
-    }
-
-    // Buat header file CSV
-    let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Lengkap,Jabatan/Role,Site/Lokasi,Tipe Absen,Tanggal,Waktu,Koordinat GPS\n";
-    
-    // Masukkan seluruh baris data absensi dari semua korlap & TAD
-    allAttendance.forEach(r => {
-        csv += `${r.user_id || r.id},"${r.name}","${r.role}","${r.site || 'PLN'}",${r.type},${r.date},${r.time},"${r.gps}"\n`;
-    });
-
-    // Proses unduh file .CSV
-    downloadCSV(csv, `Rekap_Absensi_Semua_Korlap_AMP_${new Date().toISOString().slice(0,10)}.csv`);
-    writeLog('✓ Admin berhasil mengunduh rekap absensi lengkap seluruh korlap.');
-}
 
     function exportMCPToCSV() {
         let csv = "data:text/csv;charset=utf-8,ID,Nama,Tanggal,Jumlah Item,Status\n";
