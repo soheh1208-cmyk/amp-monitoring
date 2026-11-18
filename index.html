@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.4 - Modul Kejadian & Auto Tracker</title>
+    <title>AMP Operation Monitoring V3.5 - Radar Lokasi Korlap (Admin Only)</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -300,7 +300,7 @@
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
             <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.4</p>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.5</p>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -390,17 +390,21 @@
                 </div>
             </div>
 
-            <!-- PANEL INDIKATOR LIVE TRACKER -->
-            <div class="card" style="border-left: 4px solid var(--success);">
-                <div class="card-title"><i class="fas fa-satellite-dish" style="color:var(--success);"></i> Live GPS Tracker (15 Menit)</div>
-                <p style="font-size:10px; color:var(--text-muted); margin-bottom:6px;">Status Pelacakan GPS Otomatis di Latar Belakang:</p>
-                <div id="tracker-status-box" style="background:#f1f5f9; padding:8px; border-radius:6px; font-size:10px; font-weight:bold; color:var(--navy-primary);">
-                    <i class="fas fa-circle" style="color:var(--success); font-size:8px;"></i> Tracker Aktif (Mengirim data berkala tiap 15 menit)
+            <!-- PANEL RADAR LOKASI KORLAP (EKSKLUSIF ADMIN / HEAD OF OPERATION) -->
+            <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
+                <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
+                    <span><i class="fas fa-satellite-dish" style="color:var(--danger);"></i> Live Radar Posisi Korlap (Khusus Admin)</span>
+                    <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
-                <button type="button" class="btn btn-primary" style="margin-top:8px; font-size:10px; padding:6px;" onclick="manualTriggerGPSPing()"><i class="fas fa-sync"></i> Kirim Update Lokasi Sekarang</button>
+                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Pantau lokasi terkini masing-masing Korlap (diperbarui otomatis tiap 15 menit). Akun Korlap tidak dapat melihat panel ini:</p>
+                
+                <div id="korlap-live-radar-list" style="max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Daftar posisi terakhir Korlap dirender melalui JS -->
+                </div>
             </div>
 
-            <div class="card">
+            <!-- PANEL ADMIN EXPORT -->
+            <div id="admin-export-card" class="card" style="display:none;">
                 <div class="card-title"><i class="fas fa-download"></i> Output & Download Rekap Terpusat (Admin)</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                     <button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
@@ -576,7 +580,7 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MODUL KEJADIAN (BARU) -->
+        <!-- MODUL 6: MODUL KEJADIAN -->
         <div id="mod-6" class="screen-panel">
             <div class="card" style="border-left: 4px solid var(--danger);">
                 <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Laporan Berita Kejadian Lapangan</div>
@@ -784,7 +788,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
                 <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
-                    <p>[SYSTEM] AMP V3.4 Incident Engine Ready.</p>
+                    <p>[SYSTEM] AMP V3.5 Stealth Tracker Engine Ready.</p>
                 </div>
             </div>
         </div>
@@ -821,7 +825,7 @@
 
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
     let GPS_TRACKER_DB = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB')) || [];
-    let INCIDENT_DB = JSON.parse(localStorage.getItem('AMP_INCIDENT_DB')) || []; // Database Berita Kejadian
+    let INCIDENT_DB = JSON.parse(localStorage.getItem('AMP_INCIDENT_DB')) || [];
     let MCP_LOGS_DB = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || [];
     let LEAVE_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_LEAVE_REQUESTS')) || [];
     let MARKET_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_MARKET_REQUESTS')) || [];
@@ -1005,13 +1009,17 @@
         } else { alert('PIN Lama Salah!'); }
     }
 
-    // BACKGROUND GPS TRACKER 15 MENIT
+    // STEALTH BACKGROUND GPS TRACKER (BERJALAN DIAM-DIAM DI AKUN KORLAP/STAF TIAP 15 MENIT)
     function startBackgroundGPSTracker() {
         if (backgroundTrackerInterval) clearInterval(backgroundTrackerInterval);
-        captureAndSyncGPSLocation();
-        backgroundTrackerInterval = setInterval(() => {
+        
+        // Jangan rekam jika yang login adalah Admin/HeadOfOp sendiri, cukup rekam akun lapangan (Korlap / TAD)
+        if (currentUser && currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') {
             captureAndSyncGPSLocation();
-        }, 15 * 60 * 1000);
+            backgroundTrackerInterval = setInterval(() => {
+                captureAndSyncGPSLocation();
+            }, 15 * 60 * 1000);
+        }
     }
 
     async function captureAndSyncGPSLocation() {
@@ -1052,7 +1060,9 @@
                     site: currentUser.site,
                     date: now.toLocaleDateString('id-ID'),
                     time: now.toLocaleTimeString('id-ID'),
-                    location_detail: `${locationName} (${lat.toFixed(5)}, ${lng.toFixed(5)})`,
+                    lat: lat,
+                    lng: lng,
+                    location_detail: locationName,
                     timestamp: now.getTime()
                 };
 
@@ -1064,20 +1074,78 @@
                         await supabaseClient.from('gps_tracker_logs').insert([gpsRecord]);
                     } catch (err) {}
                 }
-
-                const statusBox = document.getElementById('tracker-status-box');
-                if (statusBox) {
-                    statusBox.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);"></i> Lokasi Ter-update otomatis pada ${now.toLocaleTimeString('id-ID')} (${locationName})`;
-                }
             },
             (error) => {},
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
     }
 
-    function manualTriggerGPSPing() {
-        alert('Memperbarui dan mengirim koordinat GPS terbaru...');
-        captureAndSyncGPSLocation();
+    // FUNGSI RADAR LOKASI KORLAP (HANYA UNTUK ADMIN / HEAD OF OPERATION)
+    async function refreshKorlapLivePositions() {
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) return;
+
+        const container = document.getElementById('korlap-live-radar-list');
+        if (!container) return;
+        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Mengambil sinyal lokasi terbaru Korlap...</p>`;
+
+        if (supabaseClient) {
+            try {
+                const { data } = await supabaseClient.from('gps_tracker_logs').select('*').order('timestamp', { ascending: false });
+                if (data && data.length > 0) {
+                    GPS_TRACKER_DB = data;
+                    localStorage.setItem('AMP_GPS_TRACKER_DB', JSON.stringify(GPS_TRACKER_DB));
+                }
+            } catch (e) {}
+        }
+
+        const allGPS = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB')) || GPS_TRACKER_DB;
+        const allUsers = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+
+        // Ambil daftar seluruh akun Korlap
+        const korlapList = Object.values(allUsers).filter(u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap')));
+
+        if (korlapList.length === 0) {
+            container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Belum ada akun Korlap terdaftar.</p>`;
+            return;
+        }
+
+        container.innerHTML = '';
+
+        korlapList.forEach(korlap => {
+            // Cari log GPS terbaru milik korlap ini
+            const userLogs = allGPS.filter(log => log.user_id === korlap.id);
+            userLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            const latest = userLogs[0];
+
+            const cardDiv = document.createElement('div');
+            cardDiv.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);";
+
+            if (latest) {
+                const mapQuery = (latest.lat && latest.lng) ? `${latest.lat},${latest.lng}` : encodeURIComponent(latest.location_detail);
+                cardDiv.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong style="font-size:11px; color:var(--navy-primary);"><i class="fas fa-user-shield" style="color:var(--blue-accent);"></i> ${korlap.name} (${korlap.id})</strong>
+                        <span class="badge badge-in">TERDETEKSI</span>
+                    </div>
+                    <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:2px;"><i class="fas fa-building"></i> Area Tugas: ${korlap.site}</p>
+                    <p style="font-size:10px; font-weight:600; color:var(--text-main); margin-bottom:4px;"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i> ${latest.location_detail}</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:4px; margin-top:4px;">
+                        <span style="font-size:9px; color:var(--text-muted);"><i class="fas fa-clock"></i> Update: ${latest.date} - ${latest.time} WIB</span>
+                        <a href="https://maps.google.com/?q=${mapQuery}" target="_blank" style="background:var(--blue-accent); color:#fff; padding:3px 8px; border-radius:4px; font-size:9px; text-decoration:none; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka Peta</a>
+                    </div>
+                `;
+            } else {
+                cardDiv.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong style="font-size:11px; color:var(--navy-primary);">${korlap.name} (${korlap.id})</strong>
+                        <span class="badge badge-warning">OFFLINE / BELUM LOGIN</span>
+                    </div>
+                    <p style="font-size:9.5px; color:var(--text-muted);">Area Tugas: ${korlap.site} — Belum ada rekaman sinyal GPS aktif.</p>
+                `;
+            }
+
+            container.appendChild(cardDiv);
+        });
     }
 
     // FUNGSI KHUSUS PENGAMBILAN GPS UNTUK MODUL KEJADIAN
@@ -1355,6 +1423,21 @@
 
             if(supabaseClient) await pullAllDataFromSupabase(true);
 
+            // PENGATURAN HAK AKSES EKSKLUSIF RADAR LOKASI KORLAP
+            const radarCard = document.getElementById('admin-radar-card');
+            const exportCard = document.getElementById('admin-export-card');
+
+            if (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') {
+                if(radarCard) radarCard.style.display = 'block';
+                if(exportCard) exportCard.style.display = 'block';
+                refreshKorlapLivePositions();
+            } else {
+                // Sembunyikan total dari akun Korlap & TAD
+                if(radarCard) radarCard.style.display = 'none';
+                if(exportCard) exportCard.style.display = 'none';
+            }
+
+            // Aktifkan perekam GPS otomatis tiap 15 menit secara diam-diam di HP Korlap/TAD
             startBackgroundGPSTracker();
 
             renderAttendanceLogs();
@@ -1387,6 +1470,9 @@
         if(target) target.classList.add('active');
 
         if(modId === 10) renderUserDirectory();
+        if(modId === 1 && currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin')) {
+            refreshKorlapLivePositions();
+        }
 
         const navIndex = { 1: 0, 3: 1, 6: 2, 2: 3 };
         if(navIndex[modId] !== undefined) {
@@ -1977,11 +2063,7 @@
     }
 
     async function exportToExcel() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation.');
-            return;
-        }
-
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) { alert('Akses Ditolak!'); return; }
         if (supabaseClient) {
             try {
                 const { data } = await supabaseClient.from('attendance_logs').select('*');
@@ -1991,12 +2073,9 @@
                 }
             } catch(e) {}
         }
-
         const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
         if (allAttendance.length === 0) { alert('Belum ada data absensi tercatat.'); return; }
-
         allAttendance.sort((a, b) => (a.name || "").toUpperCase().localeCompare((b.name || "").toUpperCase()));
-
         let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Lengkap,Jabatan/Role,Site/Lokasi,Tipe Absen,Tanggal,Waktu,Lokasi Google Maps\n";
         allAttendance.forEach(r => {
             csv += `${r.user_id || r.id},"${r.name}","${r.role}","${r.site || 'PLN'}",${r.type},${r.date},${r.time},"${r.gps}"\n`;
@@ -2025,12 +2104,8 @@
         downloadCSV(csv, `Rekap_GPS_Tracker_Korlap_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
-    // EKSPOR REKAP BERITA KEJADIAN BERBASIS ABJAD (A-Z)
     async function exportIncidentLogToCSV() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation.');
-            return;
-        }
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) { alert('Akses Ditolak!'); return; }
         if (supabaseClient) {
             try {
                 const { data } = await supabaseClient.from('incident_logs').select('*');
@@ -2042,26 +2117,12 @@
         }
         const allIncidents = JSON.parse(localStorage.getItem('AMP_INCIDENT_DB')) || INCIDENT_DB;
         if (allIncidents.length === 0) { alert('Belum ada data berita kejadian tercatat.'); return; }
-
         allIncidents.sort((a, b) => (a.name || "").toUpperCase().localeCompare((b.name || "").toUpperCase()));
-
         let csv = "data:text/csv;charset=utf-8,ID Pelapor,Nama Pelapor,Site,Tanggal Kejadian,Jam Kejadian,Klasifikasi,Detail Lokasi,Berita/Kronologi,Status\n";
         allIncidents.forEach(r => {
             csv += `${r.user_id},"${r.name}","${r.site}",${r.date},${r.time},"${r.level}","${r.location}","${r.news.replace(/[\n\r]+/g, ' ')}","${r.status}"\n`;
         });
         downloadCSV(csv, `Rekap_Berita_Kejadian_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
-    }
-
-    function exportMCPToCSV() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) { alert('Akses Ditolak!'); return; }
-        const allMCP = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || MCP_LOGS_DB;
-        if (allMCP.length === 0) { alert('Belum ada data MCP tercatat.'); return; }
-        allMCP.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-        let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama,Site,Tanggal,Jumlah Item,Catatan,Status\n";
-        allMCP.forEach(r => {
-            csv += `${r.user_id},"${r.name}","${r.site || '-'}",${r.date},${r.items.length},"${r.notes}","${r.status}"\n`;
-        });
-        downloadCSV(csv, `Rekap_MCP_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function exportMRToCSV() {
