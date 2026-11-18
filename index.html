@@ -472,7 +472,6 @@
 
                 <button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Nyalakan Kamera Live</button>
                 <button type="button" class="btn btn-primary" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
-                <!-- Input file galeri DIHAPUS TOTAL agar karyawan wajib live foto -->
 
                 <div style="margin-top:10px;" class="form-group">
                     <button type="button" class="btn btn-warning" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> Tarik GPS Real Google Maps</button>
@@ -772,6 +771,7 @@
         if (savedUrl && savedKey) {
             initSupabase(savedUrl, savedKey);
             await pullUsersFromSupabase(true);
+            await pullAllDataFromSupabase(true); // Otomatis tarik semua data absen & log dari cloud saat dimuat
         }
         
         const mcpDateEl = document.getElementById('mcp-date');
@@ -812,10 +812,7 @@
     }
 
     async function pullUsersFromSupabase(silent = false) {
-        if (!supabaseClient) {
-            if (!silent) alert('Supabase belum dikonfigurasi di Modul 13!');
-            return;
-        }
+        if (!supabaseClient) return;
         try {
             const { data, error } = await supabaseClient.from('user_directory').select('*');
             if (error) throw error;
@@ -827,14 +824,29 @@
                 USER_DATABASE = currentDB;
                 localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
                 renderUserDirectory();
-                writeLog(`✓ Berhasil menarik ${data.length} data personil dari Cloud.`);
-                if (!silent) alert(`Sinkronisasi Tim Berhasil! ${data.length} akun termuat.`);
-            } else {
-                if (!silent) alert('Belum ada data tim tambahan di server Cloud.');
             }
         } catch (err) {
-            writeLog('⚠ Gagal menarik user cloud: ' + err.message);
-            if (!silent) alert('Gagal menarik data: ' + err.message);
+            console.warn('Gagal sinkronisasi user: ' + err.message);
+        }
+    }
+
+    // Fungsi otomatis menarik data absensi terbaru dari Cloud Supabase agar rekap selalu terintegrasi lengkap
+    async function pullAllDataFromSupabase(silent = false) {
+        if (!supabaseClient) {
+            if (!silent) alert('Supabase belum dikonfigurasi!');
+            return;
+        }
+        try {
+            const { data, error } = await supabaseClient.from('attendance_logs').select('*');
+            if (error) throw error;
+            if (data && data.length > 0) {
+                CENTRAL_ATTENDANCE_DB = data;
+                localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
+                renderAttendanceLogs();
+                if (!silent) alert(`Berhasil menarik ${data.length} data absensi dari Cloud.`);
+            }
+        } catch (err) {
+            if (!silent) alert('Gagal menarik data absensi cloud: ' + err.message);
         }
     }
 
@@ -889,14 +901,11 @@
         if(supabaseClient) {
             try {
                 await supabaseClient.from('user_directory').upsert([newUser]);
-                writeLog(`✓ Akun baru ${id} terkirim ke Cloud Supabase.`);
-            } catch(e) {
-                writeLog(`⚠ Gagal kirim cloud: ${e.message}`);
-            }
+            } catch(e) {}
         }
 
         renderUserDirectory();
-        alert(`Akun Baru Berhasil Dibuat & Masuk ke Tim!\nNIP: ${id}\nNama: ${name}\nSilakan Login menggunakan NIP dan PIN Anda.`);
+        alert(`Akun Baru Berhasil Dibuat!\nNIP: ${id}\nNama: ${name}`);
         
         document.getElementById('reg-name').value = '';
         document.getElementById('reg-id').value = '';
@@ -998,6 +1007,8 @@
 
             document.getElementById('mr-number').value = generateMRNumber();
 
+            if(supabaseClient) await pullAllDataFromSupabase(true);
+
             renderAttendanceLogs();
             renderUserDirectory();
             renderLeaveLogs();
@@ -1009,7 +1020,7 @@
             renderOutstandingLogs();
             renderBulletinLogs();
         } else {
-            alert('ID Karyawan / NIP atau PIN Salah! Pastikan huruf dan angka sesuai.');
+            alert('ID Karyawan / NIP atau PIN Salah!');
         }
     }
 
@@ -1041,7 +1052,7 @@
             video.style.display = 'block';
             document.getElementById('camera-placeholder').style.display = 'none';
             document.getElementById('photo-preview').style.display = 'none';
-        } catch (err) { alert('Gunakan kamera perangkat secara langsung. Akses kamera diblokir.'); }
+        } catch (err) { alert('Gunakan kamera perangkat secara langsung.'); }
     }
 
     function takeSnapshot() {
@@ -1059,7 +1070,6 @@
         } else { alert('Nyalakan kamera live terlebih dahulu.'); }
     }
 
-    // GPS REAL DENGAN NAMA GEDUNG & KECAMATAN (REVERSE GEOCODING GOOGLE MAPS STYLE)
     async function getRealtimeGPS() {
         const coordsInput = document.getElementById('gps-coords');
         const gmapsLinkBox = document.getElementById('gmaps-link-box');
@@ -1078,38 +1088,33 @@
                 let locationName = `GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
                 try {
-                    // Ambil detail nama lokasi/gedung/kecamatan dari server peta publik
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+                        headers: { 'Accept-Language': 'id' }
+                    });
                     const data = await response.json();
                     if (data && data.address) {
                         const addr = data.address;
                         const building = addr.building || addr.amenity || addr.office || addr.shop || addr.road || '';
                         const village = addr.village || addr.suburb || addr.hamlet || '';
                         const district = addr.city_district || addr.town || addr.municipality || addr.city || '';
-                        const state = addr.state || '';
                         
                         let parts = [];
                         if (building) parts.push(building);
                         if (village) parts.push(village);
                         if (district) parts.push(district);
-                        if (state) parts.push(state);
 
-                        if (parts.length > 0) {
-                            locationName = parts.join(', ');
-                        }
+                        if (parts.length > 0) locationName = parts.join(', ');
                     }
-                } catch (e) {
-                    console.warn("Gagal meresolusi nama alamat: " + e.message);
-                }
+                } catch (e) {}
 
                 coordsInput.value = `${locationName} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
                 gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka Peta Google Maps</a>`;
             },
             (error) => {
                 coordsInput.value = `Site ${currentUser.site} (-6.17539, 106.82715)`;
-                gmapsLinkBox.innerHTML = `<span style="color:var(--warning); font-size:9px;">⚠ Gagal mendeteksi koordinat GPS presisi. Menggunakan site standar.</span>`;
+                gmapsLinkBox.innerHTML = `<span style="color:var(--warning); font-size:9px;">⚠ Sinyal GPS lemah. Menggunakan site standar.</span>`;
             },
-            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
         );
     }
 
@@ -1190,7 +1195,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('market_requests').insert([record]); } catch(e) {}
         }
-        alert(`Market Request ${mrNo} Dikirim! Menunggu Approve Admin.`);
+        alert(`Market Request ${mrNo} Dikirim!`);
         document.getElementById('mr-details').value = '';
         document.getElementById('mr-cost').value = '';
         document.getElementById('mr-number').value = generateMRNumber();
@@ -1203,7 +1208,7 @@
         });
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
-        alert('Market Request disetujui (Approved)!');
+        alert('Market Request disetujui!');
     }
 
     function renderMarketRequests() {
@@ -1243,7 +1248,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('leave_requests').insert([record]); } catch(e) {}
         }
-        alert('Pengajuan izin/cuti terkirim! Menunggu Approve Admin.');
+        alert('Pengajuan cuti terkirim!');
         document.getElementById('leave-reason').value = '';
     }
 
@@ -1252,7 +1257,7 @@
         LEAVE_REQUESTS_DB[index].status = "Approved by Admin";
         localStorage.setItem('AMP_LEAVE_REQUESTS', JSON.stringify(LEAVE_REQUESTS_DB));
         renderLeaveLogs();
-        alert('Cuti disetujui (Approved)!');
+        alert('Cuti disetujui!');
     }
 
     function renderLeaveLogs() {
@@ -1310,7 +1315,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('mcp_logs').insert([record]); } catch(e) {}
         }
-        alert('Checklist MCP berhasil dikirim ke Admin untuk divalidasi!');
+        alert('Checklist MCP berhasil dikirim ke Admin!');
         document.getElementById('mcp-notes').value = '';
     }
 
@@ -1319,7 +1324,7 @@
         MCP_LOGS_DB[index].status = "Verified & Approved";
         localStorage.setItem('AMP_MCP_LOGS', JSON.stringify(MCP_LOGS_DB));
         renderMCPLogs();
-        alert('MCP disetujui (Approved)!');
+        alert('MCP disetujui!');
     }
 
     function renderMCPLogs() {
@@ -1356,7 +1361,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('checklist_logs').insert([record]); } catch(e) {}
         }
-        alert('Checklist area berhasil disubmit! Menunggu Approve Admin.');
+        alert('Checklist area berhasil disubmit!');
     }
 
     function approveChecklist(index) {
@@ -1364,7 +1369,7 @@
         CHECKLIST_DB[index].status = "Approved by Admin";
         localStorage.setItem('AMP_CHECKLIST_DB', JSON.stringify(CHECKLIST_DB));
         renderChecklistLogs();
-        alert('Checklist disetujui (Approved)!');
+        alert('Checklist disetujui!');
     }
 
     function renderChecklistLogs() {
@@ -1398,7 +1403,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('k3_permits').insert([record]); } catch(e) {}
         }
-        alert('Permit K3 High Risk diajukan! Menunggu Approve Admin.');
+        alert('Permit K3 High Risk diajukan!');
     }
 
     function approveK3(index) {
@@ -1406,7 +1411,7 @@
         K3_PERMITS_DB[index].status = "Safety Approved & Verified";
         localStorage.setItem('AMP_K3_PERMITS_DB', JSON.stringify(K3_PERMITS_DB));
         renderK3Logs();
-        alert('Work Permit K3 disetujui (Approved)!');
+        alert('Work Permit K3 disetujui!');
     }
 
     function renderK3Logs() {
@@ -1430,14 +1435,14 @@
     // MODUL 9: DATA TIM & HAPUS AKUN
     async function deleteUserFromDirectory(userId) {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses ditolak! Hanya Admin yang dapat menghapus akun.');
+            alert('Akses ditolak!');
             return;
         }
         if (userId === currentUser.id || userId === 'AMP001') {
             alert('Akun utama Admin tidak dapat dihapus!');
             return;
         }
-        if (confirm(`Apakah Anda yakin ingin menghapus akun/ID ${userId} (${USER_DATABASE[userId].name}) dari Data Tim?`)) {
+        if (confirm(`Apakah Anda yakin ingin menghapus akun ${userId} dari Data Tim?`)) {
             delete USER_DATABASE[userId];
             localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
             if (supabaseClient) {
@@ -1488,7 +1493,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('equipment_logs').insert([record]); } catch(e) {}
         }
-        alert('Log equipment berhasil disimpan! Menunggu Approve Admin.');
+        alert('Log equipment berhasil disimpan!');
     }
 
     function approveEquipment(index) {
@@ -1496,7 +1501,7 @@
         EQUIPMENT_DB[index].approval = "Verified by Admin";
         localStorage.setItem('AMP_EQUIPMENT_DB', JSON.stringify(EQUIPMENT_DB));
         renderEquipmentLogs();
-        alert('Equipment log disetujui (Approved)!');
+        alert('Equipment log disetujui!');
     }
 
     function renderEquipmentLogs() {
@@ -1578,7 +1583,7 @@
         if(supabaseClient) {
             try { await supabaseClient.from('bulletin_logs').insert([record]); } catch(e) {}
         }
-        alert('Bulletin & KPI dipublikasikan!');
+        alert('Bulletin dipublikasikan!');
         document.getElementById('kpi-title').value = '';
         document.getElementById('kpi-content').value = '';
     }
@@ -1619,69 +1624,89 @@
         }
     }
 
-    // PUSAT REKAP TERINTEGRASI HANYA UNTUK AKUN ADMIN / HEAD OF OPS
-    function exportToExcel() {
+    // PUSAT REKAP ABSENSI TERINTEGRASI (URUT ABJAD A-Z NAMA KORLAP)
+    async function exportToExcel() {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
             alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap absensi seluruh tim.');
             return;
         }
 
+        // Pastikan menarik data terbaru dari cloud sebelum diexport ke excel
+        if (supabaseClient) {
+            try {
+                const { data } = await supabaseClient.from('attendance_logs').select('*');
+                if (data && data.length > 0) {
+                    CENTRAL_ATTENDANCE_DB = data;
+                    localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
+                }
+            } catch(e) {}
+        }
+
         const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
         if (allAttendance.length === 0) { alert('Belum ada data absensi tercatat.'); return; }
+
+        // URUTKAN BERDASARKAN NAMA KORLAP/KARYAWAN SECARA ABJAD (A - Z)
+        allAttendance.sort((a, b) => {
+            let nameA = (a.name || "").toUpperCase();
+            let nameB = (b.name || "").toUpperCase();
+            if (nameA < nameB) return -1;
+            if (nameA > nameB) return 1;
+            return 0;
+        });
 
         let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Lengkap,Jabatan/Role,Site/Lokasi,Tipe Absen,Tanggal,Waktu,Lokasi Google Maps\n";
         allAttendance.forEach(r => {
             csv += `${r.user_id || r.id},"${r.name}","${r.role}","${r.site || 'PLN'}",${r.type},${r.date},${r.time},"${r.gps}"\n`;
         });
-        downloadCSV(csv, `Rekap_Absensi_Semua_Tim_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_Absensi_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function exportMCPToCSV() {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap MCP.');
-            return;
+            alert('Akses Ditolak!'); return;
         }
-
         const allMCP = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || MCP_LOGS_DB;
         if (allMCP.length === 0) { alert('Belum ada data MCP tercatat.'); return; }
+
+        allMCP.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
         let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama,Site,Tanggal,Jumlah Item,Catatan,Status\n";
         allMCP.forEach(r => {
             csv += `${r.user_id},"${r.name}","${r.site || '-'}",${r.date},${r.items.length},"${r.notes}","${r.status}"\n`;
         });
-        downloadCSV(csv, `Rekap_MCP_Semua_Tim_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_MCP_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function exportCutiToCSV() {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap Cuti.');
-            return;
+            alert('Akses Ditolak!'); return;
         }
-
         const allCuti = JSON.parse(localStorage.getItem('AMP_LEAVE_REQUESTS')) || LEAVE_REQUESTS_DB;
         if (allCuti.length === 0) { alert('Belum ada data cuti/izin tercatat.'); return; }
+
+        allCuti.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
         let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama,Jenis Cuti,Alasan,Status,Tanggal\n";
         allCuti.forEach(r => {
             csv += `${r.user_id || r.id},"${r.name}","${r.type}","${r.reason}","${r.status}",${r.date}\n`;
         });
-        downloadCSV(csv, `Rekap_Cuti_Semua_Tim_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_Cuti_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function exportMRToCSV() {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap MR.');
-            return;
+            alert('Akses Ditolak!'); return;
         }
-
         const allMR = JSON.parse(localStorage.getItem('AMP_MARKET_REQUESTS')) || MARKET_REQUESTS_DB;
         if (allMR.length === 0) { alert('Belum ada data Market Request tercatat.'); return; }
+
+        allMR.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
         let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status,Tanggal\n";
         allMR.forEach(r => {
             csv += `${r.mr_id},"${r.name}","${r.site}","${r.category}",${r.priority},"${r.details}","${r.cost}","${r.status}",${r.date}\n`;
         });
-        downloadCSV(csv, `Rekap_MR_Semua_Tim_AMP_${new Date().toISOString().slice(0,10)}.csv`);
+        downloadCSV(csv, `Rekap_MR_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
     function downloadCSV(csvData, filename) {
