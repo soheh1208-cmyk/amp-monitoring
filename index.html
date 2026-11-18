@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.1 - Full Integrated MCP & Cloud Sync</title>
+    <title>AMP Operation Monitoring V3.4 - Modul Kejadian & Auto Tracker</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -300,7 +300,7 @@
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
             <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.1</p>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.4</p>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -363,7 +363,7 @@
             </div>
             
             <div style="display:flex; align-items:center; gap:6px;">
-                <div class="sync-badge" onclick="showModule(13)" title="Buka Pusat Sinkronisasi Supabase">
+                <div class="sync-badge" onclick="showModule(14)" title="Buka Pusat Sinkronisasi Supabase">
                     <i class="fas fa-database" id="sync-icon"></i> <span id="sync-badge-text">Sync</span>
                 </div>
                 <div class="user-badge">
@@ -383,47 +383,62 @@
                         <p id="dash-user-role" style="font-size:10px; color:#d97706;">Head Of Operation</p>
                         <p id="dash-user-site" style="font-size:9px; opacity:0.8; margin-top:4px;"><i class="fas fa-building"></i> Site: Pusat / All Sites</p>
                     </div>
-                    <i class="fas fa-id-badge fa-3x" style="color:#d97706; opacity:0.5;"></i>
+                    <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center;">
+                        <img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
+                        <i class="fas fa-user-tie" id="dash-avatar-icon" style="font-size:24px; color:var(--navy-primary);"></i>
+                    </div>
                 </div>
+            </div>
+
+            <!-- PANEL INDIKATOR LIVE TRACKER -->
+            <div class="card" style="border-left: 4px solid var(--success);">
+                <div class="card-title"><i class="fas fa-satellite-dish" style="color:var(--success);"></i> Live GPS Tracker (15 Menit)</div>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:6px;">Status Pelacakan GPS Otomatis di Latar Belakang:</p>
+                <div id="tracker-status-box" style="background:#f1f5f9; padding:8px; border-radius:6px; font-size:10px; font-weight:bold; color:var(--navy-primary);">
+                    <i class="fas fa-circle" style="color:var(--success); font-size:8px;"></i> Tracker Aktif (Mengirim data berkala tiap 15 menit)
+                </div>
+                <button type="button" class="btn btn-primary" style="margin-top:8px; font-size:10px; padding:6px;" onclick="manualTriggerGPSPing()"><i class="fas fa-sync"></i> Kirim Update Lokasi Sekarang</button>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-download"></i> Output & Download Rekap Terpusat (Admin)</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                     <button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
-                    <button type="button" class="btn btn-primary" onclick="exportMCPToCSV()"><i class="fas fa-file-csv"></i> Rekap MCP (.CSV)</button>
-                    <button type="button" class="btn btn-warning" onclick="exportCutiToCSV()"><i class="fas fa-file-alt"></i> Rekap Izin/Cuti (.CSV)</button>
+                    <button type="button" class="btn btn-primary" onclick="exportGPSLogToCSV()"><i class="fas fa-map-marked-alt"></i> Rekap GPS Korlap (.CSV)</button>
+                    <button type="button" class="btn btn-warning" onclick="exportIncidentLogToCSV()"><i class="fas fa-file-alt"></i> Rekap Kejadian (.CSV)</button>
                     <button type="button" class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-title"><i class="fas fa-th-large"></i> 13 Modul Terintegrasi</div>
-                <div class="modules-grid">
+                <div class="card-title"><i class="fas fa-th-large"></i> 14 Modul Terintegrasi</div>
+                <div class="modules-grid" style="grid-template-columns: repeat(4, 1fr);">
                     <div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
                     <div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
                     <div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
                     <div class="module-item" onclick="showModule(4)"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label">MR (Req)</div></div>
                     <div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin & Cuti</div></div>
-                    <div class="module-item" onclick="showModule(6)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
-                    <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
-                    <div class="module-item" onclick="showModule(8)"><div class="module-icon"><i class="fas fa-hard-hat"></i></div><div class="module-label">High Risk K3</div></div>
-                    <div class="module-item" onclick="showModule(9)"><div class="module-icon"><i class="fas fa-users"></i></div><div class="module-label">Data Tim</div></div>
-                    <div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
-                    <div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label">Outstanding</div></div>
-                    <div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI & News</div></div>
-                    <div class="module-item" onclick="showModule(13)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
+                    <div class="module-item" onclick="showModule(6)"><div class="module-icon" style="background:var(--danger); color:#fff;"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label" style="color:var(--danger); font-weight:bold;">Kejadian</div></div>
+                    <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
+                    <div class="module-item" onclick="showModule(8)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
+                    <div class="module-item" onclick="showModule(9)"><div class="module-icon"><i class="fas fa-hard-hat"></i></div><div class="module-label">High Risk K3</div></div>
+                    <div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-users"></i></div><div class="module-label">Data Tim</div></div>
+                    <div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
+                    <div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-exclamation-circle"></i></div><div class="module-label">Outstanding</div></div>
+                    <div class="module-item" onclick="showModule(13)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI & News</div></div>
+                    <div class="module-item" onclick="showModule(14)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
                 </div>
             </div>
         </div>
 
-        <!-- MODUL 2: PROFIL -->
+        <!-- MODUL 2: PROFIL & EDIT FOTO PROFIL -->
         <div id="mod-2" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-id-card"></i> Identitas & Digital ID Card Karyawan</div>
                 <div style="text-align:center; padding:10px;">
-                    <div style="width:70px; height:70px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 10px;">
-                        <i class="fas fa-user-tie"></i>
+                    <div id="profile-avatar-display" style="width:80px; height:80px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 10px; overflow:hidden; border:3px solid var(--gold-accent); position:relative;">
+                        <img id="prof-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
+                        <i class="fas fa-user-tie" id="prof-avatar-icon"></i>
                     </div>
                     <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M. Soheh</h3>
                     <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">NIP: AMP001</p>
@@ -436,9 +451,34 @@
                 </div>
             </div>
 
-            <!-- FORM EDIT PROFIL MANDIRI -->
+            <div class="card" style="border-top: 3px solid var(--gold-accent);">
+                <div class="card-title"><i class="fas fa-camera-retro"></i> Edit Foto Profil Anda</div>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Pilih ambil foto langsung dari kamera perangkat atau unggah dari galeri:</p>
+                
+                <div class="camera-box" style="height: 160px; margin-bottom: 8px;">
+                    <video id="profile-webcam" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+                    <img id="profile-photo-preview" src="" style="display:none; width:100%; height:100%; object-fit:cover;" />
+                    <div id="profile-cam-placeholder" style="color:#fff; text-align:center;">
+                        <i class="fas fa-user-circle fa-2x" style="margin-bottom:6px; color:var(--gold-accent);"></i>
+                        <p style="font-size:9.5px;">Pratinjau Foto Profil</p>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
+                    <button type="button" class="btn btn-outline" style="font-size:10px; padding:8px;" onclick="startProfileWebcam()"><i class="fas fa-video"></i> Buka Kamera</button>
+                    <button type="button" class="btn btn-primary" style="font-size:10px; padding:8px;" onclick="captureProfileSnapshot()"><i class="fas fa-camera"></i> Ambil Foto</button>
+                </div>
+
+                <div class="form-group" style="margin-top:6px;">
+                    <label style="font-size:10px; font-weight:bold;"><i class="fas fa-image"></i> Atau Unggah Foto dari Galeri Perangkat</label>
+                    <input type="file" id="profile-gallery-input" accept="image/*" class="form-control" onchange="loadProfileFromGallery(event)" style="font-size:10px; padding:6px;">
+                </div>
+
+                <button type="button" class="btn btn-success" style="margin-top:8px;" onclick="saveProfileAvatar()"><i class="fas fa-save"></i> SIMPAN FOTO PROFIL BARU</button>
+            </div>
+
             <div class="card">
-                <div class="card-title"><i class="fas fa-user-edit"></i> Edit Profil Saya</div>
+                <div class="card-title"><i class="fas fa-user-edit"></i> Edit Informasi Profil</div>
                 <div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control"></div>
                 <div class="form-group"><label>Jabatan</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
                 <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="edit-prof-site" class="form-control"></div>
@@ -536,8 +576,50 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MCP CLEANING -->
+        <!-- MODUL 6: MODUL KEJADIAN (BARU) -->
         <div id="mod-6" class="screen-panel">
+            <div class="card" style="border-left: 4px solid var(--danger);">
+                <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Laporan Berita Kejadian Lapangan</div>
+                <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Laporkan insiden, temuan darurat, atau kejadian khusus secara real-time:</p>
+                
+                <div class="form-group">
+                    <label>Judul / Perihal Kejadian</label>
+                    <input type="text" id="inc-title" class="form-control" placeholder="Contoh: Kebocoran Pipa Utama / Kendala Alat Scrubber">
+                </div>
+
+                <div class="form-group">
+                    <label>Tingkat Urgensi / Klasifikasi</label>
+                    <select id="inc-level" class="form-control">
+                        <option value="SIAGA">Siaga / Perhatian</option>
+                        <option value="DARURAT">Darurat (Butuh Tindakan Cepat)</option>
+                        <option value="KRITIS">Kritis / Insiden Berat</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Detail Lokasi Kejadian (GPS / Area)</label>
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="inc-location" class="form-control" placeholder="Tekan tombol ambil GPS..." readonly style="background:#f1f5f9; font-weight:bold;">
+                        <button type="button" class="btn btn-primary" style="width:auto; padding:6px 10px; font-size:10px; margin:0;" onclick="getIncidentGPS()"><i class="fas fa-map-marker-alt"></i> GPS</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Uraian / Berita Lengkap Kronologi Kejadian</label>
+                    <textarea id="inc-news" class="form-control" placeholder="Uraikan kronologi kejadian secara detail, pihak terkait, dan tindakan awal..." style="height:80px;"></textarea>
+                </div>
+
+                <button type="button" class="btn btn-danger" onclick="submitIncidentReport()"><i class="fas fa-paper-plane"></i> KIRIM LAPORAN KEJADIAN</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-clipboard-list"></i> Daftar Berita & Log Kejadian Terpusat</div>
+                <ul id="incident-log-list" class="log-list"></ul>
+            </div>
+        </div>
+
+        <!-- MODUL 7: MCP CLEANING -->
+        <div id="mod-7" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-broom"></i> Master Cleaning Program (MCP) & Checklist Harian</div>
                 <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Pilih tanggal pengerjaan & centang item checklist sesuai Master Program:</p>
@@ -572,8 +654,8 @@
             </div>
         </div>
 
-        <!-- MODUL 7: CHEKLIS AREA -->
-        <div id="mod-7" class="screen-panel">
+        <!-- MODUL 8: CHEKLIS AREA -->
+        <div id="mod-8" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-restroom"></i> Input Checklist Area & Toilet</div>
                 <div class="form-group">
@@ -592,8 +674,8 @@
             </div>
         </div>
 
-        <!-- MODUL 8: HIGH RISK K3 -->
-        <div id="mod-8" class="screen-panel">
+        <!-- MODUL 9: HIGH RISK K3 -->
+        <div id="mod-9" class="screen-panel">
             <div class="card" style="border-left:4px solid var(--danger);">
                 <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Work Permit High Risk K3</div>
                 <div class="form-group">
@@ -616,8 +698,8 @@
             </div>
         </div>
 
-        <!-- MODUL 9: DATA TIM -->
-        <div id="mod-9" class="screen-panel">
+        <!-- MODUL 10: DATA TIM -->
+        <div id="mod-10" class="screen-panel">
             <div class="card">
                 <div class="card-title">
                     <span><i class="fas fa-users"></i> Direktori Tim & Personil</span>
@@ -628,8 +710,8 @@
             </div>
         </div>
 
-        <!-- MODUL 10: EQUIPMENT -->
-        <div id="mod-10" class="screen-panel">
+        <!-- MODUL 11: EQUIPMENT -->
+        <div id="mod-11" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-tools"></i> Input Laporan Mesin & Equipment</div>
                 <div class="form-group">
@@ -649,8 +731,8 @@
             </div>
         </div>
 
-        <!-- MODUL 11: OUTSTANDING -->
-        <div id="mod-11" class="screen-panel">
+        <!-- MODUL 12: OUTSTANDING -->
+        <div id="mod-12" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-exclamation-circle"></i> Input Tiket Komplain Klien / Site</div>
                 <div class="form-group"><label>Judul / Topik Temuan</label><input type="text" id="out-title" class="form-control" placeholder="Contoh: Kaca lobby belum maksimal"></div>
@@ -667,8 +749,8 @@
             </div>
         </div>
 
-        <!-- MODUL 12: KPI & BULLETIN -->
-        <div id="mod-12" class="screen-panel">
+        <!-- MODUL 13: KPI & BULLETIN -->
+        <div id="mod-13" class="screen-panel">
             <div class="card">
                 <div class="card-title"><i class="fas fa-bullhorn"></i> Input Pengumuman & KPI Assessment</div>
                 <div class="form-group"><label>Judul Pengumuman / Edaran</label><input type="text" id="kpi-title" class="form-control" placeholder="Judul edaran manajemen..."></div>
@@ -681,8 +763,8 @@
             </div>
         </div>
 
-        <!-- MODUL 13: PUSAT SINKRONISASI SUPABASE -->
-        <div id="mod-13" class="screen-panel">
+        <!-- MODUL 14: PUSAT SINKRONISASI SUPABASE -->
+        <div id="mod-14" class="screen-panel">
             <div class="card" style="border-top:3px solid var(--gold-accent);">
                 <div class="card-title"><i class="fas fa-database" style="color:var(--gold-accent);"></i> Integrasi Database Supabase</div>
                 <div class="form-group"><label>Supabase Project URL</label><input type="text" id="cfg-url" class="form-control" placeholder="https://xyzcompany.supabase.co"></div>
@@ -702,7 +784,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
                 <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
-                    <p>[SYSTEM] AMP V3.1 Sync Engine Ready.</p>
+                    <p>[SYSTEM] AMP V3.4 Incident Engine Ready.</p>
                 </div>
             </div>
         </div>
@@ -711,7 +793,7 @@
         <div class="bottom-nav">
             <div class="nav-link active" onclick="showModule(1)"><i class="fas fa-home"></i>Dashboard</div>
             <div class="nav-link" onclick="showModule(3)"><i class="fas fa-camera"></i>Absensi</div>
-            <div class="nav-link" onclick="showModule(4)"><i class="fas fa-file-invoice-dollar"></i>MR (Req)</div>
+            <div class="nav-link" onclick="showModule(6)"><i class="fas fa-exclamation-triangle"></i>Kejadian</div>
             <div class="nav-link" onclick="showModule(2)"><i class="fas fa-user-shield"></i>Profil</div>
         </div>
 
@@ -729,15 +811,17 @@
     }, 1000);
 
     const DEFAULT_USERS = {
-        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789" },
-        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566" },
-        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899" }
+        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789", avatar: "" },
+        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566", avatar: "" },
+        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899", avatar: "" }
     };
 
     let USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
     if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
 
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
+    let GPS_TRACKER_DB = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB')) || [];
+    let INCIDENT_DB = JSON.parse(localStorage.getItem('AMP_INCIDENT_DB')) || []; // Database Berita Kejadian
     let MCP_LOGS_DB = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || [];
     let LEAVE_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_LEAVE_REQUESTS')) || [];
     let MARKET_REQUESTS_DB = JSON.parse(localStorage.getItem('AMP_MARKET_REQUESTS')) || [];
@@ -761,7 +845,9 @@
 
     let currentUser = null;
     let currentPhotoBase64 = '';
+    let currentProfileAvatarBase64 = '';
     let supabaseClient = null;
+    let backgroundTrackerInterval = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
@@ -771,7 +857,7 @@
         if (savedUrl && savedKey) {
             initSupabase(savedUrl, savedKey);
             await pullUsersFromSupabase(true);
-            await pullAllDataFromSupabase(true); // Otomatis tarik semua data absen & log dari cloud saat dimuat
+            await pullAllDataFromSupabase(true);
         }
         
         const mcpDateEl = document.getElementById('mcp-date');
@@ -825,29 +911,32 @@
                 localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
                 renderUserDirectory();
             }
-        } catch (err) {
-            console.warn('Gagal sinkronisasi user: ' + err.message);
-        }
+        } catch (err) {}
     }
 
-    // Fungsi otomatis menarik data absensi terbaru dari Cloud Supabase agar rekap selalu terintegrasi lengkap
     async function pullAllDataFromSupabase(silent = false) {
-        if (!supabaseClient) {
-            if (!silent) alert('Supabase belum dikonfigurasi!');
-            return;
-        }
+        if (!supabaseClient) return;
         try {
-            const { data, error } = await supabaseClient.from('attendance_logs').select('*');
-            if (error) throw error;
+            const { data } = await supabaseClient.from('attendance_logs').select('*');
             if (data && data.length > 0) {
                 CENTRAL_ATTENDANCE_DB = data;
                 localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
                 renderAttendanceLogs();
-                if (!silent) alert(`Berhasil menarik ${data.length} data absensi dari Cloud.`);
             }
-        } catch (err) {
-            if (!silent) alert('Gagal menarik data absensi cloud: ' + err.message);
-        }
+            
+            const { data: gpsData } = await supabaseClient.from('gps_tracker_logs').select('*');
+            if (gpsData && gpsData.length > 0) {
+                GPS_TRACKER_DB = gpsData;
+                localStorage.setItem('AMP_GPS_TRACKER_DB', JSON.stringify(GPS_TRACKER_DB));
+            }
+
+            const { data: incData } = await supabaseClient.from('incident_logs').select('*');
+            if (incData && incData.length > 0) {
+                INCIDENT_DB = incData;
+                localStorage.setItem('AMP_INCIDENT_DB', JSON.stringify(INCIDENT_DB));
+                renderIncidentLogs();
+            }
+        } catch (err) {}
     }
 
     function writeLog(msg) {
@@ -875,38 +964,26 @@
         const phone = document.getElementById('reg-phone').value.trim() || '-';
         const pin = document.getElementById('reg-pin').value.trim();
 
-        if(!name || !id || !pin) { 
-            alert('Lengkapi Nama, NIP/ID, dan PIN terlebih dahulu!'); 
-            return; 
-        }
+        if(!name || !id || !pin) { alert('Lengkapi Nama, NIP/ID, dan PIN!'); return; }
 
         let currentDB = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
-        if(currentDB[id]) { 
-            alert('ID Karyawan / NIP sudah terdaftar!'); 
-            return; 
-        }
+        if(currentDB[id]) { alert('ID Karyawan / NIP sudah terdaftar!'); return; }
 
         let roleAssigned = "TAD";
-        if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) {
-            roleAssigned = "Korlap";
-        } else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) {
-            roleAssigned = "HeadOfOp";
-        }
+        if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) roleAssigned = "Korlap";
+        else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) roleAssigned = "HeadOfOp";
 
-        const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone };
+        const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone, avatar: "" };
         currentDB[id] = newUser;
         USER_DATABASE = currentDB;
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
 
         if(supabaseClient) {
-            try {
-                await supabaseClient.from('user_directory').upsert([newUser]);
-            } catch(e) {}
+            try { await supabaseClient.from('user_directory').upsert([newUser]); } catch(e) {}
         }
 
         renderUserDirectory();
         alert(`Akun Baru Berhasil Dibuat!\nNIP: ${id}\nNama: ${name}`);
-        
         document.getElementById('reg-name').value = '';
         document.getElementById('reg-id').value = '';
         document.getElementById('reg-pin').value = '';
@@ -926,6 +1003,277 @@
             alert(`PIN Akun ${id} Diperbarui!`);
             switchAuthSubView('login');
         } else { alert('PIN Lama Salah!'); }
+    }
+
+    // BACKGROUND GPS TRACKER 15 MENIT
+    function startBackgroundGPSTracker() {
+        if (backgroundTrackerInterval) clearInterval(backgroundTrackerInterval);
+        captureAndSyncGPSLocation();
+        backgroundTrackerInterval = setInterval(() => {
+            captureAndSyncGPSLocation();
+        }, 15 * 60 * 1000);
+    }
+
+    async function captureAndSyncGPSLocation() {
+        if (!currentUser) return;
+        if (!navigator.geolocation) return;
+
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                let locationName = `GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+                        headers: { 'Accept-Language': 'id' }
+                    });
+                    const data = await response.json();
+                    if (data && data.address) {
+                        const addr = data.address;
+                        const building = addr.building || addr.amenity || addr.office || addr.shop || addr.road || '';
+                        const village = addr.village || addr.suburb || addr.hamlet || '';
+                        const district = addr.city_district || addr.town || addr.municipality || addr.city || '';
+                        
+                        let parts = [];
+                        if (building) parts.push(building);
+                        if (village) parts.push(village);
+                        if (district) parts.push(district);
+
+                        if (parts.length > 0) locationName = parts.join(', ');
+                    }
+                } catch (e) {}
+
+                const now = new Date();
+                const gpsRecord = {
+                    user_id: currentUser.id,
+                    name: currentUser.name,
+                    role: currentUser.role,
+                    site: currentUser.site,
+                    date: now.toLocaleDateString('id-ID'),
+                    time: now.toLocaleTimeString('id-ID'),
+                    location_detail: `${locationName} (${lat.toFixed(5)}, ${lng.toFixed(5)})`,
+                    timestamp: now.getTime()
+                };
+
+                GPS_TRACKER_DB.unshift(gpsRecord);
+                localStorage.setItem('AMP_GPS_TRACKER_DB', JSON.stringify(GPS_TRACKER_DB));
+
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('gps_tracker_logs').insert([gpsRecord]);
+                    } catch (err) {}
+                }
+
+                const statusBox = document.getElementById('tracker-status-box');
+                if (statusBox) {
+                    statusBox.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);"></i> Lokasi Ter-update otomatis pada ${now.toLocaleTimeString('id-ID')} (${locationName})`;
+                }
+            },
+            (error) => {},
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        );
+    }
+
+    function manualTriggerGPSPing() {
+        alert('Memperbarui dan mengirim koordinat GPS terbaru...');
+        captureAndSyncGPSLocation();
+    }
+
+    // FUNGSI KHUSUS PENGAMBILAN GPS UNTUK MODUL KEJADIAN
+    async function getIncidentGPS() {
+        const locInput = document.getElementById('inc-location');
+        locInput.value = "Mendeteksi Lokasi Kejadian...";
+        if (!navigator.geolocation) {
+            locInput.value = `Site ${currentUser.site}`;
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                let locName = `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+                        headers: { 'Accept-Language': 'id' }
+                    });
+                    const data = await response.json();
+                    if (data && data.address) {
+                        const addr = data.address;
+                        const building = addr.building || addr.amenity || addr.office || addr.road || '';
+                        const village = addr.village || addr.suburb || '';
+                        const district = addr.city_district || addr.town || addr.city || '';
+                        let p = [];
+                        if (building) p.push(building);
+                        if (village) p.push(village);
+                        if (district) p.push(district);
+                        if (p.length > 0) locName = p.join(', ');
+                    }
+                } catch(e) {}
+                locInput.value = `${locName} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+            },
+            () => { locInput.value = `Site ${currentUser.site} (GPS Default)`; },
+            { enableHighAccuracy: true, timeout: 15000 }
+        );
+    }
+
+    // SUBMIT BERITA KEJADIAN
+    async function submitIncidentReport() {
+        const title = document.getElementById('inc-title').value.trim();
+        const level = document.getElementById('inc-level').value;
+        const location = document.getElementById('inc-location').value.trim();
+        const news = document.getElementById('inc-news').value.trim();
+
+        if(!title || !news) { alert('Judul dan Berita / Kronologi Kejadian wajib diisi!'); return; }
+        if(!location) { alert('Silakan ambil detail lokasi GPS terlebih dahulu!'); return; }
+
+        const now = new Date();
+        const incidentRecord = {
+            id: 'INC-' + Math.floor(1000 + Math.random() * 9000),
+            user_id: currentUser.id,
+            name: currentUser.name,
+            role: currentUser.role,
+            site: currentUser.site,
+            title: title,
+            level: level,
+            location: location,
+            news: news,
+            date: now.toLocaleDateString('id-ID'),
+            time: now.toLocaleTimeString('id-ID'),
+            status: 'Dilaporkan'
+        };
+
+        INCIDENT_DB.unshift(incidentRecord);
+        localStorage.setItem('AMP_INCIDENT_DB', JSON.stringify(INCIDENT_DB));
+        renderIncidentLogs();
+
+        if(supabaseClient) {
+            try {
+                await supabaseClient.from('incident_logs').insert([incidentRecord]);
+            } catch(e) {}
+        }
+
+        alert('Laporan Berita Kejadian Berhasil Dikirim!');
+        document.getElementById('inc-title').value = '';
+        document.getElementById('inc-news').value = '';
+        document.getElementById('inc-location').value = '';
+    }
+
+    function renderIncidentLogs() {
+        const list = document.getElementById('incident-log-list');
+        if(!list) return;
+        list.innerHTML = '';
+        
+        let filtered = INCIDENT_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        if(filtered.length === 0) {
+            list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada laporan kejadian tercatat.</li>`;
+            return;
+        }
+
+        filtered.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.style.flexDirection = 'column';
+            li.style.alignItems = 'flex-start';
+            li.style.gap = '4px';
+            li.innerHTML = `
+                <div style="display:flex; justify-content:space-between; width:100%;">
+                    <strong><i class="fas fa-exclamation-circle" style="color:var(--danger);"></i> ${item.title}</strong>
+                    <span class="badge ${item.level === 'DARURAT' || item.level === 'KRITIS' ? 'badge-out' : 'badge-warning'}">${item.level}</span>
+                </div>
+                <div style="font-size:9.5px; color:var(--text-main);">
+                    <strong>Pelapor:</strong> ${item.name} (${item.user_id}) | <strong>Waktu:</strong> ${item.date} - ${item.time} WIB<br>
+                    <strong>Lokasi:</strong> ${item.location}<br>
+                    <strong>Berita / Kronologi:</strong> ${item.news}
+                </div>
+                <span class="badge badge-in" style="margin-top:2px;">Status: ${item.status}</span>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    async function startProfileWebcam() {
+        const video = document.getElementById('profile-webcam');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            document.getElementById('profile-cam-placeholder').style.display = 'none';
+            document.getElementById('profile-photo-preview').style.display = 'none';
+        } catch (err) { alert('Akses kamera perangkat diblokir atau tidak tersedia.'); }
+    }
+
+    function captureProfileSnapshot() {
+        const video = document.getElementById('profile-webcam');
+        const img = document.getElementById('profile-photo-preview');
+        if (video.style.display === 'block' && video.srcObject) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 200; canvas.height = 200;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            currentProfileAvatarBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            img.src = currentProfileAvatarBase64;
+            img.style.display = 'block';
+            video.style.display = 'none';
+            const stream = video.srcObject;
+            if(stream) stream.getTracks().forEach(track => track.stop());
+            alert('Foto Profil dari Kamera Berhasil Diambil!');
+        } else { alert('Nyalakan kamera terlebih dahulu.'); }
+    }
+
+    function loadProfileFromGallery(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentProfileAvatarBase64 = e.target.result;
+                const img = document.getElementById('profile-photo-preview');
+                img.src = currentProfileAvatarBase64;
+                img.style.display = 'block';
+                document.getElementById('profile-webcam').style.display = 'none';
+                document.getElementById('profile-cam-placeholder').style.display = 'none';
+                alert('Foto Profil dari Galeri Berhasil Dimuat!');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    async function saveProfileAvatar() {
+        if (!currentProfileAvatarBase64) { alert('Ambil foto dari kamera atau pilih dari galeri terlebih dahulu!'); return; }
+        currentUser.avatar = currentProfileAvatarBase64;
+        USER_DATABASE[currentUser.id] = currentUser;
+        localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+        applyUserAvatarToUI();
+        if(supabaseClient) {
+            try { await supabaseClient.from('user_directory').upsert([currentUser]); } catch(e) {}
+        }
+        alert('Foto Profil Berhasil Disimpan!');
+    }
+
+    function applyUserAvatarToUI() {
+        const profImg = document.getElementById('prof-avatar-img');
+        const profIcon = document.getElementById('prof-avatar-icon');
+        const dashImg = document.getElementById('dash-avatar-img');
+        const dashIcon = document.getElementById('dash-avatar-icon');
+
+        if (currentUser && currentUser.avatar) {
+            profImg.src = currentUser.avatar;
+            profImg.style.display = 'block';
+            if(profIcon) profIcon.style.display = 'none';
+
+            dashImg.src = currentUser.avatar;
+            dashImg.style.display = 'block';
+            if(dashIcon) dashIcon.style.display = 'none';
+
+            const preview = document.getElementById('profile-photo-preview');
+            preview.src = currentUser.avatar;
+            preview.style.display = 'block';
+            document.getElementById('profile-cam-placeholder').style.display = 'none';
+        } else {
+            if(profImg) profImg.style.display = 'none';
+            if(profIcon) profIcon.style.display = 'block';
+            if(dashImg) dashImg.style.display = 'none';
+            if(dashIcon) dashIcon.style.display = 'block';
+        }
     }
 
     function updateOwnProfile() {
@@ -973,10 +1321,7 @@
         const idInput = document.getElementById('login-id').value.trim().toUpperCase();
         const pinInput = document.getElementById('login-pin').value.trim();
 
-        if (!idInput || !pinInput) {
-            alert('Masukkan ID Karyawan / NIP dan PIN terlebih dahulu!');
-            return;
-        }
+        if (!idInput || !pinInput) { alert('Masukkan ID Karyawan dan PIN!'); return; }
 
         USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
         if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
@@ -1005,13 +1350,17 @@
             document.getElementById('edit-prof-site').value = currentUser.site;
             document.getElementById('edit-prof-phone').value = currentUser.phone || '';
 
+            applyUserAvatarToUI();
             document.getElementById('mr-number').value = generateMRNumber();
 
             if(supabaseClient) await pullAllDataFromSupabase(true);
 
+            startBackgroundGPSTracker();
+
             renderAttendanceLogs();
             renderUserDirectory();
             renderLeaveLogs();
+            renderIncidentLogs();
             renderMCPLogs();
             renderMarketRequests();
             renderChecklistLogs();
@@ -1020,11 +1369,12 @@
             renderOutstandingLogs();
             renderBulletinLogs();
         } else {
-            alert('ID Karyawan / NIP atau PIN Salah!');
+            alert('ID Karyawan atau PIN Salah!');
         }
     }
 
     function logout() {
+        if (backgroundTrackerInterval) clearInterval(backgroundTrackerInterval);
         currentUser = null;
         document.getElementById('auth-modal-overlay').style.display = 'flex';
         switchAuthSubView('login');
@@ -1036,9 +1386,9 @@
         const target = document.getElementById('mod-' + modId);
         if(target) target.classList.add('active');
 
-        if(modId === 9) renderUserDirectory();
+        if(modId === 10) renderUserDirectory();
 
-        const navIndex = { 1: 0, 3: 1, 4: 2, 2: 3 };
+        const navIndex = { 1: 0, 3: 1, 6: 2, 2: 3 };
         if(navIndex[modId] !== undefined) {
             document.querySelectorAll('.bottom-nav .nav-link')[navIndex[modId]].classList.add('active');
         }
@@ -1278,7 +1628,7 @@
         });
     }
 
-    // MODUL 6: MCP CLEANING
+    // MODUL 7: MCP CLEANING
     function renderMCPMasterTable() {
         const tbody = document.getElementById('mcp-master-tbody');
         if (!tbody) return;
@@ -1349,7 +1699,7 @@
         });
     }
 
-    // MODUL 7: CHECKLIST AREA
+    // MODUL 8: CHECKLIST AREA
     async function submitChecklistArea() {
         const area = document.getElementById('chk-area').value;
         const notes = document.getElementById('chk-notes').value.trim() || 'Normal';
@@ -1390,7 +1740,7 @@
         });
     }
 
-    // MODUL 8: HIGH RISK K3
+    // MODUL 9: HIGH RISK K3
     async function submitK3Permit() {
         const cat = document.getElementById('k3-category').value;
         const loc = document.getElementById('k3-location').value.trim() || 'Site PLN';
@@ -1432,7 +1782,7 @@
         });
     }
 
-    // MODUL 9: DATA TIM & HAPUS AKUN
+    // MODUL 10: DATA TIM & HAPUS AKUN
     async function deleteUserFromDirectory(userId) {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
             alert('Akses ditolak!');
@@ -1480,7 +1830,7 @@
         });
     }
 
-    // MODUL 10: EQUIPMENT
+    // MODUL 11: EQUIPMENT
     async function submitEquipmentLog() {
         const name = document.getElementById('eq-name').value;
         const status = document.getElementById('eq-status').value;
@@ -1522,7 +1872,7 @@
         });
     }
 
-    // MODUL 11: OUTSTANDING
+    // MODUL 12: OUTSTANDING
     async function submitOutstandingTicket() {
         const title = document.getElementById('out-title').value.trim();
         const details = document.getElementById('out-details').value.trim();
@@ -1567,7 +1917,7 @@
         });
     }
 
-    // MODUL 12: KPI & BULLETIN
+    // MODUL 13: KPI & BULLETIN
     async function submitBulletin() {
         if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin' && currentUser.role !== 'Korlap') {
             alert('Akses ditolak!'); return;
@@ -1608,6 +1958,8 @@
             const usersArr = Object.values(USER_DATABASE);
             if(usersArr.length) await supabaseClient.from('user_directory').upsert(usersArr);
             if(CENTRAL_ATTENDANCE_DB.length) await supabaseClient.from('attendance_logs').upsert(CENTRAL_ATTENDANCE_DB);
+            if(GPS_TRACKER_DB.length) await supabaseClient.from('gps_tracker_logs').upsert(GPS_TRACKER_DB);
+            if(INCIDENT_DB.length) await supabaseClient.from('incident_logs').upsert(INCIDENT_DB);
             if(MARKET_REQUESTS_DB.length) await supabaseClient.from('market_requests').upsert(MARKET_REQUESTS_DB);
             if(LEAVE_REQUESTS_DB.length) await supabaseClient.from('leave_requests').upsert(LEAVE_REQUESTS_DB);
             if(MCP_LOGS_DB.length) await supabaseClient.from('mcp_logs').upsert(MCP_LOGS_DB);
@@ -1624,14 +1976,12 @@
         }
     }
 
-    // PUSAT REKAP ABSENSI TERINTEGRASI (URUT ABJAD A-Z NAMA KORLAP)
     async function exportToExcel() {
         if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation yang dapat mendownload rekap absensi seluruh tim.');
+            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation.');
             return;
         }
 
-        // Pastikan menarik data terbaru dari cloud sebelum diexport ke excel
         if (supabaseClient) {
             try {
                 const { data } = await supabaseClient.from('attendance_logs').select('*');
@@ -1645,14 +1995,7 @@
         const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
         if (allAttendance.length === 0) { alert('Belum ada data absensi tercatat.'); return; }
 
-        // URUTKAN BERDASARKAN NAMA KORLAP/KARYAWAN SECARA ABJAD (A - Z)
-        allAttendance.sort((a, b) => {
-            let nameA = (a.name || "").toUpperCase();
-            let nameB = (b.name || "").toUpperCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-        });
+        allAttendance.sort((a, b) => (a.name || "").toUpperCase().localeCompare((b.name || "").toUpperCase()));
 
         let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Lengkap,Jabatan/Role,Site/Lokasi,Tipe Absen,Tanggal,Waktu,Lokasi Google Maps\n";
         allAttendance.forEach(r => {
@@ -1661,15 +2004,59 @@
         downloadCSV(csv, `Rekap_Absensi_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
-    function exportMCPToCSV() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak!'); return;
+    async function exportGPSLogToCSV() {
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) { alert('Akses Ditolak!'); return; }
+        if (supabaseClient) {
+            try {
+                const { data } = await supabaseClient.from('gps_tracker_logs').select('*');
+                if (data && data.length > 0) {
+                    GPS_TRACKER_DB = data;
+                    localStorage.setItem('AMP_GPS_TRACKER_DB', JSON.stringify(GPS_TRACKER_DB));
+                }
+            } catch(e) {}
         }
+        const allGPS = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB')) || GPS_TRACKER_DB;
+        if (allGPS.length === 0) { alert('Belum ada data pelacakan GPS.'); return; }
+        allGPS.sort((a, b) => (a.name || "").toUpperCase().localeCompare((b.name || "").toUpperCase()));
+        let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama Korlap,Jabatan,Site,Tanggal,Jam Update,Detail Lokasi Wilayah\n";
+        allGPS.forEach(r => {
+            csv += `${r.user_id},"${r.name}","${r.role || 'Korlap'}","${r.site || '-'}",${r.date},${r.time},"${r.location_detail}"\n`;
+        });
+        downloadCSV(csv, `Rekap_GPS_Tracker_Korlap_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    // EKSPOR REKAP BERITA KEJADIAN BERBASIS ABJAD (A-Z)
+    async function exportIncidentLogToCSV() {
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
+            alert('Akses Ditolak! Hanya akun Admin / Head Of Operation.');
+            return;
+        }
+        if (supabaseClient) {
+            try {
+                const { data } = await supabaseClient.from('incident_logs').select('*');
+                if (data && data.length > 0) {
+                    INCIDENT_DB = data;
+                    localStorage.setItem('AMP_INCIDENT_DB', JSON.stringify(INCIDENT_DB));
+                }
+            } catch(e) {}
+        }
+        const allIncidents = JSON.parse(localStorage.getItem('AMP_INCIDENT_DB')) || INCIDENT_DB;
+        if (allIncidents.length === 0) { alert('Belum ada data berita kejadian tercatat.'); return; }
+
+        allIncidents.sort((a, b) => (a.name || "").toUpperCase().localeCompare((b.name || "").toUpperCase()));
+
+        let csv = "data:text/csv;charset=utf-8,ID Pelapor,Nama Pelapor,Site,Tanggal Kejadian,Jam Kejadian,Klasifikasi,Detail Lokasi,Berita/Kronologi,Status\n";
+        allIncidents.forEach(r => {
+            csv += `${r.user_id},"${r.name}","${r.site}",${r.date},${r.time},"${r.level}","${r.location}","${r.news.replace(/[\n\r]+/g, ' ')}","${r.status}"\n`;
+        });
+        downloadCSV(csv, `Rekap_Berita_Kejadian_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
+    }
+
+    function exportMCPToCSV() {
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) { alert('Akses Ditolak!'); return; }
         const allMCP = JSON.parse(localStorage.getItem('AMP_MCP_LOGS')) || MCP_LOGS_DB;
         if (allMCP.length === 0) { alert('Belum ada data MCP tercatat.'); return; }
-
         allMCP.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
         let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama,Site,Tanggal,Jumlah Item,Catatan,Status\n";
         allMCP.forEach(r => {
             csv += `${r.user_id},"${r.name}","${r.site || '-'}",${r.date},${r.items.length},"${r.notes}","${r.status}"\n`;
@@ -1677,31 +2064,11 @@
         downloadCSV(csv, `Rekap_MCP_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
-    function exportCutiToCSV() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak!'); return;
-        }
-        const allCuti = JSON.parse(localStorage.getItem('AMP_LEAVE_REQUESTS')) || LEAVE_REQUESTS_DB;
-        if (allCuti.length === 0) { alert('Belum ada data cuti/izin tercatat.'); return; }
-
-        allCuti.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
-        let csv = "data:text/csv;charset=utf-8,ID Karyawan,Nama,Jenis Cuti,Alasan,Status,Tanggal\n";
-        allCuti.forEach(r => {
-            csv += `${r.user_id || r.id},"${r.name}","${r.type}","${r.reason}","${r.status}",${r.date}\n`;
-        });
-        downloadCSV(csv, `Rekap_Cuti_Urut_Abjad_${new Date().toISOString().slice(0,10)}.csv`);
-    }
-
     function exportMRToCSV() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) {
-            alert('Akses Ditolak!'); return;
-        }
+        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) { alert('Akses Ditolak!'); return; }
         const allMR = JSON.parse(localStorage.getItem('AMP_MARKET_REQUESTS')) || MARKET_REQUESTS_DB;
         if (allMR.length === 0) { alert('Belum ada data Market Request tercatat.'); return; }
-
         allMR.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
         let csv = "data:text/csv;charset=utf-8,ID MR,Pengaju,Site,Kategori,Prioritas,Rincian,Estimasi,Status,Tanggal\n";
         allMR.forEach(r => {
             csv += `${r.mr_id},"${r.name}","${r.site}","${r.category}",${r.priority},"${r.details}","${r.cost}","${r.status}",${r.date}\n`;
