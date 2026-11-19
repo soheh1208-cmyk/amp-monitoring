@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.9 - Satellite Radar Admin</title>
+    <title>AMP Operation Monitoring V4.0 - Google Maps Radar Admin</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
     <meta name="description" content="Sistem Monitoring Operasional PT Ardina Mulya Perkasa">
-    
+
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Leaflet CSS & JS (Peta Satelit Radar) -->
+    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Supabase JS Client v2 -->
@@ -143,14 +143,42 @@
             padding-bottom: 8px;
         }
 
-        #satellite-radar-map {
+        .map-mode-bar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .map-mode-btn {
+            flex: 1;
+            padding: 6px 6px;
+            font-size: 9.5px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: var(--navy-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .map-mode-btn.active {
+            background: var(--navy-primary);
+            color: #ffffff;
+            border-color: var(--navy-primary);
+        }
+
+        #korlap-radar-map {
             width: 100%;
-            height: 240px;
+            height: 270px;
             border-radius: 10px;
             border: 2px solid var(--navy-primary);
             margin-bottom: 10px;
             z-index: 15;
-            background: #0f172a;
+            background: #e5e7eb;
         }
 
         .radar-legend {
@@ -164,6 +192,65 @@
             padding: 5px 8px;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
+        }
+
+        /* Radar Marker Pulse Animation */
+        .korlap-radar-marker {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radar-pulse-ring {
+            position: absolute;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.35);
+            border: 1.5px solid rgba(239, 68, 68, 0.8);
+            animation: radarPulseAnim 1.8s infinite ease-out;
+        }
+
+        @keyframes radarPulseAnim {
+            0% { transform: scale(0.55); opacity: 0.95; }
+            100% { transform: scale(1.65); opacity: 0; }
+        }
+
+        .radar-pin-core {
+            position: relative;
+            z-index: 2;
+            background: #dc2626;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+        }
+
+        .radar-pin-label {
+            position: absolute;
+            top: 38px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 25, 47, 0.92);
+            color: #ffffff;
+            border: 1px solid var(--gold-accent);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 8.5px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+            pointer-events: none;
         }
 
         .modules-grid {
@@ -339,7 +426,7 @@
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
             <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.9</p>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V4.0</p>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -356,7 +443,7 @@
             <button type="button" class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
 
             <div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
-                <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin)<br>
+                <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin / Head of Ops)<br>
                 <code>KOR001</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
             </div>
         </div>
@@ -400,7 +487,7 @@
                     <p>Facility Service Specialist</p>
                 </div>
             </div>
-            
+
             <div style="display:flex; align-items:center; gap:6px;">
                 <div class="sync-badge" onclick="showModule(14)" title="Buka Pusat Sinkronisasi Supabase">
                     <i class="fas fa-database" id="sync-icon"></i> <span id="sync-badge-text">Sync</span>
@@ -429,18 +516,26 @@
                 </div>
             </div>
 
-            <!-- PANEL SATELIT RADAR LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS) -->
+            <!-- PANEL GOOGLE MAPS RADAR LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS) -->
             <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
                 <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-                    <span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap (Admin / Head of Ops)</span>
+                    <span><i class="fas fa-radar" style="color:var(--danger);"></i> Google Maps Radar Korlap (Admin / Head of Ops)</span>
                     <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
-                <div class="radar-legend">
-                    <span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Akses Terbatas: Admin & Head of Ops</span>
-                    <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Titik Aktif</span>
+
+                <div class="map-mode-bar">
+                    <button type="button" id="btn-mode-roadmap" class="map-mode-btn active" onclick="setRadarMapMode('roadmap')"><i class="fas fa-map"></i> Peta Jalan</button>
+                    <button type="button" id="btn-mode-hybrid" class="map-mode-btn" onclick="setRadarMapMode('hybrid')"><i class="fas fa-layer-group"></i> Satelit + Label</button>
+                    <button type="button" id="btn-mode-satellite" class="map-mode-btn" onclick="setRadarMapMode('satellite')"><i class="fas fa-globe-asia"></i> Satelit</button>
                 </div>
-                <div id="satellite-radar-map"></div>
-                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta satelit):</p>
+
+                <div class="radar-legend">
+                    <span><i class="fas fa-shield-alt" style="color:var(--navy-primary);"></i> Khusus Admin & Head of Ops</span>
+                    <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Korlap di Radar</span>
+                </div>
+
+                <div id="korlap-radar-map"></div>
+                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar radar posisi Korlap terkini (klik kartu untuk fokus ke titik lokasi di peta):</p>
                 <div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
@@ -488,7 +583,7 @@
                     <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">NIP: AMP001</p>
                     <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Jabatan: Head Of Operation</p>
                 </div>
-                
+
                 <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
                     <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Lokasi Kerja:</strong> <span id="prof-site">Pusat / All Sites</span></p>
                     <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
@@ -625,7 +720,7 @@
             <div class="card" style="border-left: 4px solid var(--danger);">
                 <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Laporan Berita Kejadian Lapangan</div>
                 <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Laporkan insiden, temuan darurat, atau kejadian khusus disertai foto bukti:</p>
-                
+
                 <div class="form-group">
                     <label>Judul / Perihal Kejadian</label>
                     <input type="text" id="inc-title" class="form-control" placeholder="Contoh: Kebocoran Pipa / Kerusakan Alat">
@@ -648,7 +743,6 @@
                     </div>
                 </div>
 
-                <!-- ELEMEN UPLOAD FOTO KEJADIAN -->
                 <div class="form-group">
                     <label><i class="fas fa-camera"></i> Unggah Foto Bukti Kejadian</label>
                     <input type="file" id="inc-photo-input" accept="image/*" class="form-control" onchange="previewIncidentPhoto(event)" style="font-size:10px; padding:6px;">
@@ -830,7 +924,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
                 <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
-                    <p>[SYSTEM] AMP V3.9 Satellite Radar Engine Ready.</p>
+                    <p>[SYSTEM] AMP V4.0 Google Maps Radar Engine Ready.</p>
                 </div>
             </div>
         </div>
@@ -897,9 +991,12 @@
     let backgroundTrackerInterval = null;
     let isSavingAttendance = false;
 
-    // Variabel Peta Satelit Radar (Khusus Admin / Head of Ops)
-    let satelliteMap = null;
-    let satelliteMarkersLayer = null;
+    // Variabel Peta Google Maps Radar (Khusus Admin / Head of Ops)
+    let radarMap = null;
+    let radarMarkersLayer = null;
+    let radarTileLayer = null;
+    let radarLabelLayer = null;
+    let currentMapMode = 'roadmap';
     let korlapMarkerMap = {};
 
     function isAdminOrHeadOfOps(user) {
@@ -909,38 +1006,80 @@
         return r === 'headofop' || r === 'admin' || j.includes('head of operation') || j.includes('admin');
     }
 
-    function initSatelliteRadarMap() {
+    function applyMapTileMode(mode) {
+        if (!radarMap || typeof L === 'undefined') return;
+        currentMapMode = mode;
+
+        if (radarTileLayer) {
+            radarMap.removeLayer(radarTileLayer);
+            radarTileLayer = null;
+        }
+        if (radarLabelLayer) {
+            radarMap.removeLayer(radarLabelLayer);
+            radarLabelLayer = null;
+        }
+
+        if (mode === 'roadmap') {
+            // Tampilan jalan & detail lokasi seperti Google Maps
+            radarTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                attribution: 'Google Maps Radar',
+                maxZoom: 20
+            }).addTo(radarMap);
+        } else if (mode === 'hybrid') {
+            // Satelit + nama jalan, gedung, dan tempat ala Google Maps
+            radarTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                attribution: 'Google Hybrid Radar',
+                maxZoom: 20
+            }).addTo(radarMap);
+        } else {
+            // Satelit murni
+            radarTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Esri Satellite Radar',
+                maxZoom: 19
+            }).addTo(radarMap);
+            radarLabelLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19
+            }).addTo(radarMap);
+        }
+
+        document.querySelectorAll('.map-mode-btn').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.getElementById('btn-mode-' + mode);
+        if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function setRadarMapMode(mode) {
         if (!isAdminOrHeadOfOps(currentUser)) return;
-        const mapEl = document.getElementById('satellite-radar-map');
+        initRadarMap();
+        applyMapTileMode(mode);
+    }
+
+    function initRadarMap() {
+        if (!isAdminOrHeadOfOps(currentUser)) return;
+        const mapEl = document.getElementById('korlap-radar-map');
         if (!mapEl || typeof L === 'undefined') return;
 
-        if (!satelliteMap) {
-            satelliteMap = L.map('satellite-radar-map', {
+        if (!radarMap) {
+            radarMap = L.map('korlap-radar-map', {
                 center: [-6.2088, 106.8456],
-                zoom: 10,
+                zoom: 12,
                 zoomControl: true
             });
 
-            // Layer Citra Satelit (Esri World Imagery)
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri Satellite Radar',
-                maxZoom: 19
-            }).addTo(satelliteMap);
-
-            satelliteMarkersLayer = L.layerGroup().addTo(satelliteMap);
+            applyMapTileMode(currentMapMode);
+            radarMarkersLayer = L.layerGroup().addTo(radarMap);
         }
 
         setTimeout(() => {
-            if (satelliteMap) satelliteMap.invalidateSize();
+            if (radarMap) radarMap.invalidateSize();
         }, 150);
     }
 
-    function focusKorlapOnSatelliteMap(userId) {
+    function focusKorlapOnRadarMap(userId) {
         if (!isAdminOrHeadOfOps(currentUser)) return;
-        initSatelliteRadarMap();
+        initRadarMap();
         const marker = korlapMarkerMap[userId];
-        if (marker && satelliteMap) {
-            satelliteMap.setView(marker.getLatLng(), 16, { animate: true });
+        if (marker && radarMap) {
+            radarMap.flyTo(marker.getLatLng(), 17, { animate: true, duration: 0.7 });
             marker.openPopup();
         }
     }
@@ -955,7 +1094,7 @@
             await pullUsersFromSupabase(true);
             await pullAllDataFromSupabase(true);
         }
-        
+
         const mcpDateEl = document.getElementById('mcp-date');
         if (mcpDateEl) mcpDateEl.value = new Date().toISOString().slice(0, 10);
         renderMCPMasterTable();
@@ -990,7 +1129,6 @@
         }
     }
 
-    // HELPER DETEKSI NAMA GEDUNG / PT / INSTANSI & LOKASI AKURAT
     async function resolveAccurateBuildingOrPT(lat, lng) {
         let entityName = '';
         let roadName = '';
@@ -1137,7 +1275,7 @@
                 localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
                 renderAttendanceLogs();
             }
-            
+
             const { data: gpsData } = await supabaseClient.from('gps_tracker_logs').select('*');
             if (gpsData && gpsData.length > 0) {
                 GPS_TRACKER_DB = gpsData;
@@ -1219,7 +1357,6 @@
         } else { alert('PIN Lama Salah!'); }
     }
 
-    // STEALTH BACKGROUND GPS TRACKER (TIAP 15 MENIT DI AKUN KORLAP/TAD)
     function startBackgroundGPSTracker() {
         if (backgroundTrackerInterval) clearInterval(backgroundTrackerInterval);
         if (currentUser && !isAdminOrHeadOfOps(currentUser)) {
@@ -1269,7 +1406,7 @@
         );
     }
 
-    // RADAR & PETA SATELIT LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS)
+    // RADAR & GOOGLE MAPS LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS)
     async function refreshKorlapLivePositions() {
         if (!isAdminOrHeadOfOps(currentUser)) {
             const radarCard = document.getElementById('admin-radar-card');
@@ -1277,12 +1414,12 @@
             return;
         }
 
-        initSatelliteRadarMap();
+        initRadarMap();
 
         const container = document.getElementById('korlap-live-radar-list');
         const countBadge = document.getElementById('radar-marker-count');
         if (!container) return;
-        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Mengambil sinyal satelit radar...</p>`;
+        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Memindai radar lokasi Korlap...</p>`;
 
         if (supabaseClient) {
             try {
@@ -1298,8 +1435,8 @@
         const allUsers = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
         const korlapList = Object.values(allUsers).filter(u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap')));
 
-        if (satelliteMarkersLayer) {
-            satelliteMarkersLayer.clearLayers();
+        if (radarMarkersLayer) {
+            radarMarkersLayer.clearLayers();
         }
         korlapMarkerMap = {};
         const bounds = [];
@@ -1307,7 +1444,7 @@
 
         if (korlapList.length === 0) {
             container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Belum ada akun Korlap terdaftar.</p>`;
-            if (countBadge) countBadge.innerText = `0 Titik Aktif`;
+            if (countBadge) countBadge.innerText = `0 Korlap di Radar`;
             return;
         }
 
@@ -1334,70 +1471,77 @@
                 activeCount++;
                 bounds.push([lat, lng]);
 
-                if (satelliteMarkersLayer && typeof L !== 'undefined') {
-                    const markerIcon = L.divIcon({
-                        className: 'custom-korlap-pin',
-                        html: `<div style="background:#ef4444; color:#fff; border:2px solid #fbbf24; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:10px; box-shadow:0 2px 6px rgba(0,0,0,0.5);">${korlap.name.charAt(0).toUpperCase()}</div>`,
-                        iconSize: [26, 26],
-                        iconAnchor: [13, 13]
+                if (radarMarkersLayer && typeof L !== 'undefined') {
+                    const shortName = korlap.name.split(' ')[0];
+                    const radarIcon = L.divIcon({
+                        className: 'custom-korlap-radar-wrapper',
+                        html: `
+                            <div class="korlap-radar-marker">
+                                <div class="radar-pulse-ring"></div>
+                                <div class="radar-pin-core">${korlap.name.charAt(0).toUpperCase()}</div>
+                                <div class="radar-pin-label">${shortName} • ${korlap.id}</div>
+                            </div>
+                        `,
+                        iconSize: [44, 54],
+                        iconAnchor: [22, 22]
                     });
 
-                    const marker = L.marker([lat, lng], { icon: markerIcon })
+                    const marker = L.marker([lat, lng], { icon: radarIcon })
                         .bindPopup(`
-                            <div style="font-size:11px; line-height:1.4;">
-                                <strong>${korlap.name}</strong> (${korlap.id})<br>
+                            <div style="font-size:11px; line-height:1.45; min-width:170px;">
+                                <strong style="color:#0a192f;">${korlap.name}</strong> <span style="color:#dc2626; font-weight:bold;">(${korlap.id})</span><br>
                                 <span style="color:#475569;">Area: ${korlap.site}</span><br>
-                                <span>${latest.location_detail}</span><br>
-                                <small style="color:#64748b;">${latest.date} - ${latest.time} WIB</small>
+                                <span style="color:#111827;">${latest.location_detail}</span><br>
+                                <small style="color:#64748b;">Update: ${latest.date} - ${latest.time} WIB</small><br>
+                                <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" style="display:inline-block; margin-top:5px; background:#1e3a8a; color:#fff; padding:3px 7px; border-radius:4px; text-decoration:none; font-size:10px; font-weight:bold;">Buka di Google Maps</a>
                             </div>
                         `)
-                        .addTo(satelliteMarkersLayer);
+                        .addTo(radarMarkersLayer);
 
                     korlapMarkerMap[korlap.id] = marker;
                 }
 
-                cardDiv.onclick = () => focusKorlapOnSatelliteMap(korlap.id);
+                cardDiv.onclick = () => focusKorlapOnRadarMap(korlap.id);
 
                 const mapQuery = `${lat},${lng}`;
                 cardDiv.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <strong style="font-size:11px; color:var(--navy-primary);"><i class="fas fa-crosshairs" style="color:var(--danger);"></i> ${korlap.name} (${korlap.id})</strong>
-                        <span class="badge badge-in">TERDETEKSI</span>
+                        <strong style="font-size:11px; color:var(--navy-primary);"><i class="fas fa-satellite-dish" style="color:var(--danger);"></i> ${korlap.name} (${korlap.id})</strong>
+                        <span class="badge badge-in">RADAR AKTIF</span>
                     </div>
                     <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:2px;"><i class="fas fa-building"></i> Area: ${korlap.site}</p>
                     <p style="font-size:10px; font-weight:600; color:var(--text-main); margin-bottom:4px;"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i> ${latest.location_detail}</p>
                     <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:4px; margin-top:4px;">
                         <span style="font-size:9px; color:var(--text-muted);"><i class="fas fa-clock"></i> ${latest.date} - ${latest.time} WIB</span>
-                        <a href="https://maps.google.com/?q=${mapQuery}" target="_blank" onclick="event.stopPropagation();" style="background:var(--blue-accent); color:#fff; padding:3px 8px; border-radius:4px; font-size:9px; text-decoration:none; font-weight:bold;"><i class="fas fa-external-link-alt"></i> GMaps</a>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" target="_blank" onclick="event.stopPropagation();" style="background:var(--blue-accent); color:#fff; padding:3px 8px; border-radius:4px; font-size:9px; text-decoration:none; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Google Maps</a>
                     </div>
                 `;
             } else {
                 cardDiv.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                         <strong style="font-size:11px; color:var(--navy-primary);">${korlap.name} (${korlap.id})</strong>
-                        <span class="badge badge-warning">OFFLINE</span>
+                        <span class="badge badge-warning">NO SIGNAL</span>
                     </div>
-                    <p style="font-size:9.5px; color:var(--text-muted);">Area: ${korlap.site} — Belum ada sinyal GPS.</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">Area: ${korlap.site} — Belum ada data GPS Korlap.</p>
                 `;
             }
             container.appendChild(cardDiv);
         });
 
-        if (countBadge) countBadge.innerText = `${activeCount} Titik Aktif`;
+        if (countBadge) countBadge.innerText = `${activeCount} Korlap di Radar`;
 
-        if (satelliteMap && bounds.length > 0) {
+        if (radarMap && bounds.length > 0) {
             setTimeout(() => {
-                satelliteMap.invalidateSize();
+                radarMap.invalidateSize();
                 if (bounds.length === 1) {
-                    satelliteMap.setView(bounds[0], 15);
+                    radarMap.setView(bounds[0], 16);
                 } else {
-                    satelliteMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 15 });
+                    radarMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
                 }
             }, 200);
         }
     }
 
-    // PENGAMBILAN GPS UNTUK MODUL KEJADIAN (TERMASUK GEDUNG / PT)
     async function getIncidentGPS() {
         const locInput = document.getElementById('inc-location');
         locInput.value = "Mendeteksi Gedung / PT / Lokasi...";
@@ -1419,7 +1563,6 @@
         );
     }
 
-    // PRATINJAU FOTO KORLAP PADA MODUL KEJADIAN
     function previewIncidentPhoto(event) {
         const file = event.target.files[0];
         if (file) {
@@ -1434,7 +1577,6 @@
         }
     }
 
-    // SUBMIT BERITA KEJADIAN BERSERTA FOTO
     async function submitIncidentReport() {
         const title = document.getElementById('inc-title').value.trim();
         const level = document.getElementById('inc-level').value;
@@ -1485,7 +1627,7 @@
         const list = document.getElementById('incident-log-list');
         if(!list) return;
         list.innerHTML = '';
-        
+
         let filtered = INCIDENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada laporan kejadian tercatat.</li>`;
@@ -1636,12 +1778,12 @@
         if (USER_DATABASE[idInput] && USER_DATABASE[idInput].pin === pinInput) {
             currentUser = USER_DATABASE[idInput];
             document.getElementById('auth-modal-overlay').style.display = 'none';
-            
+
             document.getElementById('header-user-id').innerText = currentUser.id;
             document.getElementById('dash-user-name').innerText = currentUser.name;
             document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
             document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
-            
+
             document.getElementById('prof-name').innerText = currentUser.name;
             document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
             document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
