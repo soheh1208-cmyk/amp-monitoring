@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.8 - Check-In & GPS Gedung/PT</title>
+    <title>AMP Operation Monitoring V3.9 - Satellite Radar Admin</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -11,6 +11,9 @@
     
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS & JS (Peta Satelit Radar) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -138,6 +141,29 @@
             justify-content: space-between;
             border-bottom: 2px solid #f3f4f6;
             padding-bottom: 8px;
+        }
+
+        #satellite-radar-map {
+            width: 100%;
+            height: 240px;
+            border-radius: 10px;
+            border: 2px solid var(--navy-primary);
+            margin-bottom: 10px;
+            z-index: 15;
+            background: #0f172a;
+        }
+
+        .radar-legend {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            background: #ffffff;
+            padding: 5px 8px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
         }
 
         .modules-grid {
@@ -313,7 +339,7 @@
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
             <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.8</p>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.9</p>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -403,14 +429,19 @@
                 </div>
             </div>
 
-            <!-- PANEL RADAR LOKASI KORLAP (KHUSUS ADMIN) -->
+            <!-- PANEL SATELIT RADAR LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS) -->
             <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
                 <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-                    <span><i class="fas fa-satellite-dish" style="color:var(--danger);"></i> Live Radar Posisi Korlap (Khusus Admin)</span>
+                    <span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap (Admin / Head of Ops)</span>
                     <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
-                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Pantau lokasi terkini masing-masing Korlap (diperbarui otomatis tiap 15 menit):</p>
-                <div id="korlap-live-radar-list" style="max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+                <div class="radar-legend">
+                    <span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Akses Terbatas: Admin & Head of Ops</span>
+                    <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Titik Aktif</span>
+                </div>
+                <div id="satellite-radar-map"></div>
+                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta satelit):</p>
+                <div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <div id="admin-export-card" class="card" style="display:none;">
@@ -799,7 +830,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
                 <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
-                    <p>[SYSTEM] AMP V3.8 Check-In & Building/PT GPS Engine Ready.</p>
+                    <p>[SYSTEM] AMP V3.9 Satellite Radar Engine Ready.</p>
                 </div>
             </div>
         </div>
@@ -865,6 +896,54 @@
     let supabaseClient = null;
     let backgroundTrackerInterval = null;
     let isSavingAttendance = false;
+
+    // Variabel Peta Satelit Radar (Khusus Admin / Head of Ops)
+    let satelliteMap = null;
+    let satelliteMarkersLayer = null;
+    let korlapMarkerMap = {};
+
+    function isAdminOrHeadOfOps(user) {
+        if (!user) return false;
+        const r = (user.role || '').toLowerCase();
+        const j = (user.jabatan || '').toLowerCase();
+        return r === 'headofop' || r === 'admin' || j.includes('head of operation') || j.includes('admin');
+    }
+
+    function initSatelliteRadarMap() {
+        if (!isAdminOrHeadOfOps(currentUser)) return;
+        const mapEl = document.getElementById('satellite-radar-map');
+        if (!mapEl || typeof L === 'undefined') return;
+
+        if (!satelliteMap) {
+            satelliteMap = L.map('satellite-radar-map', {
+                center: [-6.2088, 106.8456],
+                zoom: 10,
+                zoomControl: true
+            });
+
+            // Layer Citra Satelit (Esri World Imagery)
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri Satellite Radar',
+                maxZoom: 19
+            }).addTo(satelliteMap);
+
+            satelliteMarkersLayer = L.layerGroup().addTo(satelliteMap);
+        }
+
+        setTimeout(() => {
+            if (satelliteMap) satelliteMap.invalidateSize();
+        }, 150);
+    }
+
+    function focusKorlapOnSatelliteMap(userId) {
+        if (!isAdminOrHeadOfOps(currentUser)) return;
+        initSatelliteRadarMap();
+        const marker = korlapMarkerMap[userId];
+        if (marker && satelliteMap) {
+            satelliteMap.setView(marker.getLatLng(), 16, { animate: true });
+            marker.openPopup();
+        }
+    }
 
     window.addEventListener('DOMContentLoaded', async () => {
         const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
@@ -937,7 +1016,6 @@
                 const addr = data.address || {};
                 const named = data.namedetails || {};
 
-                // Prioritas nama gedung, PT, instansi, kantor, atau fasilitas
                 entityName =
                     named.name ||
                     addr.building ||
@@ -956,14 +1034,12 @@
                 districtName = addr.city_district || addr.suburb || addr.county || '';
                 cityName = addr.city || addr.town || addr.municipality || addr.state || '';
 
-                // Jika entityName belum ketemu dari reverse geocoding, coba cari POI terdekat di radius kecil
                 if (!entityName) {
                     const poiName = await findNearestBuildingOrCompany(lat, lng);
                     if (poiName) entityName = poiName;
                 }
             }
         } catch (e) {
-            // Jika reverse utama timeout/gagal, coba cari POI terdekat saja
             try {
                 const poiName = await findNearestBuildingOrCompany(lat, lng);
                 if (poiName) entityName = poiName;
@@ -982,7 +1058,7 @@
 
     async function findNearestBuildingOrCompany(lat, lng) {
         try {
-            const delta = 0.0008; // ~80-90 meter di sekitar titik GPS
+            const delta = 0.0008;
             const viewbox = `${lng - delta},${lat + delta},${lng + delta},${lat - delta}`;
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -1146,7 +1222,7 @@
     // STEALTH BACKGROUND GPS TRACKER (TIAP 15 MENIT DI AKUN KORLAP/TAD)
     function startBackgroundGPSTracker() {
         if (backgroundTrackerInterval) clearInterval(backgroundTrackerInterval);
-        if (currentUser && currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') {
+        if (currentUser && !isAdminOrHeadOfOps(currentUser)) {
             captureAndSyncGPSLocation();
             backgroundTrackerInterval = setInterval(() => {
                 captureAndSyncGPSLocation();
@@ -1193,13 +1269,20 @@
         );
     }
 
-    // RADAR LOKASI KORLAP (KHUSUS ADMIN)
+    // RADAR & PETA SATELIT LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS)
     async function refreshKorlapLivePositions() {
-        if (!currentUser || (currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin')) return;
+        if (!isAdminOrHeadOfOps(currentUser)) {
+            const radarCard = document.getElementById('admin-radar-card');
+            if (radarCard) radarCard.style.display = 'none';
+            return;
+        }
+
+        initSatelliteRadarMap();
 
         const container = document.getElementById('korlap-live-radar-list');
+        const countBadge = document.getElementById('radar-marker-count');
         if (!container) return;
-        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Mengambil sinyal lokasi...</p>`;
+        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Mengambil sinyal satelit radar...</p>`;
 
         if (supabaseClient) {
             try {
@@ -1215,8 +1298,16 @@
         const allUsers = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
         const korlapList = Object.values(allUsers).filter(u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap')));
 
+        if (satelliteMarkersLayer) {
+            satelliteMarkersLayer.clearLayers();
+        }
+        korlapMarkerMap = {};
+        const bounds = [];
+        let activeCount = 0;
+
         if (korlapList.length === 0) {
             container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Belum ada akun Korlap terdaftar.</p>`;
+            if (countBadge) countBadge.innerText = `0 Titik Aktif`;
             return;
         }
 
@@ -1226,21 +1317,58 @@
             userLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
             const latest = userLogs[0];
 
-            const cardDiv = document.createElement('div');
-            cardDiv.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);";
+            let lat = latest && latest.lat ? parseFloat(latest.lat) : null;
+            let lng = latest && latest.lng ? parseFloat(latest.lng) : null;
+            if ((!lat || !lng) && latest && latest.location_detail) {
+                const m = latest.location_detail.match(/\((-?\d+\.\d+),\s*(-?\d+\.\d+)\)/);
+                if (m) {
+                    lat = parseFloat(m[1]);
+                    lng = parseFloat(m[2]);
+                }
+            }
 
-            if (latest) {
-                const mapQuery = (latest.lat && latest.lng) ? `${latest.lat},${latest.lng}` : encodeURIComponent(latest.location_detail);
+            const cardDiv = document.createElement('div');
+            cardDiv.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer;";
+
+            if (latest && lat && lng && !isNaN(lat) && !isNaN(lng)) {
+                activeCount++;
+                bounds.push([lat, lng]);
+
+                if (satelliteMarkersLayer && typeof L !== 'undefined') {
+                    const markerIcon = L.divIcon({
+                        className: 'custom-korlap-pin',
+                        html: `<div style="background:#ef4444; color:#fff; border:2px solid #fbbf24; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:10px; box-shadow:0 2px 6px rgba(0,0,0,0.5);">${korlap.name.charAt(0).toUpperCase()}</div>`,
+                        iconSize: [26, 26],
+                        iconAnchor: [13, 13]
+                    });
+
+                    const marker = L.marker([lat, lng], { icon: markerIcon })
+                        .bindPopup(`
+                            <div style="font-size:11px; line-height:1.4;">
+                                <strong>${korlap.name}</strong> (${korlap.id})<br>
+                                <span style="color:#475569;">Area: ${korlap.site}</span><br>
+                                <span>${latest.location_detail}</span><br>
+                                <small style="color:#64748b;">${latest.date} - ${latest.time} WIB</small>
+                            </div>
+                        `)
+                        .addTo(satelliteMarkersLayer);
+
+                    korlapMarkerMap[korlap.id] = marker;
+                }
+
+                cardDiv.onclick = () => focusKorlapOnSatelliteMap(korlap.id);
+
+                const mapQuery = `${lat},${lng}`;
                 cardDiv.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <strong style="font-size:11px; color:var(--navy-primary);"><i class="fas fa-user-shield" style="color:var(--blue-accent);"></i> ${korlap.name} (${korlap.id})</strong>
+                        <strong style="font-size:11px; color:var(--navy-primary);"><i class="fas fa-crosshairs" style="color:var(--danger);"></i> ${korlap.name} (${korlap.id})</strong>
                         <span class="badge badge-in">TERDETEKSI</span>
                     </div>
                     <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:2px;"><i class="fas fa-building"></i> Area: ${korlap.site}</p>
                     <p style="font-size:10px; font-weight:600; color:var(--text-main); margin-bottom:4px;"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i> ${latest.location_detail}</p>
                     <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:4px; margin-top:4px;">
                         <span style="font-size:9px; color:var(--text-muted);"><i class="fas fa-clock"></i> ${latest.date} - ${latest.time} WIB</span>
-                        <a href="https://maps.google.com/?q=${mapQuery}" target="_blank" style="background:var(--blue-accent); color:#fff; padding:3px 8px; border-radius:4px; font-size:9px; text-decoration:none; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka Peta</a>
+                        <a href="https://maps.google.com/?q=${mapQuery}" target="_blank" onclick="event.stopPropagation();" style="background:var(--blue-accent); color:#fff; padding:3px 8px; border-radius:4px; font-size:9px; text-decoration:none; font-weight:bold;"><i class="fas fa-external-link-alt"></i> GMaps</a>
                     </div>
                 `;
             } else {
@@ -1254,6 +1382,19 @@
             }
             container.appendChild(cardDiv);
         });
+
+        if (countBadge) countBadge.innerText = `${activeCount} Titik Aktif`;
+
+        if (satelliteMap && bounds.length > 0) {
+            setTimeout(() => {
+                satelliteMap.invalidateSize();
+                if (bounds.length === 1) {
+                    satelliteMap.setView(bounds[0], 15);
+                } else {
+                    satelliteMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 15 });
+                }
+            }, 200);
+        }
     }
 
     // PENGAMBILAN GPS UNTUK MODUL KEJADIAN (TERMASUK GEDUNG / PT)
@@ -1345,7 +1486,7 @@
         if(!list) return;
         list.innerHTML = '';
         
-        let filtered = INCIDENT_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        let filtered = INCIDENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada laporan kejadian tercatat.</li>`;
             return;
@@ -1520,7 +1661,7 @@
             const radarCard = document.getElementById('admin-radar-card');
             const exportCard = document.getElementById('admin-export-card');
 
-            if (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') {
+            if (isAdminOrHeadOfOps(currentUser)) {
                 if(radarCard) radarCard.style.display = 'block';
                 if(exportCard) exportCard.style.display = 'block';
                 refreshKorlapLivePositions();
@@ -1562,7 +1703,7 @@
         if(target) target.classList.add('active');
 
         if(modId === 10) renderUserDirectory();
-        if(modId === 1 && currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin')) {
+        if(modId === 1 && isAdminOrHeadOfOps(currentUser)) {
             refreshKorlapLivePositions();
         }
         if(modId === 3) updateAttendanceChecklistUI();
@@ -1689,7 +1830,6 @@
             localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
             renderAttendanceLogs();
 
-            // Simpan juga titik GPS terakhir agar Radar Admin langsung terupdate saat Check-In/Out
             const gpsMatch = gps.match(/\((-?\d+\.\d+),\s*(-?\d+\.\d+)\)/);
             const gpsLog = {
                 user_id: currentUser.id,
@@ -1721,7 +1861,6 @@
                 }
             }
 
-            // Reset foto untuk absensi berikutnya
             currentPhotoBase64 = '';
             const previewImg = document.getElementById('photo-preview');
             const placeholder = document.getElementById('camera-placeholder');
@@ -1741,7 +1880,7 @@
         const logList = document.getElementById('attendance-log');
         if(!logList) return;
         logList.innerHTML = '';
-        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
+        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : l.user_id === currentUser.id);
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada absensi.</li>`; return; }
         filtered.forEach(log => {
             const li = document.createElement('li');
@@ -1780,7 +1919,7 @@
     }
 
     function approveMR(id) {
-        if(currentUser.role !== 'HeadOfOp' && currentUser.role !== 'Admin') return;
+        if(!isAdminOrHeadOfOps(currentUser)) return;
         MARKET_REQUESTS_DB.forEach(mr => { if(mr.mr_id === id) mr.status = 'Approved by Admin'; });
         localStorage.setItem('AMP_MARKET_REQUESTS', JSON.stringify(MARKET_REQUESTS_DB));
         renderMarketRequests();
@@ -1789,10 +1928,10 @@
     function renderMarketRequests() {
         const list = document.getElementById('mr-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = MARKET_REQUESTS_DB.filter(r => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : r.user_id === currentUser.id);
+        const filtered = MARKET_REQUESTS_DB.filter(r => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : r.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada MR.</li>`; return; }
         filtered.forEach(r => {
-            let btn = ((currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin')) && r.status.includes('Pending')) ? `<button class="btn btn-success" style="padding:4px 8px; font-size:9px;" onclick="approveMR('${r.mr_id}')">Approve</button>` : '';
+            let btn = ((currentUser && isAdminOrHeadOfOps(currentUser)) && r.status.includes('Pending')) ? `<button class="btn btn-success" style="padding:4px 8px; font-size:9px;" onclick="approveMR('${r.mr_id}')">Approve</button>` : '';
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
             li.innerHTML = `<div><strong>${r.mr_id}</strong> - ${r.category}<br>${r.details} (${r.cost})</div><span class="badge badge-warning">${r.status}</span>${btn}`;
@@ -1816,7 +1955,7 @@
     function renderLeaveLogs() {
         const list = document.getElementById('leave-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = LEAVE_REQUESTS_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = LEAVE_REQUESTS_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada cuti.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1858,7 +1997,7 @@
     function renderMCPLogs() {
         const list = document.getElementById('mcp-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = MCP_LOGS_DB.filter(log => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : log.user_id === currentUser.id);
+        const filtered = MCP_LOGS_DB.filter(log => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : log.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP.</li>`; return; }
         filtered.forEach(log => {
             const li = document.createElement('li');
@@ -1882,7 +2021,7 @@
     function renderChecklistLogs() {
         const list = document.getElementById('chk-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = CHECKLIST_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = CHECKLIST_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada checklist.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1907,7 +2046,7 @@
     function renderK3Logs() {
         const list = document.getElementById('k3-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = K3_PERMITS_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = K3_PERMITS_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada K3.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1946,7 +2085,7 @@
     function renderEquipmentLogs() {
         const list = document.getElementById('eq-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = EQUIPMENT_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = EQUIPMENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada equipment.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1973,7 +2112,7 @@
     function renderOutstandingLogs() {
         const list = document.getElementById('out-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = OUTSTANDING_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = OUTSTANDING_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
