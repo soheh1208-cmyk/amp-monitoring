@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V4.0 - Google Maps Radar Admin</title>
+    <title>AMP Operation Monitoring V4.2 - Google Maps Radar & Session Lock</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -117,6 +117,20 @@
             z-index: 10000;
         }
 
+        .login-alert-box {
+            display: none;
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-align: left;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
         .screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
         .screen-panel.active { display: block; }
 
@@ -141,6 +155,7 @@
             justify-content: space-between;
             border-bottom: 2px solid #f3f4f6;
             padding-bottom: 8px;
+            gap: 6px;
         }
 
         .map-mode-bar {
@@ -192,6 +207,7 @@
             padding: 5px 8px;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
+            gap: 6px;
         }
 
         /* Radar Marker Pulse Animation */
@@ -418,7 +434,6 @@
 
     <!-- MODAL AUTH LOGIN -->
     <div id="auth-modal-overlay" class="auth-overlay">
-        <!-- FORM LOGIN -->
         <div id="login-box-asli" class="auth-card-asli">
             <svg class="logo-svg" viewBox="0 0 200 200" style="width:50px; height:50px; margin-bottom:4px;">
                 <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
@@ -426,7 +441,9 @@
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
             <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V4.0</p>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V4.2</p>
+
+            <div id="login-session-warning" class="login-alert-box"></div>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -444,24 +461,22 @@
 
             <div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
                 <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin / Head of Ops)<br>
-                <code>KOR001</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
+                <code>KOR001</code>–<code>KOR004</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
             </div>
         </div>
 
-        <!-- FORM REGISTER -->
         <div id="register-box-asli" class="auth-card-asli" style="display:none;">
             <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
             <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-            <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: TAD002)"></div>
+            <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: KOR005)"></div>
             <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / TAD / Staf"></div>
-            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit"></div>
+            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi / ULTG Cikarang"></div>
             <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
             <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
             <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
             <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
         </div>
 
-        <!-- FORM RESET PIN -->
         <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
             <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
             <div class="form-group"><label>ID Karyawan</label><input type="text" id="reset-id" class="form-control" placeholder="ID Karyawan"></div>
@@ -495,7 +510,7 @@
                 <div class="user-badge">
                     <i class="fas fa-user-circle"></i>
                     <span id="header-user-id">AMP001</span>
-                    <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:6px; cursor:pointer;" title="Keluar"></i>
+                    <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:6px; cursor:pointer;" title="Keluar & Lepas Kunci Sesi"></i>
                 </div>
             </div>
         </div>
@@ -519,7 +534,7 @@
             <!-- PANEL GOOGLE MAPS RADAR LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS) -->
             <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
                 <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-                    <span><i class="fas fa-radar" style="color:var(--danger);"></i> Google Maps Radar Korlap (Admin / Head of Ops)</span>
+                    <span><i class="fas fa-radar" style="color:var(--danger);"></i> Google Maps Radar Korlap</span>
                     <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
 
@@ -530,13 +545,13 @@
                 </div>
 
                 <div class="radar-legend">
-                    <span><i class="fas fa-shield-alt" style="color:var(--navy-primary);"></i> Khusus Admin & Head of Ops</span>
+                    <span><i class="fas fa-shield-alt" style="color:var(--navy-primary);"></i> Auto-Refresh 2m • Admin/HeadOps</span>
                     <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Korlap di Radar</span>
                 </div>
 
                 <div id="korlap-radar-map"></div>
-                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar radar posisi Korlap terkini (klik kartu untuk fokus ke titik lokasi di peta):</p>
-                <div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+                <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar radar posisi semua Korlap (klik kartu untuk fokus ke lokasi di peta):</p>
+                <div id="korlap-live-radar-list" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <div id="admin-export-card" class="card" style="display:none;">
@@ -715,7 +730,7 @@
             </div>
         </div>
 
-        <!-- MODUL 6: MODUL KEJADIAN (DENGAN FITUR UPLOAD FOTO) -->
+        <!-- MODUL 6: MODUL KEJADIAN -->
         <div id="mod-6" class="screen-panel">
             <div class="card" style="border-left: 4px solid var(--danger);">
                 <div class="card-title" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Input Laporan Berita Kejadian Lapangan</div>
@@ -924,7 +939,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
                 <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
-                    <p>[SYSTEM] AMP V4.0 Google Maps Radar Engine Ready.</p>
+                    <p>[SYSTEM] AMP V4.2 Google Maps Radar & Session Lock Engine Ready.</p>
                 </div>
             </div>
         </div>
@@ -942,7 +957,19 @@
 </div>
 
 <script>
-    // Digital Clock Engine
+    const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+    const DEVICE_ID_KEY = 'AMP_DEVICE_ID';
+    const RADAR_REFRESH_INTERVAL_MS = 2 * 60 * 1000;
+
+    function getDeviceId() {
+        let devId = localStorage.getItem(DEVICE_ID_KEY);
+        if (!devId) {
+            devId = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+            localStorage.setItem(DEVICE_ID_KEY, devId);
+        }
+        return devId;
+    }
+
     setInterval(() => {
         const now = new Date();
         const clockStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
@@ -951,13 +978,19 @@
     }, 1000);
 
     const DEFAULT_USERS = {
-        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789", avatar: "" },
-        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566", avatar: "" },
-        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899", avatar: "" }
+        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
+        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
+        "KOR002": { id: "KOR002", name: "Dede Rusmana", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Bekasi / ULTG Cikarang", phone: "081311223344", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
+        "KOR003": { id: "KOR003", name: "Rizqi Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Bandung / SPV Area 1", phone: "081322334455", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
+        "KOR004": { id: "KOR004", name: "Irfan Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "JBB / SPV Area 2", phone: "081333445566", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
+        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 }
     };
 
     let USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
-    if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
+    Object.keys(DEFAULT_USERS).forEach(k => {
+        if (!USER_DATABASE[k]) USER_DATABASE[k] = DEFAULT_USERS[k];
+    });
+    localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
 
     let CENTRAL_ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || [];
     let GPS_TRACKER_DB = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB')) || [];
@@ -984,20 +1017,44 @@
     ];
 
     let currentUser = null;
+    let currentSessionToken = '';
     let currentPhotoBase64 = '';
     let currentProfileAvatarBase64 = '';
     let currentIncidentPhotoBase64 = '';
     let supabaseClient = null;
     let backgroundTrackerInterval = null;
+    let sessionHeartbeatInterval = null;
+    let radarAutoRefreshTimer = null;
     let isSavingAttendance = false;
 
-    // Variabel Peta Google Maps Radar (Khusus Admin / Head of Ops)
     let radarMap = null;
     let radarMarkersLayer = null;
     let radarTileLayer = null;
     let radarLabelLayer = null;
     let currentMapMode = 'roadmap';
     let korlapMarkerMap = {};
+
+    function showLoginWarning(msg) {
+        const box = document.getElementById('login-session-warning');
+        if (!box) return;
+        box.innerHTML = `<i class="fas fa-ban"></i> ${msg}`;
+        box.style.display = 'block';
+    }
+
+    function hideLoginWarning() {
+        const box = document.getElementById('login-session-warning');
+        if (box) {
+            box.style.display = 'none';
+            box.innerHTML = '';
+        }
+    }
+
+    function isSessionCurrentlyActive(userObj) {
+        if (!userObj || !userObj.is_active_session) return false;
+        const lastTs = Number(userObj.session_updated_at || 0);
+        if (!lastTs) return false;
+        return (Date.now() - lastTs) < SESSION_TTL_MS;
+    }
 
     function isAdminOrHeadOfOps(user) {
         if (!user) return false;
@@ -1010,34 +1067,26 @@
         if (!radarMap || typeof L === 'undefined') return;
         currentMapMode = mode;
 
-        if (radarTileLayer) {
-            radarMap.removeLayer(radarTileLayer);
-            radarTileLayer = null;
-        }
-        if (radarLabelLayer) {
-            radarMap.removeLayer(radarLabelLayer);
-            radarLabelLayer = null;
-        }
+        if (radarTileLayer) { radarMap.removeLayer(radarTileLayer); radarTileLayer = null; }
+        if (radarLabelLayer) { radarMap.removeLayer(radarLabelLayer); radarLabelLayer = null; }
 
         if (mode === 'roadmap') {
-            // Tampilan jalan & detail lokasi seperti Google Maps
             radarTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
                 attribution: 'Google Maps Radar',
                 maxZoom: 20
             }).addTo(radarMap);
         } else if (mode === 'hybrid') {
-            // Satelit + nama jalan, gedung, dan tempat ala Google Maps
             radarTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
                 attribution: 'Google Hybrid Radar',
                 maxZoom: 20
             }).addTo(radarMap);
         } else {
-            // Satelit murni
             radarTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Esri Satellite Radar',
                 maxZoom: 19
             }).addTo(radarMap);
             radarLabelLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Esri Places Radar',
                 maxZoom: 19
             }).addTo(radarMap);
         }
@@ -1064,7 +1113,6 @@
                 zoom: 12,
                 zoomControl: true
             });
-
             applyMapTileMode(currentMapMode);
             radarMarkersLayer = L.layerGroup().addTo(radarMap);
         }
@@ -1084,7 +1132,27 @@
         }
     }
 
+    function startRadarAutoRefresh() {
+        stopRadarAutoRefresh();
+        if (!isAdminOrHeadOfOps(currentUser)) return;
+
+        radarAutoRefreshTimer = setInterval(() => {
+            const dashboardActive = document.getElementById('mod-1')?.classList.contains('active');
+            if (isAdminOrHeadOfOps(currentUser) && dashboardActive) {
+                refreshKorlapLivePositions();
+            }
+        }, RADAR_REFRESH_INTERVAL_MS);
+    }
+
+    function stopRadarAutoRefresh() {
+        if (radarAutoRefreshTimer) {
+            clearInterval(radarAutoRefreshTimer);
+            radarAutoRefreshTimer = null;
+        }
+    }
+
     window.addEventListener('DOMContentLoaded', async () => {
+        getDeviceId();
         const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
         const savedKey = localStorage.getItem('AMP_SUPABASE_KEY');
         if (savedUrl) document.getElementById('cfg-url').value = savedUrl;
@@ -1101,6 +1169,44 @@
         renderUserDirectory();
         updateAttendanceChecklistUI();
     });
+
+    window.addEventListener('beforeunload', () => {
+        if (currentUser && currentSessionToken) {
+            releaseSessionLockSync(currentUser.id, currentSessionToken);
+        }
+    });
+
+    function releaseSessionLockSync(userId, token) {
+        const db = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+        if (db[userId] && db[userId].active_session_token === token) {
+            db[userId].is_active_session = false;
+            db[userId].active_session_token = '';
+            db[userId].active_device_id = '';
+            db[userId].session_updated_at = 0;
+            USER_DATABASE = db;
+            localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+        }
+    }
+
+    async function updateSessionHeartbeat() {
+        if (!currentUser || !currentSessionToken) return;
+        const nowTs = Date.now();
+        USER_DATABASE[currentUser.id] = {
+            ...USER_DATABASE[currentUser.id],
+            is_active_session: true,
+            active_session_token: currentSessionToken,
+            active_device_id: getDeviceId(),
+            session_updated_at: nowTs
+        };
+        currentUser = USER_DATABASE[currentUser.id];
+        localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+        if (supabaseClient) {
+            try {
+                await supabaseClient.from('user_directory').upsert([currentUser]);
+            } catch (_) {}
+        }
+    }
 
     function updateAttendanceChecklistUI() {
         const fotoEl = document.getElementById('status-foto-badge');
@@ -1142,10 +1248,7 @@
 
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&namedetails=1`,
-                {
-                    headers: { 'Accept-Language': 'id' },
-                    signal: controller.signal
-                }
+                { headers: { 'Accept-Language': 'id' }, signal: controller.signal }
             );
             clearTimeout(timeoutId);
 
@@ -1203,10 +1306,7 @@
 
             const res = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&namedetails=1&bounded=1&viewbox=${encodeURIComponent(viewbox)}&q=${encodeURIComponent('PT OR Gedung OR Kantor OR PLN OR Pabrik OR Graha OR Wisma')}`,
-                {
-                    headers: { 'Accept-Language': 'id' },
-                    signal: controller.signal
-                }
+                { headers: { 'Accept-Language': 'id' }, signal: controller.signal }
             );
             clearTimeout(timeoutId);
             const items = await res.json();
@@ -1255,13 +1355,19 @@
             const { data, error } = await supabaseClient.from('user_directory').select('*');
             if (error) throw error;
             if (data && data.length > 0) {
-                let currentDB = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+                let currentDB = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || { ...DEFAULT_USERS };
                 data.forEach(u => {
-                    if (u.id) currentDB[u.id.toUpperCase()] = u;
+                    if (u.id) {
+                        const existing = currentDB[u.id.toUpperCase()] || {};
+                        currentDB[u.id.toUpperCase()] = { ...existing, ...u };
+                    }
                 });
                 USER_DATABASE = currentDB;
                 localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
                 renderUserDirectory();
+                if (!silent && isAdminOrHeadOfOps(currentUser)) {
+                    refreshKorlapLivePositions();
+                }
             }
         } catch (err) {}
     }
@@ -1269,6 +1375,8 @@
     async function pullAllDataFromSupabase(silent = false) {
         if (!supabaseClient) return;
         try {
+            await pullUsersFromSupabase(true);
+
             const { data } = await supabaseClient.from('attendance_logs').select('*');
             if (data && data.length > 0) {
                 CENTRAL_ATTENDANCE_DB = data;
@@ -1300,6 +1408,7 @@
     }
 
     function switchAuthSubView(view) {
+        hideLoginWarning();
         document.getElementById('login-box-asli').style.display = 'none';
         document.getElementById('register-box-asli').style.display = 'none';
         document.getElementById('reset-box-asli').style.display = 'none';
@@ -1325,7 +1434,10 @@
         if(jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) roleAssigned = "Korlap";
         else if(jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) roleAssigned = "HeadOfOp";
 
-        const newUser = { id, name, role: roleAssigned, jabatan, pin, site, phone, avatar: "" };
+        const newUser = {
+            id, name, role: roleAssigned, jabatan, pin, site, phone, avatar: "",
+            is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0
+        };
         currentDB[id] = newUser;
         USER_DATABASE = currentDB;
         localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
@@ -1419,21 +1531,35 @@
         const container = document.getElementById('korlap-live-radar-list');
         const countBadge = document.getElementById('radar-marker-count');
         if (!container) return;
-        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Memindai radar lokasi Korlap...</p>`;
+        container.innerHTML = `<p style="font-size:10px; color:var(--text-muted); text-align:center;">Menyinkronkan & memindai radar semua akun Korlap...</p>`;
 
         if (supabaseClient) {
             try {
+                await pullUsersFromSupabase(true);
                 const { data } = await supabaseClient.from('gps_tracker_logs').select('*').order('timestamp', { ascending: false });
                 if (data && data.length > 0) {
                     GPS_TRACKER_DB = data;
                     localStorage.setItem('AMP_GPS_TRACKER_DB', JSON.stringify(GPS_TRACKER_DB));
                 }
+                const { data: attData } = await supabaseClient.from('attendance_logs').select('*');
+                if (attData && attData.length > 0) {
+                    CENTRAL_ATTENDANCE_DB = attData;
+                    localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
+                }
             } catch (e) {}
         }
 
         const allGPS = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB')) || GPS_TRACKER_DB;
-        const allUsers = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
-        const korlapList = Object.values(allUsers).filter(u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap')));
+        const allAttendance = JSON.parse(localStorage.getItem('AMP_CENTRAL_ATTENDANCE')) || CENTRAL_ATTENDANCE_DB;
+        const allUsers = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || { ...DEFAULT_USERS };
+
+        Object.keys(DEFAULT_USERS).forEach(k => {
+            if (!allUsers[k]) allUsers[k] = DEFAULT_USERS[k];
+        });
+
+        const korlapList = Object.values(allUsers).filter(
+            u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap'))
+        );
 
         if (radarMarkersLayer) {
             radarMarkersLayer.clearLayers();
@@ -1450,9 +1576,26 @@
 
         container.innerHTML = '';
         korlapList.forEach(korlap => {
-            const userLogs = allGPS.filter(log => log.user_id === korlap.id);
+            const uidUpper = (korlap.id || '').toUpperCase();
+            const userLogs = allGPS.filter(log => (log.user_id || '').toUpperCase() === uidUpper);
             userLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            const latest = userLogs[0];
+            let latest = userLogs[0];
+
+            // Fallback ke log absensi jika log GPS tracker belum ada
+            if (!latest) {
+                const attLogs = allAttendance.filter(a => (a.user_id || '').toUpperCase() === uidUpper && a.gps);
+                if (attLogs.length > 0) {
+                    const att = attLogs[0];
+                    latest = {
+                        user_id: korlap.id,
+                        name: korlap.name,
+                        site: korlap.site,
+                        date: att.date,
+                        time: att.time,
+                        location_detail: att.gps
+                    };
+                }
+            }
 
             let lat = latest && latest.lat ? parseFloat(latest.lat) : null;
             let lng = latest && latest.lng ? parseFloat(latest.lng) : null;
@@ -1463,6 +1606,11 @@
                     lng = parseFloat(m[2]);
                 }
             }
+
+            const sessionActive = isSessionCurrentlyActive(korlap);
+            const sessionBadge = sessionActive
+                ? `<span class="badge badge-in" style="background:#0284c7;">SEDANG LOGIN</span>`
+                : `<span class="badge" style="background:#64748b;">OFFLINE</span>`;
 
             const cardDiv = document.createElement('div');
             cardDiv.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer;";
@@ -1505,9 +1653,9 @@
 
                 const mapQuery = `${lat},${lng}`;
                 cardDiv.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:4px;">
                         <strong style="font-size:11px; color:var(--navy-primary);"><i class="fas fa-satellite-dish" style="color:var(--danger);"></i> ${korlap.name} (${korlap.id})</strong>
-                        <span class="badge badge-in">RADAR AKTIF</span>
+                        <div style="display:flex; gap:4px;">${sessionBadge}<span class="badge badge-in">RADAR AKTIF</span></div>
                     </div>
                     <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:2px;"><i class="fas fa-building"></i> Area: ${korlap.site}</p>
                     <p style="font-size:10px; font-weight:600; color:var(--text-main); margin-bottom:4px;"><i class="fas fa-map-marker-alt" style="color:var(--danger);"></i> ${latest.location_detail}</p>
@@ -1518,17 +1666,18 @@
                 `;
             } else {
                 cardDiv.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:4px;">
                         <strong style="font-size:11px; color:var(--navy-primary);">${korlap.name} (${korlap.id})</strong>
-                        <span class="badge badge-warning">NO SIGNAL</span>
+                        <div style="display:flex; gap:4px;">${sessionBadge}<span class="badge badge-warning">NO SIGNAL</span></div>
                     </div>
-                    <p style="font-size:9.5px; color:var(--text-muted);">Area: ${korlap.site} — Belum ada data GPS Korlap.</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">Area: ${korlap.site} — Terintegrasi di direktori, menunggu sinkronisasi GPS/absensi perangkat Korlap.</p>
                 `;
             }
             container.appendChild(cardDiv);
         });
 
-        if (countBadge) countBadge.innerText = `${activeCount} Korlap di Radar`;
+        const nowStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        if (countBadge) countBadge.innerText = `${activeCount}/${korlapList.length} Korlap • ${nowStr}`;
 
         if (radarMap && bounds.length > 0) {
             setTimeout(() => {
@@ -1763,77 +1912,136 @@
     }
 
     async function processLogin() {
+        hideLoginWarning();
         const idInput = document.getElementById('login-id').value.trim().toUpperCase();
         const pinInput = document.getElementById('login-pin').value.trim();
 
-        if (!idInput || !pinInput) { alert('Masukkan ID Karyawan dan PIN!'); return; }
+        if (!idInput || !pinInput) {
+            showLoginWarning('Masukkan ID Karyawan / NIP dan PIN terlebih dahulu.');
+            return;
+        }
 
-        USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || DEFAULT_USERS;
-        if (!USER_DATABASE["AMP001"]) USER_DATABASE["AMP001"] = DEFAULT_USERS["AMP001"];
+        USER_DATABASE = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || { ...DEFAULT_USERS };
+        Object.keys(DEFAULT_USERS).forEach(k => {
+            if (!USER_DATABASE[k]) USER_DATABASE[k] = DEFAULT_USERS[k];
+        });
 
-        if (!USER_DATABASE[idInput] && supabaseClient) {
+        if (supabaseClient) {
             await pullUsersFromSupabase(true);
         }
 
-        if (USER_DATABASE[idInput] && USER_DATABASE[idInput].pin === pinInput) {
-            currentUser = USER_DATABASE[idInput];
-            document.getElementById('auth-modal-overlay').style.display = 'none';
-
-            document.getElementById('header-user-id').innerText = currentUser.id;
-            document.getElementById('dash-user-name').innerText = currentUser.name;
-            document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
-            document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
-
-            document.getElementById('prof-name').innerText = currentUser.name;
-            document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
-            document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
-            document.getElementById('prof-site').innerText = currentUser.site;
-            document.getElementById('prof-phone').innerText = currentUser.phone || '-';
-
-            document.getElementById('edit-prof-name').value = currentUser.name;
-            document.getElementById('edit-prof-jabatan').value = currentUser.jabatan || currentUser.role;
-            document.getElementById('edit-prof-site').value = currentUser.site;
-            document.getElementById('edit-prof-phone').value = currentUser.phone || '';
-
-            applyUserAvatarToUI();
-            document.getElementById('mr-number').value = generateMRNumber();
-
-            if(supabaseClient) await pullAllDataFromSupabase(true);
-
-            const radarCard = document.getElementById('admin-radar-card');
-            const exportCard = document.getElementById('admin-export-card');
-
-            if (isAdminOrHeadOfOps(currentUser)) {
-                if(radarCard) radarCard.style.display = 'block';
-                if(exportCard) exportCard.style.display = 'block';
-                refreshKorlapLivePositions();
-            } else {
-                if(radarCard) radarCard.style.display = 'none';
-                if(exportCard) exportCard.style.display = 'none';
-            }
-
-            startBackgroundGPSTracker();
-            updateAttendanceChecklistUI();
-
-            renderAttendanceLogs();
-            renderUserDirectory();
-            renderLeaveLogs();
-            renderIncidentLogs();
-            renderMCPLogs();
-            renderMarketRequests();
-            renderChecklistLogs();
-            renderK3Logs();
-            renderEquipmentLogs();
-            renderOutstandingLogs();
-            renderBulletinLogs();
-        } else {
-            alert('ID Karyawan atau PIN Salah!');
+        const targetUser = USER_DATABASE[idInput];
+        if (!targetUser || targetUser.pin !== pinInput) {
+            showLoginWarning('ID Karyawan atau PIN salah. Silakan periksa kembali.');
+            return;
         }
+
+        const thisDevice = getDeviceId();
+        if (isSessionCurrentlyActive(targetUser) && targetUser.active_device_id !== thisDevice) {
+            const lastTime = new Date(Number(targetUser.session_updated_at)).toLocaleTimeString('id-ID');
+            const msg = `Akses Ditolak! Akun ${targetUser.name} (${targetUser.id}) sedang digunakan di perangkat lain (aktif sejak ${lastTime} WIB).`;
+            showLoginWarning(msg);
+            alert(msg);
+            return;
+        }
+
+        currentSessionToken = 'SES-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        const nowTs = Date.now();
+        targetUser.is_active_session = true;
+        targetUser.active_session_token = currentSessionToken;
+        targetUser.active_device_id = thisDevice;
+        targetUser.session_updated_at = nowTs;
+
+        USER_DATABASE[idInput] = targetUser;
+        localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+        currentUser = targetUser;
+
+        if (supabaseClient) {
+            try { await supabaseClient.from('user_directory').upsert([currentUser]); } catch (_) {}
+        }
+
+        if (sessionHeartbeatInterval) clearInterval(sessionHeartbeatInterval);
+        sessionHeartbeatInterval = setInterval(updateSessionHeartbeat, 60 * 1000);
+
+        document.getElementById('auth-modal-overlay').style.display = 'none';
+        document.getElementById('login-pin').value = '';
+
+        document.getElementById('header-user-id').innerText = currentUser.id;
+        document.getElementById('dash-user-name').innerText = currentUser.name;
+        document.getElementById('dash-user-role').innerText = currentUser.jabatan || currentUser.role;
+        document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
+
+        document.getElementById('prof-name').innerText = currentUser.name;
+        document.getElementById('prof-id').innerText = `NIP: ${currentUser.id}`;
+        document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan || currentUser.role}`;
+        document.getElementById('prof-site').innerText = currentUser.site;
+        document.getElementById('prof-phone').innerText = currentUser.phone || '-';
+
+        document.getElementById('edit-prof-name').value = currentUser.name;
+        document.getElementById('edit-prof-jabatan').value = currentUser.jabatan || currentUser.role;
+        document.getElementById('edit-prof-site').value = currentUser.site;
+        document.getElementById('edit-prof-phone').value = currentUser.phone || '';
+
+        applyUserAvatarToUI();
+        document.getElementById('mr-number').value = generateMRNumber();
+
+        if(supabaseClient) await pullAllDataFromSupabase(true);
+
+        const radarCard = document.getElementById('admin-radar-card');
+        const exportCard = document.getElementById('admin-export-card');
+
+        if (isAdminOrHeadOfOps(currentUser)) {
+            if(radarCard) radarCard.style.display = 'block';
+            if(exportCard) exportCard.style.display = 'block';
+            refreshKorlapLivePositions();
+            startRadarAutoRefresh();
+        } else {
+            if(radarCard) radarCard.style.display = 'none';
+            if(exportCard) exportCard.style.display = 'none';
+            stopRadarAutoRefresh();
+        }
+
+        startBackgroundGPSTracker();
+        updateAttendanceChecklistUI();
+
+        renderAttendanceLogs();
+        renderUserDirectory();
+        renderLeaveLogs();
+        renderIncidentLogs();
+        renderMCPLogs();
+        renderMarketRequests();
+        renderChecklistLogs();
+        renderK3Logs();
+        renderEquipmentLogs();
+        renderOutstandingLogs();
+        renderBulletinLogs();
     }
 
-    function logout() {
+    async function logout() {
         if (backgroundTrackerInterval) clearInterval(backgroundTrackerInterval);
+        if (sessionHeartbeatInterval) clearInterval(sessionHeartbeatInterval);
+        stopRadarAutoRefresh();
+
+        if (currentUser) {
+            const uid = currentUser.id;
+            const db = JSON.parse(localStorage.getItem('AMP_USER_DATABASE')) || USER_DATABASE;
+            if (db[uid]) {
+                db[uid].is_active_session = false;
+                db[uid].active_session_token = '';
+                db[uid].active_device_id = '';
+                db[uid].session_updated_at = 0;
+                USER_DATABASE = db;
+                localStorage.setItem('AMP_USER_DATABASE', JSON.stringify(USER_DATABASE));
+
+                if (supabaseClient) {
+                    try { await supabaseClient.from('user_directory').upsert([db[uid]]); } catch (_) {}
+                }
+            }
+        }
+
         currentUser = null;
+        currentSessionToken = '';
+        hideLoginWarning();
         document.getElementById('auth-modal-overlay').style.display = 'flex';
         switchAuthSubView('login');
     }
@@ -1847,6 +2055,9 @@
         if(modId === 10) renderUserDirectory();
         if(modId === 1 && isAdminOrHeadOfOps(currentUser)) {
             refreshKorlapLivePositions();
+            startRadarAutoRefresh();
+        } else {
+            stopRadarAutoRefresh();
         }
         if(modId === 3) updateAttendanceChecklistUI();
 
@@ -2205,9 +2416,10 @@
         dirList.innerHTML = '';
         Object.keys(activeDB).forEach(id => {
             const u = activeDB[id];
+            const sessTag = isSessionCurrentlyActive(u) ? '<span class="badge badge-warning">SEDANG LOGIN</span>' : '<span class="badge badge-in">AKTIF</span>';
             const li = document.createElement('li');
             li.className = 'log-item';
-            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | ${u.site}</p></div><span class="badge badge-in">AKTIF</span>`;
+            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | ${u.site}</p></div>${sessTag}`;
             dirList.appendChild(li);
         });
     }
