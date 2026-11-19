@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.7 - Full Integrated</title>
+    <title>AMP Operation Monitoring V3.8 - Check-In & GPS Gedung/PT</title>
     <!-- Web App Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a192f">
@@ -233,6 +233,7 @@
         }
 
         .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-primary { background: var(--navy-primary); color: var(--white); }
         .btn-success { background: var(--success); color: var(--white); }
         .btn-warning { background: var(--gold-accent); color: var(--white); }
@@ -258,6 +259,18 @@
             font-size: 10px;
         }
         .log-thumb { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1; }
+
+        .status-checklist {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
 
         .bottom-nav {
             position: fixed;
@@ -300,7 +313,7 @@
                 <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
             </svg>
             <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.7</p>
+            <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.8</p>
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
@@ -492,7 +505,7 @@
         <!-- MODUL 3: ABSENSI -->
         <div id="mod-3" class="screen-panel">
             <div class="card">
-                <div class="card-title"><i class="fas fa-clock"></i> Absensi Live Foto Wajib & GPS Google Maps</div>
+                <div class="card-title"><i class="fas fa-clock"></i> Absensi Live Foto Wajib & GPS Gedung/PT</div>
                 <div class="digital-clock-box" id="live-clock">00:00:00 WIB</div>
 
                 <div class="camera-box">
@@ -506,17 +519,22 @@
                 </div>
 
                 <button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Nyalakan Kamera Live</button>
-                <button type="button" class="btn btn-primary" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
+                <button type="button" class="btn btn-primary" id="btn-take-snapshot" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
 
                 <div style="margin-top:10px;" class="form-group">
-                    <button type="button" class="btn btn-warning" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> Tarik GPS Real Google Maps</button>
-                    <input type="text" id="gps-coords" class="form-control" placeholder="Lokasi Google Maps..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold; font-size:10px;">
+                    <button type="button" class="btn btn-warning" id="btn-tarik-gps" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> 3. Tarik GPS Gedung / PT / Lokasi</button>
+                    <input type="text" id="gps-coords" class="form-control" placeholder="Nama Gedung / PT / Jalan & Koordinat..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold; font-size:10px;">
                     <div id="gmaps-link-box" style="margin-top:4px; text-align:center;"></div>
                 </div>
 
+                <div class="status-checklist">
+                    <span id="status-foto-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> Foto: Belum</span>
+                    <span id="status-gps-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> GPS: Belum</span>
+                </div>
+
                 <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button type="button" class="btn btn-success" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
-                    <button type="button" class="btn btn-danger" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
+                    <button type="button" class="btn btn-success" id="btn-checkin" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
+                    <button type="button" class="btn btn-danger" id="btn-checkout" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
                 </div>
             </div>
 
@@ -592,7 +610,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Detail Lokasi Kejadian (GPS / Area)</label>
+                    <label>Detail Lokasi Kejadian (Gedung / PT / GPS)</label>
                     <div style="display:flex; gap:6px;">
                         <input type="text" id="inc-location" class="form-control" placeholder="Tekan tombol ambil GPS..." readonly style="background:#f1f5f9; font-weight:bold;">
                         <button type="button" class="btn btn-primary" style="width:auto; padding:6px 10px; font-size:10px; margin:0;" onclick="getIncidentGPS()"><i class="fas fa-map-marker-alt"></i> GPS</button>
@@ -781,7 +799,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-terminal"></i> Log Monitor Sinkronisasi</div>
                 <div id="sync-log" style="background:#0f172a; color:#38bdf8; font-family:monospace; font-size:10px; padding:10px; border-radius:8px; height:120px; overflow-y:auto;">
-                    <p>[SYSTEM] AMP V3.7 Consolidated Engine Ready.</p>
+                    <p>[SYSTEM] AMP V3.8 Check-In & Building/PT GPS Engine Ready.</p>
                 </div>
             </div>
         </div>
@@ -846,6 +864,7 @@
     let currentIncidentPhotoBase64 = '';
     let supabaseClient = null;
     let backgroundTrackerInterval = null;
+    let isSavingAttendance = false;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
@@ -862,7 +881,128 @@
         if (mcpDateEl) mcpDateEl.value = new Date().toISOString().slice(0, 10);
         renderMCPMasterTable();
         renderUserDirectory();
+        updateAttendanceChecklistUI();
     });
+
+    function updateAttendanceChecklistUI() {
+        const fotoEl = document.getElementById('status-foto-badge');
+        const gpsEl = document.getElementById('status-gps-badge');
+        const gpsVal = document.getElementById('gps-coords') ? document.getElementById('gps-coords').value.trim() : '';
+
+        if (fotoEl) {
+            if (currentPhotoBase64) {
+                fotoEl.style.color = 'var(--success)';
+                fotoEl.innerHTML = '<i class="fas fa-check-circle"></i> Foto: Siap';
+            } else {
+                fotoEl.style.color = 'var(--danger)';
+                fotoEl.innerHTML = '<i class="fas fa-times-circle"></i> Foto: Belum';
+            }
+        }
+
+        if (gpsEl) {
+            const gpsReady = gpsVal && !gpsVal.toLowerCase().includes('mendeteksi') && !gpsVal.toLowerCase().includes('mencari');
+            if (gpsReady) {
+                gpsEl.style.color = 'var(--success)';
+                gpsEl.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Siap';
+            } else {
+                gpsEl.style.color = 'var(--danger)';
+                gpsEl.innerHTML = '<i class="fas fa-times-circle"></i> GPS: Belum';
+            }
+        }
+    }
+
+    // HELPER DETEKSI NAMA GEDUNG / PT / INSTANSI & LOKASI AKURAT
+    async function resolveAccurateBuildingOrPT(lat, lng) {
+        let entityName = '';
+        let roadName = '';
+        let villageName = '';
+        let districtName = '';
+        let cityName = '';
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&namedetails=1`,
+                {
+                    headers: { 'Accept-Language': 'id' },
+                    signal: controller.signal
+                }
+            );
+            clearTimeout(timeoutId);
+
+            const data = await response.json();
+            if (data) {
+                const addr = data.address || {};
+                const named = data.namedetails || {};
+
+                // Prioritas nama gedung, PT, instansi, kantor, atau fasilitas
+                entityName =
+                    named.name ||
+                    addr.building ||
+                    addr.office ||
+                    addr.industrial ||
+                    addr.commercial ||
+                    addr.amenity ||
+                    addr.shop ||
+                    addr.tourism ||
+                    addr.leisure ||
+                    addr.company ||
+                    '';
+
+                roadName = addr.road || addr.street || addr.pedestrian || addr.residential || '';
+                villageName = addr.village || addr.suburb || addr.hamlet || addr.neighbourhood || '';
+                districtName = addr.city_district || addr.suburb || addr.county || '';
+                cityName = addr.city || addr.town || addr.municipality || addr.state || '';
+
+                // Jika entityName belum ketemu dari reverse geocoding, coba cari POI terdekat di radius kecil
+                if (!entityName) {
+                    const poiName = await findNearestBuildingOrCompany(lat, lng);
+                    if (poiName) entityName = poiName;
+                }
+            }
+        } catch (e) {
+            // Jika reverse utama timeout/gagal, coba cari POI terdekat saja
+            try {
+                const poiName = await findNearestBuildingOrCompany(lat, lng);
+                if (poiName) entityName = poiName;
+            } catch (_) {}
+        }
+
+        const parts = [];
+        if (entityName) parts.push(entityName);
+        if (roadName && roadName !== entityName) parts.push(roadName);
+        if (villageName) parts.push(villageName);
+        if (districtName && districtName !== villageName) parts.push(districtName);
+        if (cityName && cityName !== districtName) parts.push(cityName);
+
+        return parts.length > 0 ? parts.join(', ') : `Titik Koordinat (${lat.toFixed(6)}, ${lng.toFixed(6)})`;
+    }
+
+    async function findNearestBuildingOrCompany(lat, lng) {
+        try {
+            const delta = 0.0008; // ~80-90 meter di sekitar titik GPS
+            const viewbox = `${lng - delta},${lat + delta},${lng + delta},${lat - delta}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&namedetails=1&bounded=1&viewbox=${encodeURIComponent(viewbox)}&q=${encodeURIComponent('PT OR Gedung OR Kantor OR PLN OR Pabrik OR Graha OR Wisma')}`,
+                {
+                    headers: { 'Accept-Language': 'id' },
+                    signal: controller.signal
+                }
+            );
+            clearTimeout(timeoutId);
+            const items = await res.json();
+            if (Array.isArray(items) && items.length > 0) {
+                const top = items[0];
+                return (top.namedetails && top.namedetails.name) || (top.display_name ? top.display_name.split(',')[0] : '');
+            }
+        } catch (_) {}
+        return '';
+    }
 
     function initSupabase(url, key) {
         try {
@@ -1022,27 +1162,8 @@
             async (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                let locationName = `GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
-                        headers: { 'Accept-Language': 'id' }
-                    });
-                    const data = await response.json();
-                    if (data && data.address) {
-                        const addr = data.address;
-                        const building = addr.building || addr.amenity || addr.office || addr.shop || addr.road || '';
-                        const village = addr.village || addr.suburb || addr.hamlet || '';
-                        const district = addr.city_district || addr.town || addr.municipality || addr.city || '';
-                        
-                        let parts = [];
-                        if (building) parts.push(building);
-                        if (village) parts.push(village);
-                        if (district) parts.push(district);
-
-                        if (parts.length > 0) locationName = parts.join(', ');
-                    }
-                } catch (e) {}
+                const resolvedAddr = await resolveAccurateBuildingOrPT(lat, lng);
+                const locationName = `${resolvedAddr} (${lat.toFixed(6)}, ${lng.toFixed(6)})`;
 
                 const now = new Date();
                 const gpsRecord = {
@@ -1135,40 +1256,25 @@
         });
     }
 
-    // PENGAMBILAN GPS UNTUK MODUL KEJADIAN
+    // PENGAMBILAN GPS UNTUK MODUL KEJADIAN (TERMASUK GEDUNG / PT)
     async function getIncidentGPS() {
         const locInput = document.getElementById('inc-location');
-        locInput.value = "Mendeteksi Lokasi Kejadian...";
+        locInput.value = "Mendeteksi Gedung / PT / Lokasi...";
         if (!navigator.geolocation) {
-            locInput.value = `Site ${currentUser.site}`;
+            locInput.value = `Site ${currentUser ? currentUser.site : 'Lokasi'}`;
             return;
         }
         navigator.geolocation.getCurrentPosition(
             async (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                let locName = `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
-                        headers: { 'Accept-Language': 'id' }
-                    });
-                    const data = await response.json();
-                    if (data && data.address) {
-                        const addr = data.address;
-                        const building = addr.building || addr.amenity || addr.office || addr.road || '';
-                        const village = addr.village || addr.suburb || '';
-                        const district = addr.city_district || addr.town || addr.city || '';
-                        let p = [];
-                        if (building) p.push(building);
-                        if (village) p.push(village);
-                        if (district) p.push(district);
-                        if (p.length > 0) locName = p.join(', ');
-                    }
-                } catch(e) {}
-                locInput.value = `${locName} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                const resolvedAddr = await resolveAccurateBuildingOrPT(lat, lng);
+                locInput.value = `${resolvedAddr} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
             },
-            () => { locInput.value = `Site ${currentUser.site} (GPS Default)`; },
-            { enableHighAccuracy: true, timeout: 15000 }
+            () => {
+                locInput.value = `Site ${currentUser ? currentUser.site : 'Lokasi'} (GPS Default)`;
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
     }
 
@@ -1195,7 +1301,7 @@
         const news = document.getElementById('inc-news').value.trim();
 
         if(!title || !news) { alert('Judul dan Berita Kejadian wajib diisi!'); return; }
-        if(!location) { alert('Silakan ambil detail lokasi GPS terlebih dahulu!'); return; }
+        if(!location || location.toLowerCase().includes('mendeteksi')) { alert('Silakan ambil detail lokasi GPS terlebih dahulu!'); return; }
         if(!currentIncidentPhotoBase64) { alert('Wajib unggah foto bukti kejadian!'); return; }
 
         const now = new Date();
@@ -1239,7 +1345,7 @@
         if(!list) return;
         list.innerHTML = '';
         
-        let filtered = INCIDENT_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        let filtered = INCIDENT_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada laporan kejadian tercatat.</li>`;
             return;
@@ -1424,6 +1530,7 @@
             }
 
             startBackgroundGPSTracker();
+            updateAttendanceChecklistUI();
 
             renderAttendanceLogs();
             renderUserDirectory();
@@ -1458,6 +1565,7 @@
         if(modId === 1 && currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin')) {
             refreshKorlapLivePositions();
         }
+        if(modId === 3) updateAttendanceChecklistUI();
 
         const navIndex = { 1: 0, 3: 1, 6: 2, 2: 3 };
         if(navIndex[modId] !== undefined) {
@@ -1468,12 +1576,18 @@
     async function startWebcam() {
         const video = document.getElementById('webcam');
         try {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Browser tidak mendukung akses kamera atau belum menggunakan HTTPS.');
+                return;
+            }
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
             video.srcObject = stream;
             video.style.display = 'block';
             document.getElementById('camera-placeholder').style.display = 'none';
             document.getElementById('photo-preview').style.display = 'none';
-        } catch (err) { alert('Gunakan kamera langsung.'); }
+        } catch (err) {
+            alert('Akses kamera gagal/diblokir: ' + (err.message || 'Pastikan izin kamera diizinkan di browser.'));
+        }
     }
 
     function takeSnapshot() {
@@ -1487,66 +1601,147 @@
             img.src = currentPhotoBase64;
             img.style.display = 'block';
             video.style.display = 'none';
+            const stream = video.srcObject;
+            if(stream && stream.getTracks) stream.getTracks().forEach(t => t.stop());
+            updateAttendanceChecklistUI();
             alert('Foto Absensi Diambil!');
-        } else { alert('Nyalakan kamera dulu.'); }
+        } else {
+            alert('Nyalakan kamera live terlebih dahulu (Langkah 1).');
+        }
     }
 
     async function getRealtimeGPS() {
         const coordsInput = document.getElementById('gps-coords');
         const gmapsLinkBox = document.getElementById('gmaps-link-box');
-        coordsInput.value = "Mendeteksi Lokasi...";
-        if (!navigator.geolocation) { coordsInput.value = `Site ${currentUser.site}`; return; }
+        const btnGps = document.getElementById('btn-tarik-gps');
+
+        coordsInput.value = "Mendeteksi Gedung / PT / Lokasi...";
+        if (btnGps) btnGps.disabled = true;
+        updateAttendanceChecklistUI();
+
+        if (!navigator.geolocation) {
+            coordsInput.value = `Site ${currentUser ? currentUser.site : 'Lokasi'} (GPS Tidak Didukung)`;
+            if (btnGps) btnGps.disabled = false;
+            updateAttendanceChecklistUI();
+            return;
+        }
 
         navigator.geolocation.getCurrentPosition(
             async (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                let locationName = `GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
-                        headers: { 'Accept-Language': 'id' }
-                    });
-                    const data = await response.json();
-                    if (data && data.address) {
-                        const addr = data.address;
-                        const b = addr.building || addr.amenity || addr.road || '';
-                        const v = addr.village || addr.suburb || '';
-                        const d = addr.city_district || addr.town || addr.city || '';
-                        let p = []; if(b) p.push(b); if(v) p.push(v); if(d) p.push(d);
-                        if(p.length > 0) locationName = p.join(', ');
-                    }
-                } catch (e) {}
-                coordsInput.value = `${locationName} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
-                gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka Peta</a>`;
+                const resolvedAddr = await resolveAccurateBuildingOrPT(lat, lng);
+                coordsInput.value = `${resolvedAddr} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                gmapsLinkBox.innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="color:var(--blue-accent); font-size:10px; font-weight:bold;"><i class="fas fa-external-link-alt"></i> Buka Peta Google Maps</a>`;
+                if (btnGps) btnGps.disabled = false;
+                updateAttendanceChecklistUI();
             },
-            () => { coordsInput.value = `Site ${currentUser.site}`; },
-            { enableHighAccuracy: true, timeout: 20000 }
+            (err) => {
+                coordsInput.value = `Site ${currentUser ? currentUser.site : 'Lokasi'} (${err.message || 'Izin GPS ditolak/timeout'})`;
+                if (btnGps) btnGps.disabled = false;
+                updateAttendanceChecklistUI();
+            },
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
         );
     }
 
     async function saveAttendance(type) {
-        if(!currentPhotoBase64) { alert('Wajib ambil foto wajah!'); return; }
-        const gps = document.getElementById('gps-coords').value;
-        if(!gps || gps.includes("Mendeteksi")) { alert('Tarik GPS dulu!'); return; }
-        const now = new Date();
-        const record = {
-            user_id: currentUser.id, name: currentUser.name, role: currentUser.role, site: currentUser.site,
-            type: type, time: now.toLocaleTimeString('id-ID'), date: now.toLocaleDateString('id-ID'), gps: gps, photo: currentPhotoBase64
-        };
-        CENTRAL_ATTENDANCE_DB.unshift(record);
-        localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
-        renderAttendanceLogs();
-        if(supabaseClient) {
-            try { await supabaseClient.from('attendance_logs').insert([record]); } catch(e) {}
+        if (isSavingAttendance) return;
+
+        if (!currentUser) {
+            alert('Sesi login tidak ditemukan. Silakan login ulang.');
+            return;
         }
-        alert(`Absensi ${type} Berhasil!`);
+
+        if (!currentPhotoBase64) {
+            alert('Tidak bisa ' + type + ': Wajib ambil foto wajah terlebih dahulu (klik "2. Ambil Foto Live Sekarang").');
+            return;
+        }
+
+        const gpsEl = document.getElementById('gps-coords');
+        const gps = gpsEl ? gpsEl.value.trim() : '';
+        if (!gps || gps.toLowerCase().includes('mendeteksi')) {
+            alert('Tidak bisa ' + type + ': Klik "3. Tarik GPS Gedung / PT / Lokasi" dan tunggu hingga lokasi muncul.');
+            return;
+        }
+
+        isSavingAttendance = true;
+        const btnIn = document.getElementById('btn-checkin');
+        const btnOut = document.getElementById('btn-checkout');
+        if (btnIn) btnIn.disabled = true;
+        if (btnOut) btnOut.disabled = true;
+
+        try {
+            const now = new Date();
+            const record = {
+                user_id: currentUser.id,
+                name: currentUser.name,
+                role: currentUser.role,
+                site: currentUser.site,
+                type: type,
+                time: now.toLocaleTimeString('id-ID'),
+                date: now.toLocaleDateString('id-ID'),
+                gps: gps,
+                photo: currentPhotoBase64
+            };
+
+            CENTRAL_ATTENDANCE_DB.unshift(record);
+            localStorage.setItem('AMP_CENTRAL_ATTENDANCE', JSON.stringify(CENTRAL_ATTENDANCE_DB));
+            renderAttendanceLogs();
+
+            // Simpan juga titik GPS terakhir agar Radar Admin langsung terupdate saat Check-In/Out
+            const gpsMatch = gps.match(/\((-?\d+\.\d+),\s*(-?\d+\.\d+)\)/);
+            const gpsLog = {
+                user_id: currentUser.id,
+                name: currentUser.name,
+                role: currentUser.role,
+                site: currentUser.site,
+                date: record.date,
+                time: record.time,
+                lat: gpsMatch ? parseFloat(gpsMatch[1]) : null,
+                lng: gpsMatch ? parseFloat(gpsMatch[2]) : null,
+                location_detail: gps,
+                timestamp: now.getTime()
+            };
+            GPS_TRACKER_DB.unshift(gpsLog);
+            localStorage.setItem('AMP_GPS_TRACKER_DB', JSON.stringify(GPS_TRACKER_DB));
+
+            let cloudStatus = 'Tersimpan di perangkat.';
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient.from('attendance_logs').insert([record]);
+                    if (error) {
+                        cloudStatus = 'Tersimpan lokal (Cloud gagal: ' + error.message + ').';
+                    } else {
+                        cloudStatus = 'Tersimpan ke perangkat & Cloud Supabase.';
+                        await supabaseClient.from('gps_tracker_logs').insert([gpsLog]);
+                    }
+                } catch (e) {
+                    cloudStatus = 'Tersimpan lokal (Jaringan/Cloud bermasalah).';
+                }
+            }
+
+            // Reset foto untuk absensi berikutnya
+            currentPhotoBase64 = '';
+            const previewImg = document.getElementById('photo-preview');
+            const placeholder = document.getElementById('camera-placeholder');
+            if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
+            if (placeholder) placeholder.style.display = 'block';
+            updateAttendanceChecklistUI();
+
+            alert(`Absensi ${type} Berhasil!\n${cloudStatus}`);
+        } finally {
+            isSavingAttendance = false;
+            if (btnIn) btnIn.disabled = false;
+            if (btnOut) btnOut.disabled = false;
+        }
     }
 
     function renderAttendanceLogs() {
         const logList = document.getElementById('attendance-log');
         if(!logList) return;
         logList.innerHTML = '';
-        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
+        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : l.user_id === currentUser.id);
         if(filtered.length === 0) { logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada absensi.</li>`; return; }
         filtered.forEach(log => {
             const li = document.createElement('li');
@@ -1594,10 +1789,10 @@
     function renderMarketRequests() {
         const list = document.getElementById('mr-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = MARKET_REQUESTS_DB.filter(r => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : r.user_id === currentUser.id);
+        const filtered = MARKET_REQUESTS_DB.filter(r => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : r.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada MR.</li>`; return; }
         filtered.forEach(r => {
-            let btn = ((currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') && r.status.includes('Pending')) ? `<button class="btn btn-success" style="padding:4px 8px; font-size:9px;" onclick="approveMR('${r.mr_id}')">Approve</button>` : '';
+            let btn = ((currentUser && (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin')) && r.status.includes('Pending')) ? `<button class="btn btn-success" style="padding:4px 8px; font-size:9px;" onclick="approveMR('${r.mr_id}')">Approve</button>` : '';
             const li = document.createElement('li');
             li.className = 'log-item'; li.style.flexDirection = 'column'; li.style.alignItems = 'flex-start';
             li.innerHTML = `<div><strong>${r.mr_id}</strong> - ${r.category}<br>${r.details} (${r.cost})</div><span class="badge badge-warning">${r.status}</span>${btn}`;
@@ -1621,7 +1816,7 @@
     function renderLeaveLogs() {
         const list = document.getElementById('leave-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = LEAVE_REQUESTS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = LEAVE_REQUESTS_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada cuti.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1663,7 +1858,7 @@
     function renderMCPLogs() {
         const list = document.getElementById('mcp-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = MCP_LOGS_DB.filter(log => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : log.user_id === currentUser.id);
+        const filtered = MCP_LOGS_DB.filter(log => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : log.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP.</li>`; return; }
         filtered.forEach(log => {
             const li = document.createElement('li');
@@ -1687,7 +1882,7 @@
     function renderChecklistLogs() {
         const list = document.getElementById('chk-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = CHECKLIST_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = CHECKLIST_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada checklist.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1712,7 +1907,7 @@
     function renderK3Logs() {
         const list = document.getElementById('k3-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = K3_PERMITS_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = K3_PERMITS_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada K3.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1751,7 +1946,7 @@
     function renderEquipmentLogs() {
         const list = document.getElementById('eq-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = EQUIPMENT_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = EQUIPMENT_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada equipment.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1778,7 +1973,7 @@
     function renderOutstandingLogs() {
         const list = document.getElementById('out-log-list');
         if(!list) return; list.innerHTML = '';
-        const filtered = OUTSTANDING_DB.filter(item => (currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
+        const filtered = OUTSTANDING_DB.filter(item => (!currentUser || currentUser.role === 'HeadOfOp' || currentUser.role === 'Admin') ? true : item.user_id === currentUser.id);
         if(filtered.length === 0) { list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket.</li>`; return; }
         filtered.forEach(item => {
             const li = document.createElement('li');
@@ -1865,11 +2060,10 @@
         downloadCSV(csv, `MR_${new Date().toISOString().slice(0,10)}.csv`);
     }
 
-    // FUNGSI BLOB DOWNLOAD CSV YANG ANDAL DI SEMUA BROWSER HP/PC
     function downloadCSV(csvData, filename) {
         const blob = new Blob(["\ufeff" + csvData], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
-        if (navigator.msSaveBlob) { // IE 10+
+        if (navigator.msSaveBlob) {
             navigator.msSaveBlob(blob, filename);
         } else {
             const url = URL.createObjectURL(blob);
