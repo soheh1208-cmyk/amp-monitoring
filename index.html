@@ -519,7 +519,7 @@
             gap: 8px;
         }
 
-        /* Toast Notification (Non-blocking feedback helper) */
+        /* Toast Notification */
         #toast-banner {
             position: fixed;
             top: 60px;
@@ -605,7 +605,7 @@
 
             <div class="form-group">
                 <label>ID Karyawan / NIP</label>
-                <input type="text" id="login-id" class="form-control" placeholder="Contoh: TAD001, KOR001, AMP001">
+                <input type="text" id="login-id" class="form-control" placeholder="Contoh: TAD001, Dede_Rusmana, AMP001">
             </div>
 
             <div class="form-group">
@@ -619,16 +619,16 @@
 
             <div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
                 <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin / Head of Ops)<br>
-                <code>KOR001</code>–<code>KOR011</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
+                <code>Dede_Rusmana</code>, <code>Tegar_D</code>, <code>Tamam_2</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
             </div>
         </div>
 
         <div id="register-box-asli" class="auth-card-asli" style="display:none;">
             <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
             <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-            <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: KOR012)"></div>
+            <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="ID / NIP (Contoh: Korlap_Baru)"></div>
             <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / TAD / Staf"></div>
-            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi / ULTG Cikarang"></div>
+            <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
             <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
             <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
             <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
@@ -1148,42 +1148,251 @@
         if (clockEl) clockEl.innerText = clockStr;
     }, 1000);
 
-    // Daftar lengkap seluruh akun termasuk semua Korlap wilayah operasional
+    // Normalisasi kunci ID agar pencocokan spasi & huruf konsisten saat login, pencarian, dan penyimpanan
+    function normalizeUserId(rawId) {
+        return String(rawId || '').trim().replace(/\s+/g, ' ').toUpperCase();
+    }
+
+    // Daftar akun default: AMP001, TAD001, dan 13 akun Korlap terbaru
     const DEFAULT_USERS = {
-        "AMP001": { id: "AMP001", name: "M. Soheh", role: "HeadOfOp", jabatan: "Head Of Operation", pin: "123456", site: "Pusat / All Sites", phone: "08123456789", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR001": { id: "KOR001", name: "Ahmad Korlap", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "PLN Area Jakarta Central", phone: "082233445566", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR002": { id: "KOR002", name: "Dede Rusmana", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Bekasi / ULTG Cikarang", phone: "081311223344", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR003": { id: "KOR003", name: "Rizqi", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Bandung / SPV Area 1", phone: "081322334455", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR004": { id: "KOR004", name: "Yadi", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "ULTG Bandung Barat / SPV Area 1", phone: "081333445566", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR005": { id: "KOR005", name: "Irfan", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Cawang / JBB SPV Area 2", phone: "081344556677", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR006": { id: "KOR006", name: "Dede Purnama", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Pulogadung / JBB SPV Area 2", phone: "081355667788", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR007": { id: "KOR007", name: "Andi", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "ULTG Gandul / JBB SPV Area 2", phone: "081366778899", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR008": { id: "KOR008", name: "Dadang D", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "ULTG Karet / JBB SPV Area 2", phone: "081377889900", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR009": { id: "KOR009", name: "Tegar", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Karawang / JBT SPV Area 3", phone: "081388990011", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR010": { id: "KOR010", name: "Tamam", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "UPT Bogor / JBT SPV Area 3", phone: "081399001122", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "KOR011": { id: "KOR011", name: "Rifkiyansah & Haerudin", role: "Korlap", jabatan: "Koordinator Lapangan", pin: "123456", site: "ULTG Sukabumi & Purwakarta / JBT SPV Area 3", phone: "081300112233", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 },
-        "TAD001": { id: "TAD001", name: "Budi Santoso", role: "TAD", jabatan: "Staf Operasional (TAD)", pin: "123456", site: "PLN Unit Gambir", phone: "085566778899", avatar: "", is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0 }
+        [normalizeUserId("AMP001")]: {
+            id: "AMP001",
+            name: "M. Soheh",
+            role: "HeadOfOp",
+            jabatan: "Head Of Operation",
+            pin: "123456",
+            site: "Pusat / All Sites",
+            phone: "08123456789",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("TAD001")]: {
+            id: "TAD001",
+            name: "Budi Santoso",
+            role: "TAD",
+            jabatan: "Staf Operasional (TAD)",
+            pin: "123456",
+            site: "PLN Unit Gambir",
+            phone: "085566778899",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Dede_Rusmana")]: {
+            id: "Dede_Rusmana",
+            name: "Dede Rusmana",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Bekasi & ULTG Cikarang",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Dede_Purnama")]: {
+            id: "Dede_Purnama",
+            name: "Dede Purnama",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "ULTG Karet & ULTG Mampang",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Dadang_Darsono")]: {
+            id: "Dadang_Darsono",
+            name: "Dadang Darsono",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Rizky_Badrul Z")]: {
+            id: "Rizky_Badrul Z",
+            name: "Rizky Badrul Zaman",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "Kantor Induk Bandung & ULTG Bandung Barat",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Irfan_AS")]: {
+            id: "Irfan_AS",
+            name: "Irfan Ardiatma S",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Cawang_ULTG Mampang",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Yan_S")]: {
+            id: "Yan_S",
+            name: "Yan Saputra",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Yadi_S")]: {
+            id: "Yadi_S",
+            name: "Yadi Supriyadi",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Bandung, ULTG Bandung timur & Selatan",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Tegar_D")]: {
+            id: "Tegar_D",
+            name: "Tegar Dwitama",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "ULTG Cikarang",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Andi_I")]: {
+            id: "Andi_I",
+            name: "Andi Ilmanto",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Tamam_2")]: {
+            id: "Tamam_2",
+            name: "Tamam",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Bogor & ULTG Sukabumi",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Haerudin_3")]: {
+            id: "Haerudin_3",
+            name: "Haerudin",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "ULTG Purwakarta",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Iswanto_R")]: {
+            id: "Iswanto_R",
+            name: "Iswanto Riansyah",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Bogor & ULTG Sukabumi",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        },
+        [normalizeUserId("Rifky_Y")]: {
+            id: "Rifky_Y",
+            name: "Rifkiyansyah",
+            role: "Korlap",
+            jabatan: "Koordinator Lapangan",
+            pin: "123456",
+            site: "UPT Bogor & ULTG Sukabumi",
+            phone: "-",
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
+        }
     };
+
+    // Pola ID Korlap lama yang harus dihapus bersih dari localStorage saat dimuat
+    const LEGACY_KORLAP_ID_REGEX = /^KOR\d+$/i;
 
     // Koordinat referensi seluruh area kerja agar sinyal radar Korlap langsung aktif
     const SITE_REFERENCE_COORDS = [
-        { keywords: ["jakarta central", "gambir", "karet", "mampang"], lat: -6.1865, lng: 106.8233 },
-        { keywords: ["bekasi", "cikarang"], lat: -6.2383, lng: 106.9756 },
-        { keywords: ["bandung barat", "cimahi"], lat: -6.8722, lng: 107.5425 },
-        { keywords: ["bandung"], lat: -6.9175, lng: 107.6191 },
+        { keywords: ["ancol"], lat: -6.1275, lng: 106.8312 },
+        { keywords: ["harapan indah"], lat: -6.1835, lng: 106.9765 },
+        { keywords: ["petukangan"], lat: -6.2380, lng: 106.7485 },
+        { keywords: ["tangsel", "tangerang selatan", "ciputat", "bsd"], lat: -6.2886, lng: 106.7179 },
+        { keywords: ["gandul", "cinere"], lat: -6.3328, lng: 106.7905 },
+        { keywords: ["karet"], lat: -6.2116, lng: 106.8147 },
+        { keywords: ["mampang"], lat: -6.2429, lng: 106.8271 },
         { keywords: ["cawang"], lat: -6.2486, lng: 106.8685 },
         { keywords: ["pulogadung"], lat: -6.1887, lng: 106.9056 },
-        { keywords: ["gandul", "cinere", "tangsel"], lat: -6.3328, lng: 106.7905 },
-        { keywords: ["karawang"], lat: -6.3054, lng: 107.3061 },
+        { keywords: ["bekasi"], lat: -6.2383, lng: 106.9756 },
+        { keywords: ["cikarang"], lat: -6.2649, lng: 107.1536 },
+        { keywords: ["bandung barat", "cimahi"], lat: -6.8722, lng: 107.5425 },
+        { keywords: ["bandung"], lat: -6.9175, lng: 107.6191 },
         { keywords: ["bogor"], lat: -6.5971, lng: 106.8060 },
         { keywords: ["sukabumi"], lat: -6.9277, lng: 106.9300 },
         { keywords: ["purwakarta"], lat: -6.5569, lng: 107.4433 },
-        { keywords: ["jbb"], lat: -6.2297, lng: 106.8295 },
-        { keywords: ["jbt"], lat: -6.9147, lng: 107.6098 }
+        { keywords: ["jakarta central", "gambir"], lat: -6.1865, lng: 106.8233 }
     ];
 
     function resolveSiteFallbackCoords(siteName, seedIndex = 0) {
-        const s = (siteName || '').toLowerCase();
+        const s = String(siteName || '').toLowerCase();
         const offset = ((seedIndex % 5) - 2) * 0.0012;
         for (const item of SITE_REFERENCE_COORDS) {
             if (item.keywords.some(kw => s.includes(kw))) {
@@ -1210,40 +1419,58 @@
         }
     }
 
-    let USER_DATABASE = safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS });
-    Object.keys(DEFAULT_USERS).forEach(k => {
-        if (!USER_DATABASE[k]) USER_DATABASE[k] = DEFAULT_USERS[k];
-    });
-    safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
-
-    // Menyimpan daftar ID akun yang sudah dihapus oleh Admin/HeadOfOp agar tidak muncul kembali saat sinkronisasi
-    let DELETED_USER_IDS = safeLoadStorage('AMP_DELETED_USER_IDS', []);
-    if (!Array.isArray(DELETED_USER_IDS)) DELETED_USER_IDS = [];
-
     function normalizeDeletedUserIds(list) {
-        return Array.from(new Set((list || []).map(id => String(id || '').trim().toUpperCase()).filter(Boolean)));
+        return Array.from(
+            new Set(
+                (list || [])
+                    .map(id => normalizeUserId(id))
+                    .filter(Boolean)
+            )
+        );
     }
 
-    DELETED_USER_IDS = normalizeDeletedUserIds(DELETED_USER_IDS);
-    safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
+    let DELETED_USER_IDS = normalizeDeletedUserIds(safeLoadStorage('AMP_DELETED_USER_IDS', []));
 
     function filterActiveUsersMap(rawMap) {
         const deletedSet = new Set(normalizeDeletedUserIds(DELETED_USER_IDS));
         const cleaned = {};
         Object.keys(rawMap || {}).forEach(key => {
             const entry = rawMap[key];
-            const canonicalId = String((entry && entry.id) || key || '').trim().toUpperCase();
-            if (!canonicalId || deletedSet.has(canonicalId)) return;
+            const canonicalId = normalizeUserId((entry && entry.id) || key);
+            if (!canonicalId) return;
+            if (LEGACY_KORLAP_ID_REGEX.test(canonicalId)) return;
+            if (deletedSet.has(canonicalId)) return;
+
+            const fallbackDef = DEFAULT_USERS[canonicalId] || {};
             cleaned[canonicalId] = {
+                ...fallbackDef,
                 ...entry,
-                id: canonicalId
+                id: (entry && entry.id) || fallbackDef.id || canonicalId
             };
         });
         return cleaned;
     }
 
-    USER_DATABASE = filterActiveUsersMap(USER_DATABASE);
-    safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
+    // Bersihkan sisa akun Korlap lama (KOR001-KOR011) di localStorage & muat daftar akun aktif baru
+    function purgeLegacyKorlapAccountsInStorage() {
+        const rawStored = safeLoadStorage('AMP_USER_DATABASE', {});
+        const mergedWithDefaults = {
+            ...DEFAULT_USERS,
+            ...rawStored
+        };
+        const sanitized = filterActiveUsersMap(mergedWithDefaults);
+        Object.keys(DEFAULT_USERS).forEach(normKey => {
+            const deletedSet = new Set(normalizeDeletedUserIds(DELETED_USER_IDS));
+            if (!deletedSet.has(normKey) && !sanitized[normKey]) {
+                sanitized[normKey] = { ...DEFAULT_USERS[normKey] };
+            }
+        });
+        safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
+        safeSaveStorage('AMP_USER_DATABASE', sanitized);
+        return sanitized;
+    }
+
+    let USER_DATABASE = purgeLegacyKorlapAccountsInStorage();
 
     let CENTRAL_ATTENDANCE_DB = safeLoadStorage('AMP_CENTRAL_ATTENDANCE', []);
     let GPS_TRACKER_DB = safeLoadStorage('AMP_GPS_TRACKER_DB', []);
@@ -1311,8 +1538,8 @@
 
     function isAdminOrHeadOfOps(user) {
         if (!user) return false;
-        const r = (user.role || '').toLowerCase();
-        const j = (user.jabatan || '').toLowerCase();
+        const r = String(user.role || '').toLowerCase();
+        const j = String(user.jabatan || '').toLowerCase();
         return r === 'headofop' || r === 'admin' || j.includes('head of operation') || j.includes('admin');
     }
 
@@ -1378,7 +1605,8 @@
     function focusKorlapOnRadarMap(userId) {
         if (!isAdminOrHeadOfOps(currentUser)) return;
         initRadarMap();
-        const marker = korlapMarkerMap[userId];
+        const normKey = normalizeUserId(userId);
+        const marker = korlapMarkerMap[normKey];
         if (marker && radarMap) {
             radarMap.flyTo(marker.getLatLng(), 16, { animate: true, duration: 0.7 });
             marker.openPopup();
@@ -1406,6 +1634,8 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
         getDeviceId();
+        USER_DATABASE = purgeLegacyKorlapAccountsInStorage();
+
         const savedUrl = localStorage.getItem('AMP_SUPABASE_URL');
         const savedKey = localStorage.getItem('AMP_SUPABASE_KEY');
         if (savedUrl) document.getElementById('cfg-url').value = savedUrl;
@@ -1430,12 +1660,13 @@
     });
 
     function releaseSessionLockSync(userId, token) {
-        const db = safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE);
-        if (db[userId] && db[userId].active_session_token === token) {
-            db[userId].is_active_session = false;
-            db[userId].active_session_token = '';
-            db[userId].active_device_id = '';
-            db[userId].session_updated_at = 0;
+        const normId = normalizeUserId(userId);
+        const db = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+        if (db[normId] && db[normId].active_session_token === token) {
+            db[normId].is_active_session = false;
+            db[normId].active_session_token = '';
+            db[normId].active_device_id = '';
+            db[normId].session_updated_at = 0;
             USER_DATABASE = db;
             safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
         }
@@ -1443,15 +1674,16 @@
 
     async function updateSessionHeartbeat() {
         if (!currentUser || !currentSessionToken) return;
+        const normId = normalizeUserId(currentUser.id);
         const nowTs = Date.now();
-        USER_DATABASE[currentUser.id] = {
-            ...USER_DATABASE[currentUser.id],
+        USER_DATABASE[normId] = {
+            ...(USER_DATABASE[normId] || currentUser),
             is_active_session: true,
             active_session_token: currentSessionToken,
             active_device_id: getDeviceId(),
             session_updated_at: nowTs
         };
-        currentUser = USER_DATABASE[currentUser.id];
+        currentUser = USER_DATABASE[normId];
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
         if (supabaseClient) {
@@ -1623,14 +1855,14 @@
                 DELETED_USER_IDS = normalizeDeletedUserIds(safeLoadStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS));
                 const deletedSet = new Set(DELETED_USER_IDS);
 
-                let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS }));
+                let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
                 data.forEach(u => {
-                    if (u.id) {
-                        const normId = String(u.id).trim().toUpperCase();
-                        // Lewati akun yang sudah dihapus oleh Admin agar pull cloud tidak menghidupkannya kembali
+                    if (u && u.id) {
+                        const normId = normalizeUserId(u.id);
+                        if (LEGACY_KORLAP_ID_REGEX.test(normId)) return;
                         if (deletedSet.has(normId)) return;
-                        const existing = currentDB[normId] || {};
-                        currentDB[normId] = { ...existing, ...u, id: normId };
+                        const existing = currentDB[normId] || DEFAULT_USERS[normId] || {};
+                        currentDB[normId] = { ...existing, ...u, id: existing.id || u.id };
                     }
                 });
                 USER_DATABASE = filterActiveUsersMap(currentDB);
@@ -1703,25 +1935,25 @@
 
     async function processRegister() {
         const name = document.getElementById('reg-name').value.trim();
-        const id = document.getElementById('reg-id').value.trim().toUpperCase();
+        const rawId = document.getElementById('reg-id').value.trim().replace(/\s+/g, ' ');
+        const normId = normalizeUserId(rawId);
         const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Staf Operasional';
         const site = document.getElementById('reg-site').value.trim() || 'PLN Unit Central';
         const phone = document.getElementById('reg-phone').value.trim() || '-';
         const pin = document.getElementById('reg-pin').value.trim();
 
-        if (!name || !id || !pin) {
+        if (!name || !rawId || !pin) {
             showNotice('Lengkapi Nama, NIP/ID, dan PIN!');
             return;
         }
 
-        let currentDB = safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE);
-        if (currentDB[id]) {
+        let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+        if (currentDB[normId]) {
             showNotice('ID Karyawan / NIP sudah terdaftar!');
             return;
         }
 
-        // Jika ID sebelumnya pernah dihapus lalu didaftarkan ulang, keluarkan dari daftar terhapus
-        DELETED_USER_IDS = normalizeDeletedUserIds(DELETED_USER_IDS).filter(itemId => itemId !== id);
+        DELETED_USER_IDS = normalizeDeletedUserIds(DELETED_USER_IDS).filter(itemId => itemId !== normId);
         safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
 
         let roleAssigned = "TAD";
@@ -1729,10 +1961,20 @@
         else if (jabatan.toLowerCase().includes('head') || jabatan.toLowerCase().includes('admin')) roleAssigned = "HeadOfOp";
 
         const newUser = {
-            id, name, role: roleAssigned, jabatan, pin, site, phone, avatar: "",
-            is_active_session: false, active_session_token: "", active_device_id: "", session_updated_at: 0
+            id: rawId,
+            name,
+            role: roleAssigned,
+            jabatan,
+            pin,
+            site,
+            phone,
+            avatar: "",
+            is_active_session: false,
+            active_session_token: "",
+            active_device_id: "",
+            session_updated_at: 0
         };
-        currentDB[id] = newUser;
+        currentDB[normId] = newUser;
         USER_DATABASE = currentDB;
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
@@ -1744,28 +1986,28 @@
         document.getElementById('reg-name').value = '';
         document.getElementById('reg-id').value = '';
         document.getElementById('reg-pin').value = '';
-        document.getElementById('login-id').value = id;
+        document.getElementById('login-id').value = rawId;
         switchAuthSubView('login');
-        showNotice(`Akun baru ${id} (${name}) berhasil dibuat.`);
+        showNotice(`Akun baru ${rawId} (${name}) berhasil dibuat.`);
     }
 
     function processResetPIN() {
-        const id = document.getElementById('reset-id').value.trim().toUpperCase();
+        const normId = normalizeUserId(document.getElementById('reset-id').value);
         const oldPin = document.getElementById('reset-old-pin').value.trim();
         const newPin = document.getElementById('reset-new-pin').value.trim();
-        if (!id || !oldPin || !newPin) {
+        if (!normId || !oldPin || !newPin) {
             showNotice('Lengkapi form reset PIN!');
             return;
         }
-        if (!USER_DATABASE[id]) {
+        if (!USER_DATABASE[normId]) {
             showNotice('ID Karyawan tidak terdaftar!');
             return;
         }
-        if (USER_DATABASE[id].pin === oldPin || oldPin === '123456') {
-            USER_DATABASE[id].pin = newPin;
+        if (USER_DATABASE[normId].pin === oldPin || oldPin === '123456') {
+            USER_DATABASE[normId].pin = newPin;
             safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
             switchAuthSubView('login');
-            showNotice(`PIN akun ${id} berhasil diperbarui.`);
+            showNotice(`PIN akun ${USER_DATABASE[normId].id} berhasil diperbarui.`);
         } else {
             showNotice('PIN Lama salah!');
         }
@@ -1852,7 +2094,9 @@
 
         const allGPS = safeLoadStorage('AMP_GPS_TRACKER_DB', GPS_TRACKER_DB);
         const allAttendance = safeLoadStorage('AMP_CENTRAL_ATTENDANCE', CENTRAL_ATTENDANCE_DB);
-        const allUsers = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS }));
+        const allUsers = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+        USER_DATABASE = allUsers;
+        safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
         const korlapList = Object.values(allUsers).filter(
             u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap'))
@@ -1873,15 +2117,15 @@
 
         container.innerHTML = '';
         korlapList.forEach((korlap, idx) => {
-            const uidUpper = (korlap.id || '').toUpperCase();
-            const userLogs = allGPS.filter(log => (log.user_id || '').toUpperCase() === uidUpper);
+            const normUid = normalizeUserId(korlap.id);
+            const userLogs = allGPS.filter(log => normalizeUserId(log.user_id) === normUid);
             userLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
             let latest = userLogs[0];
             let isAreaFallback = false;
 
             // 1. Cek fallback ke log absensi jika log GPS tracker belum ada
             if (!latest) {
-                const attLogs = allAttendance.filter(a => (a.user_id || '').toUpperCase() === uidUpper && a.gps);
+                const attLogs = allAttendance.filter(a => normalizeUserId(a.user_id) === normUid && a.gps);
                 if (attLogs.length > 0) {
                     const att = attLogs[0];
                     latest = {
@@ -1962,7 +2206,7 @@
                     `)
                     .addTo(radarMarkersLayer);
 
-                korlapMarkerMap[korlap.id] = marker;
+                korlapMarkerMap[normUid] = marker;
             }
 
             cardDiv.onclick = () => focusKorlapOnRadarMap(korlap.id);
@@ -2097,7 +2341,7 @@
         if (!list) return;
         list.innerHTML = '';
 
-        let filtered = INCIDENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
+        let filtered = INCIDENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(item.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada laporan kejadian tercatat.</li>`;
             return;
@@ -2182,8 +2426,9 @@
             showNotice('Pilih atau ambil foto profil terlebih dahulu!');
             return;
         }
+        const normId = normalizeUserId(currentUser.id);
         currentUser.avatar = currentProfileAvatarBase64;
-        USER_DATABASE[currentUser.id] = currentUser;
+        USER_DATABASE[normId] = currentUser;
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
         applyUserAvatarToUI();
         if (supabaseClient) {
@@ -2208,10 +2453,11 @@
 
     function updateOwnProfile() {
         if (!currentUser) return;
+        const normId = normalizeUserId(currentUser.id);
         const newName = document.getElementById('edit-prof-name').value.trim();
         const newJabatan = document.getElementById('edit-prof-jabatan').value.trim();
         const newSite = document.getElementById('edit-prof-site').value.trim();
-        const newPhone = document.getElementById('edit-prof-phone').value.trim();
+        const newPhone = document.getElementById('edit-prof-phone').value.trim() || '-';
         if (!newName || !newJabatan) {
             showNotice('Nama & Jabatan wajib diisi!');
             return;
@@ -2220,7 +2466,7 @@
         currentUser.jabatan = newJabatan;
         currentUser.site = newSite;
         currentUser.phone = newPhone;
-        USER_DATABASE[currentUser.id] = currentUser;
+        USER_DATABASE[normId] = currentUser;
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
         document.getElementById('prof-name').innerText = currentUser.name;
         document.getElementById('prof-jabatan').innerText = `Jabatan: ${currentUser.jabatan}`;
@@ -2229,11 +2475,13 @@
         document.getElementById('dash-user-name').innerText = currentUser.name;
         document.getElementById('dash-user-role').innerText = currentUser.jabatan;
         document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${currentUser.site}`;
+        renderUserDirectory();
         showNotice('Profil berhasil diperbarui.');
     }
 
     function changeOwnPIN() {
         if (!currentUser) return;
+        const normId = normalizeUserId(currentUser.id);
         const oldPin = document.getElementById('prof-old-pin').value.trim();
         const newPin = document.getElementById('prof-new-pin').value.trim();
         if (!oldPin || !newPin) {
@@ -2241,7 +2489,7 @@
             return;
         }
         if (currentUser.pin === oldPin) {
-            USER_DATABASE[currentUser.id].pin = newPin;
+            USER_DATABASE[normId].pin = newPin;
             currentUser.pin = newPin;
             safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
             document.getElementById('prof-old-pin').value = '';
@@ -2259,24 +2507,22 @@
 
     async function processLogin() {
         hideLoginWarning();
-        const idInput = document.getElementById('login-id').value.trim().toUpperCase();
+        const rawIdInput = document.getElementById('login-id').value.trim().replace(/\s+/g, ' ');
+        const normIdInput = normalizeUserId(rawIdInput);
         const pinInput = document.getElementById('login-pin').value.trim();
 
-        if (!idInput || !pinInput) {
+        if (!normIdInput || !pinInput) {
             showLoginWarning('Masukkan ID Karyawan / NIP dan PIN terlebih dahulu.');
             return;
         }
 
-        USER_DATABASE = safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS });
-        Object.keys(DEFAULT_USERS).forEach(k => {
-            if (!USER_DATABASE[k]) USER_DATABASE[k] = DEFAULT_USERS[k];
-        });
+        USER_DATABASE = purgeLegacyKorlapAccountsInStorage();
 
         if (supabaseClient) {
             await pullUsersFromSupabase(true);
         }
 
-        const targetUser = USER_DATABASE[idInput];
+        const targetUser = USER_DATABASE[normIdInput];
         if (!targetUser || targetUser.pin !== pinInput) {
             showLoginWarning('ID Karyawan atau PIN salah. Silakan periksa kembali.');
             return;
@@ -2299,7 +2545,7 @@
         targetUser.active_device_id = thisDevice;
         targetUser.session_updated_at = nowTs;
 
-        USER_DATABASE[idInput] = targetUser;
+        USER_DATABASE[normIdInput] = targetUser;
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
         currentUser = targetUser;
 
@@ -2327,7 +2573,7 @@
         document.getElementById('edit-prof-name').value = currentUser.name;
         document.getElementById('edit-prof-jabatan').value = currentUser.jabatan || currentUser.role;
         document.getElementById('edit-prof-site').value = currentUser.site;
-        document.getElementById('edit-prof-phone').value = currentUser.phone || '';
+        document.getElementById('edit-prof-phone').value = currentUser.phone || '-';
 
         applyUserAvatarToUI();
         document.getElementById('mr-number').value = generateMRNumber();
@@ -2371,18 +2617,18 @@
         stopRadarAutoRefresh();
 
         if (currentUser) {
-            const uid = currentUser.id;
-            const db = safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE);
-            if (db[uid]) {
-                db[uid].is_active_session = false;
-                db[uid].active_session_token = '';
-                db[uid].active_device_id = '';
-                db[uid].session_updated_at = 0;
+            const normUid = normalizeUserId(currentUser.id);
+            const db = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+            if (db[normUid]) {
+                db[normUid].is_active_session = false;
+                db[normUid].active_session_token = '';
+                db[normUid].active_device_id = '';
+                db[normUid].session_updated_at = 0;
                 USER_DATABASE = db;
                 safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
                 if (supabaseClient) {
-                    try { await supabaseClient.from('user_directory').upsert([db[uid]]); } catch (_) {}
+                    try { await supabaseClient.from('user_directory').upsert([db[normUid]]); } catch (_) {}
                 }
             }
         }
@@ -2582,7 +2828,7 @@
         const logList = document.getElementById('attendance-log');
         if (!logList) return;
         logList.innerHTML = '';
-        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : l.user_id === currentUser.id);
+        let filtered = CENTRAL_ATTENDANCE_DB.filter(l => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(l.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             logList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada absensi.</li>`;
             return;
@@ -2642,7 +2888,7 @@
         const list = document.getElementById('mr-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = MARKET_REQUESTS_DB.filter(r => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : r.user_id === currentUser.id);
+        const filtered = MARKET_REQUESTS_DB.filter(r => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(r.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada MR.</li>`;
             return;
@@ -2683,7 +2929,7 @@
         const list = document.getElementById('leave-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = LEAVE_REQUESTS_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
+        const filtered = LEAVE_REQUESTS_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(item.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada cuti.</li>`;
             return;
@@ -2738,7 +2984,7 @@
         const list = document.getElementById('mcp-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = MCP_LOGS_DB.filter(log => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : log.user_id === currentUser.id);
+        const filtered = MCP_LOGS_DB.filter(log => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(log.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada log MCP.</li>`;
             return;
@@ -2770,7 +3016,7 @@
         const list = document.getElementById('chk-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = CHECKLIST_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
+        const filtered = CHECKLIST_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(item.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada checklist.</li>`;
             return;
@@ -2804,7 +3050,7 @@
         const list = document.getElementById('k3-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = K3_PERMITS_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
+        const filtered = K3_PERMITS_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(item.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada K3.</li>`;
             return;
@@ -2825,7 +3071,7 @@
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
         const canManageUsers = isAdminOrHeadOfOps(currentUser);
-        const currentLoggedId = currentUser ? String(currentUser.id || '').trim().toUpperCase() : '';
+        const currentLoggedId = currentUser ? normalizeUserId(currentUser.id) : '';
 
         dirList.innerHTML = '';
         const userKeys = Object.keys(activeDB);
@@ -2834,25 +3080,25 @@
             return;
         }
 
-        userKeys.forEach(id => {
-            const u = activeDB[id];
-            const canonicalId = String(u.id || id).trim().toUpperCase();
+        userKeys.forEach(normKey => {
+            const u = activeDB[normKey];
+            const displayId = u.id || normKey;
             const sessTag = isSessionCurrentlyActive(u)
                 ? '<span class="badge badge-warning">SEDANG LOGIN</span>'
                 : '<span class="badge badge-in">AKTIF</span>';
 
             // Tombol Hapus hanya tampil untuk Admin / Head of Operation dan tidak muncul untuk akun sendiri
-            const isSelf = currentLoggedId && canonicalId === currentLoggedId;
+            const isSelf = currentLoggedId && normalizeUserId(displayId) === currentLoggedId;
             const deleteBtnHtml = (canManageUsers && !isSelf)
-                ? `<button type="button" class="btn btn-danger" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="deleteTeamAccount('${encodeURIComponent(canonicalId)}')"><i class="fas fa-trash-alt"></i> Hapus</button>`
+                ? `<button type="button" class="btn btn-danger" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="deleteTeamAccount('${encodeURIComponent(normKey)}')"><i class="fas fa-trash-alt"></i> Hapus</button>`
                 : '';
 
             const li = document.createElement('li');
             li.className = 'log-item';
             li.innerHTML = `
                 <div style="flex:1; min-width:0;">
-                    <strong>${u.name} (${canonicalId})</strong>
-                    <p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | ${u.site}</p>
+                    <strong>${u.name} (${displayId})</strong>
+                    <p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | ${u.site} | Telp: ${u.phone || '-'}</p>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
                     ${sessTag}
@@ -2870,44 +3116,42 @@
             return;
         }
 
-        const targetId = decodeURIComponent(encodedUserId || '').trim().toUpperCase();
-        const currentLoggedId = String((currentUser && currentUser.id) || '').trim().toUpperCase();
+        const targetNormId = normalizeUserId(decodeURIComponent(encodedUserId || ''));
+        const currentLoggedId = currentUser ? normalizeUserId(currentUser.id) : '';
 
-        if (!targetId) return;
-        if (targetId === currentLoggedId) {
+        if (!targetNormId) return;
+        if (targetNormId === currentLoggedId) {
             showNotice('Akun yang sedang aktif login tidak dapat dihapus.');
             return;
         }
 
-        let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
-        const targetUser = currentDB[targetId];
-        if (!targetUser) {
-            showNotice(`Akun ${targetId} tidak ditemukan di direktori.`);
-            renderUserDirectory();
-            return;
-        }
+        DELETED_USER_IDS = normalizeDeletedUserIds([...DELETED_USER_IDS, targetNormId]);
+        safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
 
-        // Hapus dari database lokal & catat ID ke daftar terhapus agar sinkronisasi tidak memunculkannya kembali
-        delete currentDB[targetId];
+        let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+        const targetUser = currentDB[targetNormId];
+        delete currentDB[targetNormId];
         USER_DATABASE = currentDB;
         safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
-        DELETED_USER_IDS = normalizeDeletedUserIds([...DELETED_USER_IDS, targetId]);
-        safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
-
         if (supabaseClient) {
             try {
-                const { error } = await supabaseClient
-                    .from('user_directory')
-                    .delete()
-                    .eq('id', targetUser.id || targetId);
-                if (error) {
-                    writeLog(`⚠️ Gagal hapus ${targetId} di Supabase: ${error.message}`);
-                } else {
-                    writeLog(`✓ Akun ${targetId} (${targetUser.name}) dihapus dari Supabase user_directory.`);
+                const candidateIds = Array.from(new Set([
+                    (targetUser && targetUser.id) || targetNormId,
+                    targetNormId
+                ]));
+                for (const idVal of candidateIds) {
+                    const { error } = await supabaseClient
+                        .from('user_directory')
+                        .delete()
+                        .eq('id', idVal);
+                    if (error) {
+                        writeLog(`⚠️ Gagal hapus ${idVal} di Supabase: ${error.message}`);
+                    }
                 }
+                writeLog(`✓ Akun ${targetNormId} dihapus dari direktori & Supabase.`);
             } catch (err) {
-                writeLog(`⚠️ Error koneksi saat menghapus ${targetId}: ${err.message}`);
+                writeLog(`⚠️ Error koneksi saat menghapus ${targetNormId}: ${err.message}`);
             }
         }
 
@@ -2915,7 +3159,7 @@
         if (isAdminOrHeadOfOps(currentUser)) {
             refreshKorlapLivePositions();
         }
-        showNotice(`Akun ${targetUser.name} (${targetId}) telah dihapus dari direktori tim.`);
+        showNotice(`Akun ${(targetUser && targetUser.name) || targetNormId} telah dihapus dari direktori tim.`);
     }
 
     async function submitEquipmentLog() {
@@ -2938,7 +3182,7 @@
         const list = document.getElementById('eq-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = EQUIPMENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
+        const filtered = EQUIPMENT_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(item.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada equipment.</li>`;
             return;
@@ -2976,7 +3220,7 @@
         const list = document.getElementById('out-log-list');
         if (!list) return;
         list.innerHTML = '';
-        const filtered = OUTSTANDING_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : item.user_id === currentUser.id);
+        const filtered = OUTSTANDING_DB.filter(item => (!currentUser || isAdminOrHeadOfOps(currentUser)) ? true : normalizeUserId(item.user_id) === normalizeUserId(currentUser.id));
         if (filtered.length === 0) {
             list.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Belum ada tiket.</li>`;
             return;
