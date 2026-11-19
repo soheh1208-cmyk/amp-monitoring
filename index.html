@@ -1216,6 +1216,35 @@
     });
     safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
 
+    // Menyimpan daftar ID akun yang sudah dihapus oleh Admin/HeadOfOp agar tidak muncul kembali saat sinkronisasi
+    let DELETED_USER_IDS = safeLoadStorage('AMP_DELETED_USER_IDS', []);
+    if (!Array.isArray(DELETED_USER_IDS)) DELETED_USER_IDS = [];
+
+    function normalizeDeletedUserIds(list) {
+        return Array.from(new Set((list || []).map(id => String(id || '').trim().toUpperCase()).filter(Boolean)));
+    }
+
+    DELETED_USER_IDS = normalizeDeletedUserIds(DELETED_USER_IDS);
+    safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
+
+    function filterActiveUsersMap(rawMap) {
+        const deletedSet = new Set(normalizeDeletedUserIds(DELETED_USER_IDS));
+        const cleaned = {};
+        Object.keys(rawMap || {}).forEach(key => {
+            const entry = rawMap[key];
+            const canonicalId = String((entry && entry.id) || key || '').trim().toUpperCase();
+            if (!canonicalId || deletedSet.has(canonicalId)) return;
+            cleaned[canonicalId] = {
+                ...entry,
+                id: canonicalId
+            };
+        });
+        return cleaned;
+    }
+
+    USER_DATABASE = filterActiveUsersMap(USER_DATABASE);
+    safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
+
     let CENTRAL_ATTENDANCE_DB = safeLoadStorage('AMP_CENTRAL_ATTENDANCE', []);
     let GPS_TRACKER_DB = safeLoadStorage('AMP_GPS_TRACKER_DB', []);
     let INCIDENT_DB = safeLoadStorage('AMP_INCIDENT_DB', []);
@@ -1591,14 +1620,20 @@
             const { data, error } = await supabaseClient.from('user_directory').select('*');
             if (error) throw error;
             if (data && data.length > 0) {
-                let currentDB = safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS });
+                DELETED_USER_IDS = normalizeDeletedUserIds(safeLoadStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS));
+                const deletedSet = new Set(DELETED_USER_IDS);
+
+                let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS }));
                 data.forEach(u => {
                     if (u.id) {
-                        const existing = currentDB[u.id.toUpperCase()] || {};
-                        currentDB[u.id.toUpperCase()] = { ...existing, ...u };
+                        const normId = String(u.id).trim().toUpperCase();
+                        // Lewati akun yang sudah dihapus oleh Admin agar pull cloud tidak menghidupkannya kembali
+                        if (deletedSet.has(normId)) return;
+                        const existing = currentDB[normId] || {};
+                        currentDB[normId] = { ...existing, ...u, id: normId };
                     }
                 });
-                USER_DATABASE = currentDB;
+                USER_DATABASE = filterActiveUsersMap(currentDB);
                 safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
                 renderUserDirectory();
                 if (!silent) {
@@ -1684,6 +1719,10 @@
             showNotice('ID Karyawan / NIP sudah terdaftar!');
             return;
         }
+
+        // Jika ID sebelumnya pernah dihapus lalu didaftarkan ulang, keluarkan dari daftar terhapus
+        DELETED_USER_IDS = normalizeDeletedUserIds(DELETED_USER_IDS).filter(itemId => itemId !== id);
+        safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
 
         let roleAssigned = "TAD";
         if (jabatan.toLowerCase().includes('korlap') || jabatan.toLowerCase().includes('koordinator')) roleAssigned = "Korlap";
@@ -1813,11 +1852,7 @@
 
         const allGPS = safeLoadStorage('AMP_GPS_TRACKER_DB', GPS_TRACKER_DB);
         const allAttendance = safeLoadStorage('AMP_CENTRAL_ATTENDANCE', CENTRAL_ATTENDANCE_DB);
-        const allUsers = safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS });
-
-        Object.keys(DEFAULT_USERS).forEach(k => {
-            if (!allUsers[k]) allUsers[k] = DEFAULT_USERS[k];
-        });
+        const allUsers = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', { ...DEFAULT_USERS }));
 
         const korlapList = Object.values(allUsers).filter(
             u => u.role === 'Korlap' || (u.jabatan && u.jabatan.toLowerCase().includes('korlap'))
@@ -2785,16 +2820,102 @@
     function renderUserDirectory() {
         const dirList = document.getElementById('user-directory-list');
         if (!dirList) return;
-        let activeDB = safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE);
+        const activeDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+        USER_DATABASE = activeDB;
+        safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
+
+        const canManageUsers = isAdminOrHeadOfOps(currentUser);
+        const currentLoggedId = currentUser ? String(currentUser.id || '').trim().toUpperCase() : '';
+
         dirList.innerHTML = '';
-        Object.keys(activeDB).forEach(id => {
+        const userKeys = Object.keys(activeDB);
+        if (userKeys.length === 0) {
+            dirList.innerHTML = `<li class="log-item" style="color:var(--text-muted); text-align:center;">Tidak ada akun aktif di direktori tim.</li>`;
+            return;
+        }
+
+        userKeys.forEach(id => {
             const u = activeDB[id];
-            const sessTag = isSessionCurrentlyActive(u) ? '<span class="badge badge-warning">SEDANG LOGIN</span>' : '<span class="badge badge-in">AKTIF</span>';
+            const canonicalId = String(u.id || id).trim().toUpperCase();
+            const sessTag = isSessionCurrentlyActive(u)
+                ? '<span class="badge badge-warning">SEDANG LOGIN</span>'
+                : '<span class="badge badge-in">AKTIF</span>';
+
+            // Tombol Hapus hanya tampil untuk Admin / Head of Operation dan tidak muncul untuk akun sendiri
+            const isSelf = currentLoggedId && canonicalId === currentLoggedId;
+            const deleteBtnHtml = (canManageUsers && !isSelf)
+                ? `<button type="button" class="btn btn-danger" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="deleteTeamAccount('${encodeURIComponent(canonicalId)}')"><i class="fas fa-trash-alt"></i> Hapus</button>`
+                : '';
+
             const li = document.createElement('li');
             li.className = 'log-item';
-            li.innerHTML = `<div><strong>${u.name} (${u.id})</strong><p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | ${u.site}</p></div>${sessTag}`;
+            li.innerHTML = `
+                <div style="flex:1; min-width:0;">
+                    <strong>${u.name} (${canonicalId})</strong>
+                    <p style="font-size:9px; color:var(--text-muted);">${u.jabatan || u.role} | ${u.site}</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                    ${sessTag}
+                    ${deleteBtnHtml}
+                </div>
+            `;
             dirList.appendChild(li);
         });
+    }
+
+    // Menghapus akun yang tidak aktif; hanya dapat dijalankan oleh Admin / Head of Operation
+    async function deleteTeamAccount(encodedUserId) {
+        if (!isAdminOrHeadOfOps(currentUser)) {
+            showNotice('Akses ditolak: hanya Admin / Head of Operation yang dapat menghapus akun.');
+            return;
+        }
+
+        const targetId = decodeURIComponent(encodedUserId || '').trim().toUpperCase();
+        const currentLoggedId = String((currentUser && currentUser.id) || '').trim().toUpperCase();
+
+        if (!targetId) return;
+        if (targetId === currentLoggedId) {
+            showNotice('Akun yang sedang aktif login tidak dapat dihapus.');
+            return;
+        }
+
+        let currentDB = filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE));
+        const targetUser = currentDB[targetId];
+        if (!targetUser) {
+            showNotice(`Akun ${targetId} tidak ditemukan di direktori.`);
+            renderUserDirectory();
+            return;
+        }
+
+        // Hapus dari database lokal & catat ID ke daftar terhapus agar sinkronisasi tidak memunculkannya kembali
+        delete currentDB[targetId];
+        USER_DATABASE = currentDB;
+        safeSaveStorage('AMP_USER_DATABASE', USER_DATABASE);
+
+        DELETED_USER_IDS = normalizeDeletedUserIds([...DELETED_USER_IDS, targetId]);
+        safeSaveStorage('AMP_DELETED_USER_IDS', DELETED_USER_IDS);
+
+        if (supabaseClient) {
+            try {
+                const { error } = await supabaseClient
+                    .from('user_directory')
+                    .delete()
+                    .eq('id', targetUser.id || targetId);
+                if (error) {
+                    writeLog(`⚠️ Gagal hapus ${targetId} di Supabase: ${error.message}`);
+                } else {
+                    writeLog(`✓ Akun ${targetId} (${targetUser.name}) dihapus dari Supabase user_directory.`);
+                }
+            } catch (err) {
+                writeLog(`⚠️ Error koneksi saat menghapus ${targetId}: ${err.message}`);
+            }
+        }
+
+        renderUserDirectory();
+        if (isAdminOrHeadOfOps(currentUser)) {
+            refreshKorlapLivePositions();
+        }
+        showNotice(`Akun ${targetUser.name} (${targetId}) telah dihapus dari direktori tim.`);
     }
 
     async function submitEquipmentLog() {
@@ -2911,7 +3032,8 @@
         }
         writeLog('[SYNC] Mendorong semua data ke Supabase...');
         try {
-            await supabaseClient.from('user_directory').upsert(Object.values(USER_DATABASE));
+            const activeUsers = Object.values(filterActiveUsersMap(safeLoadStorage('AMP_USER_DATABASE', USER_DATABASE)));
+            await supabaseClient.from('user_directory').upsert(activeUsers);
             await supabaseClient.from('attendance_logs').upsert(CENTRAL_ATTENDANCE_DB);
             await supabaseClient.from('gps_tracker_logs').upsert(GPS_TRACKER_DB);
             await supabaseClient.from('incident_logs').upsert(INCIDENT_DB);
