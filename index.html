@@ -323,6 +323,10 @@
             margin-bottom: 4px;
         }
 
+        .gps-live-dot {
+            display:inline-block; width:8px; height:8px; border-radius:50%;
+            background:#10b981; margin-right:5px; box-shadow:0 0 0 3px rgba(16,185,129,.15);
+        }
         .auth-overlay {
             position: fixed;
             inset: 0;
@@ -684,6 +688,24 @@
                 </div>
             </div>
 
+            <!-- PANEL GPS LIVE KORLAP: tracking transparan dan berbasis izin perangkat -->
+            <div id="korlap-gps-card" class="card" style="display:none; border:2px solid #10b981; background:#f0fdf4;">
+                <div class="card-title" style="color:#065f46;">
+                    <span><i class="fas fa-location-crosshairs"></i> GPS Live Korlap</span>
+                    <span id="korlap-gps-status" class="badge badge-warning">BELUM AKTIF</span>
+                </div>
+                <p style="font-size:10px; color:#334155; line-height:1.5; margin-bottom:8px;">
+                    Dengan mengaktifkan fitur ini, perangkat membagikan lokasi aktual kepada Admin / Head of Ops selama izin lokasi tersedia. Pelacakan dapat berhenti saat browser ditutup, sistem membatasi aktivitas latar belakang, atau izin/GPS dinonaktifkan.
+                </p>
+                <div id="korlap-gps-detail" style="font-size:10px; color:#475569; margin-bottom:8px;">Lokasi belum dibagikan.</div>
+                <button type="button" id="btn-start-korlap-gps" class="btn btn-success" onclick="enableKorlapLiveTracking()">
+                    <i class="fas fa-location-arrow"></i> IZINKAN & AKTIFKAN GPS LIVE
+                </button>
+                <button type="button" id="btn-stop-korlap-gps" class="btn btn-outline" onclick="disableKorlapLiveTracking()" style="display:none;">
+                    <i class="fas fa-pause-circle"></i> HENTIKAN BERBAGI LOKASI
+                </button>
+            </div>
+
             <!-- PANEL GOOGLE MAPS RADAR LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS) -->
             <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
                 <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
@@ -698,17 +720,17 @@
                 </div>
 
                 <div class="radar-legend">
-                    <span><i class="fas fa-shield-alt" style="color:var(--navy-primary);"></i> <span id="radar-refresh-status-label">Live 10d • Semua Korlap Aktif</span></span>
+                    <span><i class="fas fa-shield-alt" style="color:var(--navy-primary);"></i> <span id="radar-refresh-status-label">GPS aktual • Pembaruan otomatis</span></span>
                     <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Korlap di Radar</span>
                 </div>
 
                 <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <button type="button" id="btn-poll-live20" class="btn btn-success" style="margin:0; padding:6px 8px; font-size:9.5px;" onclick="setRadarRefreshRate('live20')"><i class="fas fa-bolt"></i> Live 10d (Cepat)</button>
-                    <button type="button" id="btn-poll-auto2m" class="btn btn-outline" style="margin:0; padding:6px 8px; font-size:9.5px;" onclick="setRadarRefreshRate('auto2m')"><i class="fas fa-clock"></i> Auto 2m (Hemat)</button>
+                    <button type="button" id="btn-poll-live20" class="btn btn-success" style="margin:0; padding:6px 8px; font-size:9.5px;" onclick="setRadarRefreshRate('live20')"><i class="fas fa-bolt"></i> Live 10 dtk</button>
+                    <button type="button" id="btn-poll-auto2m" class="btn btn-outline" style="margin:0; padding:6px 8px; font-size:9.5px;" onclick="setRadarRefreshRate('auto2m')"><i class="fas fa-clock"></i> Auto 2 mnt</button>
                 </div>
 
                 <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <button type="button" id="btn-sim-korlap-walk" class="btn btn-warning" style="margin:0; padding:6px 8px; font-size:9.5px;" onclick="toggleKorlapWalkSimulation()"><i class="fas fa-walking"></i> Simulasi Tes Jalan Korlap</button>
+                    <span style="font-size:9px;color:#64748b;">Radar hanya menampilkan titik GPS aktual dari perangkat Korlap.</span>
                 </div>
 
                 <div id="korlap-radar-map"></div>
@@ -1119,6 +1141,10 @@
 </div>
 
 <script>
+    window.addEventListener('error', function (event) {
+        console.error('AMP JavaScript error:', event.error || event.message);
+    });
+
     const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
     const DEVICE_ID_KEY = 'AMP_DEVICE_ID';
     const LIVE_GPS_PUSH_INTERVAL_MS = 10 * 1000;
@@ -1483,23 +1509,34 @@
         return cleaned;
     }
 
+    // Pembacaan localStorage yang tahan terhadap JSON rusak/kosong.
+    function safeReadStorage(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (err) {
+            console.warn('Data lokal rusak, gunakan nilai default untuk:', key, err);
+            return fallback;
+        }
+    }
+
     function loadLocalDatabases() {
         purgeLegacyKorlapKeys();
-        const savedUsers = JSON.parse(localStorage.getItem('AMP_USERS_DB') || 'null');
+        const savedUsers = safeReadStorage('AMP_USERS_DB', null);
         USER_DATABASE = sanitizeUsersMap(savedUsers);
         safeSaveStorage('AMP_USERS_DB', USER_DATABASE);
 
-        ATTENDANCE_DB = JSON.parse(localStorage.getItem('AMP_ATTENDANCE_DB') || '[]');
-        LEAVE_DB = JSON.parse(localStorage.getItem('AMP_LEAVE_DB') || '[]');
-        INCIDENT_DB = JSON.parse(localStorage.getItem('AMP_INCIDENT_DB') || '[]');
-        MCP_DB = JSON.parse(localStorage.getItem('AMP_MCP_DB') || '[]');
-        CHECKLIST_DB = JSON.parse(localStorage.getItem('AMP_CHECKLIST_DB') || '[]');
-        K3_DB = JSON.parse(localStorage.getItem('AMP_K3_DB') || '[]');
-        EQUIPMENT_DB = JSON.parse(localStorage.getItem('AMP_EQUIPMENT_DB') || '[]');
-        OUTSTANDING_DB = JSON.parse(localStorage.getItem('AMP_OUTSTANDING_DB') || '[]');
-        BULLETIN_DB = JSON.parse(localStorage.getItem('AMP_BULLETIN_DB') || '[]');
-        MR_DB = JSON.parse(localStorage.getItem('AMP_MR_DB') || '[]');
-        GPS_TRACKER_DB = JSON.parse(localStorage.getItem('AMP_GPS_TRACKER_DB') || '[]');
+        ATTENDANCE_DB = safeReadStorage('AMP_ATTENDANCE_DB', []);
+        LEAVE_DB = safeReadStorage('AMP_LEAVE_DB', []);
+        INCIDENT_DB = safeReadStorage('AMP_INCIDENT_DB', []);
+        MCP_DB = safeReadStorage('AMP_MCP_DB', []);
+        CHECKLIST_DB = safeReadStorage('AMP_CHECKLIST_DB', []);
+        K3_DB = safeReadStorage('AMP_K3_DB', []);
+        EQUIPMENT_DB = safeReadStorage('AMP_EQUIPMENT_DB', []);
+        OUTSTANDING_DB = safeReadStorage('AMP_OUTSTANDING_DB', []);
+        BULLETIN_DB = safeReadStorage('AMP_BULLETIN_DB', []);
+        MR_DB = safeReadStorage('AMP_MR_DB', []);
+        GPS_TRACKER_DB = safeReadStorage('AMP_GPS_TRACKER_DB', []);
     }
 
     function initSupabase(url, key) {
@@ -1632,44 +1669,68 @@
     }
 
     async function processLogin() {
-        hideLoginWarning();
-        const rawId = document.getElementById('login-id').value.trim();
-        const pin = document.getElementById('login-pin').value.trim();
+        const loginButton = document.querySelector('#login-box-asli button.btn-primary');
+        try {
+            hideLoginWarning();
+            const idInput = document.getElementById('login-id');
+            const pinInput = document.getElementById('login-pin');
+            const rawId = idInput ? idInput.value.trim() : '';
+            const pin = pinInput ? pinInput.value.trim() : '';
 
-        if (!rawId || !pin) {
-            showLoginWarning('Harap isi ID Karyawan dan PIN 6 Digit.');
-            return;
+            if (!rawId || !pin) {
+                showLoginWarning('Harap isi ID Karyawan dan PIN 6 Digit.');
+                return;
+            }
+
+            // Pastikan database lokal sudah dimuat; pulihkan database default bila perlu.
+            if (!USER_DATABASE || Object.keys(USER_DATABASE).length === 0) {
+                loadLocalDatabases();
+            }
+            const user = findUserById(rawId);
+            if (!user || String(user.pin) !== String(pin)) {
+                showLoginWarning('ID Karyawan atau PIN salah. Periksa kembali ID dan PIN Anda.');
+                return;
+            }
+
+            const myDeviceId = getDeviceId();
+            const localLock = safeReadStorage('AMP_SESSION_LOCK_' + user.id, null);
+            if (localLock && localLock.device_id !== myDeviceId &&
+                (Date.now() - Number(localLock.last_seen || 0)) < SESSION_TTL_MS) {
+                showLoginWarning(`Akun ${user.name} (${user.id}) masih aktif di perangkat lain. Logout dari perangkat tersebut atau tunggu sesi berakhir.`);
+                return;
+            }
+
+            // Pemeriksaan cloud dibatasi waktunya agar koneksi Supabase lambat tidak
+            // membuat tombol login terlihat tidak merespons. Cloud bersifat opsional.
+            if (supabaseClient) {
+                const remoteLock = await Promise.race([
+                    checkRemoteSessionLock(user.id).catch(() => null),
+                    new Promise(resolve => setTimeout(() => resolve(null), 2500))
+                ]);
+                if (remoteLock && remoteLock.device_id !== myDeviceId) {
+                    showLoginWarning(`Akun ${user.name} (${user.id}) sedang login di perangkat lain.`);
+                    return;
+                }
+            }
+
+            currentUser = { ...user };
+            localStorage.setItem('AMP_ACTIVE_USER_ID', currentUser.id);
+
+            // Tampilkan aplikasi segera; sinkronisasi lock cloud berjalan di belakang.
+            const overlay = document.getElementById('auth-modal-overlay');
+            if (overlay) overlay.style.display = 'none';
+            updateUserInterface();
+            showModule(1);
+            startSessionHeartbeat(currentUser.id);
+            claimSessionLock(currentUser.id).catch(err => console.warn('Session lock warning:', err));
+            startBackgroundGPSTracker();
+            showNotice(`Selamat datang, ${currentUser.name}!`);
+        } catch (err) {
+            console.error('AMP login error:', err);
+            showLoginWarning('Login mengalami kendala teknis. Muat ulang halaman, lalu coba kembali.');
+        } finally {
+            if (loginButton) loginButton.disabled = false;
         }
-
-        const user = findUserById(rawId);
-        if (!user || String(user.pin) !== String(pin)) {
-            showLoginWarning('ID Karyawan atau PIN salah. Silakan periksa kembali.');
-            return;
-        }
-
-        const myDeviceId = getDeviceId();
-        const localLock = JSON.parse(localStorage.getItem('AMP_SESSION_LOCK_' + user.id) || 'null');
-        if (localLock && localLock.device_id !== myDeviceId && (Date.now() - Number(localLock.last_seen || 0)) < SESSION_TTL_MS) {
-            showLoginWarning(`Akun ${user.name} (${user.id}) sedang aktif di perangkat lain. Keluar dulu dari perangkat tersebut sebelum login di sini.`);
-            return;
-        }
-
-        const remoteLock = await checkRemoteSessionLock(user.id);
-        if (remoteLock && remoteLock.device_id !== myDeviceId) {
-            showLoginWarning(`Akun ${user.name} (${user.id}) sedang login di perangkat lain.`);
-            return;
-        }
-
-        currentUser = { ...user };
-        localStorage.setItem('AMP_ACTIVE_USER_ID', currentUser.id);
-        await claimSessionLock(currentUser.id);
-        startSessionHeartbeat(currentUser.id);
-
-        document.getElementById('auth-modal-overlay').style.display = 'none';
-        updateUserInterface();
-        showModule(1);
-        startBackgroundGPSTracker();
-        showNotice(`Selamat datang, ${currentUser.name}!`);
     }
 
     function processRegister() {
@@ -1747,6 +1808,8 @@
         applyAvatarToUI(currentUser.avatar || '');
 
         const adminMode = isAdminOrHeadOfOps(currentUser);
+        const korlapMode = String(currentUser.role || '').toLowerCase() === 'korlap';
+        document.getElementById('korlap-gps-card').style.display = korlapMode ? 'block' : 'none';
         document.getElementById('admin-radar-card').style.display = adminMode ? 'block' : 'none';
         document.getElementById('admin-export-card').style.display = adminMode ? 'block' : 'none';
 
@@ -2759,43 +2822,130 @@
         }
     }
 
+    function setKorlapGpsUI(state, detail = '') {
+        const badge = document.getElementById('korlap-gps-status');
+        const detailEl = document.getElementById('korlap-gps-detail');
+        const startBtn = document.getElementById('btn-start-korlap-gps');
+        const stopBtn = document.getElementById('btn-stop-korlap-gps');
+        if (!badge) return;
+
+        const states = {
+            active: ['GPS LIVE', 'badge-in'],
+            waiting: ['MENUNGGU GPS', 'badge-warning'],
+            denied: ['IZIN DITOLAK', 'badge-out'],
+            unavailable: ['GPS TIDAK TERSEDIA', 'badge-out'],
+            stopped: ['TIDAK AKTIF', 'badge-warning'],
+            error: ['GPS TERPUTUS', 'badge-out']
+        };
+        const [label, cls] = states[state] || states.stopped;
+        badge.className = 'badge ' + cls;
+        badge.textContent = label;
+        if (detailEl) detailEl.textContent = detail;
+        if (startBtn) startBtn.style.display = state === 'active' ? 'none' : 'flex';
+        if (stopBtn) stopBtn.style.display = state === 'active' || state === 'waiting' ? 'flex' : 'none';
+    }
+
+    function handleLiveGeoPosition(pos) {
+        if (!currentUser || String(currentUser.role || '').toLowerCase() !== 'korlap') return;
+        const lat = Number(pos.coords.latitude);
+        const lng = Number(pos.coords.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            setKorlapGpsUI('error', 'Koordinat GPS tidak valid.');
+            return;
+        }
+
+        latestLiveGeoCoords = { lat, lng, timestamp: Date.now() };
+        const accuracy = Math.round(pos.coords.accuracy || 0);
+        setKorlapGpsUI('active',
+            `Lokasi dibagikan • Akurasi ±${accuracy} m • ${new Date().toLocaleTimeString('id-ID')}`);
+        // Kirim koordinat nyata dari perangkat; tidak ada koordinat site/fallback.
+        pushLiveGPSPoint(lat, lng, `GPS perangkat • akurasi ±${accuracy} m`, false);
+    }
+
+    function handleLiveGeoError(err) {
+        const code = err && err.code;
+        if (code === 1) {
+            setKorlapGpsUI('denied', 'Izin lokasi ditolak/dicabut. Aktifkan kembali izin lokasi browser untuk melanjutkan.');
+        } else if (code === 2) {
+            setKorlapGpsUI('unavailable', 'Perangkat tidak dapat memperoleh lokasi. Periksa GPS dan layanan lokasi.');
+        } else if (code === 3) {
+            setKorlapGpsUI('error', 'Waktu tunggu GPS habis. Menunggu pembacaan lokasi berikutnya.');
+        } else {
+            setKorlapGpsUI('error', 'GPS tidak dapat dibaca. Periksa izin dan pengaturan lokasi perangkat.');
+        }
+    }
+
     function startBackgroundGPSTracker() {
         stopBackgroundGPSTracker();
-        if (!currentUser || !navigator.geolocation) return;
+        if (!currentUser || String(currentUser.role || '').toLowerCase() !== 'korlap') return;
+        if (!navigator.geolocation) {
+            setKorlapGpsUI('unavailable', 'Browser/perangkat ini tidak mendukung Geolocation.');
+            return;
+        }
 
-        const handlePos = (pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            latestLiveGeoCoords = { lat, lng, timestamp: Date.now() };
-            pushLiveGPSPoint(lat, lng, `${lat.toFixed(6)}, ${lng.toFixed(6)}`, false);
-        };
+        // Jangan meminta izin diam-diam. Jika sudah pernah diizinkan, lanjutkan otomatis
+        // setelah sesi login dipulihkan; jika belum, Korlap menekan tombol aktivasi.
+        if (navigator.permissions && navigator.permissions.query) {
+            navigator.permissions.query({ name: 'geolocation' })
+                .then(permission => {
+                    if (permission.state === 'granted') beginKorlapGeoWatch();
+                    else if (permission.state === 'denied') handleLiveGeoError({ code: 1 });
+                    else setKorlapGpsUI('waiting', 'Tekan tombol aktifkan GPS dan izinkan akses lokasi perangkat.');
+                    permission.onchange = () => {
+                        if (permission.state === 'denied') {
+                            stopBackgroundGPSTracker();
+                            handleLiveGeoError({ code: 1 });
+                        }
+                    };
+                })
+                .catch(() => setKorlapGpsUI('waiting', 'Tekan tombol aktifkan GPS dan izinkan akses lokasi perangkat.'));
+        } else {
+            setKorlapGpsUI('waiting', 'Tekan tombol aktifkan GPS dan izinkan akses lokasi perangkat.');
+        }
+    }
 
+    function beginKorlapGeoWatch() {
+        if (!currentUser || String(currentUser.role || '').toLowerCase() !== 'korlap' || !navigator.geolocation) return;
+        stopBackgroundGPSTracker();
+        setKorlapGpsUI('waiting', 'Meminta pembacaan lokasi aktual dari perangkat...');
         try {
             bgGpsWatchId = navigator.geolocation.watchPosition(
-                handlePos,
-                () => {},
-                { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+                handleLiveGeoPosition,
+                handleLiveGeoError,
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 }
             );
-        } catch (e) {}
+        } catch (e) {
+            setKorlapGpsUI('error', 'Browser gagal memulai GPS: ' + (e.message || 'unknown error'));
+        }
+    }
 
-        bgGpsFallbackTimer = setInterval(() => {
-            if (!currentUser || !navigator.geolocation) return;
-            navigator.geolocation.getCurrentPosition(
-                handlePos,
-                () => {},
-                { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
-            );
-        }, LIVE_GPS_PUSH_INTERVAL_MS);
+    function enableKorlapLiveTracking() {
+        if (!currentUser || String(currentUser.role || '').toLowerCase() !== 'korlap') {
+            showNotice('Fitur ini hanya untuk akun Korlap.', true);
+            return;
+        }
+        if (!window.isSecureContext) {
+            showNotice('GPS membutuhkan HTTPS. Buka AMP Monitoring melalui alamat HTTPS.', true);
+            return;
+        }
+        if (!navigator.geolocation) {
+            setKorlapGpsUI('unavailable', 'Browser tidak mendukung GPS.');
+            return;
+        }
+        beginKorlapGeoWatch();
+    }
+
+    function disableKorlapLiveTracking() {
+        stopBackgroundGPSTracker();
+        latestLiveGeoCoords = null;
+        setKorlapGpsUI('stopped', 'Berbagi lokasi dihentikan oleh pengguna.');
+        showNotice('Berbagi lokasi GPS dihentikan.');
     }
 
     function stopBackgroundGPSTracker() {
         if (bgGpsWatchId !== null && navigator.geolocation) {
             try { navigator.geolocation.clearWatch(bgGpsWatchId); } catch (e) {}
             bgGpsWatchId = null;
-        }
-        if (bgGpsFallbackTimer) {
-            clearInterval(bgGpsFallbackTimer);
-            bgGpsFallbackTimer = null;
         }
     }
 
@@ -2813,8 +2963,8 @@
         }
         if (lbl) {
             lbl.textContent = radarRefreshMode === 'live20'
-                ? 'Live 10d • Semua Korlap Aktif'
-                : 'Auto 2m • Semua Korlap Aktif';
+                ? 'GPS aktual • Pembaruan otomatis'
+                : 'Auto 2 menit • Hemat data';
         }
         startRadarAutoRefresh();
         refreshKorlapLivePositions();
@@ -2977,7 +3127,7 @@
                 typeof latestGps.lng === 'number' &&
                 !isNaN(latestGps.lat) &&
                 !isNaN(latestGps.lng) &&
-                (nowTs - Number(latestGps.timestamp || 0)) <= (15 * 60 * 1000)
+                (nowTs - Number(latestGps.timestamp || 0)) <= (90 * 1000)
             );
 
             let lat, lng, timeText, statusText, locationText, facilityName = '';
@@ -2991,17 +3141,27 @@
                     ? `${facilityName} (${lat.toFixed(6)}, ${lng.toFixed(6)})`
                     : (latestGps.location_detail || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
             } else {
-                const [fbLat, fbLng] = resolveSiteFallbackCoords(korlap.site, idx);
-                lat = fbLat;
-                lng = fbLng;
-                timeText = 'Sinyal Area';
-                statusText = 'SINYAL AREA';
-                locationText = `Sinyal Area Kerja: ${korlap.site || '-'} (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                // Tidak menampilkan koordinat perkiraan/site fallback sebagai posisi Korlap.
+                timeText = latestGps ? `${latestGps.date || ''} • ${latestGps.time || ''}`.trim() : 'Belum ada data GPS';
+                statusText = latestGps ? 'GPS KEDALUWARSA' : 'BELUM TERLACAK';
+                locationText = latestGps
+                    ? 'Lokasi terakhir: ' + (latestGps.location_detail || 'Koordinat tersedia') 
+                    : 'Menunggu perangkat Korlap mengirim GPS aktual';
             }
 
-            boundsPoints.push([lat, lng]);
+            if (hasLiveGps) boundsPoints.push([lat, lng]);
 
             if (radarMap && typeof L !== 'undefined') {
+                if (!hasLiveGps) {
+                    if (korlapMarkerMap[korlap.id]) {
+                        radarMap.removeLayer(korlapMarkerMap[korlap.id]);
+                        delete korlapMarkerMap[korlap.id];
+                    }
+                    if (korlapTrailLayerMap[korlap.id]) {
+                        radarMap.removeLayer(korlapTrailLayerMap[korlap.id]);
+                        delete korlapTrailLayerMap[korlap.id];
+                    }
+                } else {
                 const pinLabel = korlap.name;
                 if (korlapMarkerMap[korlap.id]) {
                     korlapMarkerMap[korlap.id].setLatLng([lat, lng]);
@@ -3034,9 +3194,10 @@
                         }).addTo(radarMap);
                     }
                 }
+                }
             }
 
-            const gmapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+            const gmapsUrl = hasLiveGps ? `https://www.google.com/maps?q=${lat},${lng}` : '#';
             const badgeClass = hasLiveGps ? 'badge-in' : 'badge-warning';
             const facilityBadgeHtml = (hasLiveGps && facilityName)
                 ? `<div class="radar-facility-badge"><i class="fas fa-building"></i> Lokasi Pasti: ${facilityName}</div>`
@@ -3052,7 +3213,7 @@
                     <div style="font-size:9.5px; color:#334155; margin-bottom:2px;"><i class="fas fa-map-pin" style="color:#dc2626;"></i> ${locationText}</div>
                     <div style="display:flex; justify-content:space-between; align-items:center; font-size:9px; color:#64748b; margin-top:4px;">
                         <span><i class="fas fa-clock"></i> ${timeText}</span>
-                        <a href="${gmapsUrl}" target="_blank" onclick="event.stopPropagation();" style="background:#1e3a8a; color:#fff; padding:3px 7px; border-radius:5px; text-decoration:none; font-weight:700;"><i class="fas fa-external-link-alt"></i> Google Maps</a>
+                        ${hasLiveGps ? `<a href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();" style="background:#1e3a8a; color:#fff; padding:3px 7px; border-radius:5px; text-decoration:none; font-weight:700;"><i class="fas fa-external-link-alt"></i> Google Maps</a>` : '<span style="color:#94a3b8;">Peta tidak tersedia</span>'}
                     </div>
                 </div>
             `);
@@ -3087,70 +3248,7 @@
     }
 
     function toggleKorlapWalkSimulation() {
-        if (!isAdminOrHeadOfOps(currentUser)) return;
-        const simBtn = document.getElementById('btn-sim-korlap-walk');
-
-        if (walkSimTimer) {
-            clearInterval(walkSimTimer);
-            walkSimTimer = null;
-            if (simBtn) {
-                simBtn.className = 'btn btn-warning';
-                simBtn.innerHTML = '<i class="fas fa-walking"></i> Simulasi Tes Jalan Korlap';
-            }
-            showNotice('Simulasi tes jalan Korlap dihentikan.');
-            return;
-        }
-
-        const korlapUsers = Object.values(USER_DATABASE).filter(
-            u => u && String(u.role || '').toLowerCase() === 'korlap'
-        );
-        if (korlapUsers.length === 0) {
-            showNotice('Tidak ada akun Korlap tersedia untuk simulasi.', true);
-            return;
-        }
-
-        const targetKorlap = korlapUsers[0];
-        walkSimUserId = targetKorlap.id;
-        walkSimStep = 0;
-
-        if (simBtn) {
-            simBtn.className = 'btn btn-danger';
-            simBtn.innerHTML = '<i class="fas fa-stop-circle"></i> Hentikan Simulasi (' + targetKorlap.name + ')';
-        }
-
-        const [baseLat, baseLng] = resolveSiteFallbackCoords(targetKorlap.site, 0);
-        const pushSimPoint = () => {
-            walkSimStep++;
-            const stepLat = baseLat + (walkSimStep * 0.00045);
-            const stepLng = baseLng + (Math.sin(walkSimStep * 0.6) * 0.00035);
-            const now = new Date();
-            const simRecord = {
-                user_id: targetKorlap.id,
-                name: targetKorlap.name,
-                role: targetKorlap.role,
-                site: targetKorlap.site,
-                date: now.toLocaleDateString('id-ID'),
-                time: now.toLocaleTimeString('id-ID'),
-                lat: stepLat,
-                lng: stepLng,
-                location_detail: `UPT Bekasi & ULTG Cikarang - Jalur Patroli #${walkSimStep} (${stepLat.toFixed(6)}, ${stepLng.toFixed(6)})`,
-                timestamp: now.getTime()
-            };
-
-            GPS_TRACKER_DB.unshift(simRecord);
-            if (GPS_TRACKER_DB.length > 500) {
-                GPS_TRACKER_DB = GPS_TRACKER_DB.slice(0, 500);
-            }
-            safeSaveStorage('AMP_GPS_TRACKER_DB', GPS_TRACKER_DB);
-
-            refreshKorlapLivePositions().then(() => {
-                focusKorlapOnRadarMap(targetKorlap.id);
-            });
-        };
-
-        showNotice(`Memulai simulasi pergerakan live untuk ${targetKorlap.name}...`);
-        pushSimPoint();
-        walkSimTimer = setInterval(pushSimPoint, 3000);
+        showNotice('Simulasi GPS dinonaktifkan. Radar hanya menerima koordinat GPS aktual perangkat Korlap.', true);
     }
 
     function downloadCSVFile(filename, headers, rows) {
@@ -3300,6 +3398,8 @@
     window.startWebcam = startWebcam;
     window.takeSnapshot = takeSnapshot;
     window.getRealtimeGPS = getRealtimeGPS;
+    window.enableKorlapLiveTracking = enableKorlapLiveTracking;
+    window.disableKorlapLiveTracking = disableKorlapLiveTracking;
     window.saveAttendance = saveAttendance;
     window.startProfileWebcam = startProfileWebcam;
     window.captureProfileSnapshot = captureProfileSnapshot;
