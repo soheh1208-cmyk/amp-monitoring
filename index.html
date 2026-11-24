@@ -48,7 +48,7 @@
 
     .login-left {
       background: rgba(255, 255, 255, 0.98);
-      padding: 28px 28px 22px;
+      padding: 24px 26px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -57,56 +57,51 @@
     }
 
     .brand-box { text-align: center; }
-    .amp-starburst {
-      width: 96px;
-      height: 96px;
-      margin: 0 auto 10px;
-      border-radius: 22px;
-      background: radial-gradient(circle at 30% 30%, #1d5fd6, #091b3d 75%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 900;
-      font-size: 26px;
-      letter-spacing: 1px;
-      box-shadow: 0 10px 24px rgba(11, 31, 68, 0.32), inset 0 0 0 3px rgba(255,255,255,0.22);
-      position: relative;
-    }
-    .amp-starburst::after {
-      content: "PLN OP";
-      position: absolute;
-      bottom: -8px;
-      background: var(--amber-500);
-      color: #06132b;
-      font-size: 9px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 999px;
-      letter-spacing: 0.6px;
+    .amp-logo-img {
+      width: 108px;
+      height: 78px;
+      object-fit: contain;
+      margin: 0 auto 6px;
+      display: block;
+      border-radius: 12px;
+      background: #fff;
+      padding: 4px;
+      box-shadow: 0 6px 18px rgba(11, 31, 68, 0.14);
     }
 
-    .company-title { font-size: 16px; font-weight: 900; color: var(--navy-900); letter-spacing: 0.4px; }
-    .system-title { font-size: 19px; font-weight: 900; color: var(--slate-900); margin-top: 6px; line-height: 1.2; }
-    .system-sub { font-size: 10.5px; font-weight: 700; color: var(--slate-600); letter-spacing: 1.2px; margin-top: 3px; text-transform: uppercase; }
+    .company-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); letter-spacing: 0.4px; }
+    .system-title { font-size: 18.5px; font-weight: 900; color: var(--slate-900); margin-top: 4px; line-height: 1.2; }
+    .system-sub { font-size: 10px; font-weight: 700; color: var(--slate-600); letter-spacing: 1.1px; margin-top: 3px; text-transform: uppercase; }
 
     .pin-card {
-      margin-top: 18px;
+      margin-top: 14px;
       background: var(--slate-50);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 15px;
     }
-    .pin-label { font-size: 11px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.8px; margin-bottom: 8px; display: block; }
-    .pin-input-wrap { position: relative; display: flex; align-items: center; }
+    .pin-label { font-size: 11px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.7px; margin-bottom: 5px; display: block; }
+    .pin-input-wrap { position: relative; display: flex; align-items: center; margin-bottom: 10px; }
+    .text-input-login {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--slate-300);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+      background: #fff;
+      outline: none;
+    }
+    .text-input-login:focus, .pin-input:focus { border-color: var(--blue-600); }
     .pin-input {
       width: 100%;
-      padding: 12px 42px 12px 14px;
+      padding: 10px 42px 10px 14px;
       border-radius: 10px;
-      border: 2px solid var(--blue-500);
-      font-size: 17px;
+      border: 1.5px solid var(--blue-500);
+      font-size: 16px;
       font-weight: 800;
-      letter-spacing: 5px;
+      letter-spacing: 4px;
       color: var(--navy-900);
       background: #fff;
       outline: none;
@@ -119,11 +114,12 @@
       cursor: pointer;
       font-size: 16px;
       color: var(--slate-600);
+      padding: 4px;
     }
     .btn-masuk {
       width: 100%;
-      margin-top: 12px;
-      padding: 13px 16px;
+      margin-top: 4px;
+      padding: 12px 16px;
       border: none;
       border-radius: 10px;
       background: linear-gradient(90deg, var(--navy-900), var(--blue-600));
@@ -141,58 +137,60 @@
     }
     .btn-masuk:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
-    .pin-hint-box {
+    .auth-links-stack {
       margin-top: 12px;
-      text-align: center;
-      border-top: 1px dashed var(--slate-300);
       padding-top: 10px;
+      border-top: 1px dashed var(--slate-300);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--slate-700);
     }
-    .pin-hint-caption { font-size: 11px; color: var(--slate-600); margin-bottom: 5px; }
-    .pin-chip {
-      display: inline-block;
-      background: #e0f2fe;
-      border: 1px solid #7dd3fc;
-      color: var(--navy-900);
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: 3px;
-      padding: 5px 18px;
-      border-radius: 8px;
+    .auth-link-btn {
+      background: none;
+      border: none;
+      color: var(--blue-600);
+      font-weight: 800;
       cursor: pointer;
+      text-decoration: underline;
+      font-size: 12px;
     }
+    .auth-link-btn:hover { color: var(--navy-900); }
 
     .login-error {
       margin-top: 8px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--rose-600);
       text-align: center;
-      min-height: 18px;
+      min-height: 16px;
     }
 
     .badges-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      margin-top: 14px;
+      margin-top: 12px;
       text-align: center;
     }
     .badge-item {
       background: var(--slate-50);
       border: 1px solid var(--slate-200);
       border-radius: 8px;
-      padding: 7px 4px;
+      padding: 6px 4px;
     }
-    .badge-item .b-ico { font-size: 14px; display: block; margin-bottom: 2px; }
-    .badge-item .b-txt { font-size: 9px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.4px; }
+    .badge-item .b-ico { font-size: 13px; display: block; margin-bottom: 2px; }
+    .badge-item .b-txt { font-size: 8.5px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.4px; }
 
     .login-footer-left {
       text-align: center;
-      margin-top: 12px;
+      margin-top: 10px;
       font-size: 10px;
       color: var(--slate-600);
     }
-    .tagline-italic { font-style: italic; font-weight: 700; color: var(--navy-800); margin-top: 3px; font-size: 11px; }
+    .tagline-italic { font-style: italic; font-weight: 700; color: var(--navy-800); margin-top: 2px; font-size: 11px; }
 
     .login-right {
       position: relative;
@@ -219,15 +217,29 @@
     .pln-banner .p-sub { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: var(--cyan-400); }
     .pln-banner .p-main { font-size: 16px; font-weight: 900; letter-spacing: 0.4px; line-height: 1.25; }
 
+    .lock-notice-banner {
+      background: rgba(6, 19, 43, 0.82);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #e0f2fe;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
     .menu-grid-8 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 14px;
       margin: auto 0;
-      padding: 18px 0;
+      padding: 14px 0;
     }
     .menu-card-8 {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.93);
       color: var(--slate-900);
       border-radius: 14px;
       padding: 16px 14px;
@@ -236,8 +248,20 @@
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
       transition: transform 0.16s ease, box-shadow 0.16s ease;
       border: 1px solid rgba(255,255,255,0.7);
+      position: relative;
     }
-    .menu-card-8:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35); }
+    .menu-card-8:hover { transform: translateY(-2px); }
+    .lock-pill {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
     .m-icon-box {
       width: 44px;
       height: 44px;
@@ -265,6 +289,39 @@
     }
     .login-right-footer strong { color: var(--cyan-400); }
 
+    /* ================= MODAL REGISTRASI & LUPA ID/PIN ================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 19, 43, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 900;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0 24px 48px rgba(2, 8, 23, 0.45);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--slate-200);
+      padding-bottom: 8px;
+    }
+    .modal-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); }
+    .modal-close {
+      background: none; border: none; font-size: 18px; cursor: pointer; color: var(--slate-600); font-weight: 900;
+    }
+
     /* ================= MAIN APP SHELL ================= */
     #appShell { display: none; min-height: 100vh; background: var(--slate-100); }
 
@@ -283,10 +340,9 @@
       box-shadow: 0 4px 18px rgba(6, 19, 43, 0.25);
     }
     .topbar-brand { display: flex; align-items: center; gap: 12px; }
-    .topbar-logo {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: var(--blue-500); color: #fff; font-weight: 900;
-      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    .topbar-logo-img {
+      width: 48px; height: 38px; border-radius: 8px;
+      background: #fff; padding: 2px; object-fit: contain;
     }
     .topbar-user { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
     .pill-info {
@@ -296,6 +352,7 @@
       border-radius: 999px;
       font-weight: 700;
     }
+    .pill-role-admin { background: rgba(245, 158, 11, 0.25); border-color: #fbbf24; color: #fde68a; }
     .pill-gps-on { background: rgba(16, 185, 129, 0.22); border-color: #34d399; color: #a7f3d0; }
     .pill-gps-off { background: rgba(244, 63, 94, 0.22); border-color: #fb7185; color: #fecdd3; }
     .btn-logout {
@@ -374,7 +431,7 @@
     .kpi-box .k-val { font-size: 20px; font-weight: 900; color: var(--navy-900); margin-top: 4px; }
     .kpi-box .k-note { font-size: 10.5px; color: var(--slate-600); margin-top: 2px; }
 
-    /* RADAR MAP */
+    /* RADAR MAP (ADMIN / HEAD OF OPS ONLY) */
     .radar-layout {
       display: grid;
       grid-template-columns: 1.55fr 1fr;
@@ -416,6 +473,16 @@
       font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
     }
     .korlap-meta { font-size: 11px; color: var(--slate-600); margin-top: 4px; line-height: 1.35; }
+
+    .restricted-box {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+      border-radius: 14px;
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
 
     /* TABLES & CONTROLS */
     .controls-bar {
@@ -530,44 +597,37 @@
     <div class="login-left">
       <div>
         <div class="brand-box">
-          <div class="amp-starburst">AMP</div>
+          <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" />
           <div class="company-title">PT. ARDINA MULYA PERKASA</div>
           <div class="system-title">MONITORING OPERASIONAL</div>
           <div class="system-sub">MANAGEMENT BUILDING CLEANING SERVICE</div>
         </div>
 
         <div class="pin-card">
-          <label class="pin-label" for="pinInput">ISI PIN AKUN KORLAP</label>
+          <label class="pin-label" for="usernameInput">ID / USERNAME</label>
           <div class="pin-input-wrap">
-            <input type="password" id="pinInput" class="pin-input" value="" maxlength="10" placeholder="Masukkan PIN" autocomplete="off" />
+            <input type="text" id="usernameInput" class="text-input-login" placeholder="Masukkan ID / Username" autocomplete="off" />
+          </div>
+
+          <label class="pin-label" for="pinInput">PIN</label>
+          <div class="pin-input-wrap">
+            <input type="password" id="pinInput" class="pin-input" value="" maxlength="12" placeholder="Masukkan PIN" autocomplete="off" />
             <button type="button" class="eye-btn" id="togglePinEye" title="Tampilkan / Sembunyikan PIN">👁️</button>
           </div>
-          <button type="button" class="btn-masuk" id="btnMasukSistem">Masuk Sistem &rsaquo;</button>
 
-          <div class="pin-hint-box" style="text-align:left; max-height:112px; overflow-y:auto;">
-            <div class="pin-hint-caption" style="text-align:center;">Klik PIN akun Korlap (1 akun = 1 perangkat aktif):</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:10.5px;">
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110101')">110101 • Dede Rusmana</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110202')">110202 • Dede Purnama</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110303')">110303 • Dadang Darsono</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110404')">110404 • Rizky Badrul Z</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110505')">110505 • Irfan Ardiatma S</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110606')">110606 • Yan Saputra</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110707')">110707 • Yadi Supriyadi</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110808')">110808 • Tegar Dwitama</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('110909')">110909 • Andi Ilmanto</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('111010')">111010 • Tamam</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('111111')">111111 • Haerudin</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('111212')">111212 • Iswanto Riansyah</span>
-              <span class="pin-chip" style="font-size:10.5px; letter-spacing:1px; padding:3px 6px;" onclick="fillPin('111313')">111313 • Rifkiyansyah</span>
-            </div>
+          <button type="button" class="btn-masuk" id="btnMasukSistem">Login &rsaquo;</button>
+
+          <div class="auth-links-stack">
+            <div>Belum punya akun ? <button type="button" class="auth-link-btn" onclick="openModal('modalRegister')">Registrasi</button></div>
+            <div><button type="button" class="auth-link-btn" onclick="openModal('modalForgot')">Lupa ID / PIN</button></div>
           </div>
+
           <div class="login-error" id="loginErrorMsg"></div>
         </div>
 
         <div class="badges-row">
           <div class="badge-item"><span class="b-ico">🛡️</span><span class="b-txt">AMAN</span></div>
-          <div class="badge-item"><span class="b-ico">🚀</span><span class="b-txt">MUDAH</span></div>
+          <div class="badge-item"><span class="b-ico">🔒</span><span class="b-txt">1 DEVICE</span></div>
           <div class="badge-item"><span class="b-ico">📊</span><span class="b-txt">TERINTEGRASI</span></div>
           <div class="badge-item"><span class="b-ico">👥</span><span class="b-txt">MULTI USER</span></div>
         </div>
@@ -594,43 +654,55 @@
         <div class="p-main" style="font-size:14px; color:#bae6fd;">UIT JBT &amp; UIT JBB</div>
       </div>
 
+      <div class="lock-notice-banner">
+        <span>🔒 <strong>Modul Terkunci Sebelum Login:</strong> Silakan masukkan <strong>ID/Username</strong> dan <strong>PIN</strong> terlebih dahulu untuk membuka modul operasional satu per satu.</span>
+      </div>
+
       <div class="menu-grid-8">
-        <div class="menu-card-8" onclick="quickOpenModule('mod-1', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('DASHBOARD')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#1d4ed8;">🏠</div>
           <div class="m-title">DASHBOARD</div>
           <div class="m-desc">Rekap kinerja, KPI, SLA, dan performa lokasi</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-2', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('MONITORING PEKERJAAN')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#2563eb;">📋</div>
           <div class="m-title">MONITORING PEKERJAAN</div>
           <div class="m-desc">Input aktivitas, checklist, SLA dan evidence</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-3', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('MANPOWER')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#059669;">👥</div>
           <div class="m-title">MANPOWER</div>
           <div class="m-desc">Absensi, grooming, APD/K3 dan penilaian</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-4', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('MCP & DAC')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#ea580c;">🗂️</div>
           <div class="m-title">MCP &amp; DAC</div>
           <div class="m-desc">Monitoring pelaksanaan, temuan dan tindak lanjut</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-5', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('TEMUAN & ACTION PLAN')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#7c3aed;">🔍</div>
           <div class="m-title">TEMUAN &amp; ACTION PLAN</div>
           <div class="m-desc">Register temuan, PIC, target dan verifikasi</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-6', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('MATERIAL & ASSET')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#e11d48;">📦</div>
           <div class="m-title">MATERIAL &amp; ASSET</div>
           <div class="m-desc">Stok, pemakaian, peralatan dan MR</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-7', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('LAPORAN')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#0d9488;">📊</div>
           <div class="m-title">LAPORAN</div>
           <div class="m-desc">Rekap bulanan, export Excel &amp; PDF</div>
         </div>
-        <div class="menu-card-8" onclick="quickOpenModule('mod-8', '110101')">
+        <div class="menu-card-8" onclick="requireLoginNotice('PENGATURAN')">
+          <span class="lock-pill">🔒 Login</span>
           <div class="m-icon-box" style="background:#475569;">⚙️</div>
           <div class="m-title">PENGATURAN</div>
           <div class="m-desc">User, lokasi, data master dan backup</div>
@@ -644,11 +716,60 @@
     </div>
   </section>
 
+  <!-- ================= MODAL REGISTRASI AKUN BARU ================= -->
+  <div class="modal-backdrop" id="modalRegister">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Registrasi Akun Korlap Baru</div>
+        <button type="button" class="modal-close" onclick="closeModal('modalRegister')">&times;</button>
+      </div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Contoh: Budi Santoso" />
+      </div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>ID / Username Baru</label>
+        <input type="text" id="regUsername" placeholder="Contoh: Budi_S" />
+      </div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Area Tugas PLN</label>
+        <input type="text" id="regArea" placeholder="Contoh: UPT Bekasi / ULTG Cikarang" />
+      </div>
+      <div class="field-group" style="margin-bottom:12px;">
+        <label>Buat PIN (6 digit angka)</label>
+        <input type="password" id="regPin" maxlength="10" placeholder="Contoh: 111414" />
+      </div>
+      <button type="button" class="btn-masuk" onclick="submitRegister()">Daftarkan Akun</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL LUPA ID / PIN ================= -->
+  <div class="modal-backdrop" id="modalForgot">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Bantuan Lupa ID / PIN &amp; Reset Sesi Perangkat</div>
+        <button type="button" class="modal-close" onclick="closeModal('modalForgot')">&times;</button>
+      </div>
+      <p style="font-size:12px; color:var(--slate-600); margin-bottom:10px; line-height:1.45;">
+        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk melihat pengingat akun atau mereset kunci perangkat apabila akun terkunci di perangkat sebelumnya.
+      </p>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Nama Lengkap / ID / Username</label>
+        <input type="text" id="forgotLookupInput" placeholder="Contoh: Dede Rusmana atau Dede_Rusmana" />
+      </div>
+      <div id="forgotResultBox" style="font-size:12px; color:var(--navy-900); background:var(--slate-50); border:1px solid var(--slate-200); border-radius:8px; padding:10px; margin-bottom:12px; display:none;"></div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-primary" style="flex:1;" onclick="lookupAccountRecovery()">Cek Akun</button>
+        <button type="button" class="btn-secondary" style="flex:1;" onclick="unlockDeviceSessionByInput()">Reset Kunci Perangkat</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= APLIKASI UTAMA ================= -->
   <section id="appShell">
     <header class="topbar">
       <div class="topbar-brand">
-        <div class="topbar-logo">AMP</div>
+        <img class="topbar-logo-img" id="topbarLogoImg" alt="Logo AMP" />
         <div>
           <div style="font-size:14px; font-weight:900;">PT. ARDINA MULYA PERKASA — MONITORING OPERASIONAL</div>
           <div style="font-size:11px; color:#93c5fd;">PT PLN (Persero) UIT JBT &amp; UIT JBB &bull; 14 Modul Terintegrasi</div>
@@ -656,9 +777,9 @@
       </div>
       <div class="topbar-user">
         <span class="pill-info" id="activeUserBadge">User: -</span>
+        <span class="pill-info" id="activeRoleBadge">Role: -</span>
         <span class="pill-info" id="activeAreaBadge">Area: -</span>
         <span class="pill-info pill-gps-off" id="gpsStatusBadge">GPS: Menunggu Izin...</span>
-        <span class="pill-info" id="syncStatusBadge">Sync: Lokal</span>
         <button type="button" class="btn-logout" id="btnLogout">Keluar</button>
       </div>
     </header>
@@ -670,18 +791,18 @@
       <div id="mod-1" class="module-panel active">
         <div class="kpi-grid">
           <div class="kpi-box">
-            <div class="k-lbl">PERSONEL KORLAP AKTIF</div>
-            <div class="k-val" id="kpiKorlapTotal">13</div>
-            <div class="k-note">UIT JBT &amp; UIT JBB</div>
+            <div class="k-lbl" id="kpiCard1Label">AKUN AKTIF</div>
+            <div class="k-val" id="kpiKorlapTotal">-</div>
+            <div class="k-note" id="kpiCard1Note">UIT JBT &amp; UIT JBB</div>
           </div>
           <div class="kpi-box" style="border-left-color:#059669;">
-            <div class="k-lbl">SINYAL GPS LIVE (WATCHPOSITION)</div>
+            <div class="k-lbl">STATUS GPS PERANGKAT</div>
             <div class="k-val" id="kpiGpsLiveCount">0</div>
-            <div class="k-note">Perangkat mengirim koordinat nyata</div>
+            <div class="k-note">Pelacakan lokasi aktif</div>
           </div>
           <div class="kpi-box" style="border-left-color:#ea580c;">
-            <div class="k-lbl">TOTAL ITEM MCP TERDATA</div>
-            <div class="k-val" id="kpiMcpTotal">236</div>
+            <div class="k-lbl">ITEM MCP (SESUAI HAK AKSES)</div>
+            <div class="k-val" id="kpiMcpTotal">0</div>
             <div class="k-note">Lantai 1, Lantai 2, Halaman &amp; Crass</div>
           </div>
           <div class="kpi-box" style="border-left-color:#7c3aed;">
@@ -691,17 +812,19 @@
           </div>
         </div>
 
-        <div class="card">
+        <!-- PANEL RADAR GPS: HANYA BISA DIAKSES ADMIN / HEAD OF OPS -->
+        <div class="card" id="adminRadarCard" style="display:none;">
           <div class="card-header-row">
             <div>
-              <div class="card-title">Radar Pergerakan GPS Nyata (Live) Korlap &amp; Fasilitas PLN</div>
-              <div class="card-sub" id="liveCoordsReadout">Koordinat perangkat saat ini: belum terdeteksi — izinkan akses lokasi browser untuk pelacakan langsung.</div>
+              <div class="card-title">Radar Pergerakan GPS Nyata (Live) Semua Korlap</div>
+              <div class="card-sub" id="liveCoordsReadout">Mode Head of Operation / Admin: memantau seluruh pergerakan GPS &amp; data Korlap.</div>
             </div>
             <div class="controls-bar" style="margin-bottom:0;">
               <select id="radarFilterKorlap" class="form-select" onchange="focusSelectedKorlap()">
-                <option value="ALL">Semua Korlap (13 Personel)</option>
+                <option value="ALL">Semua Korlap</option>
               </select>
-              <button type="button" class="btn-success" onclick="triggerLiveGpsOnce()">📍 Update GPS Sekarang</button>
+              <button type="button" class="btn-success" onclick="triggerLiveGpsOnce()">📍 Refresh GPS</button>
+              <button type="button" class="btn-primary" onclick="fitAllLiveKorlap()">🎯 Fokus Korlap Live</button>
               <button type="button" class="btn-secondary" onclick="resetRadarView()">🗺️ Reset Peta</button>
             </div>
           </div>
@@ -709,6 +832,16 @@
           <div class="radar-layout">
             <div id="korlapRadarMap"></div>
             <div class="korlap-roster-list" id="korlapRosterList"></div>
+          </div>
+        </div>
+
+        <!-- PANEL KHUSUS KORLAP (NON-ADMIN): RADAR SEMUA KORLAP TERKUNCI -->
+        <div class="card" id="korlapRestrictedRadarCard" style="display:none;">
+          <div class="restricted-box">
+            <strong>🔒 Akses Radar GPS &amp; Rekap Seluruh Korlap Dibatasi</strong><br/>
+            Radar pemantauan GPS dan rekap seluruh data Korlap hanya dapat diakses oleh akun <strong>Admin / Head of Operation</strong>.
+            Perangkat Anda tetap mengirimkan sinyal kehadiran dan titik lokasi Anda sendiri ke sistem pusat.<br/>
+            <span id="korlapOwnGpsStatus" style="display:inline-block; margin-top:6px; font-weight:700;">Status GPS perangkat Anda: menunggu izin lokasi...</span>
           </div>
         </div>
       </div>
@@ -719,7 +852,7 @@
           <div class="card-header-row">
             <div>
               <div class="card-title">Modul 2 — Monitoring Pekerjaan Harian &amp; SLA</div>
-              <div class="card-sub">Pencatatan aktivitas pembersihan, SLA, dan evidence berdasarkan area Korlap</div>
+              <div class="card-sub" id="mod2Sub">Pencatatan aktivitas pembersihan, SLA, dan evidence</div>
             </div>
           </div>
           <div class="form-grid-2">
@@ -757,15 +890,15 @@
         <div class="card">
           <div class="card-header-row">
             <div>
-              <div class="card-title">Modul 3 — Manpower, Absensi, Grooming &amp; Roster Korlap</div>
-              <div class="card-sub">Daftar 13 Korlap PT. Ardina Mulya Perkasa beserta area tugas dan pencatatan absensi</div>
+              <div class="card-title">Modul 3 — Manpower, Absensi &amp; Roster</div>
+              <div class="card-sub" id="mod3Sub">Data absensi dan status perangkat sesuai hak akses akun</div>
             </div>
             <button type="button" class="btn-success" onclick="recordAttendanceNow()">✅ Absen Hadir + Lokasi GPS</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Nama Korlap</th><th>PIN</th><th>Area Tugas PLN</th><th>Koordinat Referensi / Live</th><th>Status Tracking</th></tr>
+                <tr><th>ID / Username</th><th>Nama Personel</th><th>Area Tugas PLN</th><th>Koordinat Referensi / Live</th><th>Status Sesi &amp; GPS</th></tr>
               </thead>
               <tbody id="manpowerTableBody"></tbody>
             </table>
@@ -773,52 +906,58 @@
         </div>
       </div>
 
-      <!-- MODUL 4: MCP & DAC (SESUAI MCP.xlsx PER AREA KORLAP) -->
+      <!-- MODUL 4: MCP & DAC -->
       <div id="mod-4" class="module-panel">
         <div class="card">
           <div class="card-header-row">
             <div>
-              <div class="card-title">Modul 4 — Master Cleaning Program (MCP) &amp; DAC per Area Korlap</div>
-              <div class="card-sub">Struktur data dari <strong>MCP.xlsx</strong> (Doc. ID: QF-0425-MCP / QF-OPR-01-01) — otomatis tersaring sesuai area tugas Korlap aktif atau pilihan area</div>
+              <div class="card-title">Modul 4 — Master Cleaning Program (MCP) &amp; DAC</div>
+              <div class="card-sub" id="mod4Sub">Korlap hanya melihat area tugasnya sendiri; Admin/HeadOfOps dapat melihat semua area</div>
             </div>
           </div>
 
           <div class="controls-bar">
-            <label style="font-size:12px; font-weight:700;">Filter Korlap / Area:</label>
-            <select id="mcpKorlapFilter" class="form-select" onchange="onMcpKorlapFilterChange()">
-              <option value="ACTIVE_USER">Sesuai Area Korlap Aktif</option>
-              <option value="ALL">Semua Area (13 Korlap)</option>
+            <div id="mcpAdminFilterWrap" style="display:none; align-items:center; gap:8px;">
+              <label style="font-size:12px; font-weight:700;">Filter Korlap (Admin):</label>
+              <select id="mcpKorlapFilter" class="form-select" onchange="renderMcpTable()">
+                <option value="ALL">Semua Area / Semua Korlap</option>
+              </select>
+            </div>
+            <select id="mcpStatusFilter" class="form-select" onchange="renderMcpTable()">
+              <option value="ALL">Semua Status</option>
+              <option value="X">Sudah Dikerjakan (X)</option>
+              <option value="RENCANA">Rencana (Tanpa X)</option>
             </select>
-
-            <label style="font-size:12px; font-weight:700;">Frekuensi / Kode:</label>
-            <select id="mcpKodeFilter" class="form-select" onchange="renderMcpModule()">
-              <option value="ALL">Semua Kode (D, W, M, 3M, 6M, A)</option>
-              <option value="D">D — Daily (Harian)</option>
-              <option value="W">W — Weekly (Mingguan)</option>
-              <option value="M">M — Monthly (Bulanan)</option>
-              <option value="3M">3M — 3 Monthly</option>
-              <option value="6M">6M — 6 Monthly</option>
-              <option value="A">A — Annually</option>
-            </select>
-
-            <input type="text" id="mcpSearchInput" class="form-control" placeholder="Cari objek, area, atau uraian kerja..." oninput="renderMcpModule()" style="min-width:220px;" />
+            <input type="text" id="mcpSearchInput" class="form-control" placeholder="Cari uraian pekerjaan / area..." oninput="renderMcpTable()" style="min-width:210px;" />
+            <button type="button" class="btn-secondary" id="btnExportMcp" onclick="exportMcpCsv()">⬇️ Export CSV MCP</button>
           </div>
 
-          <div class="mcp-subtabs" id="mcpSheetTabs">
-            <button type="button" class="mcp-subtab active" data-sheet="LANTAI_1" onclick="switchMcpSheet('LANTAI_1', this)">LANTAI 1 (Satu)</button>
-            <button type="button" class="mcp-subtab" data-sheet="LANTAI_2" onclick="switchMcpSheet('LANTAI_2', this)">LANTAI 2 (Dua)</button>
-            <button type="button" class="mcp-subtab" data-sheet="HALAMAN" onclick="switchMcpSheet('HALAMAN', this)">HALAMAN</button>
-            <button type="button" class="mcp-subtab" data-sheet="CRASS_PROGRAM" onclick="switchMcpSheet('CRASS_PROGRAM', this)">CRASS PROGRAM (Gondola &amp; Layout)</button>
+          <div class="mcp-subtabs" id="mcpSubtabs">
+            <button type="button" class="mcp-subtab active" data-sheet="LANTAI 1" onclick="switchMcpSheet('LANTAI 1')">LANTAI 1</button>
+            <button type="button" class="mcp-subtab" data-sheet="LANTAI 2" onclick="switchMcpSheet('LANTAI 2')">LANTAI 2</button>
+            <button type="button" class="mcp-subtab" data-sheet="HALAMAN" onclick="switchMcpSheet('HALAMAN')">HALAMAN</button>
+            <button type="button" class="mcp-subtab" data-sheet="CRASS" onclick="switchMcpSheet('CRASS')">CRASS</button>
           </div>
 
-          <div id="mcpAreaBanner" style="background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a; padding:9px 12px; border-radius:10px; font-size:12px; font-weight:700; margin-bottom:12px;"></div>
-
-          <div class="table-wrap" id="mcpTableContainer"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Area / Lokasi</th>
+                  <th>Uraian Pekerjaan</th>
+                  <th>Kode</th>
+                  <th>Frekuensi</th>
+                  <th>Bulan / Minggu Pelaksanaan (Klik Sel untuk Toggle Tanda X)</th>
+                </tr>
+              </thead>
+              <tbody id="mcpTableBody"></tbody>
+            </table>
+          </div>
 
           <div class="legend-grid">
-            <div><strong>Tanda Status (Klik untuk ubah):</strong><br/><strong>V</strong> = Rencana Pekerjaan &bull; <strong>X</strong> = Sudah Dilaksanakan &bull; <strong>=</strong> = Belum Terealisasi</div>
-            <div><strong>Kode Frekuensi:</strong><br/><strong>D</strong> = Daily &bull; <strong>W</strong> = Weekly &bull; <strong>M</strong> = Monthly &bull; <strong>3M/6M/A</strong> = Berkala</div>
-            <div><strong>Istilah Teknis MCP:</strong><br/><strong>ROC</strong> = Removal of Conwebs &bull; <strong>SF</strong> = Sweep Flat Mop &bull; <strong>GC</strong> = Glass Cleaning &bull; <strong>PC</strong> = Pressure Cleaning</div>
+            <div><strong>Kode:</strong> D = Daily &bull; W = Weekly &bull; M = Monthly &bull; Q = Quarterly &bull; SA = Semi-Annual &bull; A = Annual</div>
+            <div><strong>Tanda X:</strong> Klik sel bulan untuk menandai atau menghapus tanda <strong>X</strong>.</div>
           </div>
         </div>
       </div>
@@ -826,17 +965,26 @@
       <!-- MODUL 5: TEMUAN & ACTION PLAN -->
       <div id="mod-5" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 5 — Temuan Lapangan &amp; Action Plan</div>
-          <div class="card-sub" style="margin-bottom:12px;">Catat temuan kebersihan/fasilitas, PIC, target penyelesaian, dan verifikasi</div>
-          <div class="form-grid-2">
-            <div class="field-group"><label>Lokasi Temuan</label><input type="text" id="findingLocInput" placeholder="Contoh: Toilet Lt. 1 / Area GI" /></div>
-            <div class="field-group"><label>Deskripsi Temuan</label><input type="text" id="findingDescInput" placeholder="Contoh: Noda pada kaca partisi / saluran air" /></div>
-            <div class="field-group"><label>PIC Tindak Lanjut</label><input type="text" id="findingPicInput" placeholder="Nama Korlap / Petugas" /></div>
-            <div class="field-group"><label>Status</label><select id="findingStatusInput"><option value="Open">Open</option><option value="On Progress">On Progress</option><option value="Verified">Verified</option></select></div>
+          <div class="card-title">Modul 5 — Register Temuan Lapangan &amp; Action Plan</div>
+          <div class="card-sub">Korlap hanya melihat temuan di areanya sendiri; Admin/HeadOfOps memantau seluruh temuan</div>
+          <div class="form-grid-2" style="margin-top:12px;">
+            <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Contoh: ULTG Cikarang / UPT Bekasi" /></div>
+            <div class="field-group"><label>Uraian Temuan</label><input type="text" id="findDescInput" placeholder="Contoh: Saluran air halaman perlu pembersihan rutin" /></div>
+            <div class="field-group"><label>PIC Penanggung Jawab</label><input type="text" id="findPicInput" readonly /></div>
+            <div class="field-group"><label>Status</label>
+              <select id="findStatusInput">
+                <option value="Rencana">Rencana</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Kendala">Kendala</option>
+              </select>
+            </div>
           </div>
           <button type="button" class="btn-primary" onclick="addFindingItem()">+ Tambah Temuan</button>
           <div class="table-wrap" style="margin-top:14px;">
-            <table><thead><tr><th>Lokasi</th><th>Temuan</th><th>PIC</th><th>Status</th></tr></thead><tbody id="findingTableBody"></tbody></table>
+            <table>
+              <thead><tr><th>Tanggal</th><th>Lokasi</th><th>Temuan</th><th>PIC</th><th>Status</th></tr></thead>
+              <tbody id="findingsTableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -844,1155 +992,356 @@
       <!-- MODUL 6: MATERIAL & ASSET -->
       <div id="mod-6" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 6 — Material, Chemical &amp; Asset Operasional</div>
-          <div class="card-sub" style="margin-bottom:12px;">Pemantauan stok material kebersihan, APD, dan peralatan kerja</div>
-          <div class="table-wrap">
+          <div class="card-title">Modul 6 — Material &amp; Asset Operasional (Chemical, Tools &amp; APD)</div>
+          <div class="card-sub">Pemantauan stok material kebersihan, peralatan, dan kelengkapan APD</div>
+          <div class="table-wrap" style="margin-top:12px;">
             <table>
-              <thead><tr><th>Kode</th><th>Nama Material / Asset</th><th>Kategori</th><th>Stok Tersedia</th><th>Satuan</th><th>Kondisi</th></tr></thead>
-              <tbody>
-                <tr><td>MAT-01</td><td>Glass Cleaner Concentrate</td><td>Chemical</td><td>24</td><td>Jerigen (5L)</td><td>Aman</td></tr>
-                <tr><td>MAT-02</td><td>Floor Cleaner / Disinfectant</td><td>Chemical</td><td>31</td><td>Jerigen (5L)</td><td>Aman</td></tr>
-                <tr><td>MAT-03</td><td>Microfiber Mop &amp; Pad</td><td>Peralatan</td><td>46</td><td>Set</td><td>Baik</td></tr>
-                <tr><td>APD-01</td><td>Safety Helmet, Rompi &amp; Sarung Tangan K3</td><td>K3 / APD</td><td>38</td><td>Paket</td><td>Siap Pakai</td></tr>
-              </tbody>
+              <thead><tr><th>Kode Item</th><th>Nama Material / Asset</th><th>Kategori</th><th>Stok Tersedia</th><th>Satuan</th><th>Kondisi</th></tr></thead>
+              <tbody id="materialTableBody"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- MODUL 7: LAPORAN & REKAP -->
+      <!-- MODUL 7: LAPORAN (ADMIN / HEAD OF OPS ONLY FOR FULL REPORTS) -->
       <div id="mod-7" class="module-panel">
         <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="card-title">Modul 7 — Rekapitulasi &amp; Export Laporan</div>
-              <div class="card-sub">Ekspor data log pekerjaan, absensi, dan realisasi MCP ke CSV / cetak laporan</div>
-            </div>
-            <div class="controls-bar" style="margin-bottom:0;">
-              <button type="button" class="btn-success" onclick="exportMcpCsv()">⬇️ Export MCP (CSV)</button>
-              <button type="button" class="btn-secondary" onclick="window.print()">🖨️ Cetak / PDF</button>
-            </div>
+          <div class="card-title">Modul 7 — Rekapitulasi Laporan &amp; Ekspor Data</div>
+          <div class="card-sub" id="mod7Sub">Rekap data operasional sesuai tingkat hak akses akun</div>
+          <div class="controls-bar" style="margin-top:12px;" id="mod7Actions">
+            <button type="button" class="btn-success" onclick="exportMcpCsv()">⬇️ Unduh CSV Rekap</button>
+            <button type="button" class="btn-primary" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
           </div>
-          <div id="reportSummaryBox" style="font-size:12.5px; color:var(--slate-700); line-height:1.6;"></div>
+          <div id="reportSummaryText" style="font-size:12.5px; color:var(--slate-700); line-height:1.6;"></div>
         </div>
       </div>
 
-      <!-- MODUL 8: PENGATURAN & MASTER DATA -->
+      <!-- MODUL 8: PENGATURAN -->
       <div id="mod-8" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 8 — Pengaturan Sistem &amp; Data Master</div>
-          <div class="card-sub" style="margin-bottom:12px;">Konfigurasi identitas perusahaan, PIN akses, dan reset data lokal</div>
-          <div class="form-grid-2">
-            <div class="field-group"><label>Perusahaan</label><input type="text" value="PT. ARDINA MULYA PERKASA" readonly /></div>
-            <div class="field-group"><label>Unit Operasional</label><input type="text" value="PT PLN (Persero) UIT JBT &amp; UIT JBB" readonly /></div>
+          <div class="card-title">Modul 8 — Pengaturan Sistem, Koneksi Supabase &amp; Manajemen Sesi</div>
+          <div class="card-sub" id="mod8Sub">Pengaturan sistem pusat dan kontrol sesi perangkat</div>
+          <div id="adminSettingsContent">
+            <div class="form-grid-2" style="margin-top:12px;">
+              <div class="field-group"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" placeholder="https://xxxx.supabase.co" /></div>
+              <div class="field-group"><label>Supabase Anon Key</label><input type="text" id="sbKeyInput" placeholder="eyJ..." /></div>
+            </div>
+            <div class="controls-bar">
+              <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan &amp; Hubungkan Supabase</button>
+              <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Uji &amp; Sinkron GPS Sekarang</button>
+              <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">🔗 Salin Link Auto-Connect Korlap</button>
+              <button type="button" class="btn-secondary" onclick="backupJsonData()">⬇️ Backup JSON</button>
+              <button type="button" class="btn-secondary" style="color:#b91c1c;" onclick="resetAllDeviceLocks()">🔓 Buka Semua Kunci Perangkat Korlap</button>
+            </div>
+            <div id="supabaseSyncStatusBox" style="margin-top:8px; padding:10px 12px; border-radius:10px; background:#f8fafc; border:1px solid #cbd5e1; font-size:12px; color:#334155;">
+              Status Sinkronisasi GPS Cloud: <strong>Belum dikonfigurasi</strong> (isi Project URL &amp; Anon Key di atas).
+            </div>
+            <details style="margin-top:10px; font-size:12px; color:#334155; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px;">
+              <summary style="font-weight:800; color:#1e3a8a; cursor:pointer;">📋 Lihat Script SQL Tabel Supabase (Jalankan 1x di SQL Editor Supabase)</summary>
+              <pre style="margin-top:8px; background:#0f172a; color:#e2e8f0; padding:10px; border-radius:8px; overflow-x:auto; font-size:11px;">create table if not exists public.amp_live_gps (
+  korlap_id text primary key,
+  korlap_name text,
+  area text,
+  lat double precision not null,
+  lng double precision not null,
+  accuracy integer,
+  is_real_device boolean default true,
+  updated_at timestamptz default now()
+);
+
+alter table public.amp_live_gps enable row level security;
+
+create policy "Allow public read amp_live_gps"
+  on public.amp_live_gps for select using (true);
+
+create policy "Allow public upsert amp_live_gps"
+  on public.amp_live_gps for insert with check (true);
+
+create policy "Allow public update amp_live_gps"
+  on public.amp_live_gps for update using (true);</pre>
+            </details>
           </div>
-          <button type="button" class="btn-secondary" onclick="resetLocalProgress()">🔄 Reset Status Checklist Lokal</button>
+          <div id="korlapSettingsRestricted" class="restricted-box" style="display:none; margin-top:12px;">
+            <strong>🔒 Pengaturan Pusat Hanya untuk Admin / Head of Operation</strong><br/>
+            Akun Korlap tidak memiliki akses ke konfigurasi sistem, backup seluruh data, maupun manajemen akun lain.
+          </div>
         </div>
       </div>
 
-      <!-- MODUL 9: QR CODE & E-CHECKLIST -->
       <div id="mod-9" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 9 — QR Code &amp; E-Checklist Titik Area</div>
-          <div class="card-sub" style="margin-bottom:12px;">Verifikasi cepat titik inspeksi area gedung dan gardu/kantor PLN</div>
-          <div class="form-grid-2">
-            <div class="field-group"><label>Kode / Titik QR</label><input type="text" id="qrCodeInput" placeholder="Contoh: QR-LT1-TOILET-01" /></div>
-            <div class="field-group"><label>Hasil Inspeksi</label><select id="qrResultInput"><option value="Sesuai Standar (OK)">Sesuai Standar (OK)</option><option value="Perlu Perbaikan">Perlu Perbaikan</option></select></div>
-          </div>
-          <button type="button" class="btn-primary" onclick="addQrCheck()">+ Catat QR Check</button>
-          <div class="table-wrap" style="margin-top:14px;"><table><thead><tr><th>Waktu</th><th>Kode QR</th><th>Hasil</th><th>Petugas</th></tr></thead><tbody id="qrTableBody"></tbody></table></div>
+          <div class="card-title">Modul 9 — Inspeksi Kualitas Kebersihan &amp; 5R</div>
+          <div class="card-sub" id="mod9Sub">Evaluasi Ringkas, Rapi, Resik, Rawat, Rajin (5R) pada area tugas Anda.</div>
         </div>
       </div>
-
-      <!-- MODUL 10: KPI & SLA TRACKER -->
       <div id="mod-10" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 10 — KPI &amp; SLA Tracker</div>
-          <div class="card-sub" style="margin-bottom:12px;">Target SLA kebersihan dan ketepatan pelaporan operasional PLN</div>
-          <div class="table-wrap">
-            <table><thead><tr><th>Indikator</th><th>Target</th><th>Capaian Saat Ini</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>Ketepatan Pelaporan Harian Korlap</td><td>&ge; 95%</td><td>97%</td><td><span class="status-chip st-selesai">Tercapai</span></td></tr>
-              <tr><td>Kepatuhan Jadwal MCP Harian (D)</td><td>&ge; 95%</td><td id="kpiDynamicSlaCell">96%</td><td><span class="status-chip st-selesai">Aktif</span></td></tr>
-              <tr><td>Respon Tindak Lanjut Temuan</td><td>&lt; 24 Jam</td><td>12 Jam</td><td><span class="status-chip st-selesai">Tercapai</span></td></tr>
-            </tbody></table>
-          </div>
+          <div class="card-title">Modul 10 — Kepatuhan K3, Safety Briefing &amp; APD</div>
+          <div class="card-sub" id="mod10Sub">Pencatatan safety briefing harian, penggunaan APD, dan nihil kecelakaan kerja (Zero Accident).</div>
         </div>
       </div>
-
-      <!-- MODUL 11: K3 & APD MONITORING -->
       <div id="mod-11" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 11 — K3 &amp; APD Monitoring</div>
-          <div class="card-sub" style="margin-bottom:12px;">Pemantauan safety briefing, kelengkapan APD, dan keselamatan kerja lapangan</div>
-          <div class="form-grid-2">
-            <div class="field-group"><label>Area / Tim</label><input type="text" id="k3AreaInput" placeholder="Contoh: Tim Lantai 1 &amp; Halaman" /></div>
-            <div class="field-group"><label>Status APD &amp; K3</label><input type="text" id="k3StatusInput" placeholder="Contoh: APD Lengkap, Zero Accident" /></div>
-          </div>
-          <button type="button" class="btn-primary" onclick="addK3Log()">+ Simpan Catatan K3</button>
-          <div class="table-wrap" style="margin-top:14px;"><table><thead><tr><th>Waktu</th><th>Area / Tim</th><th>Catatan K3 / APD</th></tr></thead><tbody id="k3TableBody"></tbody></table></div>
+          <div class="card-title">Modul 11 — Jadwal Shift &amp; Penugasan Personel</div>
+          <div class="card-sub" id="mod11Sub">Pengaturan shift pagi/siang/patroli sesuai wilayah tugas.</div>
         </div>
       </div>
-
-      <!-- MODUL 12: JADWAL & SHIFT KERJA -->
       <div id="mod-12" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 12 — Jadwal &amp; Shift Kerja</div>
-          <div class="card-sub" style="margin-bottom:12px;">Pengaturan shift operasional (Shift 1 / Shift 2 / Shift 3) dan hari kerja</div>
-          <div class="table-wrap">
-            <table><thead><tr><th>Shift</th><th>Jam Operasional</th><th>Cakupan Tugas</th><th>Keterangan</th></tr></thead>
-            <tbody>
-              <tr><td>Shift 1</td><td>06.00 – 14.00 WIB</td><td>Pembersihan utama, area publik, lobby, ruang kerja &amp; halaman</td><td>Sesuai MCP Shift 1</td></tr>
-              <tr><td>Shift 2</td><td>14.00 – 22.00 WIB</td><td>Maintenance lanjutan, pembersihan area sore &amp; serah terima</td><td>Koordinasi Korlap</td></tr>
-              <tr><td>Shift 3</td><td>22.00 – 06.00 WIB</td><td>Pekerjaan malam / frekuensi FN sesuai kebutuhan lokasi</td><td>Sesuai arahan PIC</td></tr>
-            </tbody></table>
-          </div>
+          <div class="card-title">Modul 12 — Keluhan Pelanggan / Service Request (PLN)</div>
+          <div class="card-sub" id="mod12Sub">Pelacakan permintaan layanan tambahan dan respon cepat tindak lanjut di lapangan.</div>
         </div>
       </div>
-
-      <!-- MODUL 13: LOG AKTIVITAS & AUDIT -->
       <div id="mod-13" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 13 — Log Aktivitas &amp; Audit Trail</div>
-          <div class="card-sub" style="margin-bottom:12px;">Jejak aktivitas sistem, pembaruan GPS nyata, dan perubahan status MCP</div>
-          <div class="table-wrap">
-            <table><thead><tr><th>Waktu</th><th>Aksi / Kejadian</th><th>Detail</th></tr></thead><tbody id="auditLogBody"></tbody></table>
-          </div>
+          <div class="card-title">Modul 13 — Audit Peralatan &amp; Kalibrasi Mesin</div>
+          <div class="card-sub" id="mod13Sub">Pemeriksaan kesiapan polisher, vacuum cleaner, tangga, dan alat kerja lapangan.</div>
         </div>
       </div>
-
-      <!-- MODUL 14: SUPABASE SYNC -->
       <div id="mod-14" class="module-panel">
         <div class="card">
-          <div class="card-title">Modul 14 — Supabase Sync (Sinkronisasi Lintas Perangkat)</div>
-          <div class="card-sub" style="margin-bottom:12px;">Hubungkan Supabase Project URL &amp; Anon Key agar koordinat GPS nyata Korlap tersinkron ke radar Admin</div>
-          <div class="form-grid-2">
-            <div class="field-group">
-              <label>Supabase Project URL</label>
-              <input type="text" id="sbUrlInput" placeholder="https://xxxxxxxxxxxx.supabase.co" />
-            </div>
-            <div class="field-group">
-              <label>Supabase Anon Key</label>
-              <input type="password" id="sbKeyInput" placeholder="eyJhbGciOi..." />
-            </div>
-          </div>
-          <div class="controls-bar">
-            <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan Konfigurasi</button>
-            <button type="button" class="btn-success" onclick="testSupabaseConnection()">🔌 Tes Koneksi &amp; Sync</button>
-          </div>
-          <div id="sbTestResult" style="font-size:12px; font-weight:700; color:var(--slate-700);"></div>
+          <div class="card-title">Modul 14 — Log Aktivitas &amp; Sesi Perangkat</div>
+          <div class="card-sub" id="mod14Sub">Log sesi aktif perangkat dan aktivitas login.</div>
+          <div id="sessionLogContent" style="margin-top:12px; font-size:12.5px; color:var(--slate-700);"></div>
         </div>
       </div>
     </main>
   </section>
 
   <script>
-    const MCP_DATA = {"LANTAI_1": [{"no": "1", "sheet": "LANTAI 1", "area": "Toilet", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "LANTAI 1", "area": "Toilet", "objek": "Partisi", "uraian": "Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "LANTAI 1", "area": "Toilet", "objek": "Tempat sampah", "uraian": "Washing", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "LANTAI 1", "area": "Toilet", "objek": "Lantai", "uraian": "Brushing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "1", "sheet": "LANTAI 1", "area": "Toilet", "objek": "Cover seat", "uraian": "Spoting", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "directory gantung", "uraian": "Spoting / Wipe clean", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Kaca luar ruangan", "uraian": "Glass Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Bangku & Sofa tamu", "uraian": "Wipe clean / Polishing", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Lift Pasannger", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Meja Receptionist", "uraian": "Dusting", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Meja & rak lemari Figura ( wayang Golek )", "uraian": "Dusting", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Kolam ( Air Mancur )", "uraian": "Pengurasan", "kode": "M", "hari": ["Sabtu"], "minggu": ["III"], "tanggal": [19]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Astrhay/ Tempat sampah", "uraian": "Washing/Spoting", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Lantai", "uraian": "Dry buffing", "kode": "W", "hari": ["Minggu"], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "2", "sheet": "LANTAI 1", "area": "Coridor", "objek": "Coridor", "uraian": "Brushing/Scrubbing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "3", "sheet": "LANTAI 1", "area": "Janitor Pantry", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "3", "sheet": "LANTAI 1", "area": "Janitor Pantry", "objek": "Tempat sampah", "uraian": "Washing", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "3", "sheet": "LANTAI 1", "area": "Janitor Pantry", "objek": "Lantai", "uraian": "Washing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "4", "sheet": "LANTAI 1", "area": "Tangga exit Office Perencanan & Hatrans", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "4", "sheet": "LANTAI 1", "area": "Tangga exit Office Perencanan & Hatrans", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "4", "sheet": "LANTAI 1", "area": "Tangga exit Office Perencanan & Hatrans", "objek": "Pintu", "uraian": "Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "4", "sheet": "LANTAI 1", "area": "Tangga exit Office Perencanan & Hatrans", "objek": "Handrailing & Box Hydrant", "uraian": "Polishing", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "4", "sheet": "LANTAI 1", "area": "Tangga exit Office Perencanan & Hatrans", "objek": "Lantai dan Anak tangga", "uraian": "Brushing", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "Figura, Hiasan Dinding,Jam, Box Appar", "uraian": "Dustin,Wipe Clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "Blind Board &  Screen", "uraian": "Wipe Clean, Ereser clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "Rak lemari File", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG STAF ( Karyawan )", "objek": "meja & Kursi Kerja", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — MEETING JATAYU & YUDISTIRA", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — MEETING JATAYU & YUDISTIRA", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — MEETING JATAYU & YUDISTIRA", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — MEETING JATAYU & YUDISTIRA", "objek": "Tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — MEETING JATAYU & YUDISTIRA", "objek": "Pintu, & Jendela , Tiray Blind", "uraian": "Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG MANAGER", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG MANAGER", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.1", "sheet": "LANTAI 1", "area": "Ruangan Bidang Perencanaan — RUANG MANAGER", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "Figura, Hiasan Dinding,Jam, Box Appar", "uraian": "Dustin,Wipe Clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "Blind Board &  Screen", "uraian": "Wipe Clean, Ereser clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "Rak lemari File", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG STAF ( Karyawan )", "objek": "meja & Kursi Kerja", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Pintu, & Jendela , Tiray Blind", "uraian": "Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "tempat Spidol, Penghapus, dan Tray", "uraian": "Clean Up", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "meja & sofa / kursi", "uraian": "Wipe Clean & Spoting", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "tempat Spidol, Penghapus, dan Tray", "uraian": "Wipe Clean", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "meja & sofa / kursi", "uraian": "Wipe Clean & Spoting", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — WIBISANA", "objek": "Pintu & partisi kaca", "uraian": "Glass Cleaning", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG MANAGER ( SRM )", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG MANAGER ( SRM )", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG MANAGER ( SRM )", "objek": "Tempat sampah", "uraian": "WASHNG", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 1", "area": "Ruang Bidang HARTRANS — RUANG MANAGER ( SRM )", "objek": "Pintu & partisi kaca", "uraian": "Glass Cleaning", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Taman Lobby Utama", "uraian": "Sweeping, Moping", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Trap Tangga, & Ram Disable", "uraian": "Brushing Manual", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Karpet & Nomad", "uraian": "Vaccuming", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [9, 16, 23, 30]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Canopy", "uraian": "ROC", "kode": "M", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [10, 17, 24]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Pintu & partisi kaca", "uraian": "Glass Cleaning", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Meja Satpam Body Cheking", "uraian": "Dusting", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Drop Off  Mobil Lobby", "uraian": "Damp Mopping", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Teras & Lobby", "uraian": "Brushing", "kode": "2W", "hari": ["Kamis"], "minggu": ["II", "IV"], "tanggal": [10, 24]}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Teras & Lobby", "uraian": "Tidak teralisasi", "kode": "D", "hari": [], "minggu": [], "tanggal": []}, {"no": "6", "sheet": "LANTAI 1", "area": "Teras & Lobby", "objek": "Teras & Lobby", "uraian": "D = Daily (Harian )", "kode": "D", "hari": ["Senin"], "minggu": ["I"], "tanggal": [8, 22]}], "LANTAI_2": [{"no": "1", "sheet": "LANTAI 2", "area": "Toilet", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "LANTAI 2", "area": "Toilet", "objek": "Partisi", "uraian": "Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "LANTAI 2", "area": "Toilet", "objek": "Tempat sampah", "uraian": "Washing", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "LANTAI 2", "area": "Toilet", "objek": "Lantai", "uraian": "Brushing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "1", "sheet": "LANTAI 2", "area": "Toilet", "objek": "Cover seat", "uraian": "Spoting", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "directory gantung", "uraian": "Spoting / Wipe clean", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Kaca luar ruangan", "uraian": "Glass Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Bangku & Sofa tamu", "uraian": "Wipe clean / Polishing", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Pintu Lift Pasannger", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Handrailing", "uraian": "Dusting", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 7, 9, 14, 16, 21, 23, 28, 30]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Box Appar / Hydarnt", "uraian": "Dusting", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Tangga Pasanger", "uraian": "Pengurasan", "kode": "W", "hari": ["Sabtu"], "minggu": ["III"], "tanggal": [19]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Astrhay/ Tempat sampah", "uraian": "Washing/Spoting", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Lantai", "uraian": "Dry buffing", "kode": "W", "hari": ["Minggu"], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "2", "sheet": "LANTAI 2", "area": "Coridor", "objek": "Coridor", "uraian": "Brushing/Scrubbing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "3", "sheet": "LANTAI 2", "area": "Janitor Pantry", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "3", "sheet": "LANTAI 2", "area": "Janitor Pantry", "objek": "Tempat sampah", "uraian": "Washing", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "3", "sheet": "LANTAI 2", "area": "Janitor Pantry", "objek": "Lantai", "uraian": "Washing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "4", "sheet": "LANTAI 2", "area": "Tangga exit Office PST & KKU", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "4", "sheet": "LANTAI 2", "area": "Tangga exit Office PST & KKU", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "4", "sheet": "LANTAI 2", "area": "Tangga exit Office PST & KKU", "objek": "Pintu", "uraian": "Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "4", "sheet": "LANTAI 2", "area": "Tangga exit Office PST & KKU", "objek": "Handrailing & Box Hydrant", "uraian": "Polishing", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "4", "sheet": "LANTAI 2", "area": "Tangga exit Office PST & KKU", "objek": "Lantai dan Anak tangga", "uraian": "Brushing", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "Figura, Hiasan Dinding,Jam, Box Appar", "uraian": "Dustin,Wipe Clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "Blind Board &  Screen", "uraian": "Wipe Clean, Ereser clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "Rak lemari File", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG STAF ( Karyawan )", "objek": "meja & Kursi Kerja", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — MEETING PODCASE", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — MEETING PODCASE", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — MEETING PODCASE", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — MEETING PODCASE", "objek": "Tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — MEETING PODCASE", "objek": "Pintu, & Jendela , Tiray Blind", "uraian": "Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG MANAGER SRM", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG MANAGER SRM", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.1", "sheet": "LANTAI 2", "area": "Ruangan Bidang KKU — RUANG MANAGER SRM", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "Figura, Hiasan Dinding,Jam, Box Appar", "uraian": "Dustin,Wipe Clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "Blind Board &  Screen", "uraian": "Wipe Clean, Ereser clean", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "Rak lemari File", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG STAF ( Karyawan )", "objek": "meja & Kursi Kerja", "uraian": "Dusting, Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "Pintu & partisi kaca", "uraian": "Wipe Clean & Glass Cleaning", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "Tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "Pintu, & Jendela , Tiray Blind", "uraian": "Wipe Clean", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "tempat Spidol, Penghapus, dan Tray", "uraian": "Clean Up", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — MEETING WISAGENI", "objek": "meja & sofa / kursi", "uraian": "Wipe Clean & Spoting", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — GATOT KACA ( GM )", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 28]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — GATOT KACA ( GM )", "objek": "tempat Spidol, Penghapus, dan Tray", "uraian": "Wipe Clean", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — GATOT KACA ( GM )", "objek": "meja & sofa / kursi", "uraian": "Wipe Clean & Spoting", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — GATOT KACA ( GM )", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 9, 16, 23, 30]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — GATOT KACA ( GM )", "objek": "LANTAI PARKIT", "uraian": "Coating", "kode": "3 M", "hari": [], "minggu": [], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — GATOT KACA ( GM )", "objek": "Pintu & partisi kaca", "uraian": "Glass Cleaning", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG MANAGER GM", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG MANAGER GM", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 8, 15, 22, 29]}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG MANAGER GM", "objek": "Tempat sampah", "uraian": "WASHNG", "kode": "W", "hari": [], "minggu": ["I", "II", "III", "IV"], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG MANAGER GM", "objek": "LANTAI PARKIT", "uraian": "Coating", "kode": "3 M", "hari": [], "minggu": [], "tanggal": []}, {"no": "5.2", "sheet": "LANTAI 2", "area": "Ruang Bidang PST — RUANG MANAGER GM", "objek": "Pintu & partisi kaca", "uraian": "Glass Cleaning", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 10, 17, 24, 31]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU", "objek": "Flafound, atap, langit langit", "uraian": "ROC", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [8, 15, 22, 27]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU", "objek": "Corridor", "uraian": "Brushing & DRY Buffiong", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [9, 16, 23, 28]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Kerja Staft", "objek": "Rak lemari File", "uraian": "dusting", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [10, 17, 24, 29]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Kerja Staft", "objek": "meja & Kursi Kerja", "uraian": "Dusting , wipe clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Kerja Staft", "objek": "tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [10, 17, 24, 29]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Kerja Staft", "objek": "Lantai", "uraian": "vaccuming & Brushing", "kode": "3M", "hari": [], "minggu": [], "tanggal": []}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager MSB", "objek": "Rak lemari File", "uraian": "Wipe Clean, Dusting", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [8, 15, 22, 27]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager MSB", "objek": "meja & Kursi Kerja", "uraian": "Dusting, Spoting", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [9, 16, 23, 28]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager MSB", "objek": "tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [10, 17, 24, 29]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager MSB", "objek": "Lantai parkit", "uraian": "Stripig Coating", "kode": "3M", "hari": [], "minggu": [], "tanggal": []}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager  VP HTD", "objek": "Rak lemari File", "uraian": "Wipe Clean, Dusting", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [8, 15, 22, 27]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager  VP HTD", "objek": "meja & Kursi Kerja", "uraian": "Dusting, Spoting", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [9, 16, 23, 28]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager  VP HTD", "objek": "tempat sampah", "uraian": "washing", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [10, 17, 24, 29]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruangan Manager  VP HTD", "objek": "Lantai parkit", "uraian": "Stripig Coating", "kode": "3M", "hari": [], "minggu": [], "tanggal": []}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [7, 14, 21, 26]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "objek": "tempat Spidol, Penghapus, dan Tray", "uraian": "Wipe Clean", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [8, 15, 22, 27]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "objek": "meja & sofa / kursi", "uraian": "Wipe Clean & Spoting", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [9, 16, 23, 28]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "objek": "Dinding", "uraian": "Wall Cleaning", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [10, 17, 24, 29]}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "objek": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "uraian": "Tidak teralisasi", "kode": "D", "hari": [], "minggu": [], "tanggal": []}, {"no": "6", "sheet": "LANTAI 2", "area": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "objek": "HTD & GEDUNG BARU — Ruang Meeting SRIKANDI", "uraian": "D = Daily (Harian )", "kode": "D", "hari": ["Senin"], "minggu": ["I"], "tanggal": [8, 22]}], "HALAMAN": [{"no": "1", "sheet": "HALAMAN", "area": "Toilet  POS Satpam", "objek": "Ceiling, Exhausfan, Ac Grill & Kap Lampu", "uraian": "ROC", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "HALAMAN", "area": "Toilet  POS Satpam", "objek": "Dinding / Dinding kubikal", "uraian": "Wall Cleaning", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "1", "sheet": "HALAMAN", "area": "Toilet  POS Satpam", "objek": "Partisi", "uraian": "Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "HALAMAN", "area": "Toilet  POS Satpam", "objek": "Tempat sampah", "uraian": "Washing", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 11, 18, 25]}, {"no": "1", "sheet": "HALAMAN", "area": "Toilet  POS Satpam", "objek": "Lantai", "uraian": "Brushing", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [5, 12, 19, 26]}, {"no": "1", "sheet": "HALAMAN", "area": "Toilet  POS Satpam", "objek": "Cover seat", "uraian": "Spoting", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Pagar Dnding Beton", "uraian": "Spoting", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Tiang Lampu", "uraian": "Wipe Clean Dusting", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Tiang Bord / Reklame", "uraian": "Wipe Clean Dusting", "kode": "W", "hari": ["Kamis"], "minggu": ["I", "II", "III", "IV"], "tanggal": [4, 10, 17, 24, 31]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Sign Board Logo PLN", "uraian": "Spoting / Wipe clean", "kode": "W", "hari": ["Rabu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [3, 9, 16, 23, 30]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Gerbang Tralis Otomatis", "uraian": "Spoting", "kode": "W", "hari": ["Selasa"], "minggu": ["I", "II", "III", "IV"], "tanggal": [2, 8, 15, 22, 29]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Selokan depan", "uraian": "Clean Up", "kode": "W", "hari": ["Senin"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 7, 14, 21, 28]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Canopy Pos Satpam", "uraian": "Wipe Clean & Glass Cleaning", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Bom Gate", "uraian": "Dusting", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Lampu taman", "uraian": "Spoting", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [12, 19, 26]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Lantai", "uraian": "Pos Satpam", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Halaman Depan Pedestrian ( Paving Blok )", "uraian": "Marka Jalan", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"], "minggu": ["II", "III"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]}, {"no": "2", "sheet": "HALAMAN", "area": "Halaman Depan Pedestrian ( Paving Blok )", "objek": "Halaman Depan Pedestrian ( Paving Blok )", "uraian": "Castin/ Car Stoper", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [12, 19, 26]}, {"no": "3", "sheet": "HALAMAN", "area": "Halaman ( Lapangan Upacara)", "objek": "Conblok/ Paving Blok", "uraian": "Jet Spraying", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "3", "sheet": "HALAMAN", "area": "Halaman ( Lapangan Upacara)", "objek": "Tempat sampah", "uraian": "Washing", "kode": "W", "hari": ["Selasa"], "minggu": [], "tanggal": [1, 8, 15, 22, 29]}, {"no": "3", "sheet": "HALAMAN", "area": "Halaman ( Lapangan Upacara)", "objek": "Rambu Rambu", "uraian": "Spoting", "kode": "W", "hari": ["Kamis"], "minggu": [], "tanggal": [3, 10, 17, 24, 31]}, {"no": "3", "sheet": "HALAMAN", "area": "Halaman ( Lapangan Upacara)", "objek": "Gutter selokan", "uraian": "Clean Up", "kode": "M", "hari": ["Selasa"], "minggu": [], "tanggal": [1, 8, 15, 22, 29]}, {"no": "3", "sheet": "HALAMAN", "area": "Halaman ( Lapangan Upacara)", "objek": "Lampu taman", "uraian": "Dusting", "kode": "W", "hari": ["Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [12, 19, 26]}, {"no": "4", "sheet": "HALAMAN", "area": "Halaman Parkir Motor & Smoking Area", "objek": "Rambu Rambu", "uraian": "Dusting", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "4", "sheet": "HALAMAN", "area": "Halaman Parkir Motor & Smoking Area", "objek": "Lantai Aspal Warna  Parking Set", "uraian": "Washing", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "4", "sheet": "HALAMAN", "area": "Halaman Parkir Motor & Smoking Area", "objek": "Cone, Pembatas", "uraian": "Wipe Clean", "kode": "W", "hari": ["Jumat"], "minggu": ["I", "II", "III", "IV"], "tanggal": [11, 18, 25]}, {"no": "4", "sheet": "HALAMAN", "area": "Halaman Parkir Motor & Smoking Area", "objek": "Gutter selokan", "uraian": "Wipe Clean", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "4", "sheet": "HALAMAN", "area": "Halaman Parkir Motor & Smoking Area", "objek": "Canopy Parkiran", "uraian": "polishing", "kode": "M", "hari": [], "minggu": [], "tanggal": []}, {"no": "4", "sheet": "HALAMAN", "area": "Halaman Parkir Motor & Smoking Area", "objek": "Planter Pot taman", "uraian": "Sweeping", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Pedestrian Jalan Conblok", "uraian": "Sweeping,", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Pos Jaga Satpam", "uraian": "Dusting", "kode": "W", "hari": ["Senin"], "minggu": [], "tanggal": [1, 7, 14, 21, 28]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Cone, Pembatas", "uraian": "wipe clean", "kode": "W", "hari": ["Selasa"], "minggu": [], "tanggal": [2, 8, 15, 22, 29]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Dinding  Beton", "uraian": "Jet Spraying", "kode": "W", "hari": ["Senin"], "minggu": [], "tanggal": [1, 7, 14, 21, 28]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Gutter selokan", "uraian": "Clean Up", "kode": "W", "hari": ["Selasa"], "minggu": [], "tanggal": [2, 8, 15, 22, 29]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Planter Pot taman", "uraian": "sweeping", "kode": "W", "hari": ["Jumat"], "minggu": [], "tanggal": [11, 18, 25]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Rambu Rambu", "uraian": "Touch Up Cleaning", "kode": "D", "hari": ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"], "minggu": ["I", "II", "III", "IV"], "tanggal": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Toilet ELCO", "uraian": "General Cleaning", "kode": "W", "hari": ["Rabu"], "minggu": [], "tanggal": [3, 9, 16, 23, 30]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "TPS", "uraian": "Clean Up", "kode": "M", "hari": ["Kamis"], "minggu": [], "tanggal": [4, 10, 17, 24, 31]}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Halaman ELCO Café & Kantin", "uraian": "Tidak teralisasi", "kode": "D", "hari": [], "minggu": [], "tanggal": []}, {"no": "6", "sheet": "HALAMAN", "area": "Halaman ELCO Café & Kantin", "objek": "Halaman ELCO Café & Kantin", "uraian": "D = Daily (Harian )", "kode": "D", "hari": ["Senin"], "minggu": ["I"], "tanggal": [8, 22]}], "CRASS_PROGRAM": [{"section": "Gondola / Luar Gedung", "kategori": "KACA", "objek": "a. Kaca Luar tampaK depan lobby", "uraian": "GLASS CLEANING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "KACA", "objek": "b. Kaca luar tampak depan Parkir motor", "uraian": "GLASS CLEANING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "KACA", "objek": "c. kaca pasat luar lobby", "uraian": "GLASS CLEANING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "KACA", "objek": "d. Kaca pasat luar tampak depan upacara", "uraian": "GLASS CLEANING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "KACA", "objek": "e. kaca dak partisi rooftop tampak sisi selatan (parkir motor )", "uraian": "GLASS CLEANING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "DINDING", "objek": "a. Dinding luar tampak utara sisi kantin", "uraian": "SPOTING, DRY DUSTING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "DINDING", "objek": "b. Dinding pilar rangka baja sisi selatan parkir motor", "uraian": "SPOTING, DRY DUSTING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "DINDING", "objek": "c. Dinding belakang Tps", "uraian": "SPOTING, DRY DUSTING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "DINDING", "objek": "d. Dinding ACP belakang hantrans", "uraian": "SPOTING, DRY DUSTING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "DINDING", "objek": "e. Dinidng & kaca Rent belakang", "uraian": "SPOTING, GLASS CLEANING", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "a. Canopy pintu masuk dan keluar mobil", "uraian": "SPOTING / WIPE CLEAN", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "b. Canopy Lobby utama", "uraian": "SPOTING / WIPE CLEAN", "frekuensi": "6M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "W = Weekly / mingguan", "uraian": "FN = Fortnightly / malam hari", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "AC = Aircon Grilles", "uraian": "PC = Pressure Cleaning", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "(Pembersihan AC Grill)", "uraian": "(penggunaan jet sprayer)", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "SF = Sweep Flat Mop", "uraian": "CC = Carpark Cleaning", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "(Sapu dengan flat mop)", "uraian": "(pembersihan parkir)", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "CANOPY", "objek": "OBJECT DESCRIPTION", "uraian": "Uraian pekerjaan", "frekuensi": "FREKUENSI"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG RAPAT", "objek": "a.SRIKANDI", "uraian": "STRIPING & CAOTING", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG RAPAT", "objek": "b. PIPA", "uraian": "SHAMPOING CARPET", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG RAPAT", "objek": "c. WISAGENI", "uraian": "SHAMPOING CARPET", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG RAPAT", "objek": "d. GATOT KACA", "uraian": "STRIPING & CAOTING", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG RAPAT", "objek": "e. POD CAST (KKU)", "uraian": "SHAMPOING CARPET", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG GM & SRM", "objek": "a. RUANG GM", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG GM & SRM", "objek": "b. RUANG VP HTD ( Bu widia )", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG GM & SRM", "objek": "c. RUANG MANAGER MSB (Pak sukma )", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG GM & SRM", "objek": "d. RUANG SRM ( Pak Firdaus )", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Gondola / Luar Gedung", "kategori": "RUANG GM & SRM", "objek": "e. RUANG FINACE (KKU) Pak Yusuf", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "a. RUANG SRM RENT", "uraian": "WASHING, STRIPING", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "b. RUANG K3 HAR", "uraian": "WASHING, STRIPING", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "c. RUANG FITNES LT 2", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "d. RUANG PAK OKI ( KKU )", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "c. RUANG MANAGER PST", "uraian": "STRIPING & COATING", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "W = Weekly / mingguan", "uraian": "FN = Fortnightly / malam hari", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "AC = Aircon Grilles", "uraian": "PC = Pressure Cleaning", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "(Pembersihan AC Grill)", "uraian": "(penggunaan jet sprayer)", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "SF = Sweep Flat Mop", "uraian": "CC = Carpark Cleaning", "frekuensi": "3M"}, {"section": "Pemetaan Ruangan / Per Layout", "kategori": "RUANG STAFT", "objek": "(Sapu dengan flat mop)", "uraian": "(pembersihan parkir)", "frekuensi": "3M"}]};
+    // Logo resmi PT. Ardina Mulya Perkasa
+    const AMP_LOGO_DATA_URI = "data:image/png;base64,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";
 
-    const KORLAP_ROSTER = [
-      { id: "Dede_Rusmana", nama: "Dede Rusmana", pin: "110101", role: "Korlap", area: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Dede_Purnama", nama: "Dede Purnama", pin: "110202", role: "Korlap", area: "ULTG Karet & ULTG Mampang", lat: -6.224, lng: 106.751, mcpSheets: ["LANTAI_1", "LANTAI_2", "HALAMAN", "CRASS_PROGRAM"] },
-      { id: "Dadang_Darsono", nama: "Dadang Darsono", pin: "110303", role: "Korlap", area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah", lat: -6.195, lng: 106.909, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Rizky_Badrul Z", nama: "Rizky Badrul Zaman", pin: "110404", role: "Korlap", area: "Kantor Induk Bandung & ULTG Bandung Barat", lat: -6.9039, lng: 107.6186, mcpSheets: ["LANTAI_1", "LANTAI_2", "HALAMAN", "CRASS_PROGRAM"] },
-      { id: "Irfan_AS", nama: "Irfan Ardiatma S", pin: "110505", role: "Korlap", area: "UPT Cawang & ULTG Mampang", lat: -6.2435, lng: 106.8685, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Yan_S", nama: "Yan Saputra", pin: "110606", role: "Korlap", area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah", lat: -6.1985, lng: 106.912, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Yadi_S", nama: "Yadi Supriyadi", pin: "110707", role: "Korlap", area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan", lat: -6.9175, lng: 107.6191, mcpSheets: ["LANTAI_1", "LANTAI_2", "HALAMAN", "CRASS_PROGRAM"] },
-      { id: "Tegar_D", nama: "Tegar Dwitama", pin: "110808", role: "Korlap", area: "ULTG Cikarang", lat: -6.265, lng: 107.15, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Andi_I", nama: "Andi Ilmanto", pin: "110909", role: "Korlap", area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", lat: -6.342, lng: 106.784, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Tamam_2", nama: "Tamam", pin: "111010", role: "Korlap", area: "UPT Bogor & ULTG Sukabumi", lat: -6.5971, lng: 106.806, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Haerudin_3", nama: "Haerudin", pin: "111111", role: "Korlap", area: "ULTG Purwakarta", lat: -6.5569, lng: 107.4463, mcpSheets: ["HALAMAN", "LANTAI_1", "CRASS_PROGRAM"] },
-      { id: "Iswanto_R", nama: "Iswanto Riansyah", pin: "111212", role: "Korlap", area: "UPT Bogor & ULTG Sukabumi", lat: -6.605, lng: 106.815, mcpSheets: ["LANTAI_1", "LANTAI_2", "HALAMAN"] },
-      { id: "Rifky_Y", nama: "Rifkiyansyah", pin: "111313", role: "Korlap", area: "UPT Bogor & ULTG Sukabumi", lat: -6.922, lng: 106.927, mcpSheets: ["LANTAI_1", "LANTAI_2", "HALAMAN"] },
+    // ================= DATA AKUN ADMIN / HEAD OF OPS + 13 KORLAP SESUAI DATA RESMI =================
+    const DEFAULT_ACCOUNTS = [
+      {
+        id: "M.Soheh",
+        username: "M.Soheh",
+        name: "M.Soheh (Head Of Operation)",
+        role: "ADMIN",
+        pin: "990099",
+        area: "Seluruh Wilayah PLN UIT JBT & UIT JBB",
+        lat: -6.2432,
+        lng: 106.8689
+      },
+      {
+        id: "Dede_Rusmana",
+        username: "Dede_Rusmana",
+        name: "Dede Rusmana",
+        role: "KORLAP",
+        pin: "110101",
+        area: "UPT Bekasi & ULTG Cikarang",
+        lat: -6.2383,
+        lng: 106.9756
+      },
+      {
+        id: "Dede_Purnama",
+        username: "Dede_Purnama",
+        name: "Dede Purnama",
+        role: "KORLAP",
+        pin: "110202",
+        area: "ULTG Karet & ULTG Mampang",
+        lat: -6.2165,
+        lng: 106.8168
+      },
+      {
+        id: "Dadang_Darsono",
+        username: "Dadang_Darsono",
+        name: "Dadang Darsono",
+        role: "KORLAP",
+        pin: "110303",
+        area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
+        lat: -6.1835,
+        lng: 106.9065
+      },
+      {
+        id: "Rizky_Badrul Z",
+        username: "Rizky_Badrul Z",
+        name: "Rizky Badrul Zaman",
+        role: "KORLAP",
+        pin: "110404",
+        area: "Kantor Induk Bandung & ULTG Bandung Barat",
+        lat: -6.9147,
+        lng: 107.6098
+      },
+      {
+        id: "Irfan_AS",
+        username: "Irfan_AS",
+        name: "Irfan Ardiatma S",
+        role: "KORLAP",
+        pin: "110505",
+        area: "UPT Cawang & ULTG Mampang",
+        lat: -6.2432,
+        lng: 106.8689
+      },
+      {
+        id: "Yan_S",
+        username: "Yan_S",
+        name: "Yan Saputra",
+        role: "KORLAP",
+        pin: "110606",
+        area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
+        lat: -6.1525,
+        lng: 106.8421
+      },
+      {
+        id: "Yadi_S",
+        username: "Yadi_S",
+        name: "Yadi Supriyadi",
+        role: "KORLAP",
+        pin: "110707",
+        area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan",
+        lat: -6.9326,
+        lng: 107.6278
+      },
+      {
+        id: "Tegar_D",
+        username: "Tegar_D",
+        name: "Tegar Dwitama",
+        role: "KORLAP",
+        pin: "110808",
+        area: "ULTG Cikarang",
+        lat: -6.2654,
+        lng: 107.1512
+      },
+      {
+        id: "Andi_I",
+        username: "Andi_I",
+        name: "Andi Ilmanto",
+        role: "KORLAP",
+        pin: "110909",
+        area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel",
+        lat: -6.3189,
+        lng: 106.7745
+      },
+      {
+        id: "Tamam_2",
+        username: "Tamam_2",
+        name: "Tamam",
+        role: "KORLAP",
+        pin: "111010",
+        area: "UPT Bogor & ULTG Sukabumi",
+        lat: -6.5971,
+        lng: 106.8060
+      },
+      {
+        id: "Haerudin_3",
+        username: "Haerudin_3",
+        name: "Haerudin",
+        role: "KORLAP",
+        pin: "111111",
+        area: "ULTG Purwakarta",
+        lat: -6.5569,
+        lng: 107.4463
+      },
+      {
+        id: "Iswanto_R",
+        username: "Iswanto_R",
+        name: "Iswanto Riansyah",
+        role: "KORLAP",
+        pin: "111212",
+        area: "UPT Bogor & ULTG Sukabumi",
+        lat: -6.9277,
+        lng: 106.9271
+      },
+      {
+        id: "Rifky_Y",
+        username: "Rifky_Y",
+        name: "Rifkiyansyah",
+        role: "KORLAP",
+        pin: "111313",
+        area: "UPT Karawang, UPT Bogor & ULTG Sukabumi",
+        lat: -6.3036,
+        lng: 107.3009
+      }
     ];
 
     const MODULES_14 = [
-      { id: "mod-1", label: "1. Dashboard & Radar GPS" },
+      { id: "mod-1", label: "1. Dashboard" },
       { id: "mod-2", label: "2. Monitoring Pekerjaan" },
       { id: "mod-3", label: "3. Manpower & Absensi" },
       { id: "mod-4", label: "4. MCP & DAC" },
       { id: "mod-5", label: "5. Temuan & Action Plan" },
       { id: "mod-6", label: "6. Material & Asset" },
-      { id: "mod-7", label: "7. Laporan" },
+      { id: "mod-7", label: "7. Laporan & Ekspor" },
       { id: "mod-8", label: "8. Pengaturan" },
-      { id: "mod-9", label: "9. QR & E-Checklist" },
-      { id: "mod-10", label: "10. KPI & SLA" },
-      { id: "mod-11", label: "11. K3 & APD" },
-      { id: "mod-12", label: "12. Jadwal & Shift" },
-      { id: "mod-13", label: "13. Audit Log" },
-      { id: "mod-14", label: "14. Supabase Sync" }
+      { id: "mod-9", label: "9. Inspeksi 5R" },
+      { id: "mod-10", label: "10. K3 & APD" },
+      { id: "mod-11", label: "11. Jadwal Shift" },
+      { id: "mod-12", label: "12. Service Request" },
+      { id: "mod-13", label: "13. Audit Peralatan" },
+      { id: "mod-14", label: "14. Log Aktivitas" }
     ];
 
-    let currentUser = KORLAP_ROSTER[0];
-    let currentModuleId = "mod-1";
-    let currentMcpSheet = "LANTAI_1";
-    let mcpMarks = JSON.parse(localStorage.getItem("amp_mcp_marks_v1") || "{}");
-    let jobLogs = JSON.parse(localStorage.getItem("amp_job_logs_v1") || "[]");
-    let findings = JSON.parse(localStorage.getItem("amp_findings_v1") || "[]");
-    let qrLogs = JSON.parse(localStorage.getItem("amp_qr_logs_v1") || "[]");
-    let k3Logs = JSON.parse(localStorage.getItem("amp_k3_logs_v1") || "[]");
-    let auditLogs = JSON.parse(localStorage.getItem("amp_audit_logs_v1") || "[]");
-    let liveGpsState = {};
-    let watchId = null;
-    let radarMap = null;
-    let radarMarkers = {};
-    let radarPolylines = {};
-    let sbClient = null;
+    const MCP_TEMPLATES = {
+      "LANTAI 1": [
+        { uraian: "Cleaning Lobby Utama & Area Penerimaan Tamu", kode: "D", freq: "Harian (2x Shift)" },
+        { uraian: "Pembersihan Toilet & Wastafel Lantai 1", kode: "D", freq: "Harian (3x)" },
+        { uraian: "Sweeping & Mopping Koridor serta Tangga Utama", kode: "D", freq: "Harian" },
+        { uraian: "Dusting Kaca Partitions, Kusen & Panel Informasi", kode: "W", freq: "Mingguan" },
+        { uraian: "Polishing / Buffing Lantai Granit & Area Selasar", kode: "M", freq: "Bulanan" }
+      ],
+      "LANTAI 2": [
+        { uraian: "Cleaning Ruang Rapat, Ruang Kerja & Pantry Lantai 2", kode: "D", freq: "Harian" },
+        { uraian: "Pembersihan Toilet & Area Cuci Tangan Lantai 2", kode: "D", freq: "Harian (2x)" },
+        { uraian: "Vacuum Karpet / Pembersihan Kisi-Kisi AC & Ventilasi", kode: "W", freq: "Mingguan" },
+        { uraian: "Pembersihan Kaca Jendela Tinggi & Dinding Partisi", kode: "M", freq: "Bulanan" },
+        { uraian: "Deep Cleaning Ruang Arsip & Area Penunjang", kode: "Q", freq: "Triwulanan" }
+      ],
+      "HALAMAN": [
+        { uraian: "Sapubersih Halaman Parkir, Akses Masuk & Trotoar", kode: "D", freq: "Harian" },
+        { uraian: "Pengangkutan Sampah Domestik ke TPS", kode: "D", freq: "Harian" },
+        { uraian: "Pembersihan Saluran Drainase & Bak Kontrol Halaman", kode: "W", freq: "Mingguan" },
+        { uraian: "Pemangkasan Rumput Liar / Penataan Taman Area Site", kode: "M", freq: "Bulanan" },
+        { uraian: "Pencucian Area Jalan Lingkungan & Pos Keamanan", kode: "Q", freq: "Triwulanan" }
+      ],
+      "CRASS": [
+        { uraian: "Pembersihan Area Perimeter & Jalur Inspeksi Crass", kode: "D", freq: "Harian" },
+        { uraian: "Pembersihan Gulma & Sampah di Sekitar Pondasi / Crass", kode: "W", freq: "Mingguan" },
+        { uraian: "Pembersihan Saluran Air & Pengendalian Lumut Crass", kode: "M", freq: "Bulanan" },
+        { uraian: "Evaluasi Menyeluruh Kebersihan & K3 Area Crass", kode: "SA", freq: "Semesteran" }
+      ]
+    };
 
-    function nowTimeStr() {
-      return new Date().toLocaleString("id-ID", { hour12: false });
-    }
+    const STORAGE_KEY = "AMP_MONITORING_STATE_V2";
+    const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
+    const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
 
-    function pushAudit(action, detail) {
-      auditLogs.unshift({ time: nowTimeStr(), action, detail });
-      auditLogs = auditLogs.slice(0, 80);
-      localStorage.setItem("amp_audit_logs_v1", JSON.stringify(auditLogs));
-      renderAuditLog();
-    }
-
-    function detectFacilityName(lat, lng) {
-      let best = { name: "Wilayah Operasional PLN UIT JBT / JBB", distKm: 999 };
-      KORLAP_ROSTER.forEach(k => {
-        const dLat = (k.lat - lat) * 111;
-        const dLng = (k.lng - lng) * 111 * Math.cos(lat * Math.PI / 180);
-        const dist = Math.sqrt(dLat * dLat + dLng * dLng);
-        if (dist < best.distKm) {
-          best = { name: k.area, distKm: dist };
-        }
-      });
-      return best.distKm < 12 ? best.name : `Titik Koordinat (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
-    }
-
-    // ================= LOGIN & NAVIGATION (SINGLE ACTIVE DEVICE LOCK) =================
-    const DEVICE_SESSION_ID = (() => {
-      let did = localStorage.getItem("amp_device_id_v1");
+    function getThisDeviceId() {
+      let did = localStorage.getItem(DEVICE_ID_KEY);
       if (!did) {
         did = "DEV-" + Math.random().toString(36).slice(2, 10).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
-        localStorage.setItem("amp_device_id_v1", did);
+        localStorage.setItem(DEVICE_ID_KEY, did);
       }
       return did;
-    })();
-
-    const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
-
-    function fillPin(pinStr) {
-      document.getElementById("pinInput").value = pinStr;
-      document.getElementById("loginErrorMsg").textContent = "";
     }
 
-    function getActiveSessionsMap() {
+    const THIS_DEVICE_ID = getThisDeviceId();
+    let state = loadState();
+    let activeUser = null;
+    // Opsional: isi default Supabase URL & Key di sini agar semua HP Korlap otomatis terhubung tanpa input manual
+    const DEFAULT_SUPABASE_URL = "";
+    const DEFAULT_SUPABASE_KEY = "";
+
+    let radarMap = null;
+    let radarMarkers = {};
+    let radarTrailPolylines = {};
+    let gpsHistoryByKorlap = {};
+    let autoFollowKorlapId = null;
+    let liveWatchId = null;
+    let gpsPollIntervalId = null;
+    let supabaseRealtimeChannel = null;
+    let currentMcpSheet = "LANTAI 1";
+
+    // Otomatis baca parameter ?sb_url=...&sb_key=... jika link dibagikan Admin ke HP Korlap
+    (function applySupabaseFromUrlParams() {
       try {
-        return JSON.parse(localStorage.getItem("amp_active_sessions_v1") || "{}");
-      } catch (_) {
-        return {};
-      }
-    }
-
-    function saveActiveSessionsMap(mapObj) {
-      localStorage.setItem("amp_active_sessions_v1", JSON.stringify(mapObj));
-    }
-
-    async function checkAndClaimAccountSession(korlap) {
-      const nowMs = Date.now();
-      const localMap = getActiveSessionsMap();
-      const existingLocal = localMap[korlap.id];
-
-      if (existingLocal && existingLocal.deviceId !== DEVICE_SESSION_ID && (nowMs - existingLocal.lastSeenMs) < SESSION_TTL_MS) {
-        return {
-          allowed: false,
-          reason: `Login ditolak: Akun ${korlap.nama} (${korlap.id}) sudah login di perangkat lain (${existingLocal.deviceId}) sejak ${existingLocal.loginTime}.`
-        };
-      }
-
-      if (sbClient) {
-        try {
-          const { data, error } = await sbClient
-            .from("active_sessions")
-            .select("*")
-            .eq("user_id", korlap.id)
-            .maybeSingle();
-
-          if (!error && data && data.is_active && data.device_id && data.device_id !== DEVICE_SESSION_ID) {
-            const lastSeen = data.last_seen_ms ? Number(data.last_seen_ms) : 0;
-            if ((nowMs - lastSeen) < SESSION_TTL_MS) {
-              return {
-                allowed: false,
-                reason: `Login ditolak: Akun ${korlap.nama} (${korlap.id}) sedang aktif di perangkat lain (${data.device_id}). Silakan logout terlebih dahulu di perangkat tersebut.`
-              };
-            }
-          }
-
-          await sbClient.from("active_sessions").upsert([{
-            user_id: korlap.id,
-            user_name: korlap.nama,
-            device_id: DEVICE_SESSION_ID,
-            is_active: true,
-            last_seen_ms: nowMs,
-            login_time: nowTimeStr()
-          }], { onConflict: "user_id" });
-        } catch (_) {}
-      }
-
-      localMap[korlap.id] = {
-        deviceId: DEVICE_SESSION_ID,
-        loginTime: nowTimeStr(),
-        lastSeenMs: nowMs
-      };
-      saveActiveSessionsMap(localMap);
-      return { allowed: true };
-    }
-
-    async function releaseAccountSession(korlap) {
-      if (!korlap) return;
-      const localMap = getActiveSessionsMap();
-      if (localMap[korlap.id] && localMap[korlap.id].deviceId === DEVICE_SESSION_ID) {
-        delete localMap[korlap.id];
-        saveActiveSessionsMap(localMap);
-      }
-      if (sbClient) {
-        try {
-          await sbClient
-            .from("active_sessions")
-            .update({ is_active: false, last_seen_ms: Date.now() })
-            .eq("user_id", korlap.id)
-            .eq("device_id", DEVICE_SESSION_ID);
-        } catch (_) {}
-      }
-    }
-
-    document.getElementById("togglePinEye").addEventListener("click", () => {
-      const inp = document.getElementById("pinInput");
-      inp.type = inp.type === "password" ? "text" : "password";
-    });
-
-    document.getElementById("btnMasukSistem").addEventListener("click", () => {
-      attemptLogin("mod-1");
-    });
-
-    document.getElementById("pinInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") attemptLogin("mod-1");
-    });
-
-    document.getElementById("btnLogout").addEventListener("click", async () => {
-      if (watchId !== null && navigator.geolocation) {
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-      }
-      await releaseAccountSession(currentUser);
-      pushAudit("Logout Sistem", `${currentUser.nama} keluar dari perangkat ${DEVICE_SESSION_ID}`);
-      document.getElementById("appShell").style.display = "none";
-      document.getElementById("loginScreen").style.display = "grid";
-      document.getElementById("pinInput").value = "";
-    });
-
-    function quickOpenModule(modId, pinVal) {
-      document.getElementById("pinInput").value = pinVal || "110101";
-      attemptLogin(modId);
-    }
-
-    async function attemptLogin(targetModId) {
-      const pinVal = (document.getElementById("pinInput").value || "").trim();
-      const errEl = document.getElementById("loginErrorMsg");
-      if (!pinVal) {
-        errEl.textContent = "Silakan isi PIN akun Korlap terlebih dahulu.";
-        return;
-      }
-      const matched = KORLAP_ROSTER.find(k => k.pin === pinVal);
-      if (!matched) {
-        errEl.textContent = "PIN tidak dikenali. Periksa kembali PIN akun Korlap Anda.";
-        return;
-      }
-
-      const sessionCheck = await checkAndClaimAccountSession(matched);
-      if (!sessionCheck.allowed) {
-        errEl.textContent = sessionCheck.reason;
-        return;
-      }
-
-      errEl.textContent = "";
-      currentUser = matched;
-
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("appShell").style.display = "block";
-      document.getElementById("activeUserBadge").textContent = `Korlap: ${currentUser.nama} (${currentUser.id})`;
-      document.getElementById("activeAreaBadge").textContent = `Area: ${currentUser.area}`;
-
-      buildModulesNav();
-      populateSelects();
-      initKorlapRadarMap();
-      startRealTimeGpsWatch();
-      renderAllModules();
-      switchModule(targetModId || "mod-1");
-      pushAudit("Login Sistem", `${currentUser.nama} login di perangkat ${DEVICE_SESSION_ID}`);
-    }
-
-    function buildModulesNav() {
-      const nav = document.getElementById("modulesNav");
-      nav.innerHTML = MODULES_14.map(m =>
-        `<button type="button" class="mod-tab ${m.id === currentModuleId ? "active" : ""}" data-mod="${m.id}" onclick="switchModule('${m.id}')">${m.label}</button>`
-      ).join("");
-    }
-
-    function switchModule(modId) {
-      currentModuleId = modId;
-      document.querySelectorAll(".module-panel").forEach(p => p.classList.remove("active"));
-      const target = document.getElementById(modId);
-      if (target) target.classList.add("active");
-      document.querySelectorAll(".mod-tab").forEach(t => {
-        t.classList.toggle("active", t.dataset.mod === modId);
-      });
-      if (modId === "mod-1" && radarMap) {
-        setTimeout(() => radarMap.invalidateSize(), 120);
-      }
-      if (modId === "mod-4") {
-        renderMcpModule();
-      }
-      if (modId === "mod-7") {
-        renderReportSummary();
-      }
-    }
-
-    // ================= REAL-TIME GPS TRACKING (WATCHPOSITION) =================
-    function startRealTimeGpsWatch() {
-      const badge = document.getElementById("gpsStatusBadge");
-      const readout = document.getElementById("liveCoordsReadout");
-
-      if (!navigator.geolocation) {
-        badge.className = "pill-info pill-gps-off";
-        badge.textContent = "GPS: Tidak Didukung Browser";
-        return;
-      }
-
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-
-      watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-          const facility = detectFacilityName(lat, lng);
-          const timeNow = nowTimeStr();
-
-          liveGpsState[currentUser.id] = {
-            lat,
-            lng,
-            accuracy: Math.round(accuracy || 10),
-            timestamp: timeNow,
-            facility
-          };
-
-          badge.className = "pill-info pill-gps-on";
-          badge.textContent = `GPS LIVE: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-          readout.textContent = `Koordinat GPS Nyata (${currentUser.nama}): ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${Math.round(accuracy || 10)}m) • Terdeteksi: ${facility} • Update: ${timeNow}`;
-
-          updateRadarMarkersAndPaths(true);
-          renderKorlapRoster();
-          updateKpiCounts();
-          syncGpsToSupabaseIfConfigured(currentUser.id, lat, lng, accuracy, facility, timeNow);
-        },
-        (err) => {
-          badge.className = "pill-info pill-gps-off";
-          badge.textContent = `GPS: ${err.message || "Izin Lokasi Belum Aktif"}`;
-          readout.textContent = `Menunggu izin GPS nyata perangkat (${err.message || "Pastikan GPS aktif & izinkan lokasi pada browser"}).`;
-        },
-        { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 }
-      );
-    }
-
-    function triggerLiveGpsOnce() {
-      if (!navigator.geolocation) return;
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-          const facility = detectFacilityName(lat, lng);
-          const timeNow = nowTimeStr();
-          liveGpsState[currentUser.id] = { lat, lng, accuracy: Math.round(accuracy || 10), timestamp: timeNow, facility };
-          updateRadarMarkersAndPaths(true);
-          renderKorlapRoster();
-          updateKpiCounts();
-          pushAudit("Update GPS Manual", `${currentUser.nama}: ${lat.toFixed(5)}, ${lng.toFixed(5)} (${facility})`);
-        },
-        (err) => alert("Gagal mengambil GPS: " + err.message),
-        { enableHighAccuracy: true }
-      );
-    }
-
-    // ================= RADAR PETA KORLAP =================
-    function initKorlapRadarMap() {
-      if (radarMap) {
-        radarMap.invalidateSize();
-        return;
-      }
-      const startKorlap = currentUser || KORLAP_ROSTER[0];
-      radarMap = L.map("korlapRadarMap", { zoomControl: true }).setView([startKorlap.lat, startKorlap.lng], 11);
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap"
-      }).addTo(radarMap);
-
-      updateRadarMarkersAndPaths(false);
-    }
-
-    function updateRadarMarkersAndPaths(centerOnActive) {
-      if (!radarMap) return;
-
-      KORLAP_ROSTER.forEach(k => {
-        const live = liveGpsState[k.id];
-        const isLive = Boolean(live);
-        const lat = isLive ? live.lat : k.lat;
-        const lng = isLive ? live.lng : k.lng;
-
-        if (!radarMarkers[k.id]) {
-          const marker = L.circleMarker([lat, lng], {
-            radius: isLive ? 10 : 7,
-            color: "#ffffff",
-            weight: 2,
-            fillColor: isLive ? "#059669" : "#1d5fd6",
-            fillOpacity: 0.92
-          }).addTo(radarMap);
-
-          marker.on("click", () => {
-            document.getElementById("radarFilterKorlap").value = k.id;
-            focusSelectedKorlap();
-          });
-          radarMarkers[k.id] = marker;
-          radarPolylines[k.id] = L.polyline([[lat, lng]], {
-            color: isLive ? "#059669" : "#2575fc",
-            weight: 3,
-            opacity: 0.85
-          }).addTo(radarMap);
-        } else {
-          radarMarkers[k.id].setLatLng([lat, lng]);
-          radarMarkers[k.id].setRadius(isLive ? 10 : 7);
-          radarMarkers[k.id].setStyle({ fillColor: isLive ? "#059669" : "#1d5fd6" });
-
-          const line = radarPolylines[k.id];
-          const pts = line.getLatLngs();
-          const lastPt = pts[pts.length - 1];
-          if (!lastPt || lastPt.lat !== lat || lastPt.lng !== lng) {
-            line.addLatLng([lat, lng]);
-          }
+        const params = new URLSearchParams(window.location.search);
+        const u = params.get("sb_url");
+        const k = params.get("sb_key");
+        if (u && k) {
+          if (!state.supabase) state.supabase = { url: "", key: "" };
+          state.supabase.url = u.trim();
+          state.supabase.key = k.trim();
+          saveState();
         }
-
-        const statusTag = isLive
-          ? `GPS LIVE (±${live.accuracy}m) • ${live.timestamp}`
-          : "Referensi Pos Area PLN (Menunggu Sinyal GPS Live Perangkat)";
-        radarMarkers[k.id].bindPopup(
-          `<strong>${k.nama}</strong> (${k.id})<br/>Area: ${isLive ? live.facility : k.area}<br/><small>${statusTag}</small>`
-        );
-      });
-
-      if (centerOnActive && currentUser && liveGpsState[currentUser.id]) {
-        const c = liveGpsState[currentUser.id];
-        radarMap.setView([c.lat, c.lng], Math.max(radarMap.getZoom(), 15));
-      }
-    }
-
-    function focusSelectedKorlap() {
-      const selId = document.getElementById("radarFilterKorlap").value;
-      if (!radarMap) return;
-      if (selId === "ALL") {
-        resetRadarView();
-        return;
-      }
-      const k = KORLAP_ROSTER.find(item => item.id === selId);
-      if (!k) return;
-      const live = liveGpsState[k.id];
-      const lat = live ? live.lat : k.lat;
-      const lng = live ? live.lng : k.lng;
-      radarMap.setView([lat, lng], live ? 16 : 13);
-      if (radarMarkers[k.id]) radarMarkers[k.id].openPopup();
-    }
-
-    function resetRadarView() {
-      if (!radarMap) return;
-      const bounds = KORLAP_ROSTER.map(k => {
-        const live = liveGpsState[k.id];
-        return [live ? live.lat : k.lat, live ? live.lng : k.lng];
-      });
-      radarMap.fitBounds(bounds, { padding: [24, 24] });
-    }
-
-    function renderKorlapRoster() {
-      const listEl = document.getElementById("korlapRosterList");
-      listEl.innerHTML = KORLAP_ROSTER.map(k => {
-        const live = liveGpsState[k.id];
-        const badge = live
-          ? `<span class="badge-live">GPS LIVE</span>`
-          : `<span class="badge-area">Area PLN</span>`;
-        const coordText = live
-          ? `${live.lat.toFixed(5)}, ${live.lng.toFixed(5)} • ${live.facility} (${live.timestamp})`
-          : `Pos Area: ${k.area} (${k.lat.toFixed(4)}, ${k.lng.toFixed(4)})`;
-        return `
-          <div class="korlap-item" onclick="selectKorlapFromList('${k.id}')">
-            <div class="korlap-item-top">
-              <span class="korlap-name">${k.id} — ${k.nama}</span>
-              ${badge}
-            </div>
-            <div class="korlap-meta">${coordText}</div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function selectKorlapFromList(id) {
-      document.getElementById("radarFilterKorlap").value = id;
-      focusSelectedKorlap();
-    }
-
-    // ================= MODUL 4: MCP & DAC PER AREA KORLAP =================
-    function populateSelects() {
-      const radarSel = document.getElementById("radarFilterKorlap");
-      radarSel.innerHTML = `<option value="ALL">Semua Korlap (13 Personel)</option>` +
-        KORLAP_ROSTER.map(k => `<option value="${k.id}">${k.nama} — ${k.area}</option>`).join("");
-
-      const mcpKorlapSel = document.getElementById("mcpKorlapFilter");
-      mcpKorlapSel.innerHTML =
-        `<option value="ACTIVE_USER">Sesuai Area Korlap Aktif (${currentUser.nama})</option>` +
-        `<option value="ALL">Semua Area (13 Korlap)</option>` +
-        KORLAP_ROSTER.map(k => `<option value="KLP:${k.id}">${k.nama} — ${k.area}</option>`).join("");
-
-      const jobAreaSel = document.getElementById("jobAreaInput");
-      jobAreaSel.innerHTML = KORLAP_ROSTER.map(k => `<option value="${k.area}">${k.area} (${k.nama})</option>`).join("");
-      jobAreaSel.value = currentUser.area;
-    }
-
-    function getTargetKorlapForMcp() {
-      const val = document.getElementById("mcpKorlapFilter").value;
-      if (val === "ALL") return null;
-      if (val === "ACTIVE_USER") return currentUser;
-      if (val.startsWith("KLP:")) {
-        const kid = val.split(":")[1];
-        return KORLAP_ROSTER.find(k => k.id === kid) || currentUser;
-      }
-      return currentUser;
-    }
-
-    function onMcpKorlapFilterChange() {
-      const targetKlp = getTargetKorlapForMcp();
-      if (targetKlp && Array.isArray(targetKlp.mcpSheets) && !targetKlp.mcpSheets.includes(currentMcpSheet)) {
-        currentMcpSheet = targetKlp.mcpSheets[0];
-        document.querySelectorAll(".mcp-subtab").forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.sheet === currentMcpSheet);
-        });
-      }
-      renderMcpModule();
-    }
-
-    function switchMcpSheet(sheetKey, btnEl) {
-      currentMcpSheet = sheetKey;
-      document.querySelectorAll(".mcp-subtab").forEach(b => b.classList.remove("active"));
-      if (btnEl) btnEl.classList.add("active");
-      renderMcpModule();
-    }
-
-    function getMarkKey(sheetKey, idx) {
-      return `${sheetKey}__${idx}`;
-    }
-
-    function toggleMcpMark(sheetKey, idx) {
-      const key = getMarkKey(sheetKey, idx);
-      const cur = mcpMarks[key] || "V";
-      const next = cur === "V" ? "X" : (cur === "X" ? "=" : "V");
-      mcpMarks[key] = next;
-      localStorage.setItem("amp_mcp_marks_v1", JSON.stringify(mcpMarks));
-      updateKpiCounts();
-      renderMcpModule();
-      pushAudit("Update Status MCP", `${sheetKey} baris #${idx + 1} diubah menjadi "${next}" oleh ${currentUser.nama}`);
-    }
-
-    function renderMcpModule() {
-      const targetKlp = getTargetKorlapForMcp();
-      const kodeFilter = document.getElementById("mcpKodeFilter").value;
-      const searchQ = (document.getElementById("mcpSearchInput").value || "").trim().toLowerCase();
-      const banner = document.getElementById("mcpAreaBanner");
-      const container = document.getElementById("mcpTableContainer");
-
-      if (targetKlp) {
-        banner.textContent = `Area Korlap Terpilih: ${targetKlp.nama} (${targetKlp.id}) • Wilayah Tugas: ${targetKlp.area} • Sheet Aktif: ${currentMcpSheet.replace("_", " ")}`;
-      } else {
-        banner.textContent = `Menampilkan Seluruh Area Operasional (13 Korlap PT. Ardina Mulya Perkasa) • Sheet Aktif: ${currentMcpSheet.replace("_", " ")}`;
-      }
-
-      const rawList = MCP_DATA[currentMcpSheet] || [];
-
-      if (currentMcpSheet === "CRASS_PROGRAM") {
-        const filtered = rawList.filter((item) => {
-          const matchKode = kodeFilter === "ALL" || (item.frekuensi || "").toUpperCase().includes(kodeFilter);
-          const matchSearch = !searchQ ||
-            (item.objek || "").toLowerCase().includes(searchQ) ||
-            (item.uraian || "").toLowerCase().includes(searchQ) ||
-            (item.kategori || "").toLowerCase().includes(searchQ);
-          return matchKode && matchSearch;
-        });
-
-        container.innerHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Bagian / Layout</th>
-                <th>Kategori</th>
-                <th>Object Description</th>
-                <th>Uraian Pekerjaan</th>
-                <th>Frekuensi</th>
-                <th>Area Korlap</th>
-                <th>Status (V / X / =)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${filtered.map((item, i) => {
-                const origIdx = rawList.indexOf(item);
-                const mark = mcpMarks[getMarkKey(currentMcpSheet, origIdx)] || "V";
-                const chipClass = mark === "X" ? "st-selesai" : (mark === "=" ? "st-kendala" : "st-rencana");
-                return `
-                  <tr>
-                    <td>${i + 1}</td>
-                    <td>${item.section}</td>
-                    <td><strong>${item.kategori}</strong></td>
-                    <td>${item.objek}</td>
-                    <td>${item.uraian}</td>
-                    <td><strong>${item.frekuensi}</strong></td>
-                    <td>${targetKlp ? targetKlp.area : "Kantor Induk / UIT JBT & JBB"}</td>
-                    <td><span class="status-chip ${chipClass}" onclick="toggleMcpMark('${currentMcpSheet}', ${origIdx})">${mark}</span></td>
-                  </tr>
-                `;
-              }).join("")}
-            </tbody>
-          </table>
-        `;
-        return;
-      }
-
-      const filteredRows = rawList.filter(item => {
-        const matchKode = kodeFilter === "ALL" || (item.kode || "").toUpperCase() === kodeFilter;
-        const matchSearch = !searchQ ||
-          (item.area || "").toLowerCase().includes(searchQ) ||
-          (item.objek || "").toLowerCase().includes(searchQ) ||
-          (item.uraian || "").toLowerCase().includes(searchQ);
-        return matchKode && matchSearch;
-      });
-
-      container.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Public Area / Ruangan</th>
-              <th>Object Description</th>
-              <th>Uraian Pekerjaan</th>
-              <th>Kode</th>
-              <th>Hari / Minggu Rencana</th>
-              <th>Area Korlap</th>
-              <th>Status (V / X / =)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filteredRows.map((item, i) => {
-              const origIdx = rawList.indexOf(item);
-              const mark = mcpMarks[getMarkKey(currentMcpSheet, origIdx)] || "V";
-              const chipClass = mark === "X" ? "st-selesai" : (mark === "=" ? "st-kendala" : "st-rencana");
-              const sched = [
-                ...(item.hari || []),
-                ...(item.minggu || []).map(w => "Mgg " + w)
-              ].join(", ") || "Sesuai Jadwal";
-              return `
-                <tr>
-                  <td>${item.no || (i + 1)}</td>
-                  <td><strong>${item.area}</strong></td>
-                  <td>${item.objek}</td>
-                  <td>${item.uraian}</td>
-                  <td><strong>${item.kode}</strong></td>
-                  <td>${sched}</td>
-                  <td>${targetKlp ? targetKlp.area : "Semua Area PLN"}</td>
-                  <td><span class="status-chip ${chipClass}" onclick="toggleMcpMark('${currentMcpSheet}', ${origIdx})">${mark}</span></td>
-                </tr>
-              `;
-            }).join("")}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function exportMcpCsv() {
-      const sheets = ["LANTAI_1", "LANTAI_2", "HALAMAN", "CRASS_PROGRAM"];
-      const lines = ["Sheet,Area_Korlap,Lokasi_Objek,Uraian_Pekerjaan,Kode_Frekuensi,Status_V_X_Sama"];
-      sheets.forEach(s => {
-        const arr = MCP_DATA[s] || [];
-        arr.forEach((row, idx) => {
-          const st = mcpMarks[getMarkKey(s, idx)] || "V";
-          const area = (row.area || row.kategori || s).replace(/"/g, '""');
-          const obj = (row.objek || "").replace(/"/g, '""');
-          const uraian = (row.uraian || "").replace(/"/g, '""');
-          const kode = (row.kode || row.frekuensi || "").replace(/"/g, '""');
-          lines.push(`"${s}","${currentUser.area} - ${area}","${obj}","${uraian}","${kode}","${st}"`);
-        });
-      });
-      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `MCP_AMP_${currentUser.id}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      pushAudit("Export CSV MCP", `Mengunduh rekap MCP untuk ${currentUser.nama}`);
-    }
-
-    // ================= MODUL LAINNYA & KPI =================
-    function updateKpiCounts() {
-      const liveCount = Object.keys(liveGpsState).length;
-      document.getElementById("kpiKorlapTotal").textContent = String(KORLAP_ROSTER.length);
-      document.getElementById("kpiGpsLiveCount").textContent = String(liveCount);
-
-      const allCount = ["LANTAI_1", "LANTAI_2", "HALAMAN", "CRASS_PROGRAM"]
-        .reduce((acc, k) => acc + ((MCP_DATA[k] || []).length), 0);
-      const doneCount = Object.values(mcpMarks).filter(v => v === "X").length;
-      const pct = allCount > 0 ? Math.round((doneCount / allCount) * 100) : 0;
-
-      document.getElementById("kpiMcpTotal").textContent = String(allCount);
-      document.getElementById("kpiMcpDone").textContent = String(doneCount);
-      document.getElementById("kpiMcpPct").textContent = `${pct}% dari ${allCount} item MCP`;
-    }
-
-    function addJobLog() {
-      const area = document.getElementById("jobAreaInput").value;
-      const desc = document.getElementById("jobDescInput").value.trim();
-      const sla = document.getElementById("jobSlaInput").value || "98";
-      const note = document.getElementById("jobNoteInput").value.trim() || "Tercatat di sistem";
-      if (!desc) return alert("Isi uraian pekerjaan terlebih dahulu.");
-      jobLogs.unshift({ time: nowTimeStr(), korlap: currentUser.nama, area, desc, sla: sla + "%", note });
-      localStorage.setItem("amp_job_logs_v1", JSON.stringify(jobLogs));
-      document.getElementById("jobDescInput").value = "";
-      document.getElementById("jobNoteInput").value = "";
-      renderJobLogs();
-      pushAudit("Input Pekerjaan", `${desc} (${area})`);
-    }
-
-    function renderJobLogs() {
-      const tb = document.getElementById("jobLogBody");
-      if (!jobLogs.length) {
-        tb.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">Belum ada log pekerjaan tersimpan.</td></tr>`;
-        return;
-      }
-      tb.innerHTML = jobLogs.map(r =>
-        `<tr><td>${r.time}</td><td>${r.korlap}</td><td>${r.area}</td><td>${r.desc}</td><td><strong>${r.sla}</strong></td><td>${r.note}</td></tr>`
-      ).join("");
-    }
-
-    function recordAttendanceNow() {
-      const live = liveGpsState[currentUser.id];
-      const coordInfo = live ? `${live.lat.toFixed(5)}, ${live.lng.toFixed(5)} (${live.facility})` : currentUser.area;
-      jobLogs.unshift({
-        time: nowTimeStr(),
-        korlap: currentUser.nama,
-        area: currentUser.area,
-        desc: "Absensi Kehadiran & Grooming Korlap",
-        sla: "100%",
-        note: `Lokasi: ${coordInfo}`
-      });
-      localStorage.setItem("amp_job_logs_v1", JSON.stringify(jobLogs));
-      renderJobLogs();
-      pushAudit("Absensi Korlap", `${currentUser.nama} absen hadir di ${coordInfo}`);
-      alert(`Absensi tercatat untuk ${currentUser.nama} (${coordInfo}).`);
-    }
-
-    function renderManpowerTable() {
-      const tb = document.getElementById("manpowerTableBody");
-      tb.innerHTML = KORLAP_ROSTER.map(k => {
-        const live = liveGpsState[k.id];
-        const coordStr = live
-          ? `${live.lat.toFixed(5)}, ${live.lng.toFixed(5)} (${live.facility})`
-          : `Ref: ${k.lat.toFixed(4)}, ${k.lng.toFixed(4)}`;
-        const stBadge = live
-          ? `<span class="status-chip st-selesai">GPS LIVE</span>`
-          : `<span class="status-chip st-rencana">Standby Area</span>`;
-        return `<tr><td><strong>${k.id}</strong></td><td>${k.nama}</td><td>${k.pin}</td><td>${k.area}</td><td>${coordStr}</td><td>${stBadge}</td></tr>`;
-      }).join("");
-    }
-
-    function addFindingItem() {
-      const loc = document.getElementById("findingLocInput").value.trim();
-      const desc = document.getElementById("findingDescInput").value.trim();
-      const pic = document.getElementById("findingPicInput").value.trim() || currentUser.nama;
-      const st = document.getElementById("findingStatusInput").value;
-      if (!loc || !desc) return alert("Lengkapi lokasi dan deskripsi temuan.");
-      findings.unshift({ loc, desc, pic, st });
-      localStorage.setItem("amp_findings_v1", JSON.stringify(findings));
-      document.getElementById("findingLocInput").value = "";
-      document.getElementById("findingDescInput").value = "";
-      renderFindings();
-      pushAudit("Temuan Baru", `${loc}: ${desc}`);
-    }
-
-    function renderFindings() {
-      const tb = document.getElementById("findingTableBody");
-      tb.innerHTML = findings.length
-        ? findings.map(f => `<tr><td>${f.loc}</td><td>${f.desc}</td><td>${f.pic}</td><td><strong>${f.st}</strong></td></tr>`).join("")
-        : `<tr><td colspan="4" style="text-align:center; color:#64748b;">Belum ada temuan lapangan tercatat.</td></tr>`;
-    }
-
-    function addQrCheck() {
-      const code = document.getElementById("qrCodeInput").value.trim();
-      const res = document.getElementById("qrResultInput").value;
-      if (!code) return alert("Masukkan kode QR titik area.");
-      qrLogs.unshift({ time: nowTimeStr(), code, res, user: currentUser.nama });
-      localStorage.setItem("amp_qr_logs_v1", JSON.stringify(qrLogs));
-      document.getElementById("qrCodeInput").value = "";
-      renderQrLogs();
-      pushAudit("QR Check", `${code} — ${res}`);
-    }
-
-    function renderQrLogs() {
-      const tb = document.getElementById("qrTableBody");
-      tb.innerHTML = qrLogs.length
-        ? qrLogs.map(q => `<tr><td>${q.time}</td><td><strong>${q.code}</strong></td><td>${q.res}</td><td>${q.user}</td></tr>`).join("")
-        : `<tr><td colspan="4" style="text-align:center; color:#64748b;">Belum ada catatan QR checklist.</td></tr>`;
-    }
-
-    function addK3Log() {
-      const area = document.getElementById("k3AreaInput").value.trim();
-      const st = document.getElementById("k3StatusInput").value.trim();
-      if (!area || !st) return alert("Lengkapi area dan status K3/APD.");
-      k3Logs.unshift({ time: nowTimeStr(), area, st });
-      localStorage.setItem("amp_k3_logs_v1", JSON.stringify(k3Logs));
-      document.getElementById("k3AreaInput").value = "";
-      document.getElementById("k3StatusInput").value = "";
-      renderK3Logs();
-      pushAudit("Log K3 & APD", `${area}: ${st}`);
-    }
-
-    function renderK3Logs() {
-      const tb = document.getElementById("k3TableBody");
-      tb.innerHTML = k3Logs.length
-        ? k3Logs.map(k => `<tr><td>${k.time}</td><td>${k.area}</td><td>${k.st}</td></tr>`).join("")
-        : `<tr><td colspan="3" style="text-align:center; color:#64748b;">Belum ada log K3 &amp; APD.</td></tr>`;
-    }
-
-    function renderAuditLog() {
-      const tb = document.getElementById("auditLogBody");
-      if (!tb) return;
-      tb.innerHTML = auditLogs.length
-        ? auditLogs.map(a => `<tr><td>${a.time}</td><td><strong>${a.action}</strong></td><td>${a.detail}</td></tr>`).join("")
-        : `<tr><td colspan="3" style="text-align:center; color:#64748b;">Belum ada aktivitas audit.</td></tr>`;
-    }
-
-    function renderReportSummary() {
-      const doneCount = Object.values(mcpMarks).filter(v => v === "X").length;
-      const liveCount = Object.keys(liveGpsState).length;
-      document.getElementById("reportSummaryBox").innerHTML = `
-        <p><strong>Korlap Aktif:</strong> ${currentUser.nama} (${currentUser.area})</p>
-        <p><strong>Sinyal GPS Live Terdeteksi:</strong> ${liveCount} dari ${KORLAP_ROSTER.length} Korlap</p>
-        <p><strong>Total Log Pekerjaan Tercatat:</strong> ${jobLogs.length} entri</p>
-        <p><strong>Item MCP Terealisasi (X):</strong> ${doneCount} item</p>
-      `;
-    }
-
-    function resetLocalProgress() {
-      if (!confirm("Reset seluruh status tanda V/X/= pada MCP lokal?")) return;
-      mcpMarks = {};
-      localStorage.removeItem("amp_mcp_marks_v1");
-      updateKpiCounts();
-      renderMcpModule();
-      pushAudit("Reset MCP", "Status tanda MCP direset ke default");
-    }
-
-    // ================= SUPABASE SYNC =================
-    function loadSupabaseConfig() {
-      const saved = JSON.parse(localStorage.getItem("amp_sb_cfg_v1") || "{}");
-      if (saved.url) document.getElementById("sbUrlInput").value = saved.url;
-      if (saved.key) document.getElementById("sbKeyInput").value = saved.key;
-      if (saved.url && saved.key && window.supabase) {
-        sbClient = window.supabase.createClient(saved.url, saved.key);
-        document.getElementById("syncStatusBadge").textContent = "Sync: Supabase Siap";
-      }
-    }
-
-    function saveSupabaseConfig() {
-      const url = (document.getElementById("sbUrlInput").value || "").trim();
-      const key = (document.getElementById("sbKeyInput").value || "").trim();
-      localStorage.setItem("amp_sb_cfg_v1", JSON.stringify({ url, key }));
-      if (url && key && window.supabase) {
-        sbClient = window.supabase.createClient(url, key);
-        document.getElementById("syncStatusBadge").textContent = "Sync: Supabase Aktif";
-        document.getElementById("sbTestResult").textContent = "Konfigurasi Supabase tersimpan.";
-      } else {
-        document.getElementById("sbTestResult").textContent = "Isi URL dan Anon Key Supabase terlebih dahulu.";
-      }
-    }
-
-    async function testSupabaseConnection() {
-      saveSupabaseConfig();
-      const out = document.getElementById("sbTestResult");
-      if (!sbClient) {
-        out.textContent = "Klien Supabase belum terinisialisasi.";
-        return;
-      }
-      out.textContent = "Menguji koneksi ke Supabase...";
-      try {
-        const { data, error } = await sbClient.from("gps_tracker_logs").select("*").limit(20);
-        if (error) {
-          out.textContent = `Koneksi tersambung, namun tabel/izin perlu dicek: ${error.message}`;
-          return;
-        }
-        if (Array.isArray(data)) {
-          data.forEach(row => {
-            if (row.user_id && row.lat && row.lng) {
-              liveGpsState[row.user_id] = {
-                lat: Number(row.lat),
-                lng: Number(row.lng),
-                accuracy: Number(row.accuracy || 10),
-                timestamp: row.recorded_at || nowTimeStr(),
-                facility: row.facility_name || detectFacilityName(Number(row.lat), Number(row.lng))
-              };
-            }
-          });
-          updateRadarMarkersAndPaths(false);
-          renderKorlapRoster();
-          updateKpiCounts();
-        }
-        out.textContent = `Berhasil terhubung ke Supabase! Memuat ${data ? data.length : 0} log GPS.`;
-      } catch (e) {
-        out.textContent = `Gagal terhubung: ${e.message}`;
-      }
-    }
-
-    async function syncGpsToSupabaseIfConfigured(userId, lat, lng, accuracy, facility, timeNow) {
-      if (!sbClient) return;
-      try {
-        await sbClient.from("gps_tracker_logs").insert([{
-          user_id: userId,
-          user_name: currentUser.nama,
-          lat,
-          lng,
-          accuracy: Math.round(accuracy || 10),
-          facility_name: facility,
-          recorded_at: timeNow
-        }]);
-      } catch (_) {}
-    }
-
-    function renderAllModules() {
-      renderKorlapRoster();
-      renderManpowerTable();
-      renderJobLogs();
-      renderMcpModule();
-      renderFindings();
-      renderQrLogs();
-      renderK3Logs();
-      renderAuditLog();
-      updateKpiCounts();
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      loadSupabaseConfig();
-      updateKpiCounts();
-    });
-
-    // ================= PWA INSTALL TO HOME SCREEN / APP MENU =================
-    (function initPwaSupport() {
-      const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <defs>
-          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#0b1f44"/>
-            <stop offset="100%" stop-color="#1d5fd6"/>
-          </linearGradient>
-        </defs>
-        <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-        <circle cx="256" cy="236" r="132" fill="none" stroke="#38bdf8" stroke-width="10" opacity="0.35"/>
-        <text x="256" y="268" text-anchor="middle" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-weight="900" font-size="112">AMP</text>
-        <rect x="116" y="330" width="280" height="52" rx="26" fill="#f59e0b"/>
-        <text x="256" y="364" text-anchor="middle" fill="#06132b" font-family="Segoe UI, Arial, sans-serif" font-weight="900" font-size="26">MONITORING</text>
-      </svg>`;
-      const iconDataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgIcon);
-
-      const appleIconEl = document.getElementById("pwaAppleIconLink");
-      if (appleIconEl) appleIconEl.href = iconDataUrl;
-
-      const manifestObj = {
-        id: "./",
-        name: "AMP Monitoring Operasional",
-        short_name: "AMP Monitoring",
-        description: "Monitoring Operasional PT. Ardina Mulya Perkasa — PLN UIT JBT & UIT JBB",
-        start_url: "./",
-        scope: "./",
-        display: "standalone",
-        orientation: "any",
-        background_color: "#0b1f44",
-        theme_color: "#0b1f44",
-        icons: [
-          {
-            src: iconDataUrl,
-            sizes: "192x192",
-            type: "image/svg+xml",
-            purpose: "any"
-          },
-          {
-            src: iconDataUrl,
-            sizes: "512x512",
-            type: "image/svg+xml",
-            purpose: "any"
-          }
-        ]
-      };
-
-      try {
-        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: "application/manifest+json" });
-        const manifestUrl = URL.createObjectURL(manifestBlob);
-        const manifestLink = document.getElementById("pwaManifestLink");
-        if (manifestLink) manifestLink.href = manifestUrl;
-      } catch (_) {}
-
-      let deferredInstallPrompt = null;
-      const installBtn = document.getElementById("btnInstallPwa");
-      const hintEl = document.getElementById("pwaInstallHint");
-
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredInstallPrompt = e;
-        if (hintEl) hintEl.textContent = "Siap dipasang menjadi ikon aplikasi di menu HP.";
-      });
-
-      if (installBtn) {
-        installBtn.addEventListener("click", async () => {
-          if (deferredInstallPrompt) {
-            deferredInstallPrompt.prompt();
-            await deferredInstallPrompt.userChoice;
-            deferredInstallPrompt = null;
-            return;
-          }
-          const isHttpsOrLocal = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
-          if (!isHttpsOrLocal) {
-            alert("Agar muncul di menu HP seperti aplikasi (PWA), buka alamat HTTPS (misalnya GitHub Pages: https://soheh1208-cmyk.github.io/amp-monitoring/), lalu pilih 'Tambahkan ke Layar Utama / Install App' di menu browser (⋮).");
-            return;
-          }
-          alert("Klik menu browser (⋮) lalu pilih 'Tambahkan ke Layar Utama' atau 'Install aplikasi' agar ikon AMP Monitoring muncul di menu HP.");
-        });
-      }
-
-      if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-        const swCode = `
-          const CACHE_NAME = "amp-monitoring-pwa-v1";
-          self.addEventListener("install", (event) => {
-            self.skipWaiting();
-          });
-          self.addEventListener("activate", (event) => {
-            event.waitUntil(self.clients.claim());
-          });
-          self.addEventListener("fetch", (event) => {
-            if (event.request.method !== "GET") return;
-            event.respondWith(
-              fetch(event.request).catch(() => caches.match(event.request))
-            );
-          });
-        `;
-        try {
-          const swBlob = new Blob([swCode], { type: "application/javascript" });
-          const swUrl = URL.createObjectURL(swBlob);
-          navigator.serviceWorker.register(swUrl).catch(() => {});
-        } catch (_) {}
-      }
-    })();
-  </script>
-
-</body>
-</html>
