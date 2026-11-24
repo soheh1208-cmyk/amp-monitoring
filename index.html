@@ -1184,11 +1184,15 @@
         <span><i class="fas fa-database"></i> Konfigurasi & Sinkronisasi Supabase</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
+      <p id="sb-status-text" style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Status Cloud: Belum terhubung (menggunakan penyimpanan lokal perangkat).</p>
       <div class="form-group"><label>Supabase Project URL</label><input type="text" id="sb-url" class="form-control" placeholder="https://xxxx.supabase.co"></div>
       <div class="form-group"><label>Supabase Anon Key</label><input type="password" id="sb-key" class="form-control" placeholder="eyJ..."></div>
       <div class="form-group"><label>Google Maps JavaScript API Key (Opsional)</label><input type="password" id="sb-gmaps-key" class="form-control" placeholder="AIzaSy..."></div>
       <button type="button" class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-plug"></i> SIMPAN & HUBUNGKAN</button>
       <button type="button" class="btn btn-success" onclick="syncAllData()"><i class="fas fa-sync"></i> SINKRONKAN DATA SEKARANG</button>
+      <div style="margin-top:8px; padding:8px; background:#f8fafc; border-radius:8px; border:1px solid var(--border-soft); font-size:9px; color:#475569; line-height:1.45;">
+        <strong>Tabel Supabase yang dipakai:</strong> <code>amp_live_gps</code> (kolom: <code>user_id</code> primary key, <code>user_name</code>, <code>jabatan</code>, <code>site</code>, <code>lat</code>, <code>lng</code>, <code>accuracy</code>, <code>place_name</code>, <code>last_activity</code>, <code>updated_at</code>, <code>timestamp_ms</code>) dan <code>amp_attendance</code> (kolom: <code>id</code>, <code>user_id</code>, <code>user_name</code>, <code>jabatan</code>, <code>site</code>, <code>place_name</code>, <code>att_type</code>, <code>att_time</code>, <code>lat</code>, <code>lng</code>, <code>accuracy</code>, <code>photo_data</code>).
+      </div>
     </div>
   </div>
 
@@ -1243,6 +1247,15 @@
     }
   }
 
+  function safeLocalStorageSet(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   const APP_STATE = {
     currentUser: null,
     users: JSON.parse(localStorage.getItem('amp_users') || '[]'),
@@ -1262,6 +1275,7 @@
     currentGPS: null
   };
 
+  let supabaseClient = null;
   let radarMap = null;
   let radarBaseGroup = null;
   let radarMarkers = [];
@@ -1273,6 +1287,7 @@
   let currentRadarMode = 'detail';
   let radarLiveTimer = null;
   let korlapWatchId = null;
+  let lastCloudPushMs = 0;
   let webcamStream = null;
   let profileStream = null;
   const geocodeCache = new Map();
@@ -1281,6 +1296,162 @@
     if (!user) return false;
     const roleText = `${user.jabatan || ''} ${user.role || ''} ${user.id || ''}`.toLowerCase();
     return /\b(admin|administrator|head\s*of\s*operation|head\s*of\s*ops|head|ops|direktur)\b/i.test(roleText);
+  }
+
+  function initSupabaseClient() {
+    const url = (APP_STATE.sbConfig?.url || '').trim();
+    const key = (APP_STATE.sbConfig?.key || '').trim();
+    const badge = document.getElementById('header-sync-badge');
+    const badgeText = document.getElementById('sync-badge-text');
+    const statusText = document.getElementById('sb-status-text');
+
+    if (url && key && window.supabase && typeof window.supabase.createClient === 'function') {
+      try {
+        supabaseClient = window.supabase.createClient(url, key);
+        if (badge) badge.classList.add('connected');
+        if (badgeText) badgeText.textContent = 'Cloud ON';
+        if (statusText) statusText.textContent = 'Status Cloud: Terhubung ke Supabase (' + url + ').';
+        return true;
+      } catch (_) {}
+    }
+    supabaseClient = null;
+    if (badge) badge.classList.remove('connected');
+    if (badgeText) badgeText.textContent = 'Lokal';
+    if (statusText) statusText.textContent = 'Status Cloud: Belum terhubung (menggunakan penyimpanan lokal perangkat).';
+    return false;
+  }
+
+  async function pushLiveGPSToSupabase(gpsEntry, force = false) {
+    if (!supabaseClient || !gpsEntry) return;
+    const nowMs = Date.now();
+    if (!force && nowMs - lastCloudPushMs < 12000) return;
+    lastCloudPushMs = nowMs;
+
+    try {
+      await supabaseClient.from('amp_live_gps').upsert(
+        {
+          user_id: gpsEntry.userId,
+          user_name: gpsEntry.userName,
+          jabatan: gpsEntry.jabatan || 'Korlap',
+          site: gpsEntry.site || '-',
+          lat: Number(gpsEntry.lat),
+          lng: Number(gpsEntry.lng),
+          accuracy: Number(gpsEntry.accuracy || 0),
+          place_name: gpsEntry.placeName || '',
+          last_activity: gpsEntry.lastActivity || 'GPS Live',
+          updated_at: gpsEntry.updatedAt || new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+          timestamp_ms: gpsEntry.timestamp || nowMs
+        },
+        { onConflict: 'user_id' }
+      );
+    } catch (_) {}
+  }
+
+  async function pushAttendanceToSupabase(entry) {
+    if (!supabaseClient || !entry) return false;
+    try {
+      const { error } = await supabaseClient.from('amp_attendance').upsert(
+        {
+          id: entry.id || `${entry.userId}_${Date.now()}`,
+          user_id: entry.userId,
+          user_name: entry.userName,
+          jabatan: entry.jabatan || '-',
+          site: entry.site || '-',
+          place_name: entry.placeName || '',
+          att_type: entry.type,
+          att_time: entry.time,
+          lat: Number(entry.gps.lat),
+          lng: Number(entry.gps.lng),
+          accuracy: Number(entry.gps.accuracy || 0),
+          photo_data: entry.photo || ''
+        },
+        { onConflict: 'id' }
+      );
+      return !error;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  async function pullLiveGPSFromSupabase() {
+    if (!supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('amp_live_gps')
+        .select('*')
+        .order('timestamp_ms', { ascending: false })
+        .limit(100);
+
+      if (error || !Array.isArray(data)) return;
+
+      data.forEach((row) => {
+        if (!row || typeof row.lat !== 'number' || typeof row.lng !== 'number') return;
+        const uid = row.user_id;
+        APP_STATE.liveKorlapGPS[uid] = {
+          userId: uid,
+          userName: row.user_name || uid,
+          jabatan: row.jabatan || 'Korlap',
+          site: row.site || '-',
+          lat: Number(row.lat),
+          lng: Number(row.lng),
+          accuracy: Math.round(Number(row.accuracy || 0)),
+          placeName: row.place_name || '',
+          lastActivity: row.last_activity || 'GPS Live',
+          updatedAt: row.updated_at || '-',
+          timestamp: Number(row.timestamp_ms || 0)
+        };
+      });
+
+      safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+    } catch (_) {}
+  }
+
+  async function pullAttendanceFromSupabase() {
+    if (!supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('amp_attendance')
+        .select('*')
+        .order('att_time', { ascending: false })
+        .limit(50);
+
+      if (error || !Array.isArray(data) || !data.length) return;
+
+      const existingIds = new Set(APP_STATE.attendance.map(a => a.id).filter(Boolean));
+      const merged = [...APP_STATE.attendance];
+
+      data.forEach((row) => {
+        const rid = row.id || `${row.user_id}_${row.att_time}`;
+        if (existingIds.has(rid)) return;
+        existingIds.add(rid);
+        merged.push({
+          id: rid,
+          userId: row.user_id,
+          userName: row.user_name,
+          jabatan: row.jabatan || '-',
+          site: row.site || '-',
+          placeName: row.place_name || '',
+          type: row.att_type,
+          time: row.att_time,
+          gps: {
+            lat: Number(row.lat || 0),
+            lng: Number(row.lng || 0),
+            accuracy: Number(row.accuracy || 0),
+            placeName: row.place_name || ''
+          },
+          photo: row.photo_data || ''
+        });
+      });
+
+      APP_STATE.attendance = merged.slice(0, 50);
+      const slimForStorage = APP_STATE.attendance.map((item, idx) =>
+        idx < 6 ? item : { ...item, photo: '' }
+      );
+      if (!safeLocalStorageSet('amp_attendance', JSON.stringify(slimForStorage))) {
+        safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance.slice(0, 5).map(x => ({ ...x, photo: '' }))));
+      }
+      renderAttendanceList();
+    } catch (_) {}
   }
 
   setInterval(() => {
@@ -1338,7 +1509,7 @@
     if (idx >= 0) APP_STATE.users[idx] = { ...APP_STATE.users[idx], ...userObj };
     else APP_STATE.users.push(userObj);
 
-    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
     alert('Akun berhasil disimpan. Silakan login.');
     switchAuthSubView('login');
   }
@@ -1358,7 +1529,7 @@
       return;
     }
     user.pin = newPin;
-    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
     alert('PIN berhasil diperbarui.');
     switchAuthSubView('login');
   }
@@ -1379,7 +1550,7 @@
         : 'Korlap / Operasional';
       user = { id, name: id, jabatan: inferredJabatan, site: 'Area PLN', phone: '-', pin, avatar: '' };
       APP_STATE.users.push(user);
-      localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+      safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
     }
 
     if (!user) {
@@ -1392,6 +1563,7 @@
     document.getElementById('main-app').classList.add('authenticated');
     document.getElementById('bottom-nav').classList.add('authenticated');
 
+    initSupabaseClient();
     renderUserUI();
     renderAttendanceList();
     renderTeamList();
@@ -1430,6 +1602,8 @@
     document.getElementById('edit-prof-site').value = u.site;
     document.getElementById('edit-prof-phone').value = u.phone;
 
+    if (document.getElementById('sb-url')) document.getElementById('sb-url').value = APP_STATE.sbConfig?.url || '';
+    if (document.getElementById('sb-key')) document.getElementById('sb-key').value = APP_STATE.sbConfig?.key || '';
     const radarKeyInput = document.getElementById('radar-gmaps-key');
     if (radarKeyInput && APP_STATE.sbConfig?.gmapsKey) {
       radarKeyInput.value = APP_STATE.sbConfig.gmapsKey;
@@ -1469,6 +1643,7 @@
       initRadarMapIfAdmin();
       startRadarAutoRefresh();
       refreshKorlapLivePositions();
+      pullAttendanceFromSupabase();
     } else {
       stopRadarAutoRefresh();
       clearRadarMap();
@@ -1515,7 +1690,7 @@
     const inp = document.getElementById('radar-gmaps-key');
     const key = inp ? inp.value.trim() : '';
     APP_STATE.sbConfig = { ...(APP_STATE.sbConfig || {}), gmapsKey: key };
-    localStorage.setItem('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
+    safeLocalStorageSet('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
     const syncInp = document.getElementById('sb-gmaps-key');
     if (syncInp) syncInp.value = key;
     gmapScriptPromise = null;
@@ -1617,7 +1792,7 @@
     const prev = APP_STATE.liveKorlapGPS[u.id] || {};
     APP_STATE.currentGPS = { lat: latitude, lng: longitude, accuracy, placeName: prev.placeName || '' };
 
-    APP_STATE.liveKorlapGPS[u.id] = {
+    const liveObj = {
       userId: u.id,
       userName: u.name,
       jabatan: u.jabatan,
@@ -1626,12 +1801,15 @@
       lng: longitude,
       accuracy: Math.round(accuracy || 0),
       placeName: prev.placeName || '',
+      lastActivity: prev.lastActivity || 'GPS Live',
       updatedAt: nowStr,
       timestamp: Date.now()
     };
 
-    localStorage.setItem('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+    APP_STATE.liveKorlapGPS[u.id] = liveObj;
+    safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
     updateKorlapPermissionStatus(`GPS Live Aktif (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`);
+    pushLiveGPSToSupabase(liveObj, false);
 
     const gpsInput = document.getElementById('gps-coords');
     const badge = document.getElementById('status-gps-badge');
@@ -1643,7 +1821,8 @@
     resolveDetailedPlaceName(latitude, longitude).then((placeLabel) => {
       if (APP_STATE.liveKorlapGPS[u.id]) {
         APP_STATE.liveKorlapGPS[u.id].placeName = placeLabel;
-        localStorage.setItem('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+        safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+        pushLiveGPSToSupabase(APP_STATE.liveKorlapGPS[u.id], true);
       }
       if (APP_STATE.currentGPS) {
         APP_STATE.currentGPS.placeName = placeLabel;
@@ -1685,7 +1864,7 @@
       (pos) => {
         recordKorlapLiveCoordinate(pos);
       },
-      (err) => {
+      () => {
         updateKorlapPermissionStatus('GPS terhenti / izin ditolak', true);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 3000 }
@@ -1743,11 +1922,18 @@
       alert('Nyalakan kamera live terlebih dahulu.');
       return;
     }
+
+    const srcW = video.videoWidth || 640;
+    const srcH = video.videoHeight || 480;
+    const maxW = 480;
+    const scale = srcW > maxW ? maxW / srcW : 1;
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    canvas.width = Math.round(srcW * scale);
+    canvas.height = Math.round(srcH * scale);
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    APP_STATE.capturedPhoto = canvas.toDataURL('image/jpeg', 0.75);
+
+    APP_STATE.capturedPhoto = canvas.toDataURL('image/jpeg', 0.55);
 
     const img = document.getElementById('photo-preview');
     img.src = APP_STATE.capturedPhoto;
@@ -1785,64 +1971,108 @@
     );
   }
 
-  function saveAttendance(type) {
+  async function saveAttendance(type) {
     if (!APP_STATE.capturedPhoto || !APP_STATE.currentGPS) {
       alert('Foto live dan GPS wajib dilengkapi sebelum absen.');
       return;
     }
-    const u = APP_STATE.currentUser;
-    const nowStr = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-    const entry = {
-      userId: u?.id || '-',
-      userName: u?.name || '-',
-      jabatan: u?.jabatan || '-',
-      site: u?.site || '-',
-      placeName: APP_STATE.currentGPS.placeName || '',
-      type,
-      time: nowStr,
-      gps: APP_STATE.currentGPS,
-      photo: APP_STATE.capturedPhoto
-    };
-    APP_STATE.attendance.unshift(entry);
-    localStorage.setItem('amp_attendance', JSON.stringify(APP_STATE.attendance));
 
-    if (u && !isAdminOrHeadOfOps(u)) {
-      APP_STATE.liveKorlapGPS[u.id] = {
-        userId: u.id,
-        userName: u.name,
-        jabatan: u.jabatan,
-        site: u.site || '-',
-        lat: APP_STATE.currentGPS.lat,
-        lng: APP_STATE.currentGPS.lng,
-        accuracy: Math.round(APP_STATE.currentGPS.accuracy || 0),
+    try {
+      const u = APP_STATE.currentUser;
+      const nowMs = Date.now();
+      const nowStr = new Date(nowMs).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+      const gpsLat = Number(APP_STATE.currentGPS.lat);
+      const gpsLng = Number(APP_STATE.currentGPS.lng);
+
+      const entry = {
+        id: `${u?.id || 'user'}_${nowMs}`,
+        userId: u?.id || '-',
+        userName: u?.name || '-',
+        jabatan: u?.jabatan || '-',
+        site: u?.site || '-',
         placeName: APP_STATE.currentGPS.placeName || '',
-        lastActivity: `Absen ${type}`,
-        updatedAt: nowStr,
-        timestamp: Date.now()
+        type,
+        time: nowStr,
+        gps: {
+          lat: gpsLat,
+          lng: gpsLng,
+          accuracy: APP_STATE.currentGPS.accuracy || 0,
+          placeName: APP_STATE.currentGPS.placeName || ''
+        },
+        photo: APP_STATE.capturedPhoto
       };
-      localStorage.setItem('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
-    }
 
-    renderAttendanceList();
-    if (u && isAdminOrHeadOfOps(u)) {
-      refreshKorlapLivePositions();
+      APP_STATE.attendance.unshift(entry);
+
+      let saved = safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance));
+      if (!saved) {
+        while (APP_STATE.attendance.length > 1 && !saved) {
+          APP_STATE.attendance.pop();
+          saved = safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance));
+        }
+      }
+      if (!saved) {
+        const fallbackList = APP_STATE.attendance.map(item => ({ ...item, photo: '' }));
+        safeLocalStorageSet('amp_attendance', JSON.stringify(fallbackList));
+      }
+
+      if (u && !isAdminOrHeadOfOps(u)) {
+        const liveObj = {
+          userId: u.id,
+          userName: u.name,
+          jabatan: u.jabatan,
+          site: u.site || '-',
+          lat: gpsLat,
+          lng: gpsLng,
+          accuracy: Math.round(APP_STATE.currentGPS.accuracy || 0),
+          placeName: APP_STATE.currentGPS.placeName || '',
+          lastActivity: `Absen ${type}`,
+          updatedAt: nowStr,
+          timestamp: nowMs
+        };
+        APP_STATE.liveKorlapGPS[u.id] = liveObj;
+        safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+        await pushLiveGPSToSupabase(liveObj, true);
+      }
+
+      await pushAttendanceToSupabase(entry);
+
+      renderAttendanceList();
+
+      if (u && isAdminOrHeadOfOps(u)) {
+        try {
+          refreshKorlapLivePositions();
+        } catch (_) {}
+      }
+
+      alert(
+        saved
+          ? `Absensi ${type} berhasil dicatat.`
+          : `Absensi ${type} dicatat (penyimpanan lokal penuh, foto lama otomatis diringkas).`
+      );
+    } catch (err) {
+      alert('Terjadi kendala saat menyimpan absensi: ' + (err && err.message ? err.message : err));
     }
-    alert(`Absensi ${type} berhasil dicatat.`);
   }
 
   function renderAttendanceList() {
     const list = document.getElementById('attendance-log-list');
-    document.getElementById('absen-count-badge').textContent = `${APP_STATE.attendance.length} Data`;
-    if (!APP_STATE.attendance.length) return;
+    const badge = document.getElementById('absen-count-badge');
+    if (badge) badge.textContent = `${APP_STATE.attendance.length} Data`;
+    if (!list) return;
+    if (!APP_STATE.attendance.length) {
+      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan absensi tersimpan pada sesi ini.</li>';
+      return;
+    }
     list.innerHTML = APP_STATE.attendance.map(a => `
       <li class="log-item">
-        <img src="${a.photo}" class="log-thumb" />
+        ${a.photo ? `<img src="${a.photo}" class="log-thumb" />` : `<div class="log-thumb" style="display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#475569;"><i class="fas fa-user"></i></div>`}
         <div>
           <span class="badge ${a.type === 'IN' ? 'badge-in' : 'badge-out'}">${a.type}</span>
           <strong>${a.userName}</strong> (${a.userId})<br/>
           <span style="color:var(--text-muted);">${a.time}</span><br/>
           ${a.placeName ? `<span><strong>Lokasi:</strong> ${a.placeName}</span><br/>` : ''}
-          <span>GPS: ${a.gps.lat.toFixed(5)}, ${a.gps.lng.toFixed(5)}</span>
+          <span>GPS: ${Number(a.gps.lat).toFixed(5)}, ${Number(a.gps.lng).toFixed(5)}</span>
         </div>
       </li>
     `).join('');
@@ -1860,7 +2090,7 @@
       name,
       roleSite
     });
-    localStorage.setItem('amp_team', JSON.stringify(APP_STATE.team));
+    safeLocalStorageSet('amp_team', JSON.stringify(APP_STATE.team));
     document.getElementById('team-name').value = '';
     document.getElementById('team-role-site').value = '';
     renderTeamList();
@@ -2001,8 +2231,9 @@
 
   function startRadarAutoRefresh() {
     stopRadarAutoRefresh();
-    radarLiveTimer = setInterval(() => {
+    radarLiveTimer = setInterval(async () => {
       if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+        await pullLiveGPSFromSupabase();
         APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
         refreshKorlapLivePositions();
       } else {
@@ -2084,6 +2315,7 @@
       clearRadarMap();
       return;
     }
+    await pullLiveGPSFromSupabase();
     await initRadarMapIfAdmin();
 
     const points = getConsolidatedLiveKorlapPoints();
@@ -2211,44 +2443,170 @@
     }
   }
 
-  function submitMR() { alert('Pengajuan MR dicatat secara lokal.'); }
-  function submitLeave() { alert('Pengajuan Izin/Cuti dicatat secara lokal.'); }
-  function submitIncident() { alert('Laporan kejadian dicatat secara lokal.'); }
-  function saveMCP() { alert('Progress MCP disimpan.'); }
-  function saveDAC() { alert('Cheklis area disimpan.'); }
-  function saveK3() { alert('Verifikasi K3 disimpan.'); }
-  function saveEquipment() { alert('Data equipment disimpan.'); }
-  function saveOutstanding() { alert('Item outstanding ditambahkan.'); }
+  function downloadCSV(filename, rows) {
+    const csvContent = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportToExcel() {
+    const rows = [['ID', 'Nama', 'Peran', 'Area PLN', 'Tipe', 'Waktu', 'Lokasi', 'Lat', 'Lng']];
+    APP_STATE.attendance.forEach(a => {
+      rows.push([a.userId, a.userName, a.jabatan, a.site, a.type, a.time, a.placeName || '', a.gps?.lat || '', a.gps?.lng || '']);
+    });
+    downloadCSV('rekap_absensi_amp.csv', rows);
+  }
+
+  function exportGPSLogToCSV() {
+    const rows = [['ID', 'Nama', 'Peran', 'Area PLN', 'Lokasi', 'Lat', 'Lng', 'Akurasi(m)', 'Update']];
+    getConsolidatedLiveKorlapPoints().forEach(p => {
+      rows.push([p.userId, p.userName, p.jabatan, p.site, p.placeName || '', p.lat, p.lng, p.accuracy || 0, p.updatedAt || '']);
+    });
+    downloadCSV('rekap_gps_korlap_amp.csv', rows);
+  }
+
+  function exportIncidentLogToCSV() {
+    const rows = [['Waktu', 'Pelapor', 'Site', 'Kategori', 'Kronologi']];
+    APP_STATE.incidents.forEach(i => rows.push([i.time, i.user, i.site, i.type, i.desc]));
+    downloadCSV('rekap_kejadian_amp.csv', rows);
+  }
+
+  function exportMRToCSV() {
+    const rows = [['Waktu', 'Pengaju', 'Site', 'Material', 'Jumlah', 'Prioritas', 'Catatan']];
+    APP_STATE.mr.forEach(m => rows.push([m.time, m.user, m.site, m.item, m.qty, m.priority, m.notes]));
+    downloadCSV('rekap_mr_amp.csv', rows);
+  }
+
+  function submitMR() {
+    const site = document.getElementById('mr-site').value.trim();
+    const item = document.getElementById('mr-item').value.trim();
+    const qty = document.getElementById('mr-qty').value.trim();
+    const priority = document.getElementById('mr-priority').value;
+    const notes = document.getElementById('mr-notes').value.trim();
+    if (!site || !item || !qty) { alert('Lengkapi Site, Nama Material, dan Jumlah.'); return; }
+    APP_STATE.mr.unshift({ time: new Date().toLocaleString('id-ID'), user: APP_STATE.currentUser?.name || '-', site, item, qty, priority, notes });
+    safeLocalStorageSet('amp_mr', JSON.stringify(APP_STATE.mr));
+    document.getElementById('mr-count-badge').textContent = `${APP_STATE.mr.length} MR`;
+    document.getElementById('mr-log-list').innerHTML = APP_STATE.mr.map(m => `<li class="log-item"><div><span class="badge badge-warning">${m.priority}</span> <strong>${m.item}</strong> (${m.qty})<br/>Site: ${m.site} — ${m.notes || '-'}<br/><span style="color:var(--text-muted);">${m.time}</span></div></li>`).join('');
+    alert('Pengajuan MR dicatat.');
+  }
+
+  function submitLeave() {
+    const type = document.getElementById('leave-type').value;
+    const start = document.getElementById('leave-start').value;
+    const end = document.getElementById('leave-end').value;
+    const notes = document.getElementById('leave-notes').value.trim();
+    if (!start || !end) { alert('Pilih tanggal mulai dan selesai.'); return; }
+    APP_STATE.leaves.unshift({ user: APP_STATE.currentUser?.name || '-', type, start, end, notes });
+    safeLocalStorageSet('amp_leaves', JSON.stringify(APP_STATE.leaves));
+    document.getElementById('leave-count-badge').textContent = `${APP_STATE.leaves.length} Data`;
+    document.getElementById('leave-log-list').innerHTML = APP_STATE.leaves.map(l => `<li class="log-item"><div><strong>${l.user}</strong> — <span class="badge badge-in">${l.type}</span><br/>${l.start} s/d ${l.end}<br/><span style="color:var(--text-muted);">${l.notes || '-'}</span></div></li>`).join('');
+    alert('Pengajuan izin/cuti dicatat.');
+  }
+
+  function submitIncident() {
+    const site = document.getElementById('inc-site').value.trim();
+    const type = document.getElementById('inc-type').value;
+    const desc = document.getElementById('inc-desc').value.trim();
+    if (!site || !desc) { alert('Lengkapi lokasi dan kronologi kejadian.'); return; }
+    APP_STATE.incidents.unshift({ time: new Date().toLocaleString('id-ID'), user: APP_STATE.currentUser?.name || '-', site, type, desc });
+    safeLocalStorageSet('amp_incidents', JSON.stringify(APP_STATE.incidents));
+    document.getElementById('inc-count-badge').textContent = `${APP_STATE.incidents.length} Laporan`;
+    document.getElementById('inc-log-list').innerHTML = APP_STATE.incidents.map(i => `<li class="log-item"><div><span class="badge badge-out">${i.type}</span> <strong>${i.site}</strong><br/>${i.desc}<br/><span style="color:var(--text-muted);">${i.time} oleh ${i.user}</span></div></li>`).join('');
+    alert('Laporan kejadian dicatat.');
+  }
+
+  function saveMCP() {
+    const area = document.getElementById('mcp-area').value.trim();
+    const status = document.getElementById('mcp-status').value;
+    if (!area) { alert('Isi nama area/ruangan.'); return; }
+    APP_STATE.mcp.unshift({ time: new Date().toLocaleString('id-ID'), area, status });
+    safeLocalStorageSet('amp_mcp', JSON.stringify(APP_STATE.mcp));
+    document.getElementById('mcp-log-list').innerHTML = APP_STATE.mcp.map(m => `<li class="log-item"><div><strong>${m.area}</strong> — <span class="badge badge-in">${m.status}</span><br/><span style="color:var(--text-muted);">${m.time}</span></div></li>`).join('');
+    alert('Progress MCP disimpan.');
+  }
+
+  function saveDAC() {
+    const area = document.getElementById('dac-area').value.trim();
+    const condition = document.getElementById('dac-condition').value;
+    if (!area) { alert('Isi nama area/toilet/gedung.'); return; }
+    APP_STATE.dac.unshift({ time: new Date().toLocaleString('id-ID'), area, condition });
+    safeLocalStorageSet('amp_dac', JSON.stringify(APP_STATE.dac));
+    document.getElementById('dac-log-list').innerHTML = APP_STATE.dac.map(d => `<li class="log-item"><div><strong>${d.area}</strong> — ${d.condition}<br/><span style="color:var(--text-muted);">${d.time}</span></div></li>`).join('');
+    alert('Cheklis area disimpan.');
+  }
+
+  function saveK3() {
+    const job = document.getElementById('k3-job').value.trim();
+    const apd = document.getElementById('k3-apd').value.trim();
+    if (!job || !apd) { alert('Lengkapi jenis pekerjaan dan kesiapan APD/JSA.'); return; }
+    APP_STATE.k3.unshift({ time: new Date().toLocaleString('id-ID'), job, apd });
+    safeLocalStorageSet('amp_k3', JSON.stringify(APP_STATE.k3));
+    document.getElementById('k3-log-list').innerHTML = APP_STATE.k3.map(k => `<li class="log-item"><div><strong>${k.job}</strong><br/>APD/JSA: ${k.apd}<br/><span style="color:var(--text-muted);">${k.time}</span></div></li>`).join('');
+    alert('Verifikasi K3 disimpan.');
+  }
+
+  function saveEquipment() {
+    const name = document.getElementById('eq-name').value.trim();
+    const status = document.getElementById('eq-status').value.trim();
+    if (!name || !status) { alert('Lengkapi nama alat dan kondisi.'); return; }
+    APP_STATE.equipment.unshift({ name, status });
+    safeLocalStorageSet('amp_equipment', JSON.stringify(APP_STATE.equipment));
+    document.getElementById('eq-log-list').innerHTML = APP_STATE.equipment.map(e => `<li class="log-item"><div><strong>${e.name}</strong> — ${e.status}</div></li>`).join('');
+    alert('Data equipment disimpan.');
+  }
+
+  function saveOutstanding() {
+    const item = document.getElementById('out-item').value.trim();
+    if (!item) { alert('Isi item outstanding.'); return; }
+    APP_STATE.outstanding.unshift({ item, time: new Date().toLocaleString('id-ID') });
+    safeLocalStorageSet('amp_outstanding', JSON.stringify(APP_STATE.outstanding));
+    document.getElementById('out-log-list').innerHTML = APP_STATE.outstanding.map(o => `<li class="log-item"><div><strong>${o.item}</strong><br/><span style="color:var(--text-muted);">${o.time}</span></div></li>`).join('');
+    alert('Item outstanding ditambahkan.');
+  }
+
   function saveSupabaseConfig() {
+    const url = document.getElementById('sb-url').value.trim();
+    const key = document.getElementById('sb-key').value.trim();
     const gmapsKey = document.getElementById('sb-gmaps-key')
       ? document.getElementById('sb-gmaps-key').value.trim()
       : (APP_STATE.sbConfig?.gmapsKey || '');
-    APP_STATE.sbConfig = {
-      url: document.getElementById('sb-url').value.trim(),
-      key: document.getElementById('sb-key').value.trim(),
-      gmapsKey
-    };
-    localStorage.setItem('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
+    APP_STATE.sbConfig = { url, key, gmapsKey };
+    safeLocalStorageSet('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
+
     const radarKeyInput = document.getElementById('radar-gmaps-key');
     if (radarKeyInput) radarKeyInput.value = gmapsKey;
     gmapScriptPromise = null;
+
+    const connected = initSupabaseClient();
     if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
       clearRadarMap();
       initRadarMapIfAdmin();
       refreshKorlapLivePositions();
     }
-    alert('Konfigurasi disimpan.');
+    alert(connected ? 'Konfigurasi Supabase & GMaps disimpan dan terhubung.' : 'Konfigurasi disimpan (periksa URL & Anon Key jika ingin koneksi cloud aktif).');
   }
-  function syncAllData() {
-    if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      refreshKorlapLivePositions();
+
+  async function syncAllData() {
+    initSupabaseClient();
+    if (supabaseClient) {
+      await pullLiveGPSFromSupabase();
+      await pullAttendanceFromSupabase();
+      if (APP_STATE.currentUser && !isAdminOrHeadOfOps(APP_STATE.currentUser) && APP_STATE.liveKorlapGPS[APP_STATE.currentUser.id]) {
+        await pushLiveGPSToSupabase(APP_STATE.liveKorlapGPS[APP_STATE.currentUser.id], true);
+      }
     }
-    alert('Sinkronisasi dijalankan.');
+    if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      await refreshKorlapLivePositions();
+    }
+    alert('Sinkronisasi data selesai dijalankan.');
   }
-  function exportToExcel() { alert('Ekspor CSV Absensi siap dihubungkan ke data.'); }
-  function exportGPSLogToCSV() { alert('Ekspor CSV GPS siap dihubungkan ke data.'); }
-  function exportIncidentLogToCSV() { alert('Ekspor CSV Kejadian siap dihubungkan ke data.'); }
-  function exportMRToCSV() { alert('Ekspor CSV MR siap dihubungkan ke data.'); }
+
   function startProfileWebcam() { alert('Kamera profil siap dihubungkan.'); }
   function captureProfileSnapshot() { alert('Snapshot profil siap dihubungkan.'); }
   function loadProfileFromGallery(e) {
@@ -2267,7 +2625,7 @@
     if (!APP_STATE.currentUser) return;
     const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
     if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
-    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
     renderUserUI();
     alert('Foto profil disimpan.');
   }
@@ -2279,7 +2637,7 @@
     APP_STATE.currentUser.phone = document.getElementById('edit-prof-phone').value.trim() || APP_STATE.currentUser.phone;
     const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
     if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
-    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
     renderUserUI();
     alert('Informasi profil diperbarui.');
   }
@@ -2293,7 +2651,7 @@
     APP_STATE.currentUser.pin = newPin;
     const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
     if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
-    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
     alert('PIN berhasil diupdate.');
   }
 </script>
