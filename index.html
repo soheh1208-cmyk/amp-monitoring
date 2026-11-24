@@ -354,8 +354,8 @@ body {
       <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.9</p>
 
       <div class="form-group">
-        <label>ID Karyawan / NIP</label>
-        <input type="text" id="login-id" class="form-control" placeholder="Contoh: TAD001, KOR001, AMP001">
+        <label>ID / Username Karyawan</label>
+        <input type="text" id="login-id" class="form-control" placeholder="Contoh: M.Soheh, Dede_Rusmana">
       </div>
 
       <div class="form-group">
@@ -366,29 +366,24 @@ body {
       <button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK SYSTEM</button>
       <button type="button" class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
       <button type="button" class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
-
-      <div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
-        <strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin)<br>
-        <code>KOR001</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
-      </div>
     </div>
 
     <div id="register-box-asli" class="auth-card-asli" style="display:none;">
-      <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
+      <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Akun Baru</h3>
       <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-      <div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: TAD002)"></div>
-      <div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / TAD / Staf"></div>
-      <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit"></div>
+      <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Nama_Belakang"></div>
+      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
+      <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
       <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
-      <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
+      <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit"></div>
       <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
       <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
     </div>
 
     <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
       <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
-      <div class="form-group"><label>ID Karyawan</label><input type="text" id="reset-id" class="form-control" placeholder="ID Karyawan"></div>
-      <div class="form-group"><label>PIN Lama (Default: 123456)</label><input type="password" id="reset-old-pin" class="form-control"></div>
+      <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
+      <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control"></div>
       <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
       <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
       <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
@@ -416,7 +411,7 @@ body {
         </div>
         <div class="user-badge">
           <i class="fas fa-user-circle"></i>
-          <span id="header-user-id">AMP001</span>
+          <span id="header-user-id">M.Soheh</span>
           <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:6px; cursor:pointer;" title="Keluar"></i>
         </div>
       </div>
@@ -427,9 +422,9 @@ body {
       <div class="card" style="background: linear-gradient(135deg, #0a192f, #1e3a8a); color: #fff;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
-            <h2 id="dash-user-name" style="font-size:15px;">M. Soheh</h2>
-            <p id="dash-user-role" style="font-size:10px; color:#d97706;">Head Of Operation</p>
-            <p id="dash-user-site" style="font-size:9px; opacity:0.8; margin-top:4px;"><i class="fas fa-building"></i> Site: Pusat / All Sites</p>
+            <h2 id="dash-user-name" style="font-size:15px;">M.Soheh</h2>
+            <p id="dash-user-role" style="font-size:10px; color:#d97706;">Head Of Operation / Admin</p>
+            <p id="dash-user-site" style="font-size:9px; opacity:0.85; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: Seluruh Wilayah PLN UIT JBT & UIT JBB</p>
           </div>
           <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center;">
             <img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
@@ -492,12 +487,12 @@ body {
             <img id="prof-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
             <i class="fas fa-user-tie" id="prof-avatar-icon"></i>
           </div>
-          <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M. Soheh</h3>
-          <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">NIP: AMP001</p>
-          <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Jabatan: Head Of Operation</p>
+          <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M.Soheh</h3>
+          <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">ID: M.Soheh</p>
+          <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Peran: Head Of Operation / Admin</p>
         </div>
         <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
-          <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Lokasi Kerja:</strong> <span id="prof-site">Pusat / All Sites</span></p>
+          <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Area Tugas PLN:</strong> <span id="prof-site">Seluruh Wilayah PLN UIT JBT & UIT JBB</span></p>
           <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
         </div>
       </div>
@@ -526,8 +521,8 @@ body {
       <div class="card">
         <div class="card-title"><i class="fas fa-user-edit"></i> Edit Informasi Profil</div>
         <div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control"></div>
-        <div class="form-group"><label>Jabatan</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
-        <div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="edit-prof-site" class="form-control"></div>
+        <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
+        <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="edit-prof-site" class="form-control"></div>
         <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control"></div>
         <button type="button" class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
       </div>
@@ -595,8 +590,8 @@ body {
           <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
         </div>
         <div class="form-group">
-          <label>Lokasi / Site (UPT / ULTG / Kantor)</label>
-          <input type="text" id="mr-site" class="form-control" placeholder="Contoh: UPT Cawang / ULTG Cikarang">
+          <label>Area Tugas / Site (UPT / ULTG / Kantor)</label>
+          <input type="text" id="mr-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang">
         </div>
         <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
           <div class="form-group"><label>Nama Material / Kebutuhan</label><input type="text" id="mr-item" class="form-control" placeholder="Contoh: Chemical Pembersih / APD"></div>
@@ -678,8 +673,8 @@ body {
           </select>
         </div>
         <div class="form-group">
-          <label>Lokasi Kejadian & Site</label>
-          <input type="text" id="incident-location" class="form-control" placeholder="Contoh: Area Toilet Lantai 2 / GISTET Cawang">
+          <label>Lokasi Kejadian & Area PLN</label>
+          <input type="text" id="incident-location" class="form-control" placeholder="Contoh: ULTG Cikarang / UPT Cawang">
         </div>
         <div class="form-group">
           <label>Kronologi & Tindakan Segera</label>
@@ -822,12 +817,12 @@ body {
     <div id="mod-10" class="screen-panel">
       <div class="card">
         <div class="card-title">
-          <span><i class="fas fa-users"></i> Data Tim & Personil Lapangan</span>
+          <span><i class="fas fa-users"></i> Data Tim Korlap & Admin</span>
           <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
         </div>
         <div class="form-group">
-          <label>Cari Nama / NIP / Site Personil</label>
-          <input type="text" id="team-search-input" class="form-control" placeholder="Ketik nama, NIP, atau lokasi site..." oninput="renderTeamList()">
+          <label>Cari Nama / Username / Area Tugas PLN</label>
+          <input type="text" id="team-search-input" class="form-control" placeholder="Ketik nama, username, atau area tugas..." oninput="renderTeamList()">
         </div>
         <ul id="team-member-list" class="log-list">
           <li class="log-item" style="justify-content:center; color:var(--text-muted);">Memuat data tim...</li>
@@ -847,7 +842,7 @@ body {
           <div class="form-group"><label>Jumlah Unit</label><input type="number" id="eq-qty" class="form-control" value="1" min="1"></div>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group"><label>Lokasi / Site</label><input type="text" id="eq-site" class="form-control" placeholder="Contoh: UPT Bandung"></div>
+          <div class="form-group"><label>Area / Site</label><input type="text" id="eq-site" class="form-control" placeholder="Contoh: UPT Bandung"></div>
           <div class="form-group">
             <label>Kondisi Alat</label>
             <select id="eq-condition" class="form-control">
@@ -974,20 +969,82 @@ if (window.supabase && SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.incl
 }
 
 const DEFAULT_USERS = [
-  { id: 'AMP001', name: 'M. Soheh', role: 'Admin', jabatan: 'Head Of Operation', site: 'Pusat / All Sites', phone: '081200000001', pin: '123456', avatar: '' },
-  { id: 'KOR001', name: 'Koordinator Lapangan 01', role: 'Korlap', jabatan: 'Koordinator Lapangan', site: 'UPT Cawang', phone: '081200000002', pin: '123456', avatar: '' },
-  { id: 'TAD001', name: 'Petugas Operasional 01', role: 'TAD', jabatan: 'Tenaga Alih Daya', site: 'ULTG Cikarang', phone: '081200000003', pin: '123456', avatar: '' }
+  { id: 'M.Soheh', name: 'M.Soheh', role: 'Admin', jabatan: 'Head Of Operation / Admin', site: 'Seluruh Wilayah PLN UIT JBT & UIT JBB', phone: '-', pin: '990099', avatar: '' },
+  { id: 'Dede_Rusmana', name: 'Dede Rusmana', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bekasi & ULTG Cikarang', phone: '-', pin: '110101', avatar: '' },
+  { id: 'Dede_Purnama', name: 'Dede Purnama', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Karet & ULTG Mampang', phone: '-', pin: '110202', avatar: '' },
+  { id: 'Dadang_Darsono', name: 'Dadang Darsono', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', phone: '-', pin: '110303', avatar: '' },
+  { id: 'Rizky_Badrul Z', name: 'Rizky Badrul Zaman', role: 'Korlap', jabatan: 'Korlap', site: 'Kantor Induk Bandung & ULTG Bandung Barat', phone: '-', pin: '110404', avatar: '' },
+  { id: 'Irfan_AS', name: 'Irfan Ardiatma S', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Cawang & ULTG Mampang', phone: '-', pin: '110505', avatar: '' },
+  { id: 'Yan_S', name: 'Yan Saputra', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', phone: '-', pin: '110606', avatar: '' },
+  { id: 'Yadi_S', name: 'Yadi Supriyadi', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bandung, ULTG Bandung Timur & Bandung Selatan', phone: '-', pin: '110707', avatar: '' },
+  { id: 'Tegar_D', name: 'Tegar Dwitama', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Cikarang', phone: '-', pin: '110808', avatar: '' },
+  { id: 'Andi_I', name: 'Andi Ilmanto', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Gandul, ULTG Petukangan & ULTG Tangsel', phone: '-', pin: '110909', avatar: '' },
+  { id: 'Tamam_2', name: 'Tamam', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bogor & ULTG Sukabumi', phone: '-', pin: '111010', avatar: '' },
+  { id: 'Haerudin_3', name: 'Haerudin', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Purwakarta', phone: '-', pin: '111111', avatar: '' },
+  { id: 'Iswanto_R', name: 'Iswanto Riansyah', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bogor & ULTG Sukabumi', phone: '-', pin: '111212', avatar: '' },
+  { id: 'Rifky_Y', name: 'Rifkiyansyah', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', phone: '-', pin: '111313', avatar: '' }
 ];
 
 const DEFAULT_KORLAP_POSITIONS = [
-  { id: 'KOR001', name: 'Koordinator Lapangan 01', site: 'UPT Cawang', placeName: 'GISTET 500Kv & 150Kv Cawang Baru', street: 'Jl. Mayjen Sutoyo / Cawang', lat: -6.2435, lng: 106.8685, updated: 'Baru saja' },
-  { id: 'KOR002', name: 'Koordinator Lapangan 02', site: 'ULTG Cikarang', placeName: 'ULTG Cikarang - PT PLN (Persero)', street: 'Jl. Jababeka / Cikarang', lat: -6.2980, lng: 107.1480, updated: '5 mnt lalu' },
-  { id: 'KOR003', name: 'Koordinator Lapangan 03', site: 'UPT Bandung', placeName: 'UPT Bandung - PT PLN (Persero)', street: 'Jl. Soekarno Hatta / Bandung', lat: -6.9175, lng: 107.6191, updated: '10 mnt lalu' }
+  { id: 'Dede_Rusmana', name: 'Dede Rusmana', site: 'UPT Bekasi & ULTG Cikarang', placeName: 'ULTG Cikarang / UPT Bekasi', street: 'Jl. Industri / Bekasi - Cikarang', lat: -6.2885, lng: 107.1485, updated: 'Baru saja' },
+  { id: 'Dede_Purnama', name: 'Dede Purnama', site: 'ULTG Karet & ULTG Mampang', placeName: 'ULTG Karet & ULTG Mampang', street: 'Jl. HR Rasuna Said / Karet - Mampang', lat: -6.2280, lng: 106.8240, updated: '3 mnt lalu' },
+  { id: 'Dadang_Darsono', name: 'Dadang Darsono', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', placeName: 'UPT Pulogadung', street: 'Jl. Bekasi Raya / Pulogadung', lat: -6.1935, lng: 106.9055, updated: '4 mnt lalu' },
+  { id: 'Rizky_Badrul Z', name: 'Rizky Badrul Zaman', site: 'Kantor Induk Bandung & ULTG Bandung Barat', placeName: 'Kantor Induk PLN UIT JBT Bandung', street: 'Jl. Cigereleng / Bandung', lat: -6.9350, lng: 107.6040, updated: '5 mnt lalu' },
+  { id: 'Irfan_AS', name: 'Irfan Ardiatma S', site: 'UPT Cawang & ULTG Mampang', placeName: 'GISTET 500Kv & 150Kv Cawang Baru', street: 'Jl. Mayjen Sutoyo / Cawang', lat: -6.2435, lng: 106.8685, updated: '2 mnt lalu' },
+  { id: 'Yan_S', name: 'Yan Saputra', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', placeName: 'ULTG Ancol / Harapan Indah', street: 'Jl. Lodan Raya / Jakarta Utara', lat: -6.1350, lng: 106.8350, updated: '6 mnt lalu' },
+  { id: 'Yadi_S', name: 'Yadi Supriyadi', site: 'UPT Bandung, ULTG Bandung Timur & Bandung Selatan', placeName: 'UPT Bandung', street: 'Jl. Soekarno Hatta / Bandung', lat: -6.9175, lng: 107.6191, updated: '7 mnt lalu' },
+  { id: 'Tegar_D', name: 'Tegar Dwitama', site: 'ULTG Cikarang', placeName: 'ULTG Cikarang', street: 'Jl. Jababeka / Cikarang', lat: -6.2980, lng: 107.1480, updated: '5 mnt lalu' },
+  { id: 'Andi_I', name: 'Andi Ilmanto', site: 'ULTG Gandul, ULTG Petukangan & ULTG Tangsel', placeName: 'ULTG Gandul / Tangsel', street: 'Jl. Gandul Raya / Cinere - Tangsel', lat: -6.3420, lng: 106.7860, updated: '8 mnt lalu' },
+  { id: 'Tamam_2', name: 'Tamam', site: 'UPT Bogor & ULTG Sukabumi', placeName: 'UPT Bogor', street: 'Jl. Pajajaran / Bogor', lat: -6.5971, lng: 106.8060, updated: '6 mnt lalu' },
+  { id: 'Haerudin_3', name: 'Haerudin', site: 'ULTG Purwakarta', placeName: 'ULTG Purwakarta', street: 'Jl. Jenderal Sudirman / Purwakarta', lat: -6.5569, lng: 107.4433, updated: '9 mnt lalu' },
+  { id: 'Iswanto_R', name: 'Iswanto Riansyah', site: 'UPT Bogor & ULTG Sukabumi', placeName: 'ULTG Sukabumi', street: 'Jl. Pelabuhan II / Sukabumi', lat: -6.9277, lng: 106.9300, updated: '7 mnt lalu' },
+  { id: 'Rifky_Y', name: 'Rifkiyansyah', site: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', placeName: 'UPT Karawang', street: 'Jl. Ahmad Yani / Karawang', lat: -6.3065, lng: 107.2907, updated: '4 mnt lalu' }
 ];
 
+function normalizeId(val) {
+  return String(val || '').trim().toLowerCase().replace(/\s+/g, '_');
+}
+
+function isOfficialUser(u) {
+  const target = normalizeId(u.id);
+  return DEFAULT_USERS.some(def => normalizeId(def.id) === target);
+}
+
+function buildOfficialUsers() {
+  const saved = JSON.parse(localStorage.getItem('amp_users') || '[]');
+  return DEFAULT_USERS.map(def => {
+    const match = saved.find(s => normalizeId(s.id) === normalizeId(def.id));
+    if (!match) return { ...def };
+    return {
+      ...def,
+      name: match.name || def.name,
+      role: match.role || def.role,
+      jabatan: match.jabatan || def.jabatan,
+      site: match.site || def.site,
+      phone: match.phone || def.phone,
+      pin: match.pin || def.pin,
+      avatar: match.avatar || ''
+    };
+  });
+}
+
+function buildOfficialKorlapPositions() {
+  const saved = JSON.parse(localStorage.getItem('amp_korlap_pos') || '[]');
+  return DEFAULT_KORLAP_POSITIONS.map(def => {
+    const match = saved.find(s => normalizeId(s.id) === normalizeId(def.id));
+    return match ? { ...def, ...match, id: def.id, name: def.name, site: def.site } : { ...def };
+  });
+}
+
+const initialUsers = buildOfficialUsers();
+const savedCurrent = JSON.parse(localStorage.getItem('amp_current_user') || 'null');
+const initialCurrentUser =
+  (savedCurrent && initialUsers.find(u => normalizeId(u.id) === normalizeId(savedCurrent.id))) ||
+  initialUsers[0];
+
 const state = {
-  users: JSON.parse(localStorage.getItem('amp_users') || 'null') || DEFAULT_USERS,
-  currentUser: JSON.parse(localStorage.getItem('amp_current_user') || 'null') || DEFAULT_USERS[0],
+  users: initialUsers,
+  currentUser: initialCurrentUser,
   attendance: JSON.parse(localStorage.getItem('amp_attendance') || '[]'),
   mr: JSON.parse(localStorage.getItem('amp_mr') || '[]'),
   leaves: JSON.parse(localStorage.getItem('amp_leaves') || '[]'),
@@ -997,7 +1054,7 @@ const state = {
   k3: JSON.parse(localStorage.getItem('amp_k3') || '[]'),
   equipment: JSON.parse(localStorage.getItem('amp_equipment') || '[]'),
   outstanding: JSON.parse(localStorage.getItem('amp_outstanding') || '[]'),
-  korlapPositions: JSON.parse(localStorage.getItem('amp_korlap_pos') || 'null') || DEFAULT_KORLAP_POSITIONS,
+  korlapPositions: buildOfficialKorlapPositions(),
   pendingQueue: Number(localStorage.getItem('amp_pending_queue') || '0'),
   lastSync: localStorage.getItem('amp_last_sync') || '-'
 };
@@ -1072,7 +1129,7 @@ function refreshUserUI() {
   document.getElementById('header-user-id').textContent = u.id;
   document.getElementById('dash-user-name').textContent = u.name;
   document.getElementById('dash-user-role').textContent = u.jabatan || u.role;
-  document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Site: ${u.site || '-'}`;
+  document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Area Tugas PLN: ${u.site || '-'}`;
 
   const showAdmin = isAdminOrHead();
   document.getElementById('admin-radar-card').style.display = showAdmin ? 'block' : 'none';
@@ -1106,10 +1163,14 @@ function switchAuthSubView(view) {
 }
 
 function processLogin() {
-  const id = document.getElementById('login-id').value.trim().toUpperCase();
+  const idInput = document.getElementById('login-id').value.trim();
   const pin = document.getElementById('login-pin').value.trim();
-  const found = state.users.find(u => u.id.toUpperCase() === id && u.pin === pin);
-  if (!found) return alert('ID Karyawan atau PIN salah.');
+  const found = state.users.find(u =>
+    u.id.toLowerCase() === idInput.toLowerCase() || normalizeId(u.id) === normalizeId(idInput)
+  );
+  if (!found || found.pin !== pin) {
+    return alert('ID / Username atau PIN salah. Gunakan akun resmi terdaftar.');
+  }
   state.currentUser = found;
   persistState();
   document.getElementById('auth-modal-overlay').classList.remove('active');
@@ -1123,28 +1184,34 @@ function logout() {
 
 function processRegister() {
   const name = document.getElementById('reg-name').value.trim();
-  const id = document.getElementById('reg-id').value.trim().toUpperCase();
-  const jabatan = document.getElementById('reg-jabatan').value.trim() || 'TAD';
-  const site = document.getElementById('reg-site').value.trim() || 'Site Utama';
+  const id = document.getElementById('reg-id').value.trim();
+  const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Korlap';
+  const site = document.getElementById('reg-site').value.trim() || '-';
   const phone = document.getElementById('reg-phone').value.trim() || '-';
   const pin = document.getElementById('reg-pin').value.trim();
-  if (!name || !id || pin.length < 4) return alert('Lengkapi nama, NIP, dan PIN minimal 4 digit.');
-  if (state.users.some(u => u.id.toUpperCase() === id)) return alert('ID Karyawan sudah terdaftar.');
-  const newUser = { id, name, role: jabatan, jabatan, site, phone, pin, avatar: '' };
-  state.users.push(newUser);
-  state.currentUser = newUser;
+  if (!name || !id || pin.length < 6) return alert('Lengkapi nama, ID/Username, dan PIN 6 digit.');
+  if (!isOfficialUser({ id })) {
+    return alert('Pendaftaran dibatasi hanya untuk ID / Username resmi Korlap & Admin yang terdaftar.');
+  }
+  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(id));
+  if (idx >= 0) {
+    Object.assign(state.users[idx], { name, jabatan, role: jabatan.toLowerCase().includes('admin') ? 'Admin' : 'Korlap', site, phone, pin });
+    state.currentUser = state.users[idx];
+  }
   incrementPendingQueue();
-  alert('Akun baru berhasil disimpan.');
+  alert('Data akun resmi berhasil diperbarui.');
   switchAuthSubView('login');
 }
 
 function processResetPIN() {
-  const id = document.getElementById('reset-id').value.trim().toUpperCase();
+  const idInput = document.getElementById('reset-id').value.trim();
   const oldPin = document.getElementById('reset-old-pin').value.trim();
   const newPin = document.getElementById('reset-new-pin').value.trim();
-  const u = state.users.find(x => x.id.toUpperCase() === id && x.pin === oldPin);
-  if (!u) return alert('ID Karyawan atau PIN lama tidak cocok.');
-  if (newPin.length < 4) return alert('PIN baru minimal 4 digit.');
+  const u = state.users.find(x =>
+    (x.id.toLowerCase() === idInput.toLowerCase() || normalizeId(x.id) === normalizeId(idInput)) && x.pin === oldPin
+  );
+  if (!u) return alert('ID / Username atau PIN lama tidak cocok.');
+  if (newPin.length < 6) return alert('PIN baru minimal 6 digit.');
   u.pin = newPin;
   incrementPendingQueue();
   alert('PIN berhasil diperbarui.');
@@ -1154,8 +1221,8 @@ function processResetPIN() {
 function fillProfileForm() {
   const u = state.currentUser;
   document.getElementById('prof-name').textContent = u.name;
-  document.getElementById('prof-id').textContent = `NIP: ${u.id}`;
-  document.getElementById('prof-jabatan').textContent = `Jabatan: ${u.jabatan || u.role}`;
+  document.getElementById('prof-id').textContent = `ID / Username: ${u.id}`;
+  document.getElementById('prof-jabatan').textContent = `Peran: ${u.jabatan || u.role}`;
   document.getElementById('prof-site').textContent = u.site || '-';
   document.getElementById('prof-phone').textContent = u.phone || '-';
 
@@ -1210,7 +1277,7 @@ function loadProfileFromGallery(e) {
 function saveProfileAvatar() {
   if (!tempProfileAvatar) return alert('Ambil atau pilih foto terlebih dahulu.');
   state.currentUser.avatar = tempProfileAvatar;
-  const idx = state.users.findIndex(u => u.id === state.currentUser.id);
+  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(state.currentUser.id));
   if (idx >= 0) state.users[idx].avatar = tempProfileAvatar;
   incrementPendingQueue();
   applyAvatar(tempProfileAvatar);
@@ -1223,9 +1290,9 @@ function updateOwnProfile() {
   const site = document.getElementById('edit-prof-site').value.trim();
   const phone = document.getElementById('edit-prof-phone').value.trim();
   if (!name) return alert('Nama tidak boleh kosong.');
-  Object.assign(state.currentUser, { name, jabatan, role: jabatan, site, phone });
-  const idx = state.users.findIndex(u => u.id === state.currentUser.id);
-  if (idx >= 0) Object.assign(state.users[idx], { name, jabatan, role: jabatan, site, phone });
+  Object.assign(state.currentUser, { name, jabatan, site, phone });
+  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(state.currentUser.id));
+  if (idx >= 0) Object.assign(state.users[idx], { name, jabatan, site, phone });
   incrementPendingQueue();
   refreshUserUI();
   alert('Profil berhasil diperbarui.');
@@ -1235,9 +1302,9 @@ function changeOwnPIN() {
   const oldPin = document.getElementById('prof-old-pin').value.trim();
   const newPin = document.getElementById('prof-new-pin').value.trim();
   if (oldPin !== state.currentUser.pin) return alert('PIN lama tidak sesuai.');
-  if (newPin.length < 4) return alert('PIN baru minimal 4 digit.');
+  if (newPin.length < 6) return alert('PIN baru minimal 6 digit.');
   state.currentUser.pin = newPin;
-  const idx = state.users.findIndex(u => u.id === state.currentUser.id);
+  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(state.currentUser.id));
   if (idx >= 0) state.users[idx].pin = newPin;
   incrementPendingQueue();
   document.getElementById('prof-old-pin').value = '';
@@ -1299,19 +1366,12 @@ function getRealtimeGPS() {
       badge.style.color = 'var(--success)';
       badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Siap';
 
-      if (state.currentUser.role.toLowerCase().includes('korlap')) {
-        const idx = state.korlapPositions.findIndex(k => k.id === state.currentUser.id);
-        const entry = {
-          id: state.currentUser.id,
-          name: state.currentUser.name,
-          site: state.currentUser.site,
-          placeName: state.currentUser.site,
-          street: 'Lokasi Terkini',
-          lat: Number(lat),
-          lng: Number(lng),
-          updated: new Date().toLocaleTimeString('id-ID')
-        };
-        if (idx >= 0) state.korlapPositions[idx] = entry; else state.korlapPositions.push(entry);
+      const idx = state.korlapPositions.findIndex(k => normalizeId(k.id) === normalizeId(state.currentUser.id));
+      if (idx >= 0) {
+        state.korlapPositions[idx].lat = Number(lat);
+        state.korlapPositions[idx].lng = Number(lng);
+        state.korlapPositions[idx].updated = new Date().toLocaleTimeString('id-ID');
+        persistState();
       }
 
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
@@ -1324,10 +1384,9 @@ function getRealtimeGPS() {
           if (fullDesc) {
             document.getElementById('gps-coords').value = `${fullDesc} (${lat}, ${lng})`;
           }
-          const idx = state.korlapPositions.findIndex(k => k.id === state.currentUser.id);
           if (idx >= 0) {
             state.korlapPositions[idx].placeName = buildingOrPt;
-            state.korlapPositions[idx].street = road || state.currentUser.site;
+            state.korlapPositions[idx].street = road || state.korlapPositions[idx].street;
             persistState();
           }
         })
@@ -1395,7 +1454,7 @@ function submitMR() {
   const qty = document.getElementById('mr-qty').value.trim();
   const priority = document.getElementById('mr-priority').value;
   const notes = document.getElementById('mr-notes').value.trim();
-  if (!site || !item || !qty) return alert('Lengkapi site, nama material, dan jumlah.');
+  if (!site || !item || !qty) return alert('Lengkapi area tugas, nama material, dan jumlah.');
   state.mr.unshift({ id: Date.now(), site, item, qty, priority, notes, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
   document.getElementById('mr-item').value = '';
   document.getElementById('mr-qty').value = '';
@@ -1415,7 +1474,7 @@ function renderMRLog() {
     <li class="log-item">
       <div>
         <div><strong>${m.item}</strong> (${m.qty}) <span class="badge badge-warning">${m.priority}</span></div>
-        <div style="color:var(--text-muted);">Site: ${m.site} • Oleh: ${m.by}</div>
+        <div style="color:var(--text-muted);">Area: ${m.site} • Oleh: ${m.by}</div>
         <div style="font-size:9px; color:var(--text-muted);">${m.notes || '-'} • ${m.time}</div>
       </div>
     </li>
@@ -1594,8 +1653,8 @@ function renderTeamList() {
   list.innerHTML = filtered.map(u => `
     <li class="log-item">
       <div>
-        <div><strong>${u.name}</strong> (${u.id}) <span class="badge badge-in">${u.jabatan || u.role}</span></div>
-        <div style="color:var(--text-muted);">Site: ${u.site} • Telp: ${u.phone || '-'}</div>
+        <div><strong>${u.name}</strong> <code>(${u.id})</code> <span class="badge ${u.role === 'Admin' ? 'badge-warning' : 'badge-in'}">${u.jabatan || u.role}</span></div>
+        <div style="color:var(--text-muted); margin-top:2px;">Area Tugas PLN: <strong>${u.site}</strong></div>
       </div>
     </li>
   `).join('') || '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Personil tidak ditemukan.</li>';
@@ -1623,7 +1682,7 @@ function renderEquipmentLog() {
     <li class="log-item">
       <div>
         <div><strong>${e.name}</strong> (${e.qty} unit) — <span class="badge ${e.condition.includes('Baik') ? 'badge-in' : 'badge-warning'}">${e.condition}</span></div>
-        <div style="color:var(--text-muted);">Site: ${e.site}</div>
+        <div style="color:var(--text-muted);">Area: ${e.site}</div>
       </div>
     </li>
   `).join('');
@@ -1674,7 +1733,7 @@ function initRadarMap() {
   if (!mapEl || !window.L) return;
 
   if (!radarMap) {
-    radarMap = L.map('satellite-radar-map').setView([-6.2435, 106.8685], 12);
+    radarMap = L.map('satellite-radar-map').setView([-6.45, 106.95], 9);
 
     const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
       maxZoom: 20,
@@ -1732,7 +1791,7 @@ function refreshKorlapLivePositions() {
 
   listEl.innerHTML = state.korlapPositions.map(k => {
     const hasCoords = typeof k.lat === 'number' && typeof k.lng === 'number';
-    const placeLabel = k.placeName || k.site || 'Lokasi Site';
+    const placeLabel = k.placeName || k.site || 'Area Tugas PLN';
     const roadLabel = k.street || 'Jl. / Kawasan Operasional';
     const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${k.lat},${k.lng}`;
 
@@ -1747,16 +1806,17 @@ function refreshKorlapLivePositions() {
         fillOpacity: 0.95
       }).addTo(radarMap);
 
-      marker.bindTooltip(`${placeLabel} (${k.name})`, {
+      marker.bindTooltip(`${k.name} — ${k.site}`, {
         permanent: false,
         direction: 'top'
       });
 
       marker.bindPopup(`
-        <div style="font-size:11px; line-height:1.45; min-width:175px;">
-          <strong style="color:#0a192f;">${placeLabel}</strong><br>
-          <span>Petugas: <b>${k.name}</b> (${k.id})</span><br>
-          <span>Jalan/Area: ${roadLabel}</span><br>
+        <div style="font-size:11px; line-height:1.45; min-width:185px;">
+          <strong style="color:#0a192f;">${k.name}</strong><br>
+          <span>ID: <b>${k.id}</b></span><br>
+          <span>Area Tugas: <b>${k.site}</b></span><br>
+          <span>Lokasi/Jalan: ${placeLabel} (${roadLabel})</span><br>
           <span style="color:#6b7280; font-size:10px;">Koordinat: ${k.lat}, ${k.lng} • ${k.updated}</span><br>
           <a href="${gmapsUrl}" target="_blank" rel="noopener" style="display:inline-block; margin-top:4px; color:#1e3a8a; font-weight:bold; text-decoration:underline;">
             Buka di Google Maps →
@@ -1769,12 +1829,12 @@ function refreshKorlapLivePositions() {
 
     return `
       <div onclick="focusRadarPoint(${k.lat}, ${k.lng})" style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:8px; cursor:pointer; font-size:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-          <strong>${placeLabel}</strong>
-          <span class="badge badge-in">${k.site}</span>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+          <strong>${k.name}</strong>
+          <span class="badge badge-in" style="text-align:right; max-width:58%;">${k.site}</span>
         </div>
         <div style="color:var(--navy-primary); font-size:9.5px; margin-top:2px;">
-          <i class="fas fa-user-tie"></i> ${k.name} • <i class="fas fa-road"></i> ${roadLabel}
+          <i class="fas fa-id-badge"></i> ${k.id} • <i class="fas fa-road"></i> ${roadLabel}
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:9px; margin-top:2px;">
           <span>Lat/Lng: ${k.lat}, ${k.lng} (${k.updated})</span>
@@ -1785,7 +1845,7 @@ function refreshKorlapLivePositions() {
   }).join('');
 
   if (radarMap && bounds.length > 0) {
-    radarMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 15 });
+    radarMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 14 });
   }
 }
 
@@ -1805,16 +1865,16 @@ function downloadCSV(filename, rows) {
 }
 
 function exportToExcel() {
-  downloadCSV('rekap_absensi_amp.csv', [['Tipe', 'NIP', 'Nama', 'Site', 'GPS', 'Waktu'], ...state.attendance.map(a => [a.type, a.userId, a.userName, a.site, a.gps, a.time])]);
+  downloadCSV('rekap_absensi_amp.csv', [['Tipe', 'ID/Username', 'Nama', 'Area Tugas PLN', 'GPS', 'Waktu'], ...state.attendance.map(a => [a.type, a.userId, a.userName, a.site, a.gps, a.time])]);
 }
 function exportGPSLogToCSV() {
-  downloadCSV('rekap_gps_korlap_amp.csv', [['ID', 'Nama', 'Site', 'Gedung/PT', 'Jalan', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.placeName || '', k.street || '', k.lat, k.lng, k.updated])]);
+  downloadCSV('rekap_gps_korlap_amp.csv', [['ID/Username', 'Nama', 'Area Tugas PLN', 'Lokasi/Gedung', 'Jalan', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.placeName || '', k.street || '', k.lat, k.lng, k.updated])]);
 }
 function exportIncidentLogToCSV() {
   downloadCSV('rekap_kejadian_amp.csv', [['Kategori', 'Lokasi', 'Kronologi', 'Pelapor', 'Waktu'], ...state.incidents.map(i => [i.category, i.location, i.desc, i.by, i.time])]);
 }
 function exportMRToCSV() {
-  downloadCSV('rekap_mr_amp.csv', [['Site', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Pengaju', 'Waktu'], ...state.mr.map(m => [m.site, m.item, m.qty, m.priority, m.notes, m.by, m.time])]);
+  downloadCSV('rekap_mr_amp.csv', [['Area Tugas', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Pengaju', 'Waktu'], ...state.mr.map(m => [m.site, m.item, m.qty, m.priority, m.notes, m.by, m.time])]);
 }
 
 function appendSyncLog(msg) {
@@ -1854,6 +1914,7 @@ function renderAllLogs() {
   renderOutstandingLog();
 }
 
+persistState();
 refreshUserUI();
 </script>
 </body>
