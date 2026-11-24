@@ -29,10 +29,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
 
     body {
-      background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+      background: linear-gradient(180deg, #0a192f 0%, #e2e8f0 38%, #f8fafc 100%);
       color: var(--text-main);
       min-height: 100vh;
-      padding-bottom: 72px;
+      padding-bottom: 74px;
     }
 
     #main-app {
@@ -40,9 +40,11 @@
       margin: 0 auto;
       min-height: 100vh;
       background: var(--bg-canvas);
-      box-shadow: 0 10px 30px rgba(10, 25, 47, 0.12);
+      box-shadow: 0 12px 32px rgba(10, 25, 47, 0.16);
       position: relative;
+      display: none;
     }
+    #main-app.authenticated { display: block; }
 
     .app-header {
       position: sticky;
@@ -81,7 +83,7 @@
 
     .user-badge {
       background: rgba(10, 25, 47, 0.45);
-      border: 1px solid rgba(217, 119, 6, 0.6);
+      border: 1px solid rgba(217, 119, 6, 0.65);
       padding: 5px 8px;
       border-radius: 999px;
       font-size: 9.5px;
@@ -244,10 +246,11 @@
       max-width: 540px;
       background: #fff;
       border-top: 1px solid var(--border-soft);
-      display: grid;
+      display: none;
       grid-template-columns: repeat(4, 1fr);
       z-index: 500;
     }
+    .bottom-nav.authenticated { display: grid; }
     .nav-link {
       padding: 7px 4px;
       text-align: center;
@@ -265,30 +268,75 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(10, 25, 47, 0.88);
+      background: linear-gradient(135deg, rgba(10, 25, 47, 0.97), rgba(30, 58, 138, 0.96));
       z-index: 900;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 14px;
     }
     #auth-modal-overlay.active { display: flex; }
     .auth-card-asli {
       width: 100%;
       max-width: 380px;
       background: #fff;
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 16px;
       border-top: 4px solid var(--gold-accent);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+    }
+    .auth-brand-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .auth-brand-head h2 { font-size: 12px; font-weight: 800; color: var(--navy-primary); }
+    .auth-brand-head p { font-size: 9.5px; color: var(--text-muted); }
+    .auth-gate-note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 9.5px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
   </style>
 </head>
 <body>
 
-<div id="auth-modal-overlay">
+<div id="auth-modal-overlay" class="active">
   <div id="login-box-asli" class="auth-card-asli">
-    <h3 style="font-size:13px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-lock"></i> Login AMP Operation Monitoring</h3>
-    <div class="form-group"><label>ID / Username</label><input type="text" id="login-id" class="form-control" placeholder="Contoh: M.Soheh atau Dede_Rusmana"></div>
-    <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="login-pin" class="form-control" placeholder="Masukkan PIN 6 Digit"></div>
+    <div class="auth-brand-head">
+      <svg class="logo-svg" viewBox="0 0 200 200">
+        <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
+        <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
+        <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
+      </svg>
+      <div>
+        <h2>PT. ARDINA MULYA PERKASA</h2>
+        <p>AMP Operation Monitoring</p>
+      </div>
+    </div>
+
+    <div class="auth-gate-note">
+      <i class="fas fa-shield-alt"></i>
+      <span>Silakan login menggunakan <strong>ID / Username</strong> dan <strong>PIN 6 Digit</strong> masing-masing untuk membuka Dashboard & Modul.</span>
+    </div>
+
+    <div class="form-group">
+      <label>ID / Username</label>
+      <input type="text" id="login-id" class="form-control" placeholder="Masukkan ID / Username Anda" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>PIN 6 Digit</label>
+      <input type="password" id="login-pin" class="form-control" placeholder="Masukkan PIN 6 Digit" maxlength="6" autocomplete="current-password" onkeydown="if(event.key==='Enter') processLogin()">
+    </div>
     <button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK APLIKASI</button>
     <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:10px;">
       <a href="javascript:void(0)" onclick="switchAuthSubView('register')" style="color:var(--blue-accent);">Daftar / Lengkapi Akun</a>
@@ -303,7 +351,7 @@
     <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
     <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
     <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
-    <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit"></div>
+    <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit" maxlength="6"></div>
     <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN</button>
     <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
   </div>
@@ -311,8 +359,8 @@
   <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
     <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
     <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
-    <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control"></div>
-    <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
+    <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control" maxlength="6"></div>
+    <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control" maxlength="6"></div>
     <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
     <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
   </div>
@@ -338,8 +386,8 @@
       </div>
       <div class="user-badge">
         <i class="fas fa-user-circle"></i>
-        <span id="header-user-id">M.Soheh</span>
-        <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:4px; cursor:pointer;" title="Keluar"></i>
+        <span id="header-user-id">-</span>
+        <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:4px; cursor:pointer;" title="Keluar & Kembali ke Login"></i>
       </div>
     </div>
   </div>
@@ -349,9 +397,9 @@
     <div class="card" style="background: linear-gradient(135deg, #0a192f, #1e3a8a); color: #fff;">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
         <div>
-          <h2 id="dash-user-name" style="font-size:15px;">M.Soheh</h2>
-          <p id="dash-user-role" style="font-size:10px; color:#f59e0b; font-weight:700;">Head Of Operation / Admin</p>
-          <p id="dash-user-site" style="font-size:9px; opacity:0.88; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: Seluruh Wilayah PLN UIT JBT & UIT JBB</p>
+          <h2 id="dash-user-name" style="font-size:15px;">-</h2>
+          <p id="dash-user-role" style="font-size:10px; color:#f59e0b; font-weight:700;">-</p>
+          <p id="dash-user-site" style="font-size:9px; opacity:0.88; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: -</p>
         </div>
         <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
           <img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
@@ -414,12 +462,12 @@
           <img id="prof-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
           <i class="fas fa-user-tie" id="prof-avatar-icon"></i>
         </div>
-        <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M.Soheh</h3>
-        <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">ID: M.Soheh</p>
-        <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Peran: Head Of Operation / Admin</p>
+        <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">-</h3>
+        <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">ID: -</p>
+        <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Peran: -</p>
       </div>
       <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
-        <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Area Tugas PLN:</strong> <span id="prof-site">Seluruh Wilayah PLN UIT JBT & UIT JBB</span></p>
+        <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Area Tugas PLN:</strong> <span id="prof-site">-</span></p>
         <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
       </div>
     </div>
@@ -456,8 +504,8 @@
 
     <div class="card">
       <div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
-      <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control"></div>
-      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control"></div>
+      <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control" maxlength="6"></div>
+      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control" maxlength="6"></div>
       <button type="button" class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN</button>
     </div>
   </div>
@@ -865,7 +913,7 @@
 
 </div>
 
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottom-nav">
   <a class="nav-link active" onclick="showModule(1)"><i class="fas fa-home"></i><span>Home</span></a>
   <a class="nav-link" onclick="showModule(3)"><i class="fas fa-camera"></i><span>Absen</span></a>
   <a class="nav-link" onclick="showModule(6)"><i class="fas fa-exclamation-triangle"></i><span>Kejadian</span></a>
@@ -876,6 +924,7 @@
 const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 let supabaseClient = null;
+let isLoggedIn = false;
 
 const DEFAULT_USERS = [
   { id: 'M.Soheh', name: 'M.Soheh', role: 'Admin', jabatan: 'Head Of Operation / Admin', site: 'Seluruh Wilayah PLN UIT JBT & UIT JBB', phone: '-', pin: '990099', avatar: '' },
@@ -945,14 +994,10 @@ function buildOfficialKorlapPositions() {
 }
 
 const initialUsers = buildOfficialUsers();
-const savedCurrent = JSON.parse(localStorage.getItem('amp_current_user') || 'null');
-const initialCurrentUser =
-  (savedCurrent && initialUsers.find(u => normalizeId(u.id) === normalizeId(savedCurrent.id))) ||
-  initialUsers[0];
 
 const state = {
   users: initialUsers,
-  currentUser: initialCurrentUser,
+  currentUser: null,
   attendance: JSON.parse(localStorage.getItem('amp_attendance') || '[]'),
   mr: JSON.parse(localStorage.getItem('amp_mr') || '[]'),
   leaves: JSON.parse(localStorage.getItem('amp_leaves') || '[]'),
@@ -978,6 +1023,24 @@ let profileStream = null;
 let capturedAttendancePhoto = '';
 let capturedGPS = '';
 let tempProfileAvatar = '';
+
+function setAuthGateState(loggedIn) {
+  isLoggedIn = Boolean(loggedIn && state.currentUser);
+  const overlay = document.getElementById('auth-modal-overlay');
+  const mainApp = document.getElementById('main-app');
+  const bottomNav = document.getElementById('bottom-nav');
+
+  if (isLoggedIn) {
+    overlay.classList.remove('active');
+    mainApp.classList.add('authenticated');
+    bottomNav.classList.add('authenticated');
+  } else {
+    mainApp.classList.remove('authenticated');
+    bottomNav.classList.remove('authenticated');
+    overlay.classList.add('active');
+    switchAuthSubView('login');
+  }
+}
 
 function getEffectiveSupabaseConfig() {
   const savedUrl = (localStorage.getItem('amp_supabase_url') || '').trim();
@@ -1073,7 +1136,6 @@ function clearSupabaseConfig() {
 
 function persistState() {
   localStorage.setItem('amp_users', JSON.stringify(state.users));
-  localStorage.setItem('amp_current_user', JSON.stringify(state.currentUser));
   localStorage.setItem('amp_attendance', JSON.stringify(state.attendance));
   localStorage.setItem('amp_mr', JSON.stringify(state.mr));
   localStorage.setItem('amp_leaves', JSON.stringify(state.leaves));
@@ -1104,6 +1166,10 @@ function updateSyncUI() {
 }
 
 function showModule(modNum) {
+  if (!isLoggedIn) {
+    setAuthGateState(false);
+    return;
+  }
   document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
   const target = document.getElementById(`mod-${modNum}`);
   if (target) target.classList.add('active');
@@ -1129,6 +1195,7 @@ function isAdminOrHead() {
 }
 
 function refreshUserUI() {
+  if (!isLoggedIn || !state.currentUser) return;
   const u = state.currentUser;
   document.getElementById('header-user-id').textContent = u.id;
   document.getElementById('dash-user-name').textContent = u.name;
@@ -1169,15 +1236,20 @@ function switchAuthSubView(view) {
 function processLogin() {
   const idInput = document.getElementById('login-id').value.trim();
   const pin = document.getElementById('login-pin').value.trim();
+  if (!idInput || !pin) {
+    return alert('Masukkan ID / Username dan PIN 6 Digit terlebih dahulu.');
+  }
   const found = state.users.find(u =>
     u.id.toLowerCase() === idInput.toLowerCase() || normalizeId(u.id) === normalizeId(idInput)
   );
   if (!found || found.pin !== pin) {
-    return alert('ID / Username atau PIN salah. Gunakan akun resmi terdaftar.');
+    return alert('ID / Username atau PIN salah. Periksa kembali ID dan PIN Anda.');
   }
   state.currentUser = found;
+  document.getElementById('login-pin').value = '';
   persistState();
-  document.getElementById('auth-modal-overlay').classList.remove('active');
+  setAuthGateState(true);
+  showModule(1);
   refreshUserUI();
   startLiveKorlapGPSWatch();
 }
@@ -1187,8 +1259,17 @@ function logout() {
     navigator.geolocation.clearWatch(korlapWatchId);
     korlapWatchId = null;
   }
-  document.getElementById('auth-modal-overlay').classList.add('active');
-  switchAuthSubView('login');
+  if (webcamStream) {
+    webcamStream.getTracks().forEach(t => t.stop());
+    webcamStream = null;
+  }
+  if (profileStream) {
+    profileStream.getTracks().forEach(t => t.stop());
+    profileStream = null;
+  }
+  state.currentUser = null;
+  document.getElementById('login-pin').value = '';
+  setAuthGateState(false);
 }
 
 function processRegister() {
@@ -1205,10 +1286,10 @@ function processRegister() {
   const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(id));
   if (idx >= 0) {
     Object.assign(state.users[idx], { name, jabatan, role: jabatan.toLowerCase().includes('admin') ? 'Admin' : 'Korlap', site, phone, pin });
-    state.currentUser = state.users[idx];
   }
   incrementPendingQueue();
-  alert('Data akun resmi berhasil diperbarui.');
+  document.getElementById('login-id').value = id;
+  alert('Data akun resmi berhasil diperbarui. Silakan login dengan ID dan PIN Anda.');
   switchAuthSubView('login');
 }
 
@@ -1223,11 +1304,13 @@ function processResetPIN() {
   if (newPin.length < 6) return alert('PIN baru minimal 6 digit.');
   u.pin = newPin;
   incrementPendingQueue();
-  alert('PIN berhasil diperbarui.');
+  document.getElementById('login-id').value = u.id;
+  alert('PIN berhasil diperbarui. Silakan login menggunakan PIN baru.');
   switchAuthSubView('login');
 }
 
 function fillProfileForm() {
+  if (!isLoggedIn || !state.currentUser) return;
   const u = state.currentUser;
   document.getElementById('prof-name').textContent = u.name;
   document.getElementById('prof-id').textContent = `ID / Username: ${u.id}`;
@@ -1405,6 +1488,7 @@ async function pullKorlapPositionsFromCloud() {
 }
 
 function updateKorlapCoordEntry(latNum, lngNum, placeName, streetName, syncCloud = true) {
+  if (!isLoggedIn || !state.currentUser) return null;
   const idx = state.korlapPositions.findIndex(k => normalizeId(k.id) === normalizeId(state.currentUser.id));
   if (idx < 0) return null;
   const nowStr = new Date().toLocaleTimeString('id-ID');
@@ -1415,12 +1499,12 @@ function updateKorlapCoordEntry(latNum, lngNum, placeName, streetName, syncCloud
   state.korlapPositions[idx].updated = nowStr;
   persistState();
   if (syncCloud) pushKorlapPositionToCloud(state.korlapPositions[idx]);
-  if (isAdminOrHead() && radarMap) refreshKorlapLivePositions();
+  if (isLoggedIn && isAdminOrHead() && radarMap) refreshKorlapLivePositions();
   return state.korlapPositions[idx];
 }
 
 function startLiveKorlapGPSWatch() {
-  if (!navigator.geolocation || isAdminOrHead()) return;
+  if (!isLoggedIn || !navigator.geolocation || isAdminOrHead()) return;
   if (korlapWatchId !== null) {
     navigator.geolocation.clearWatch(korlapWatchId);
     korlapWatchId = null;
@@ -1441,7 +1525,7 @@ function subscribeRealtimeKorlapRadar() {
   supabaseRealtimeChannel = supabaseClient
     .channel('korlap-live-radar-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'korlap_positions' }, async () => {
-      if (!isAdminOrHead()) return;
+      if (!isLoggedIn || !isAdminOrHead()) return;
       await pullKorlapPositionsFromCloud();
       if (radarMap) refreshKorlapLivePositions();
     })
@@ -1451,7 +1535,7 @@ function subscribeRealtimeKorlapRadar() {
 function startRadarAutoPolling() {
   if (radarPollingTimer) clearInterval(radarPollingTimer);
   radarPollingTimer = setInterval(async () => {
-    if (!isAdminOrHead()) return;
+    if (!isLoggedIn || !isAdminOrHead()) return;
     await pullKorlapPositionsFromCloud();
     if (radarMap) refreshKorlapLivePositions();
   }, 10000);
@@ -1697,7 +1781,7 @@ function renderOutstandingLog() {
 }
 
 function initRadarMap() {
-  if (!isAdminOrHead()) return;
+  if (!isLoggedIn || !isAdminOrHead()) return;
   const mapEl = document.getElementById('satellite-radar-map');
   if (!mapEl || !window.L) return;
   if (!radarMap) {
@@ -1719,7 +1803,7 @@ function initRadarMap() {
 }
 
 function refreshKorlapLivePositions() {
-  if (!isAdminOrHead()) return;
+  if (!isLoggedIn || !isAdminOrHead()) return;
   const listEl = document.getElementById('korlap-live-radar-list');
   document.getElementById('radar-marker-count').textContent = `${state.korlapPositions.length} Titik Aktif`;
   if (radarMap) { radarMarkers.forEach(m => radarMap.removeLayer(m)); radarMarkers = []; }
@@ -1764,7 +1848,7 @@ function appendSyncLog(msg) {
 }
 
 async function pushOperationSummaryToCloud() {
-  if (!supabaseClient) return;
+  if (!supabaseClient || !state.currentUser) return;
   try {
     await supabaseClient
       .from('amp_operation_logs')
@@ -1799,7 +1883,7 @@ async function pullLatestFromSupabase() {
   const pulled = await pullKorlapPositionsFromCloud();
   state.lastSync = new Date().toLocaleTimeString('id-ID');
   persistState();
-  if (isAdminOrHead() && radarMap) refreshKorlapLivePositions();
+  if (isLoggedIn && isAdminOrHead() && radarMap) refreshKorlapLivePositions();
   appendSyncLog(pulled ? 'Data posisi Korlap terbaru ditarik dari Supabase.' : 'Pemeriksaan data terbaru dari server selesai.');
   alert('Data terbaru telah dimuat.');
 }
@@ -1810,9 +1894,8 @@ function renderAllLogs() {
 }
 
 persistState();
-refreshUserUI();
 initSupabaseConnection();
-startLiveKorlapGPSWatch();
+setAuthGateState(false);
 </script>
 </body>
 </html>
