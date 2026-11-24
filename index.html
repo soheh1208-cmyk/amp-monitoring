@@ -1,1307 +1,1139 @@
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Monitoring Operasional AMP — PT. Ardina Mulya Perkasa (PLN UIT JBT & UIT JBB)</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --navy-950: #06132b;
-      --navy-900: #0b1f44;
-      --navy-800: #102e63;
-      --navy-700: #163d82;
-      --blue-600: #1d5fd6;
-      --blue-500: #2575fc;
-      --cyan-400: #38bdf8;
-      --amber-500: #f59e0b;
-      --emerald-600: #059669;
-      --rose-600: #e11d48;
-      --violet-600: #7c3aed;
-      --slate-50: #f8fafc;
-      --slate-100: #f1f5f9;
-      --slate-200: #e2e8f0;
-      --slate-300: #cbd5e1;
-      --slate-600: #475569;
-      --slate-700: #334155;
-      --slate-800: #1e293b;
-      --slate-900: #0f172a;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --shadow-card: 0 12px 30px -10px rgba(6, 19, 43, 0.16);
-    }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-    body { background: var(--slate-100); color: var(--slate-900); min-height: 100vh; }
+<meta charset="UTF-8">
 
-    /* ================= LOGIN HERO SPLIT SCREEN ================= */
-    #loginScreen {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 420px 1fr;
-      background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-800) 55%, #0e3a78 100%);
-      position: relative;
-      overflow-x: hidden;
-    }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .login-left {
-      background: rgba(255, 255, 255, 0.98);
-      padding: 24px 26px 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 12px 0 36px rgba(2, 8, 23, 0.35);
-      z-index: 2;
-    }
+<title>AMP Operation Monitoring V3.9 - Satellite Radar Admin</title>
 
-    .brand-box { text-align: center; }
-    .amp-logo-img {
-      width: 108px;
-      height: 78px;
-      object-fit: contain;
-      margin: 0 auto 6px;
-      display: block;
-      border-radius: 12px;
-      background: #fff;
-      padding: 4px;
-      box-shadow: 0 6px 18px rgba(11, 31, 68, 0.14);
-    }
+<!-- Web App Manifest -->
 
-    .company-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); letter-spacing: 0.4px; }
-    .system-title { font-size: 18.5px; font-weight: 900; color: var(--slate-900); margin-top: 4px; line-height: 1.2; }
-    .system-sub { font-size: 10px; font-weight: 700; color: var(--slate-600); letter-spacing: 1.1px; margin-top: 3px; text-transform: uppercase; }
+<link rel="manifest" href="manifest.json">
 
-    .pin-card {
-      margin-top: 14px;
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-md);
-      padding: 15px;
-    }
-    .pin-label { font-size: 11px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.7px; margin-bottom: 5px; display: block; }
-    .pin-input-wrap { position: relative; display: flex; align-items: center; margin-bottom: 10px; }
-    .text-input-login {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1.5px solid var(--slate-300);
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--navy-900);
-      background: #fff;
-      outline: none;
-    }
-    .text-input-login:focus, .pin-input:focus { border-color: var(--blue-600); }
-    .pin-input {
-      width: 100%;
-      padding: 10px 42px 10px 14px;
-      border-radius: 10px;
-      border: 1.5px solid var(--blue-500);
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 4px;
-      color: var(--navy-900);
-      background: #fff;
-      outline: none;
-    }
-    .eye-btn {
-      position: absolute;
-      right: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      color: var(--slate-600);
-      padding: 4px;
-    }
-    .btn-masuk {
-      width: 100%;
-      margin-top: 4px;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(90deg, var(--navy-900), var(--blue-600));
-      color: #fff;
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 8px 18px rgba(29, 95, 214, 0.35);
-      transition: transform 0.15s ease, filter 0.15s ease;
-    }
-    .btn-masuk:hover { filter: brightness(1.06); transform: translateY(-1px); }
+<meta name="theme-color" content="#0a192f">
 
-    .auth-links-stack {
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--slate-300);
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--slate-700);
-    }
-    .auth-link-btn {
-      background: none;
-      border: none;
-      color: var(--blue-600);
-      font-weight: 800;
-      cursor: pointer;
-      text-decoration: underline;
-      font-size: 12px;
-    }
-    .auth-link-btn:hover { color: var(--navy-900); }
+<meta name="description" content="Sistem Monitoring Operasional PT Ardina Mulya Perkasa">
 
-    .login-error {
-      margin-top: 8px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--rose-600);
-      text-align: center;
-      min-height: 16px;
-    }
 
-    .badges-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 12px;
-      text-align: center;
-    }
-    .badge-item {
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 8px;
-      padding: 6px 4px;
-    }
-    .badge-item .b-ico { font-size: 13px; display: block; margin-bottom: 2px; }
-    .badge-item .b-txt { font-size: 8.5px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.4px; }
+<!-- FontAwesome Icons -->
 
-    .login-footer-left {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 10px;
-      color: var(--slate-600);
-    }
-    .tagline-italic { font-style: italic; font-weight: 700; color: var(--navy-800); margin-top: 2px; font-size: 11px; }
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    .login-right {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 26px 32px 20px;
-      background:
-        linear-gradient(180deg, rgba(6, 19, 43, 0.52) 0%, rgba(11, 31, 68, 0.72) 65%, rgba(6, 19, 43, 0.94) 100%),
-        url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-      color: #fff;
-    }
+<!-- Leaflet CSS & JS (Peta Satelit Radar) -->
 
-    .pln-banner {
-      align-self: flex-end;
-      background: rgba(6, 19, 43, 0.78);
-      backdrop-filter: blur(8px);
-      border-left: 4px solid var(--cyan-400);
-      border-radius: 10px;
-      padding: 10px 16px;
-      text-align: right;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
-    .pln-banner .p-sub { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: var(--cyan-400); }
-    .pln-banner .p-main { font-size: 16px; font-weight: 900; letter-spacing: 0.4px; line-height: 1.25; }
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    .lock-notice-banner {
-      background: rgba(6, 19, 43, 0.82);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: #e0f2fe;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 12px;
-    }
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    .menu-grid-8 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin: auto 0;
-      padding: 14px 0;
-    }
-    .menu-card-8 {
-      background: rgba(255, 255, 255, 0.93);
-      color: var(--slate-900);
-      border-radius: 14px;
-      padding: 16px 14px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
-      border: 1px solid rgba(255,255,255,0.7);
-      position: relative;
-    }
-    .menu-card-8:hover { transform: translateY(-2px); }
-    .lock-pill {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #fee2e2;
-      color: #991b1b;
-      font-size: 9.5px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 999px;
-    }
-    .m-icon-box {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto 10px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: #fff;
-      font-weight: 800;
-    }
-    .m-title { font-size: 12px; font-weight: 900; color: var(--navy-900); letter-spacing: 0.3px; }
-    .m-desc { font-size: 10.5px; color: var(--slate-600); margin-top: 4px; line-height: 1.3; }
+<!-- Supabase JS Client v2 -->
 
-    .login-right-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.16);
-      padding-top: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 11.5px;
-    }
-    .login-right-footer strong { color: var(--cyan-400); }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    /* ================= MODAL REGISTRASI & LUPA ID/PIN ================= */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(6, 19, 43, 0.72);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 900;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal-box {
-      background: #fff;
-      border-radius: 16px;
-      max-width: 460px;
-      width: 100%;
-      padding: 20px;
-      box-shadow: 0 24px 48px rgba(2, 8, 23, 0.45);
-    }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--slate-200);
-      padding-bottom: 8px;
-    }
-    .modal-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); }
-    .modal-close {
-      background: none; border: none; font-size: 18px; cursor: pointer; color: var(--slate-600); font-weight: 900;
-    }
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-    /* ================= MAIN APP SHELL ================= */
-    #appShell { display: none; min-height: 100vh; background: var(--slate-100); }
 
-    .topbar {
-      background: linear-gradient(90deg, var(--navy-950), var(--navy-800));
-      color: #fff;
-      padding: 12px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 400;
-      box-shadow: 0 4px 18px rgba(6, 19, 43, 0.25);
-    }
-    .topbar-brand { display: flex; align-items: center; gap: 12px; }
-    .topbar-logo-img {
-      width: 48px; height: 38px; border-radius: 8px;
-      background: #fff; padding: 2px; object-fit: contain;
-    }
-    .topbar-user { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
-    .pill-info {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-weight: 700;
-    }
-    .pill-role-admin { background: rgba(245, 158, 11, 0.25); border-color: #fbbf24; color: #fde68a; }
-    .pill-gps-on { background: rgba(16, 185, 129, 0.22); border-color: #34d399; color: #a7f3d0; }
-    .pill-gps-off { background: rgba(244, 63, 94, 0.22); border-color: #fb7185; color: #fecdd3; }
-    .btn-logout {
-      background: var(--rose-600); color: #fff; border: none;
-      padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer;
-    }
 
-    /* 14-MODULE NAV STRIP */
-    .modules-nav-wrap {
-      background: #fff;
-      border-bottom: 1px solid var(--slate-200);
-      padding: 10px 16px;
-      display: flex;
-      gap: 7px;
-      overflow-x: auto;
-      position: sticky;
-      top: 62px;
-      z-index: 350;
-    }
-    .mod-tab {
-      flex: 0 0 auto;
-      padding: 7px 12px;
-      border-radius: 9px;
-      border: 1px solid var(--slate-200);
-      background: var(--slate-50);
-      color: var(--slate-700);
-      font-size: 11.5px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.14s ease;
-    }
-    .mod-tab:hover { border-color: var(--blue-500); color: var(--navy-900); }
-    .mod-tab.active {
-      background: var(--navy-900);
-      color: #fff;
-      border-color: var(--navy-900);
-      box-shadow: 0 4px 10px rgba(11, 31, 68, 0.22);
-    }
+<style>
 
-    .main-container { max-width: 1440px; margin: 0 auto; padding: 18px 20px 44px; }
+:root {
 
-    .card {
-      background: #fff;
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      box-shadow: var(--shadow-card);
-      border: 1px solid var(--slate-200);
-      margin-bottom: 18px;
-    }
-    .card-header-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .card-title { font-size: 16px; font-weight: 900; color: var(--navy-900); }
-    .card-sub { font-size: 12px; color: var(--slate-600); margin-top: 2px; }
+--navy-primary: #0a192f;
 
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .kpi-box {
-      background: linear-gradient(135deg, #fff, var(--slate-50));
-      border: 1px solid var(--slate-200);
-      border-left: 4px solid var(--blue-600);
-      border-radius: 12px;
-      padding: 12px 14px;
-    }
-    .kpi-box .k-lbl { font-size: 11px; font-weight: 700; color: var(--slate-600); }
-    .kpi-box .k-val { font-size: 20px; font-weight: 900; color: var(--navy-900); margin-top: 4px; }
-    .kpi-box .k-note { font-size: 10.5px; color: var(--slate-600); margin-top: 2px; }
+--navy-header: #112240;
 
-    /* RADAR MAP (ADMIN / HEAD OF OPS ONLY) */
-    .radar-layout {
-      display: grid;
-      grid-template-columns: 1.55fr 1fr;
-      gap: 16px;
-    }
-    #korlapRadarMap {
-      width: 100%;
-      height: 440px;
-      border-radius: 14px;
-      border: 2px solid var(--slate-200);
-      z-index: 10;
-      background: #e2e8f0;
-    }
-    .korlap-roster-list {
-      max-height: 440px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-right: 4px;
-    }
-    .korlap-item {
-      border: 1px solid var(--slate-200);
-      border-radius: 11px;
-      padding: 10px 12px;
-      background: var(--slate-50);
-      cursor: pointer;
-      transition: border-color 0.14s ease, background 0.14s ease;
-    }
-    .korlap-item:hover { border-color: var(--blue-500); background: #eff6ff; }
-    .korlap-item-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .korlap-name { font-size: 12.5px; font-weight: 800; color: var(--navy-900); }
-    .badge-live {
-      background: #dcfce7; color: #166534; border: 1px solid #86efac;
-      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
-    }
-    .badge-area {
-      background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc;
-      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
-    }
-    .korlap-meta { font-size: 11px; color: var(--slate-600); margin-top: 4px; line-height: 1.35; }
+--blue-accent: #1e3a8a;
 
-    .restricted-box {
-      background: #fff1f2;
-      border: 1px solid #fecdd3;
-      color: #9f1239;
-      border-radius: 14px;
-      padding: 18px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
+--gold-accent: #d97706;
 
-    /* TABLES & CONTROLS */
-    .controls-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-    .form-control, .form-select {
-      padding: 8px 12px;
-      border-radius: 9px;
-      border: 1px solid var(--slate-300);
-      font-size: 12.5px;
-      background: #fff;
-      color: var(--slate-900);
-    }
-    .btn-primary {
-      background: var(--navy-900); color: #fff; border: none;
-      padding: 8px 14px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
-    }
-    .btn-primary:hover { background: var(--blue-600); }
-    .btn-secondary {
-      background: var(--slate-100); color: var(--slate-800); border: 1px solid var(--slate-300);
-      padding: 8px 12px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
-    }
-    .btn-success {
-      background: var(--emerald-600); color: #fff; border: none;
-      padding: 8px 14px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
-    }
+--light-bg: #f3f4f6;
 
-    .table-wrap { overflow-x: auto; border: 1px solid var(--slate-200); border-radius: 12px; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th {
-      background: var(--navy-900);
-      color: #fff;
-      text-align: left;
-      padding: 9px 10px;
-      font-weight: 700;
-      position: sticky;
-      top: 0;
-      white-space: nowrap;
-    }
-    td { padding: 8px 10px; border-bottom: 1px solid var(--slate-200); vertical-align: middle; }
-    tr:nth-child(even) td { background: #f8fafc; }
+--white: #ffffff;
 
-    .mcp-subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .mcp-subtab {
-      padding: 7px 14px;
-      border-radius: 9px;
-      border: 1px solid var(--slate-300);
-      background: #fff;
-      color: var(--slate-700);
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .mcp-subtab.active { background: var(--blue-600); color: #fff; border-color: var(--blue-600); }
+--text-main: #1f2937;
 
-    .status-chip {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 10.5px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .st-rencana { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
-    .st-selesai { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-    .st-kendala { background: #ffe4e6; color: #9f1239; border: 1px solid #fda4af; }
+--text-muted: #6b7280;
 
-    .legend-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 8px;
-      margin-top: 12px;
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 11px;
-      color: var(--slate-700);
-    }
+--success: #10b981;
 
-    .module-panel { display: none; }
-    .module-panel.active { display: block; }
+--danger: #ef4444;
 
-    .form-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 12px; }
-    .field-group label { display: block; font-size: 11.5px; font-weight: 700; color: var(--slate-700); margin-bottom: 4px; }
-    .field-group input, .field-group select, .field-group textarea {
-      width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--slate-300); font-size: 12.5px;
-    }
+--warning: #f59e0b;
 
-    @media (max-width: 980px) {
-      #loginScreen { grid-template-columns: 1fr; }
-      .menu-grid-8 { grid-template-columns: repeat(2, 1fr); }
-      .radar-layout { grid-template-columns: 1fr; }
-    }
-  </style>
-  <meta name="theme-color" content="#0b1f44" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AMP Monitoring" />
-  <link id="pwaManifestLink" rel="manifest" />
-  <link id="pwaAppleIconLink" rel="apple-touch-icon" />
+}
+
+
+
+{ box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: var(--light-bg); color: var(--text-main); display: flex; justify-content: center; }
+
+
+
+.app-container {
+
+width: 100%;
+
+max-width: 480px;
+
+background: var(--white);
+
+min-height: 100vh;
+
+display: flex;
+
+flex-direction: column;
+
+box-shadow: 0 0 20px rgba(0,0,0,0.15);
+
+position: relative;
+
+padding-bottom: 70px;
+
+}
+
+
+
+.app-header {
+
+background: linear-gradient(135deg, var(--navy-primary), var(--blue-accent));
+
+color: var(--white);
+
+padding: 14px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+border-bottom: 3px solid var(--gold-accent);
+
+position: sticky;
+
+top: 0;
+
+z-index: 100;
+
+}
+
+
+
+.brand-box { display: flex; align-items: center; gap: 10px; }
+
+.logo-svg { width: 36px; height: 36px; }
+
+.brand-text h1 { font-size: 13px; font-weight: 700; color: #fff; }
+
+.brand-text p { font-size: 8.5px; color: var(--gold-accent); font-weight: 600; text-transform: uppercase; }
+
+
+
+.user-badge {
+
+background: rgba(255,255,255,0.15);
+
+padding: 4px 8px;
+
+border-radius: 12px;
+
+font-size: 11px;
+
+color: #fff;
+
+display: flex;
+
+align-items: center;
+
+gap: 5px;
+
+}
+
+
+
+.sync-badge {
+
+background: var(--gold-accent);
+
+color: var(--navy-primary);
+
+font-weight: bold;
+
+padding: 3px 8px;
+
+border-radius: 10px;
+
+font-size: 10px;
+
+cursor: pointer;
+
+display: flex;
+
+align-items: center;
+
+gap: 4px;
+
+box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+}
+
+
+
+.auth-overlay {
+
+position: fixed;
+
+top: 0; left: 0; right: 0; bottom: 0;
+
+background: rgba(10, 25, 47, 0.95);
+
+z-index: 9999;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 20px;
+
+overflow-y: auto;
+
+}
+
+
+
+.auth-card-asli {
+
+background: #ffffff;
+
+width: 100%;
+
+max-width: 360px;
+
+border-radius: 16px;
+
+padding: 20px;
+
+box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+
+text-align: center;
+
+max-height: 92vh;
+
+overflow-y: auto;
+
+position: relative;
+
+z-index: 10000;
+
+}
+
+
+
+.screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
+
+.screen-panel.active { display: block; }
+
+
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+
+.card {
+
+background: var(--white);
+
+border-radius: 12px;
+
+padding: 14px;
+
+margin-bottom: 14px;
+
+border: 1px solid #e5e7eb;
+
+box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+
+}
+
+
+
+.card-title {
+
+font-size: 13px;
+
+font-weight: 700;
+
+color: var(--navy-primary);
+
+margin-bottom: 10px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+border-bottom: 2px solid #f3f4f6;
+
+padding-bottom: 8px;
+
+}
+
+
+
+#satellite-radar-map {
+
+width: 100%;
+
+height: 240px;
+
+border-radius: 10px;
+
+border: 2px solid var(--navy-primary);
+
+margin-bottom: 10px;
+
+z-index: 15;
+
+background: #0f172a;
+
+}
+
+
+
+.radar-legend {
+
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+font-size: 9px;
+
+color: var(--text-muted);
+
+margin-bottom: 8px;
+
+background: #ffffff;
+
+padding: 5px 8px;
+
+border-radius: 6px;
+
+border: 1px solid #e2e8f0;
+
+}
+
+
+
+.modules-grid {
+
+display: grid;
+
+grid-template-columns: repeat(4, 1fr);
+
+gap: 10px;
+
+margin-top: 8px;
+
+}
+
+
+
+.module-item {
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+background: #f8fafc;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 10px;
+
+padding: 10px 4px;
+
+cursor: pointer;
+
+transition: all 0.2s;
+
+text-align: center;
+
+}
+
+
+
+.module-item:hover { background: #e2e8f0; transform: translateY(-2px); }
+
+.module-icon {
+
+width: 36px;
+
+height: 36px;
+
+border-radius: 8px;
+
+background: var(--navy-primary);
+
+color: var(--gold-accent);
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+font-size: 15px;
+
+margin-bottom: 4px;
+
+}
+
+
+
+.module-label { font-size: 9px; font-weight: 600; color: var(--navy-primary); line-height: 1.2; }
+
+
+
+.camera-box {
+
+width: 100%;
+
+height: 190px;
+
+background: #000;
+
+border-radius: 12px;
+
+position: relative;
+
+overflow: hidden;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+margin-bottom: 10px;
+
+}
+
+
+
+#webcam, #photo-preview { width: 100%; height: 100%; object-fit: cover; }
+
+.camera-overlay {
+
+position: absolute;
+
+border: 2px dashed rgba(255,255,255,0.7);
+
+border-radius: 50%;
+
+width: 120px;
+
+height: 150px;
+
+pointer-events: none;
+
+}
+
+
+
+.digital-clock-box {
+
+background: var(--navy-primary);
+
+color: var(--gold-accent);
+
+text-align: center;
+
+padding: 8px;
+
+border-radius: 8px;
+
+font-size: 18px;
+
+font-weight: 800;
+
+letter-spacing: 2px;
+
+margin-bottom: 10px;
+
+border: 1px solid var(--gold-accent);
+
+}
+
+
+
+.btn {
+
+width: 100%;
+
+padding: 10px 12px;
+
+border: none;
+
+border-radius: 8px;
+
+font-weight: 700;
+
+font-size: 11.5px;
+
+cursor: pointer;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+gap: 6px;
+
+margin-bottom: 6px;
+
+transition: 0.2s;
+
+position: relative;
+
+z-index: 20;
+
+touch-action: manipulation;
+
+}
+
+
+
+.btn:active { transform: scale(0.98); }
+
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-primary { background: var(--navy-primary); color: var(--white); }
+
+.btn-success { background: var(--success); color: var(--white); }
+
+.btn-warning { background: var(--gold-accent); color: var(--white); }
+
+.btn-danger { background: var(--danger); color: var(--white); }
+
+.btn-outline { background: transparent; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
+
+
+
+.form-group { margin-bottom: 8px; text-align: left; }
+
+.form-group label { display: block; font-size: 10.5px; font-weight: 600; margin-bottom: 3px; color: var(--text-main); }
+
+.form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
+
+
+
+.badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #fff; }
+
+.badge-in { background: var(--success); }
+
+.badge-out { background: var(--danger); }
+
+.badge-warning { background: var(--warning); color: #000; }
+
+
+
+.log-list { list-style: none; }
+
+.log-item {
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+padding: 8px 10px;
+
+border-bottom: 1px solid #e2e8f0;
+
+font-size: 10px;
+
+}
+
+.log-thumb { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1; }
+
+
+
+.status-checklist {
+
+background: #f8fafc;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 8px;
+
+padding: 8px 10px;
+
+font-size: 10px;
+
+margin-top: 8px;
+
+display: flex;
+
+justify-content: space-between;
+
+gap: 8px;
+
+}
+
+
+
+.bottom-nav {
+
+position: fixed;
+
+bottom: 0;
+
+width: 100%;
+
+max-width: 480px;
+
+height: 60px;
+
+background: var(--navy-primary);
+
+display: flex;
+
+justify-content: space-around;
+
+align-items: center;
+
+border-top: 2px solid var(--gold-accent);
+
+z-index: 200;
+
+}
+
+
+
+.nav-link {
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+color: #94a3b8;
+
+text-decoration: none;
+
+font-size: 9.5px;
+
+cursor: pointer;
+
+}
+
+.nav-link i { font-size: 17px; margin-bottom: 2px; }
+
+.nav-link.active { color: var(--gold-accent); font-weight: bold; }
+
+</style>
+
 </head>
+
 <body>
 
-  <!-- ================= HALAMAN LOGIN ================= -->
-  <section id="loginScreen">
-    <div class="login-left">
-      <div>
-        <div class="brand-box">
-          <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" />
-          <div class="company-title">PT. ARDINA MULYA PERKASA</div>
-          <div class="system-title">MONITORING OPERASIONAL</div>
-          <div class="system-sub">MANAGEMENT BUILDING CLEANING SERVICE</div>
-        </div>
 
-        <div class="pin-card">
-          <label class="pin-label" for="usernameInput">ID / USERNAME</label>
-          <div class="pin-input-wrap">
-            <input type="text" id="usernameInput" class="text-input-login" placeholder="Masukkan ID / Username" autocomplete="off" />
-          </div>
 
-          <label class="pin-label" for="pinInput">PIN</label>
-          <div class="pin-input-wrap">
-            <input type="password" id="pinInput" class="pin-input" value="" maxlength="12" placeholder="Masukkan PIN" autocomplete="off" />
-            <button type="button" class="eye-btn" id="togglePinEye" title="Tampilkan / Sembunyikan PIN">👁️</button>
-          </div>
+<div class="app-container">
 
-          <button type="button" class="btn-masuk" id="btnMasukSistem">Login &rsaquo;</button>
 
-          <div class="auth-links-stack">
-            <div>Belum punya akun ? <button type="button" class="auth-link-btn" onclick="openModal('modalRegister')">Registrasi</button></div>
-            <div><button type="button" class="auth-link-btn" onclick="openModal('modalForgot')">Lupa ID / PIN</button></div>
-          </div>
 
-          <div class="login-error" id="loginErrorMsg"></div>
-        </div>
+<!-- MODAL AUTH LOGIN -->
 
-        <div class="badges-row">
-          <div class="badge-item"><span class="b-ico">🛡️</span><span class="b-txt">AMAN</span></div>
-          <div class="badge-item"><span class="b-ico">🔒</span><span class="b-txt">1 DEVICE</span></div>
-          <div class="badge-item"><span class="b-ico">📊</span><span class="b-txt">TERINTEGRASI</span></div>
-          <div class="badge-item"><span class="b-ico">👥</span><span class="b-txt">MULTI USER</span></div>
-        </div>
-      </div>
+<div id="auth-modal-overlay" class="auth-overlay">
 
-      <div id="pwaInstallBox" style="margin-top:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <div style="font-size:11px; color:#1e3a8a; line-height:1.35;">
-          <strong>Pasang ke Menu HP</strong><br/>
-          <span id="pwaInstallHint">Bisa di semua HP Android (Chrome / Samsung Internet) lewat link HTTPS.</span>
-        </div>
-        <button type="button" id="btnInstallPwa" style="background:#0b1f44; color:#fff; border:none; border-radius:8px; padding:7px 11px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">+ Install</button>
-      </div>
+<!-- FORM LOGIN -->
 
-      <div class="login-footer-left">
-        <div>&copy; 2026 PT. Ardina Mulya Perkasa. All Rights Reserved.</div>
-        <div class="tagline-italic">Think clean - Work smart</div>
-      </div>
-    </div>
+<div id="login-box-asli" class="auth-card-asli">
 
-    <div class="login-right">
-      <div class="pln-banner">
-        <div class="p-sub">MENDUKUNG OPERASIONAL</div>
-        <div class="p-main">PT PLN (Persero)</div>
-        <div class="p-main" style="font-size:14px; color:#bae6fd;">UIT JBT &amp; UIT JBB</div>
-      </div>
+<svg class="logo-svg" viewBox="0 0 200 200" style="width:50px; height:50px; margin-bottom:4px;">
 
-      <div class="lock-notice-banner">
-        <span>🔒 <strong>Modul Terkunci Sebelum Login:</strong> Silakan masukkan <strong>ID/Username</strong> dan <strong>PIN</strong> terlebih dahulu untuk membuka modul operasional satu per satu.</span>
-      </div>
+<polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
 
-      <div class="menu-grid-8">
-        <div class="menu-card-8" onclick="requireLoginNotice('DASHBOARD')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#1d4ed8;">🏠</div>
-          <div class="m-title">DASHBOARD</div>
-          <div class="m-desc">Rekap kinerja, KPI, SLA, dan performa lokasi</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('MONITORING PEKERJAAN')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#2563eb;">📋</div>
-          <div class="m-title">MONITORING PEKERJAAN</div>
-          <div class="m-desc">Input aktivitas, checklist, SLA dan evidence</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('MANPOWER')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#059669;">👥</div>
-          <div class="m-title">MANPOWER</div>
-          <div class="m-desc">Absensi, grooming, APD/K3 dan penilaian</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('MCP & DAC')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#ea580c;">🗂️</div>
-          <div class="m-title">MCP &amp; DAC</div>
-          <div class="m-desc">Monitoring pelaksanaan, temuan dan tindak lanjut</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('TEMUAN & ACTION PLAN')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#7c3aed;">🔍</div>
-          <div class="m-title">TEMUAN &amp; ACTION PLAN</div>
-          <div class="m-desc">Register temuan, PIC, target dan verifikasi</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('MATERIAL & ASSET')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#e11d48;">📦</div>
-          <div class="m-title">MATERIAL &amp; ASSET</div>
-          <div class="m-desc">Stok, pemakaian, peralatan dan MR</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('LAPORAN')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#0d9488;">📊</div>
-          <div class="m-title">LAPORAN</div>
-          <div class="m-desc">Rekap bulanan, export Excel &amp; PDF</div>
-        </div>
-        <div class="menu-card-8" onclick="requireLoginNotice('PENGATURAN')">
-          <span class="lock-pill">🔒 Login</span>
-          <div class="m-icon-box" style="background:#475569;">⚙️</div>
-          <div class="m-title">PENGATURAN</div>
-          <div class="m-desc">User, lokasi, data master dan backup</div>
-        </div>
-      </div>
+<rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
 
-      <div class="login-right-footer">
-        <div><strong>AMP</strong> &bull; Facilities Service Specialist &bull; Business Support Service</div>
-        <div style="font-style:italic;">Think clean - Work smart</div>
-      </div>
-    </div>
-  </section>
+<text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
 
-  <!-- ================= MODAL REGISTRASI AKUN BARU ================= -->
-  <div class="modal-backdrop" id="modalRegister">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title">Registrasi Akun Korlap Baru</div>
-        <button type="button" class="modal-close" onclick="closeModal('modalRegister')">&times;</button>
-      </div>
-      <div class="field-group" style="margin-bottom:10px;">
-        <label>Nama Lengkap</label>
-        <input type="text" id="regName" placeholder="Contoh: Budi Santoso" />
-      </div>
-      <div class="field-group" style="margin-bottom:10px;">
-        <label>ID / Username Baru</label>
-        <input type="text" id="regUsername" placeholder="Contoh: Budi_S" />
-      </div>
-      <div class="field-group" style="margin-bottom:10px;">
-        <label>Area Tugas PLN</label>
-        <input type="text" id="regArea" placeholder="Contoh: UPT Bekasi / ULTG Cikarang" />
-      </div>
-      <div class="field-group" style="margin-bottom:12px;">
-        <label>Buat PIN (6 digit angka)</label>
-        <input type="password" id="regPin" maxlength="10" placeholder="Contoh: 111414" />
-      </div>
-      <button type="button" class="btn-masuk" onclick="submitRegister()">Daftarkan Akun</button>
-    </div>
-  </div>
+</svg>
 
-  <!-- ================= MODAL LUPA ID / PIN ================= -->
-  <div class="modal-backdrop" id="modalForgot">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title">Bantuan Lupa ID / PIN &amp; Reset Sesi Perangkat</div>
-        <button type="button" class="modal-close" onclick="closeModal('modalForgot')">&times;</button>
-      </div>
-      <p style="font-size:12px; color:var(--slate-600); margin-bottom:10px; line-height:1.45;">
-        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk melihat pengingat akun atau mereset kunci perangkat apabila akun terkunci di perangkat sebelumnya.
-      </p>
-      <div class="field-group" style="margin-bottom:10px;">
-        <label>Nama Lengkap / ID / Username</label>
-        <input type="text" id="forgotLookupInput" placeholder="Contoh: Dede Rusmana atau Dede_Rusmana" />
-      </div>
-      <div id="forgotResultBox" style="font-size:12px; color:var(--navy-900); background:var(--slate-50); border:1px solid var(--slate-200); border-radius:8px; padding:10px; margin-bottom:12px; display:none;"></div>
-      <div style="display:flex; gap:8px;">
-        <button type="button" class="btn-primary" style="flex:1;" onclick="lookupAccountRecovery()">Cek Akun</button>
-        <button type="button" class="btn-secondary" style="flex:1;" onclick="unlockDeviceSessionByInput()">Reset Kunci Perangkat</button>
-      </div>
-    </div>
-  </div>
+<h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
 
-  <!-- ================= APLIKASI UTAMA ================= -->
-  <section id="appShell">
-    <header class="topbar">
-      <div class="topbar-brand">
-        <img class="topbar-logo-img" id="topbarLogoImg" alt="Logo AMP" />
-        <div>
-          <div style="font-size:14px; font-weight:900;">PT. ARDINA MULYA PERKASA — MONITORING OPERASIONAL</div>
-          <div style="font-size:11px; color:#93c5fd;">PT PLN (Persero) UIT JBT &amp; UIT JBB &bull; 14 Modul Terintegrasi</div>
-        </div>
-      </div>
-      <div class="topbar-user">
-        <span class="pill-info" id="activeUserBadge">User: -</span>
-        <span class="pill-info" id="activeRoleBadge">Role: -</span>
-        <span class="pill-info" id="activeAreaBadge">Area: -</span>
-        <span class="pill-info pill-gps-off" id="gpsStatusBadge">GPS: Menunggu Izin...</span>
-        <button type="button" class="btn-logout" id="btnLogout">Keluar</button>
-      </div>
-    </header>
+<p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.9</p>
 
-    <nav class="modules-nav-wrap" id="modulesNav"></nav>
 
-    <main class="main-container">
-      <!-- MODUL 1: DASHBOARD & GPS RADAR LIVE -->
-      <div id="mod-1" class="module-panel active">
-        <div class="kpi-grid">
-          <div class="kpi-box">
-            <div class="k-lbl" id="kpiCard1Label">AKUN AKTIF</div>
-            <div class="k-val" id="kpiKorlapTotal">-</div>
-            <div class="k-note" id="kpiCard1Note">UIT JBT &amp; UIT JBB</div>
-          </div>
-          <div class="kpi-box" style="border-left-color:#059669;">
-            <div class="k-lbl">STATUS GPS PERANGKAT</div>
-            <div class="k-val" id="kpiGpsLiveCount">0</div>
-            <div class="k-note">Pelacakan lokasi aktif</div>
-          </div>
-          <div class="kpi-box" style="border-left-color:#ea580c;">
-            <div class="k-lbl">ITEM MCP (SESUAI HAK AKSES)</div>
-            <div class="k-val" id="kpiMcpTotal">0</div>
-            <div class="k-note">Lantai 1, Lantai 2, Halaman &amp; Crass</div>
-          </div>
-          <div class="kpi-box" style="border-left-color:#7c3aed;">
-            <div class="k-lbl">REALISASI MCP (TANDA X)</div>
-            <div class="k-val" id="kpiMcpDone">0</div>
-            <div class="k-note" id="kpiMcpPct">0% dari rencana aktif</div>
-          </div>
-        </div>
 
-        <!-- PANEL RADAR GPS: HANYA BISA DIAKSES ADMIN / HEAD OF OPS -->
-        <div class="card" id="adminRadarCard" style="display:none;">
-          <div class="card-header-row">
-            <div>
-              <div class="card-title">Radar Pergerakan GPS Nyata (Live) Semua Korlap</div>
-              <div class="card-sub" id="liveCoordsReadout">Mode Head of Operation / Admin: memantau seluruh pergerakan GPS &amp; data Korlap.</div>
-            </div>
-            <div class="controls-bar" style="margin-bottom:0;">
-              <select id="radarFilterKorlap" class="form-select" onchange="focusSelectedKorlap()">
-                <option value="ALL">Semua Korlap</option>
-              </select>
-              <button type="button" class="btn-success" onclick="triggerLiveGpsOnce()">📍 Refresh GPS</button>
-              <button type="button" class="btn-primary" onclick="fitAllLiveKorlap()">🎯 Fokus Korlap Live</button>
-              <button type="button" class="btn-secondary" onclick="resetRadarView()">🗺️ Reset Peta</button>
-            </div>
-          </div>
+<div class="form-group">
 
-          <div class="controls-bar" style="margin-bottom:10px;">
-            <input type="text" id="radarSearchAddressInput" class="form-control" placeholder="Cari nama jalan, gedung, kantor PLN, atau lokasi detail..." onkeydown="if(event.key==='Enter'){searchMapLocationDetail();}" style="flex:1; min-width:240px;" />
-            <button type="button" class="btn-primary" onclick="searchMapLocationDetail()">🔍 Cari Jalan / Gedung</button>
-          </div>
-          <div id="radarDetailAddressBanner" style="margin-bottom:10px; padding:8px 12px; border-radius:10px; background:#f8fafc; border:1px solid #cbd5e1; font-size:12px; color:#0f172a;">
-            📍 Klik salah satu Korlap di daftar atau pilih Korlap pada filter untuk menampilkan <strong>nama jalan, gedung, dan alamat detail</strong> secara otomatis.
-          </div>
+<label>ID Karyawan / NIP</label>
 
-          <div class="radar-layout">
-            <div id="korlapRadarMap"></div>
-            <div class="korlap-roster-list" id="korlapRosterList"></div>
-          </div>
-        </div>
+<input type="text" id="login-id" class="form-control" placeholder="Contoh: TAD001, KOR001, AMP001">
 
-        <!-- PANEL KHUSUS KORLAP (NON-ADMIN): RADAR SEMUA KORLAP TERKUNCI -->
-        <div class="card" id="korlapRestrictedRadarCard" style="display:none;">
-          <div class="restricted-box">
-            <strong>🔒 Akses Radar GPS &amp; Rekap Seluruh Korlap Dibatasi</strong><br/>
-            Radar pemantauan GPS dan rekap seluruh data Korlap hanya dapat diakses oleh akun <strong>Admin / Head of Operation</strong>.
-            Perangkat Anda tetap mengirimkan sinyal kehadiran dan titik lokasi Anda sendiri ke sistem pusat.<br/>
-            <span id="korlapOwnGpsStatus" style="display:inline-block; margin-top:6px; font-weight:700;">Status GPS perangkat Anda: menunggu izin lokasi...</span>
-          </div>
-        </div>
-      </div>
+</div>
 
-      <!-- MODUL 2: MONITORING PEKERJAAN -->
-      <div id="mod-2" class="module-panel">
-        <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="card-title">Modul 2 — Monitoring Pekerjaan Harian &amp; SLA</div>
-              <div class="card-sub" id="mod2Sub">Pencatatan aktivitas pembersihan, SLA, dan evidence</div>
-            </div>
-          </div>
-          <div class="form-grid-2">
-            <div class="field-group">
-              <label>Area / Fasilitas PLN</label>
-              <select id="jobAreaInput"></select>
-            </div>
-            <div class="field-group">
-              <label>Uraian Pekerjaan</label>
-              <input type="text" id="jobDescInput" placeholder="Contoh: Cleaning Lobby, Toilet & Area Gardu" />
-            </div>
-            <div class="field-group">
-              <label>Capaian SLA (%)</label>
-              <input type="number" id="jobSlaInput" min="0" max="100" value="98" />
-            </div>
-            <div class="field-group">
-              <label>Catatan / Evidence</label>
-              <input type="text" id="jobNoteInput" placeholder="Foto / keterangan kondisi lapangan" />
-            </div>
-          </div>
-          <button type="button" class="btn-primary" onclick="addJobLog()">+ Simpan Log Pekerjaan</button>
-          <div class="table-wrap" style="margin-top:14px;">
-            <table>
-              <thead>
-                <tr><th>Waktu</th><th>Korlap</th><th>Area / Fasilitas</th><th>Uraian Pekerjaan</th><th>SLA</th><th>Keterangan</th></tr>
-              </thead>
-              <tbody id="jobLogBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
-      <!-- MODUL 3: MANPOWER & ABSENSI -->
-      <div id="mod-3" class="module-panel">
-        <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="card-title">Modul 3 — Manpower, Absensi &amp; Roster</div>
-              <div class="card-sub" id="mod3Sub">Data absensi dan status perangkat sesuai hak akses akun</div>
-            </div>
-            <button type="button" class="btn-success" onclick="recordAttendanceNow()">✅ Absen Hadir + Lokasi GPS</button>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr><th>ID / Username</th><th>Nama Personel</th><th>Area Tugas PLN</th><th>Koordinat Referensi / Live</th><th>Status Sesi &amp; GPS</th></tr>
-              </thead>
-              <tbody id="manpowerTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
-      <!-- MODUL 4: MCP & DAC -->
-      <div id="mod-4" class="module-panel">
-        <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="card-title">Modul 4 — Master Cleaning Program (MCP) &amp; DAC</div>
-              <div class="card-sub" id="mod4Sub">Korlap hanya melihat area tugasnya sendiri; Admin/HeadOfOps dapat melihat semua area</div>
-            </div>
-          </div>
+<div class="form-group">
 
-          <div class="controls-bar">
-            <div id="mcpAdminFilterWrap" style="display:none; align-items:center; gap:8px;">
-              <label style="font-size:12px; font-weight:700;">Filter Korlap (Admin):</label>
-              <select id="mcpKorlapFilter" class="form-select" onchange="renderMcpTable()">
-                <option value="ALL">Semua Area / Semua Korlap</option>
-              </select>
-            </div>
-            <select id="mcpStatusFilter" class="form-select" onchange="renderMcpTable()">
-              <option value="ALL">Semua Status</option>
-              <option value="X">Sudah Dikerjakan (X)</option>
-              <option value="RENCANA">Rencana (Tanpa X)</option>
-            </select>
-            <input type="text" id="mcpSearchInput" class="form-control" placeholder="Cari uraian pekerjaan / area..." oninput="renderMcpTable()" style="min-width:210px;" />
-            <button type="button" class="btn-secondary" id="btnExportMcp" onclick="exportMcpCsv()">⬇️ Export CSV MCP</button>
-          </div>
+<label>PIN Keamanan (6 Digit)</label>
 
-          <div class="mcp-subtabs" id="mcpSubtabs">
-            <button type="button" class="mcp-subtab active" data-sheet="LANTAI 1" onclick="switchMcpSheet('LANTAI 1')">LANTAI 1</button>
-            <button type="button" class="mcp-subtab" data-sheet="LANTAI 2" onclick="switchMcpSheet('LANTAI 2')">LANTAI 2</button>
-            <button type="button" class="mcp-subtab" data-sheet="HALAMAN" onclick="switchMcpSheet('HALAMAN')">HALAMAN</button>
-            <button type="button" class="mcp-subtab" data-sheet="CRASS" onclick="switchMcpSheet('CRASS')">CRASS</button>
-          </div>
+<input type="password" id="login-pin" class="form-control" placeholder="Masukkan 6 Digit PIN">
 
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Area / Lokasi</th>
-                  <th>Uraian Pekerjaan</th>
-                  <th>Kode</th>
-                  <th>Frekuensi</th>
-                  <th>Bulan / Minggu Pelaksanaan (Klik Sel untuk Toggle Tanda X)</th>
-                </tr>
-              </thead>
-              <tbody id="mcpTableBody"></tbody>
-            </table>
-          </div>
+</div>
 
-          <div class="legend-grid">
-            <div><strong>Kode:</strong> D = Daily &bull; W = Weekly &bull; M = Monthly &bull; Q = Quarterly &bull; SA = Semi-Annual &bull; A = Annual</div>
-            <div><strong>Tanda X:</strong> Klik sel bulan untuk menandai atau menghapus tanda <strong>X</strong>.</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- MODUL 5: TEMUAN & ACTION PLAN -->
-      <div id="mod-5" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 5 — Register Temuan Lapangan &amp; Action Plan</div>
-          <div class="card-sub">Korlap hanya melihat temuan di areanya sendiri; Admin/HeadOfOps memantau seluruh temuan</div>
-          <div class="form-grid-2" style="margin-top:12px;">
-            <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Contoh: ULTG Cikarang / UPT Bekasi" /></div>
-            <div class="field-group"><label>Uraian Temuan</label><input type="text" id="findDescInput" placeholder="Contoh: Saluran air halaman perlu pembersihan rutin" /></div>
-            <div class="field-group"><label>PIC Penanggung Jawab</label><input type="text" id="findPicInput" readonly /></div>
-            <div class="field-group"><label>Status</label>
-              <select id="findStatusInput">
-                <option value="Rencana">Rencana</option>
-                <option value="Selesai">Selesai</option>
-                <option value="Kendala">Kendala</option>
-              </select>
-            </div>
-          </div>
-          <button type="button" class="btn-primary" onclick="addFindingItem()">+ Tambah Temuan</button>
-          <div class="table-wrap" style="margin-top:14px;">
-            <table>
-              <thead><tr><th>Tanggal</th><th>Lokasi</th><th>Temuan</th><th>PIC</th><th>Status</th></tr></thead>
-              <tbody id="findingsTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
-      <!-- MODUL 6: MATERIAL & ASSET -->
-      <div id="mod-6" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 6 — Material &amp; Asset Operasional (Chemical, Tools &amp; APD)</div>
-          <div class="card-sub">Pemantauan stok material kebersihan, peralatan, dan kelengkapan APD</div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <table>
-              <thead><tr><th>Kode Item</th><th>Nama Material / Asset</th><th>Kategori</th><th>Stok Tersedia</th><th>Satuan</th><th>Kondisi</th></tr></thead>
-              <tbody id="materialTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+<button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK SYSTEM</button>
 
-      <!-- MODUL 7: LAPORAN (ADMIN / HEAD OF OPS ONLY FOR FULL REPORTS) -->
-      <div id="mod-7" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 7 — Rekapitulasi Laporan &amp; Ekspor Data</div>
-          <div class="card-sub" id="mod7Sub">Rekap data operasional sesuai tingkat hak akses akun</div>
-          <div class="controls-bar" style="margin-top:12px;" id="mod7Actions">
-            <button type="button" class="btn-success" onclick="exportMcpCsv()">⬇️ Unduh CSV Rekap</button>
-            <button type="button" class="btn-primary" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
-          </div>
-          <div id="reportSummaryText" style="font-size:12.5px; color:var(--slate-700); line-height:1.6;"></div>
-        </div>
-      </div>
+<button type="button" class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
 
-      <!-- MODUL 8: PENGATURAN -->
-      <div id="mod-8" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 8 — Pengaturan Sistem, Koneksi Supabase &amp; Manajemen Sesi</div>
-          <div class="card-sub" id="mod8Sub">Pengaturan sistem pusat dan kontrol sesi perangkat</div>
-          <div id="adminSettingsContent">
-            <div class="form-grid-2" style="margin-top:12px;">
-              <div class="field-group"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" placeholder="https://xxxx.supabase.co" /></div>
-              <div class="field-group"><label>Supabase Anon Key</label><input type="text" id="sbKeyInput" placeholder="eyJ..." /></div>
-            </div>
-            <div class="controls-bar">
-              <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan &amp; Hubungkan Supabase</button>
-              <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Uji &amp; Sinkron GPS Sekarang</button>
-              <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">🔗 Salin Link Auto-Connect Korlap</button>
-              <button type="button" class="btn-secondary" onclick="backupJsonData()">⬇️ Backup JSON</button>
-              <button type="button" class="btn-secondary" style="color:#b91c1c;" onclick="resetAllDeviceLocks()">🔓 Buka Semua Kunci Perangkat Korlap</button>
-            </div>
-            <div id="supabaseSyncStatusBox" style="margin-top:8px; padding:10px 12px; border-radius:10px; background:#f8fafc; border:1px solid #cbd5e1; font-size:12px; color:#334155;">
-              Status Sinkronisasi GPS Cloud: <strong>Belum dikonfigurasi</strong> (isi Project URL &amp; Anon Key di atas).
-            </div>
-            <details style="margin-top:10px; font-size:12px; color:#334155; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px;">
-              <summary style="font-weight:800; color:#1e3a8a; cursor:pointer;">📋 Lihat Script SQL Tabel Supabase (Jalankan 1x di SQL Editor Supabase)</summary>
-              <pre style="margin-top:8px; background:#0f172a; color:#e2e8f0; padding:10px; border-radius:8px; overflow-x:auto; font-size:11px;">create table if not exists public.amp_live_gps (
-  korlap_id text primary key,
-  korlap_name text,
-  area text,
-  lat double precision not null,
-  lng double precision not null,
-  accuracy integer,
-  is_real_device boolean default true,
-  updated_at timestamptz default now()
-);
+<button type="button" class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
 
-alter table public.amp_live_gps enable row level security;
 
-create policy "Allow public read amp_live_gps"
-  on public.amp_live_gps for select using (true);
 
-create policy "Allow public upsert amp_live_gps"
-  on public.amp_live_gps for insert with check (true);
+<div style="margin-top:8px; background:#f8fafc; padding:6px; border-radius:6px; font-size:8px; color:var(--text-muted); text-align:left;">
 
-create policy "Allow public update amp_live_gps"
-  on public.amp_live_gps for update using (true);</pre>
-            </details>
-          </div>
-          <div id="korlapSettingsRestricted" class="restricted-box" style="display:none; margin-top:12px;">
-            <strong>🔒 Pengaturan Pusat Hanya untuk Admin / Head of Operation</strong><br/>
-            Akun Korlap tidak memiliki akses ke konfigurasi sistem, backup seluruh data, maupun manajemen akun lain.
-          </div>
-        </div>
-      </div>
+<strong>Akun Uji Coba:</strong> <code>AMP001</code> / PIN <code>123456</code> (Admin)<br>
 
-      <div id="mod-9" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 9 — Inspeksi Kualitas Kebersihan &amp; 5R</div>
-          <div class="card-sub" id="mod9Sub">Evaluasi Ringkas, Rapi, Resik, Rawat, Rajin (5R) pada area tugas Anda.</div>
-        </div>
-      </div>
-      <div id="mod-10" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 10 — Kepatuhan K3, Safety Briefing &amp; APD</div>
-          <div class="card-sub" id="mod10Sub">Pencatatan safety briefing harian, penggunaan APD, dan nihil kecelakaan kerja (Zero Accident).</div>
-        </div>
-      </div>
-      <div id="mod-11" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 11 — Jadwal Shift &amp; Penugasan Personel</div>
-          <div class="card-sub" id="mod11Sub">Pengaturan shift pagi/siang/patroli sesuai wilayah tugas.</div>
-        </div>
-      </div>
-      <div id="mod-12" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 12 — Keluhan Pelanggan / Service Request (PLN)</div>
-          <div class="card-sub" id="mod12Sub">Pelacakan permintaan layanan tambahan dan respon cepat tindak lanjut di lapangan.</div>
-        </div>
-      </div>
-      <div id="mod-13" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 13 — Audit Peralatan &amp; Kalibrasi Mesin</div>
-          <div class="card-sub" id="mod13Sub">Pemeriksaan kesiapan polisher, vacuum cleaner, tangga, dan alat kerja lapangan.</div>
-        </div>
-      </div>
-      <div id="mod-14" class="module-panel">
-        <div class="card">
-          <div class="card-title">Modul 14 — Log Aktivitas &amp; Sesi Perangkat</div>
-          <div class="card-sub" id="mod14Sub">Log sesi aktif perangkat dan aktivitas login.</div>
-          <div id="sessionLogContent" style="margin-top:12px; font-size:12.5px; color:var(--slate-700);"></div>
-        </div>
-      </div>
-    </main>
-  </section>
+<code>KOR001</code> / PIN <code>123456</code> (Korlap) | <code>TAD001</code> / PIN <code>123456</code> (TAD)
 
-  <script>
-    // Logo resmi PT. Ardina Mulya Perkasa
-    const AMP_LOGO_DATA_URI = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='28' fill='%230b1f44'/%3E%3Cpolygon points='100,12 122,70 180,42 140,92 188,130 130,130 140,188 100,146 60,188 70,130 12,130 60,92 20,42 78,70' fill='%231e3a8a' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='52' y='74' width='96' height='48' rx='10' fill='%2300a8ff'/%3E%3Ctext x='100' y='108' font-family='Arial,sans-serif' font-weight='900' font-size='32' fill='%23ffffff' text-anchor='middle'%3EAMP%3C/text%3E%3C/svg%3E";
+</div>
 
-    // ================= DATA AKUN ADMIN / HEAD OF OPS + 13 KORLAP SESUAI DATA RESMI =================
-    const DEFAULT_ACCOUNTS = [
-      {
-        id: "M.Soheh",
-        username: "M.Soheh",
-        name: "M.Soheh (Head Of Operation)",
-        role: "ADMIN",
-        pin: "990099",
-        area: "Seluruh Wilayah PLN UIT JBT & UIT JBB",
-        lat: -6.2432,
-        lng: 106.8689
-      },
-      {
-        id: "Dede_Rusmana",
-        username: "Dede_Rusmana",
-        name: "Dede Rusmana",
-        role: "KORLAP",
-        pin: "110101",
-        area: "UPT Bekasi & ULTG Cikarang",
-        lat: -6.2383,
-        lng: 106.9756
-      },
-      {
-        id: "Dede_Purnama",
-        username: "Dede_Purnama",
-        name: "Dede Purnama",
-        role: "KORLAP",
-        pin: "110202",
-        area: "ULTG Karet & ULTG Mampang",
-        lat: -6.2165,
-        lng: 106.8168
-      },
-      {
-        id: "Dadang_Darsono",
-        username: "Dadang_Darsono",
-        name: "Dadang Darsono",
-        role: "KORLAP",
-        pin: "110303",
-        area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
-        lat: -6.1835,
-        lng: 106.9065
-      },
-      {
-        id: "Rizky_Badrul Z",
-        username: "Rizky_Badrul Z",
-        name: "Rizky Badrul Zaman",
-        role: "KORLAP",
-        pin: "110404",
-        area: "Kantor Induk Bandung & ULTG Bandung Barat",
-        lat: -6.9147,
-        lng: 107.6098
-      },
-      {
-        id: "Irfan_AS",
-        username: "Irfan_AS",
-        name: "Irfan Ardiatma S",
-        role: "KORLAP",
-        pin: "110505",
-        area: "UPT Cawang & ULTG Mampang",
-        lat: -6.2432,
-        lng: 106.8689
-      },
-      {
-        id: "Yan_S",
-        username: "Yan_S",
-        name: "Yan Saputra",
-        role: "KORLAP",
-        pin: "110606",
-        area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
-        lat: -6.1525,
-        lng: 106.8421
-      },
-      {
-        id: "Yadi_S",
-        username: "Yadi_S",
-        name: "Yadi Supriyadi",
-        role: "KORLAP",
-        pin: "110707",
-        area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan",
-        lat: -6.9326,
-        lng: 107.6278
-      },
-      {
-        id: "Tegar_D",
-        username: "Tegar_D",
-        name: "Tegar Dwitama",
-        role: "KORLAP",
-        pin: "110808",
-        area: "ULTG Cikarang",
-        lat: -6.2654,
-        lng: 107.1512
-      },
-      {
-        id: "Andi_I",
-        username: "Andi_I",
-        name: "Andi Ilmanto",
-        role: "KORLAP",
-        pin: "110909",
-        area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel",
-        lat: -6.3189,
-        lng: 106.7745
-      },
-      {
-        id: "Tamam_2",
-        username: "Tamam_2",
-        name: "Tamam",
-        role: "KORLAP",
-        pin: "111010",
-        area: "UPT Bogor & ULTG Sukabumi",
-        lat: -6.5971,
-        lng: 106.8060
-      },
-      {
-        id: "Haerudin_3",
-        username: "Haerudin_3",
-        name: "Haerudin",
-        role: "KORLAP",
-        pin: "111111",
-        area: "ULTG Purwakarta",
-        lat: -6.5569,
-        lng: 107.4463
-      },
-      {
-        id: "Iswanto_R",
-        username: "Iswanto_R",
-        name: "Iswanto Riansyah",
-        role: "KORLAP",
-        pin: "111212",
-        area: "UPT Bogor & ULTG Sukabumi",
-        lat: -6.9277,
-        lng: 106.9271
-      },
-      {
-        id: "Rifky_Y",
-        username: "Rifky_Y",
-        name: "Rifkiyansyah",
-        role: "KORLAP",
-        pin: "111313",
-        area: "UPT Karawang, UPT Bogor & ULTG Sukabumi",
-        lat: -6.3036,
-        lng: 107.3009
-      }
-    ];
+</div>
 
-    const MODULES_14 = [
-      { id: "mod-1", label: "1. Dashboard" },
-      { id: "mod-2", label: "2. Monitoring Pekerjaan" },
-      { id: "mod-3", label: "3. Manpower & Absensi" },
-      { id: "mod-4", label: "4. MCP & DAC" },
-      { id: "mod-5", label: "5. Temuan & Action Plan" },
-      { id: "mod-6", label: "6. Material & Asset" },
-      { id: "mod-7", label: "7. Laporan & Ekspor" },
-      { id: "mod-8", label: "8. Pengaturan" },
-      { id: "mod-9", label: "9. Inspeksi 5R" },
-      { id: "mod-10", label: "10. K3 & APD" },
-      { id: "mod-11", label: "11. Jadwal Shift" },
-      { id: "mod-12", label: "12. Service Request" },
-      { id: "mod-13", label: "13. Audit Peralatan" },
-      { id: "mod-14", label: "14. Log Aktivitas" }
-    ];
 
-    const MCP_TEMPLATES = {
-      "LANTAI 1": [
-        { uraian: "Cleaning Lobby Utama & Area Penerimaan Tamu", kode: "D", freq: "Harian (2x Shift)" },
-        { uraian: "Pembersihan Toilet & Wastafel Lantai 1", kode: "D", freq: "Harian (3x)" },
-        { uraian: "Sweeping & Mopping Koridor serta Tangga Utama", kode: "D", freq: "Harian" },
-        { uraian: "Dusting Kaca Partitions, Kusen & Panel Informasi", kode: "W", freq: "Mingguan" },
-        { uraian: "Polishing / Buffing Lantai Granit & Area Selasar", kode: "M", freq: "Bulanan" }
-      ],
-      "LANTAI 2": [
-        { uraian: "Cleaning Ruang Rapat, Ruang Kerja & Pantry Lantai 2", kode: "D", freq: "Harian" },
-        { uraian: "Pembersihan Toilet & Area Cuci Tangan Lantai 2", kode: "D", freq: "Harian (2x)" },
-        { uraian: "Vacuum Karpet / Pembersihan Kisi-Kisi AC & Ventilasi", kode: "W", freq: "Mingguan" },
-        { uraian: "Pembersihan Kaca Jendela Tinggi & Dinding Partisi", kode: "M", freq: "Bulanan" },
-        { uraian: "Deep Cleaning Ruang Arsip & Area Penunjang", kode: "Q", freq: "Triwulanan" }
-      ],
-      "HALAMAN": [
-        { uraian: "Sapubersih Halaman Parkir, Akses Masuk & Trotoar", kode: "D", freq: "Harian" },
-        { uraian: "Pengangkutan Sampah Domestik ke TPS", kode: "D", freq: "Harian" },
-        { uraian: "Pembersihan Saluran Drainase & Bak Kontrol Halaman", kode: "W", freq: "Mingguan" },
-        { uraian: "Pemangkasan Rumput Liar / Penataan Taman Area Site", kode: "M", freq: "Bulanan" },
-        { uraian: "Pencucian Area Jalan Lingkungan & Pos Keamanan", kode: "Q", freq: "Triwulanan" }
-      ],
-      "CRASS": [
-        { uraian: "Pembersihan Area Perimeter & Jalur
+
+<!-- FORM REGISTER -->
+
+<div id="register-box-asli" class="auth-card-asli" style="display:none;">
+
+<h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Karyawan Baru</h3>
+
+<div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
+
+<div class="form-group"><label>ID Karyawan / NIP</label><input type="text" id="reg-id" class="form-control" placeholder="NIP (Contoh: TAD002)"></div>
+
+<div class="form-group"><label>Jabatan</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / TAD / Staf"></div>
+
+<div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Cawang / PLN Unit"></div>
+
+<div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
+
+<div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN Angka"></div>
+
+<button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
+
+<button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
+
+</div>
+
+
+
+<!-- FORM RESET PIN -->
+
+<div id="reset-box-asli" class="auth-card-asli" style="display:none;">
+
+<h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
+
+<div class="form-group"><label>ID Karyawan</label><input type="text" id="reset-id" class="form-control" placeholder="ID Karyawan"></div>
+
+<div class="form-group"><label>PIN Lama (Default: 123456)</label><input type="password" id="reset-old-pin" class="form-control"></div>
+
+<div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
+
+<button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
+
+<button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+
+</div>
+
+</div>
+
+
+
+<!-- MAIN APP WRAPPER -->
+
+<div id="main-app" style="display:block;">
+
+
+
+<div class="app-header">
+
+<div class="brand-box">
+
+<svg class="logo-svg" viewBox="0 0 200 200">
+
+<polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
+
+<rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
+
+<text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
+
+</svg>
+
+<div class="brand-text">
+
+<h1>PT. ARDINA MULYA PERKASA</h1>
+
+<p>Facility Service Specialist</p>
+
+</div>
+
+</div>
+
+
+<div style="display:flex; align-items:center; gap:6px;">
+
+<div class="sync-badge" onclick="showModule(14)" title="Buka Pusat Sinkronisasi Supabase">
+
+<i class="fas fa-database" id="sync-icon"></i> <span id="sync-badge-text">Sync</span>
+
+</div>
+
+<div class="user-badge">
+
+<i class="fas fa-user-circle"></i>
+
+<span id="header-user-id">AMP001</span>
+
+<i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:6px; cursor:pointer;" title="Keluar"></i>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- MODUL 1: DASHBOARD -->
+
+<div id="mod-1" class="screen-panel active">
+
+<div class="card" style="background: linear-gradient(135deg, #0a192f, #1e3a8a); color: #fff;">
+
+<div style="display:flex; justify-content:space-between; align-items:center;">
+
+<div>
+
+<h2 id="dash-user-name" style="font-size:15px;">M. Soheh</h2>
+
+<p id="dash-user-role" style="font-size:10px; color:#d97706;">Head Of Operation</p>
+
+<p id="dash-user-site" style="font-size:9px; opacity:0.8; margin-top:4px;"><i class="fas fa-building"></i> Site: Pusat / All Sites</p>
+
+</div>
+
+<div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center;">
+
+<img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
+
+<i class="fas fa-user-tie" id="dash-avatar-icon" style="font-size:24px; color:var(--navy-primary);"></i>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- PANEL SATELIT RADAR LOKASI KORLAP (KHUSUS ADMIN / HEAD OF OPS) -->
+
+<div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
+
+<div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
+
+<span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap (Admin / Head of Ops)</span>
+
+<button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
+
+</div>
+
+<div class="radar-legend">
+
+<span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Akses Terbatas: Admin & Head of Ops</span>
+
+<span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Titik Aktif</span>
+
+</div>
+
+<div id="satellite-radar-map"></div>
+
+<p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta satelit):</p>
+
+<div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+
+</div>
+
+
+
+<div id="admin-export-card" class="card" style="display:none;">
+
+<div class="card-title"><i class="fas fa-download"></i> Output & Download Rekap Terpusat (Admin)</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+
+<button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
+
+<button type="button" class="btn btn-primary" onclick="exportGPSLogToCSV()"><i class="fas fa-map-marked-alt"></i> Rekap GPS Korlap (.CSV)</button>
+
+<button type="button" class="btn btn-warning" onclick="exportIncidentLogToCSV()"><i class="fas fa-file-alt"></i> Rekap Kejadian (.CSV)</button>
+
+<button type="button" class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<div class="card-title"><i class="fas fa-th-large"></i> 14 Modul Terintegrasi</div>
+
+<div class="modules-grid" style="grid-template-columns: repeat(4, 1fr);">
+
+<div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
+
+<div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
+
+<div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
+
+<div class="module-item" onclick="showModule(4)"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label">MR (Req)</div></div>
+
+<div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin & Cuti</div></div>
+
+<div class="module-item" onclick="showModule(6)"><div class="module-icon" style="background:var(--danger); color:#fff;"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label" style="color:var(--danger); font-weight:bold;">Kejadian</div></div>
+
+<div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
+
+<div class="module-item" onclick="showModule(8)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
+
+<div class="module-item" onclick="showModule(9)"><div class="module-icon"><i class="fas fa-hard-hat"></i></div><div class="module-label">High Risk K3</div></div>
+
+<div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-users"></i></div><div class="module-label">Data Tim</div></div>
+
+<div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
+
+<div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-exclamation-circle"></i></div><div class="module-label">Outstanding</div></div>
+
+<div class="module-item" onclick="showModule(13)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI & News</div></div>
+
+<div class="module-item" onclick="showModule(14)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- MODUL 2: PROFIL & EDIT FOTO PROFIL -->
+
+<div id="mod-2" class="screen-panel">
+
+<div class="card">
+
+<div class="card-title"><i class="fas fa-id-card"></i> Identitas & Digital ID Card Karyawan</div>
+
+<div style="text-align:center; padding:10px;">
+
+<div id="profile-avatar-display" style="width:80px; height:80px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 10px; overflow:hidden; border:3px solid var(--gold-accent); position:relative;">
+
+<img id="prof-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
+
+<i class="fas fa-user-tie" id="prof-avatar-icon"></i>
+
+</div>
+
+<h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M. Soheh</h3>
+
+<p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">NIP: AMP001</p>
+
+<p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Jabatan: Head Of Operation</p>
+
+</div>
+
+
+<div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
+
+<p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Lokasi Kerja:</strong> <span id="prof-site">Pusat / All Sites</span></p>
+
+<p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
+
+</div>
+
+</div>
+
+
+
+<div class="card" style="border-top: 3px solid var(--gold-accent);">
+
+<div class="card-title"><i class="fas fa-camera-retro"></i> Edit Foto Profil Anda</div>
+
+<div class="camera-box" style="height: 160px; margin-bottom: 8px;">
+
+<video id="profile-webcam" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+
+<img id="profile-photo-preview" src="" style="display:none; width:100%; height:100%; object-fit:cover;" />
+
+<div id="profile-cam-placeholder" style="color:#fff; text-align:center;">
+
+<i class="fas fa-user-circle fa-2x" style="margin-bottom:6px; color:var(--gold-accent);"></i>
+
+<p style="font-size:9.5px;">Pratinjau Foto Profil</p>
+
+</div>
+
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
+
+<button type="button" class="btn btn-outline" style="font-size:10px; padding:8px;" onclick="startProfileWebcam()"><i class="fas fa-video"></i> Buka Kamera</button>
+
+<button type="button" class="btn btn-primary" style="font-size:10px; padding:8px;" onclick="captureProfileSnapshot()"><i class="fas fa-camera"></i> Ambil Foto</button>
+
+</div>
+
+<div class="form-group" style="margin-top:6px;">
+
+<label style="font-size:10px; font-weight:bold;"><i class="fas fa-image"></i> Unggah Foto dari Galeri</label>
+
+<input type="file" id="profile-gallery-input" accept="image/*" class="form-control" onchange="loadProfileFromGallery(event)" style="font-size:10px; padding:6px;">
+
+</div>
+
+<button type="button" class="btn btn-success" style="margin-top:8px;" onclick="saveProfileAvatar()"><i class="fas fa-save"></i> SIMPAN FOTO PROFIL</button>
+
+</div>
+
+
+
+<div class="card">
+
+<div class="card-title"><i class="fas fa-user-edit"></i> Edit Informasi Profil</div>
+
+<div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control"></div>
+
+<div class="form-group"><label>Jabatan</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
+
+<div class="form-group"><label>Lokasi Kerja / Site</label><input type="text" id="edit-prof-site" class="form-control"></div>
+
+<div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control"></div>
+
+<button type="button" class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
+
+</div>
+
+
+
+<div class="card">
+
+<div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
+
+<div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control"></div>
+
+<div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control"></div>
+
+<button type="button" class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN</button>
+
+</div>
+
+</div>
+
+
+
+<!-- MODUL 3: ABSENSI -->
+
+<div id="mod-3" class="screen-panel">
+
+<div class="card">
+
+<div class="card-title"><i class="fas fa-clock"></i> Absensi Live Foto Wajib & GPS Gedung/PT</div>
+
+<div class="digital-clock-box" id="live-clock">00:00:00 WIB</div>
+
+
+
+<div class="camera-box">
+
+<video id="webcam" autoplay playsinline style="display:none;"></video>
+
+<img id="photo-preview" src="" style="display:none;" />
+
+<div id="camera-placeholder" style="color:#fff; text-align:center;">
+
+<i class="fas fa-camera fa-2x" style="margin-bottom:8px; color:var(--gold-accent);"></i>
+
+<p style="font-size:10px;">Wajib Live Foto Kamera Perangkat</p>
+
+</div>
+
+<div class="camera-overlay"></div>
+
+</div>
+
+
+
+<button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Nyalakan Kamera Live</button>
+
+<button type="button" class="btn btn-primary" id="btn-take-snapshot" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
+
+
+
+<div style="margin-top:10px;" class="form-group">
+
+<button type="button" class="btn btn-warning" id="btn-tarik-gps" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> 3. Tarik GPS Gedung / PT / Lokasi</button>
+
+<input type="text" id="gps-coords" class="form-control" placeholder="Nama Gedung / PT / Jalan & Koordinat..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold; font-size:10px;">
+
+<div id="gmaps-link-box" style="margin-top:4px; text-align:center;"></div>
+
+</div>
+
+
+
+<div class="status-checklist">
+
+<span id="status-foto-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> Foto: Belum</span>
+
+<span id="status-gps-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> GPS: Belum</span>
+
+</div>
+
+
+
+<div style="display:flex; gap:8px; margin-top:10px;">
+
+<button type="button" class="btn btn-success" id="btn-checkin" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
+
+<button type="button" class="btn btn-danger" id="btn-checkout" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
+
+</div>
+
+</div>
+
+
+
+<div class= 
