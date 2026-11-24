@@ -1062,6 +1062,9 @@ const state = {
 let radarMap = null;
 let radarMarkers = [];
 let radarLayerControl = null;
+let radarPollingTimer = null;
+let korlapWatchId = null;
+let supabaseRealtimeChannel = null;
 let webcamStream = null;
 let profileStream = null;
 let capturedAttendancePhoto = '';
@@ -1175,9 +1178,14 @@ function processLogin() {
   persistState();
   document.getElementById('auth-modal-overlay').classList.remove('active');
   refreshUserUI();
+  startLiveKorlapGPSWatch();
 }
 
 function logout() {
+  if (korlapWatchId !== null && navigator.geolocation) {
+    navigator.geolocation.clearWatch(korlapWatchId);
+    korlapWatchId = null;
+  }
   document.getElementById('auth-modal-overlay').classList.add('active');
   switchAuthSubView('login');
 }
@@ -1350,6 +1358,111 @@ function takeSnapshot() {
   badge.innerHTML = '<i class="fas fa-check-circle"></i> Foto: Siap';
 }
 
+async function pushKorlapPositionToCloud(posItem) {
+  if (!supabaseClient || !posItem) return;
+  try {
+    await supabaseClient
+      .from('korlap_positions')
+      .upsert({
+        id: posItem.id,
+        name: posItem.name,
+        site: posItem.site || '',
+        place_name: posItem.placeName || '',
+        street: posItem.street || '',
+        lat: Number(posItem.lat),
+        lng: Number(posItem.lng),
+        updated_label: posItem.updated || new Date().toLocaleTimeString('id-ID'),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+  } catch (_) {}
+}
+
+async function pullKorlapPositionsFromCloud() {
+  if (!supabaseClient) return false;
+  try {
+    const { data, error } = await supabaseClient
+      .from('korlap_positions')
+      .select('*');
+    if (error || !Array.isArray(data) || !data.length) return false;
+
+    state.korlapPositions = DEFAULT_KORLAP_POSITIONS.map(def => {
+      const remote = data.find(r => normalizeId(r.id) === normalizeId(def.id));
+      if (!remote) return def;
+      return {
+        ...def,
+        name: remote.name || def.name,
+        site: remote.site || def.site,
+        placeName: remote.place_name || def.placeName,
+        street: remote.street || def.street,
+        lat: typeof remote.lat === 'number' ? remote.lat : def.lat,
+        lng: typeof remote.lng === 'number' ? remote.lng : def.lng,
+        updated: remote.updated_label || new Date().toLocaleTimeString('id-ID')
+      };
+    });
+    persistState();
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function updateKorlapCoordEntry(latNum, lngNum, placeName, streetName, syncCloud = true) {
+  const idx = state.korlapPositions.findIndex(k => normalizeId(k.id) === normalizeId(state.currentUser.id));
+  if (idx < 0) return null;
+  const nowStr = new Date().toLocaleTimeString('id-ID');
+  state.korlapPositions[idx].lat = Number(latNum);
+  state.korlapPositions[idx].lng = Number(lngNum);
+  if (placeName) state.korlapPositions[idx].placeName = placeName;
+  if (streetName) state.korlapPositions[idx].street = streetName;
+  state.korlapPositions[idx].updated = nowStr;
+  persistState();
+  if (syncCloud) pushKorlapPositionToCloud(state.korlapPositions[idx]);
+  if (isAdminOrHead() && radarMap) refreshKorlapLivePositions();
+  return state.korlapPositions[idx];
+}
+
+function startLiveKorlapGPSWatch() {
+  if (!navigator.geolocation || isAdminOrHead()) return;
+  if (korlapWatchId !== null) {
+    navigator.geolocation.clearWatch(korlapWatchId);
+    korlapWatchId = null;
+  }
+  korlapWatchId = navigator.geolocation.watchPosition(
+    pos => {
+      const lat = Number(pos.coords.latitude.toFixed(6));
+      const lng = Number(pos.coords.longitude.toFixed(6));
+      updateKorlapCoordEntry(lat, lng, null, null, true);
+    },
+    () => {},
+    { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+  );
+}
+
+function subscribeRealtimeKorlapRadar() {
+  if (!supabaseClient || supabaseRealtimeChannel) return;
+  supabaseRealtimeChannel = supabaseClient
+    .channel('korlap-live-radar-channel')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'korlap_positions' },
+      async () => {
+        if (!isAdminOrHead()) return;
+        await pullKorlapPositionsFromCloud();
+        if (radarMap) refreshKorlapLivePositions();
+      }
+    )
+    .subscribe();
+}
+
+function startRadarAutoPolling() {
+  if (radarPollingTimer) clearInterval(radarPollingTimer);
+  radarPollingTimer = setInterval(async () => {
+    if (!isAdminOrHead()) return;
+    await pullKorlapPositionsFromCloud();
+    if (radarMap) refreshKorlapLivePositions();
+  }, 10000);
+}
+
 function getRealtimeGPS() {
   if (!navigator.geolocation) return alert('Geolocation tidak didukung browser ini.');
   const btn = document.getElementById('btn-tarik-gps');
@@ -1366,13 +1479,7 @@ function getRealtimeGPS() {
       badge.style.color = 'var(--success)';
       badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Siap';
 
-      const idx = state.korlapPositions.findIndex(k => normalizeId(k.id) === normalizeId(state.currentUser.id));
-      if (idx >= 0) {
-        state.korlapPositions[idx].lat = Number(lat);
-        state.korlapPositions[idx].lng = Number(lng);
-        state.korlapPositions[idx].updated = new Date().toLocaleTimeString('id-ID');
-        persistState();
-      }
+      updateKorlapCoordEntry(Number(lat), Number(lng), null, null, true);
 
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
         .then(res => res.ok ? res.json() : null)
@@ -1384,11 +1491,7 @@ function getRealtimeGPS() {
           if (fullDesc) {
             document.getElementById('gps-coords').value = `${fullDesc} (${lat}, ${lng})`;
           }
-          if (idx >= 0) {
-            state.korlapPositions[idx].placeName = buildingOrPt;
-            state.korlapPositions[idx].street = road || state.korlapPositions[idx].street;
-            persistState();
-          }
+          updateKorlapCoordEntry(Number(lat), Number(lng), buildingOrPt, road, true);
         })
         .catch(() => {});
     },
@@ -1774,7 +1877,7 @@ function initRadarMap() {
   }
 
   setTimeout(() => radarMap.invalidateSize(), 150);
-  refreshKorlapLivePositions();
+  pullKorlapPositionsFromCloud().then(() => refreshKorlapLivePositions());
 }
 
 function refreshKorlapLivePositions() {
@@ -1886,7 +1989,12 @@ function appendSyncLog(msg) {
   list.prepend(li);
 }
 
-function syncAllToSupabase() {
+async function syncAllToSupabase() {
+  if (supabaseClient && Array.isArray(state.korlapPositions)) {
+    for (const item of state.korlapPositions) {
+      await pushKorlapPositionToCloud(item);
+    }
+  }
   state.pendingQueue = 0;
   state.lastSync = new Date().toLocaleTimeString('id-ID');
   persistState();
@@ -1894,10 +2002,12 @@ function syncAllToSupabase() {
   alert('Status sinkronisasi diperbarui.');
 }
 
-function pullLatestFromSupabase() {
+async function pullLatestFromSupabase() {
+  const pulled = await pullKorlapPositionsFromCloud();
   state.lastSync = new Date().toLocaleTimeString('id-ID');
   persistState();
-  appendSyncLog('Pemeriksaan data terbaru dari server selesai.');
+  if (isAdminOrHead() && radarMap) refreshKorlapLivePositions();
+  appendSyncLog(pulled ? 'Data posisi Korlap terbaru ditarik dari Supabase.' : 'Pemeriksaan data terbaru dari server selesai.');
   alert('Data terbaru telah dimuat.');
 }
 
@@ -1916,6 +2026,9 @@ function renderAllLogs() {
 
 persistState();
 refreshUserUI();
+startLiveKorlapGPSWatch();
+subscribeRealtimeKorlapRadar();
+startRadarAutoPolling();
 </script>
 </body>
 </html>
