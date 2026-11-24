@@ -1,501 +1,1307 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMP Operation Monitoring V3.9 - Satellite Radar Admin</title>
-    <meta name="theme-color" content="#0a192f">
-    <meta name="description" content="Sistem Monitoring Operasional PT Ardina Mulya Perkasa">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoring Operasional AMP — PT. Ardina Mulya Perkasa (PLN UIT JBT & UIT JBB)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy-950: #06132b;
+      --navy-900: #0b1f44;
+      --navy-800: #102e63;
+      --navy-700: #163d82;
+      --blue-600: #1d5fd6;
+      --blue-500: #2575fc;
+      --cyan-400: #38bdf8;
+      --amber-500: #f59e0b;
+      --emerald-600: #059669;
+      --rose-600: #e11d48;
+      --violet-600: #7c3aed;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-card: 0 12px 30px -10px rgba(6, 19, 43, 0.16);
+    }
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+    body { background: var(--slate-100); color: var(--slate-900); min-height: 100vh; }
 
-    <style>
-        :root {
-            --navy-primary: #0a192f;
-            --navy-header: #112240;
-            --blue-accent: #1e3a8a;
-            --gold-accent: #d97706;
-            --light-bg: #f3f4f6;
-            --white: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
+    /* ================= LOGIN HERO SPLIT SCREEN ================= */
+    #loginScreen {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-800) 55%, #0e3a78 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--light-bg); color: var(--text-main); display: flex; justify-content: center; }
+    .login-left {
+      background: rgba(255, 255, 255, 0.98);
+      padding: 24px 26px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 12px 0 36px rgba(2, 8, 23, 0.35);
+      z-index: 2;
+    }
 
-        .app-container {
-            width: 100%;
-            max-width: 540px;
-            background: var(--white);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.15);
-            position: relative;
-            padding-bottom: 70px;
-        }
+    .brand-box { text-align: center; }
+    .amp-logo-img {
+      width: 108px;
+      height: 78px;
+      object-fit: contain;
+      margin: 0 auto 6px;
+      display: block;
+      border-radius: 12px;
+      background: #fff;
+      padding: 4px;
+      box-shadow: 0 6px 18px rgba(11, 31, 68, 0.14);
+    }
 
-        .app-header {
-            background: linear-gradient(135deg, var(--navy-primary), var(--blue-accent));
-            color: var(--white);
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 3px solid var(--gold-accent);
-            position: sticky;
-            top: 0;
-            z-index: 300;
-        }
+    .company-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); letter-spacing: 0.4px; }
+    .system-title { font-size: 18.5px; font-weight: 900; color: var(--slate-900); margin-top: 4px; line-height: 1.2; }
+    .system-sub { font-size: 10px; font-weight: 700; color: var(--slate-600); letter-spacing: 1.1px; margin-top: 3px; text-transform: uppercase; }
 
-        .brand-box { display: flex; align-items: center; gap: 10px; }
-        .logo-svg { width: 36px; height: 36px; }
-        .brand-text h1 { font-size: 13px; font-weight: 700; color: #fff; }
-        .brand-text p { font-size: 8.5px; color: var(--gold-accent); font-weight: 600; text-transform: uppercase; }
+    .pin-card {
+      margin-top: 14px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 15px;
+    }
+    .pin-label { font-size: 11px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.7px; margin-bottom: 5px; display: block; }
+    .pin-input-wrap { position: relative; display: flex; align-items: center; margin-bottom: 10px; }
+    .text-input-login {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--slate-300);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+      background: #fff;
+      outline: none;
+    }
+    .text-input-login:focus, .pin-input:focus { border-color: var(--blue-600); }
+    .pin-input {
+      width: 100%;
+      padding: 10px 42px 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--blue-500);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--navy-900);
+      background: #fff;
+      outline: none;
+    }
+    .eye-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--slate-600);
+      padding: 4px;
+    }
+    .btn-masuk {
+      width: 100%;
+      margin-top: 4px;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--navy-900), var(--blue-600));
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 18px rgba(29, 95, 214, 0.35);
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .btn-masuk:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
-        .user-badge {
-            background: rgba(255,255,255,0.15);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+    .auth-links-stack {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--slate-300);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--slate-700);
+    }
+    .auth-link-btn {
+      background: none;
+      border: none;
+      color: var(--blue-600);
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 12px;
+    }
+    .auth-link-btn:hover { color: var(--navy-900); }
 
-        .sync-badge {
-            background: var(--gold-accent);
-            color: var(--navy-primary);
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+    .login-error {
+      margin-top: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--rose-600);
+      text-align: center;
+      min-height: 16px;
+    }
 
-        .screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
-        .screen-panel.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .badges-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .badge-item {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 6px 4px;
+    }
+    .badge-item .b-ico { font-size: 13px; display: block; margin-bottom: 2px; }
+    .badge-item .b-txt { font-size: 8.5px; font-weight: 800; color: var(--slate-700); letter-spacing: 0.4px; }
 
-        .card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 14px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-        }
+    .login-footer-left {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--slate-600);
+    }
+    .tagline-italic { font-style: italic; font-weight: 700; color: var(--navy-800); margin-top: 2px; font-size: 11px; }
 
-        .card-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--navy-primary);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #f3f4f6;
-            padding-bottom: 8px;
-        }
+    .login-right {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px 32px 20px;
+      background:
+        linear-gradient(180deg, rgba(6, 19, 43, 0.52) 0%, rgba(11, 31, 68, 0.72) 65%, rgba(6, 19, 43, 0.94) 100%),
+        url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      color: #fff;
+    }
 
-        #satellite-radar-map {
-            width: 100%;
-            height: 310px;
-            border-radius: 10px;
-            border: 2px solid var(--navy-primary);
-            margin-bottom: 8px;
-            z-index: 15;
-            background: #e2e8f0;
-        }
+    .pln-banner {
+      align-self: flex-end;
+      background: rgba(6, 19, 43, 0.78);
+      backdrop-filter: blur(8px);
+      border-left: 4px solid var(--cyan-400);
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-align: right;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .pln-banner .p-sub { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: var(--cyan-400); }
+    .pln-banner .p-main { font-size: 16px; font-weight: 900; letter-spacing: 0.4px; line-height: 1.25; }
 
-        .radar-legend {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 9.5px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            background: #ffffff;
-            padding: 6px 8px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
+    .lock-notice-banner {
+      background: rgba(6, 19, 43, 0.82);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #e0f2fe;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+    }
 
-        .detail-address-box {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 10.5px;
-            color: #0f172a;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
+    .menu-grid-8 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: auto 0;
+      padding: 14px 0;
+    }
+    .menu-card-8 {
+      background: rgba(255, 255, 255, 0.93);
+      color: var(--slate-900);
+      border-radius: 14px;
+      padding: 16px 14px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      border: 1px solid rgba(255,255,255,0.7);
+      position: relative;
+    }
+    .menu-card-8:hover { transform: translateY(-2px); }
+    .lock-pill {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+    .m-icon-box {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #fff;
+      font-weight: 800;
+    }
+    .m-title { font-size: 12px; font-weight: 900; color: var(--navy-900); letter-spacing: 0.3px; }
+    .m-desc { font-size: 10.5px; color: var(--slate-600); margin-top: 4px; line-height: 1.3; }
 
-        .search-row {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
+    .login-right-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      padding-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11.5px;
+    }
+    .login-right-footer strong { color: var(--cyan-400); }
 
-        .btn {
-            padding: 8px 10px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 11px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: 0.2s;
-        }
-        .btn-primary { background: var(--navy-primary); color: var(--white); }
-        .btn-outline { background: #fff; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
+    /* ================= MODAL REGISTRASI & LUPA ID/PIN ================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 19, 43, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 900;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0 24px 48px rgba(2, 8, 23, 0.45);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--slate-200);
+      padding-bottom: 8px;
+    }
+    .modal-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); }
+    .modal-close {
+      background: none; border: none; font-size: 18px; cursor: pointer; color: var(--slate-600); font-weight: 900;
+    }
 
-        .form-control {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 11px;
-            outline: none;
-            background: #fff;
-        }
-        .form-control:focus { border-color: var(--blue-accent); }
+    /* ================= MAIN APP SHELL ================= */
+    #appShell { display: none; min-height: 100vh; background: var(--slate-100); }
 
-        .korlap-card-item {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 10px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .korlap-card-item:hover {
-            border-color: var(--blue-accent);
-            background: #eff6ff;
-        }
+    .topbar {
+      background: linear-gradient(90deg, var(--navy-950), var(--navy-800));
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 400;
+      box-shadow: 0 4px 18px rgba(6, 19, 43, 0.25);
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 12px; }
+    .topbar-logo-img {
+      width: 48px; height: 38px; border-radius: 8px;
+      background: #fff; padding: 2px; object-fit: contain;
+    }
+    .topbar-user { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
+    .pill-info {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .pill-role-admin { background: rgba(245, 158, 11, 0.25); border-color: #fbbf24; color: #fde68a; }
+    .pill-gps-on { background: rgba(16, 185, 129, 0.22); border-color: #34d399; color: #a7f3d0; }
+    .pill-gps-off { background: rgba(244, 63, 94, 0.22); border-color: #fb7185; color: #fecdd3; }
+    .btn-logout {
+      background: var(--rose-600); color: #fff; border: none;
+      padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer;
+    }
 
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 540px;
-            height: 58px;
-            background: var(--navy-primary);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 2px solid var(--gold-accent);
-            z-index: 250;
-        }
-        .nav-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #94a3b8;
-            font-size: 9.5px;
-            cursor: pointer;
-        }
-        .nav-link i { font-size: 16px; margin-bottom: 2px; }
-        .nav-link.active { color: var(--gold-accent); font-weight: bold; }
-    </style>
+    /* 14-MODULE NAV STRIP */
+    .modules-nav-wrap {
+      background: #fff;
+      border-bottom: 1px solid var(--slate-200);
+      padding: 10px 16px;
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      position: sticky;
+      top: 62px;
+      z-index: 350;
+    }
+    .mod-tab {
+      flex: 0 0 auto;
+      padding: 7px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      color: var(--slate-700);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.14s ease;
+    }
+    .mod-tab:hover { border-color: var(--blue-500); color: var(--navy-900); }
+    .mod-tab.active {
+      background: var(--navy-900);
+      color: #fff;
+      border-color: var(--navy-900);
+      box-shadow: 0 4px 10px rgba(11, 31, 68, 0.22);
+    }
+
+    .main-container { max-width: 1440px; margin: 0 auto; padding: 18px 20px 44px; }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--slate-200);
+      margin-bottom: 18px;
+    }
+    .card-header-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .card-title { font-size: 16px; font-weight: 900; color: var(--navy-900); }
+    .card-sub { font-size: 12px; color: var(--slate-600); margin-top: 2px; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .kpi-box {
+      background: linear-gradient(135deg, #fff, var(--slate-50));
+      border: 1px solid var(--slate-200);
+      border-left: 4px solid var(--blue-600);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .kpi-box .k-lbl { font-size: 11px; font-weight: 700; color: var(--slate-600); }
+    .kpi-box .k-val { font-size: 20px; font-weight: 900; color: var(--navy-900); margin-top: 4px; }
+    .kpi-box .k-note { font-size: 10.5px; color: var(--slate-600); margin-top: 2px; }
+
+    /* RADAR MAP (ADMIN / HEAD OF OPS ONLY) */
+    .radar-layout {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 16px;
+    }
+    #korlapRadarMap {
+      width: 100%;
+      height: 440px;
+      border-radius: 14px;
+      border: 2px solid var(--slate-200);
+      z-index: 10;
+      background: #e2e8f0;
+    }
+    .korlap-roster-list {
+      max-height: 440px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+    .korlap-item {
+      border: 1px solid var(--slate-200);
+      border-radius: 11px;
+      padding: 10px 12px;
+      background: var(--slate-50);
+      cursor: pointer;
+      transition: border-color 0.14s ease, background 0.14s ease;
+    }
+    .korlap-item:hover { border-color: var(--blue-500); background: #eff6ff; }
+    .korlap-item-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .korlap-name { font-size: 12.5px; font-weight: 800; color: var(--navy-900); }
+    .badge-live {
+      background: #dcfce7; color: #166534; border: 1px solid #86efac;
+      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+    }
+    .badge-area {
+      background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc;
+      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+    }
+    .korlap-meta { font-size: 11px; color: var(--slate-600); margin-top: 4px; line-height: 1.35; }
+
+    .restricted-box {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+      border-radius: 14px;
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* TABLES & CONTROLS */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .form-control, .form-select {
+      padding: 8px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--slate-300);
+      font-size: 12.5px;
+      background: #fff;
+      color: var(--slate-900);
+    }
+    .btn-primary {
+      background: var(--navy-900); color: #fff; border: none;
+      padding: 8px 14px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--blue-600); }
+    .btn-secondary {
+      background: var(--slate-100); color: var(--slate-800); border: 1px solid var(--slate-300);
+      padding: 8px 12px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .btn-success {
+      background: var(--emerald-600); color: #fff; border: none;
+      padding: 8px 14px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--slate-200); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th {
+      background: var(--navy-900);
+      color: #fff;
+      text-align: left;
+      padding: 9px 10px;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      white-space: nowrap;
+    }
+    td { padding: 8px 10px; border-bottom: 1px solid var(--slate-200); vertical-align: middle; }
+    tr:nth-child(even) td { background: #f8fafc; }
+
+    .mcp-subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .mcp-subtab {
+      padding: 7px 14px;
+      border-radius: 9px;
+      border: 1px solid var(--slate-300);
+      background: #fff;
+      color: var(--slate-700);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .mcp-subtab.active { background: var(--blue-600); color: #fff; border-color: var(--blue-600); }
+
+    .status-chip {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .st-rencana { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .st-selesai { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .st-kendala { background: #ffe4e6; color: #9f1239; border: 1px solid #fda4af; }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: var(--slate-700);
+    }
+
+    .module-panel { display: none; }
+    .module-panel.active { display: block; }
+
+    .form-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .field-group label { display: block; font-size: 11.5px; font-weight: 700; color: var(--slate-700); margin-bottom: 4px; }
+    .field-group input, .field-group select, .field-group textarea {
+      width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--slate-300); font-size: 12.5px;
+    }
+
+    @media (max-width: 980px) {
+      #loginScreen { grid-template-columns: 1fr; }
+      .menu-grid-8 { grid-template-columns: repeat(2, 1fr); }
+      .radar-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+  <meta name="theme-color" content="#0b1f44" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AMP Monitoring" />
+  <link id="pwaManifestLink" rel="manifest" />
+  <link id="pwaAppleIconLink" rel="apple-touch-icon" />
 </head>
 <body>
-<div class="app-container">
-    <div class="app-header">
+
+  <!-- ================= HALAMAN LOGIN ================= -->
+  <section id="loginScreen">
+    <div class="login-left">
+      <div>
         <div class="brand-box">
-            <svg class="logo-svg" viewBox="0 0 200 200">
-                <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
-                <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
-                <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
-            </svg>
-            <div class="brand-text">
-                <h1>PT. ARDINA MULYA PERKASA</h1>
-                <p>Peta Detail Jalan, Gedung &amp; Radar Korlap</p>
-            </div>
+          <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" />
+          <div class="company-title">PT. ARDINA MULYA PERKASA</div>
+          <div class="system-title">MONITORING OPERASIONAL</div>
+          <div class="system-sub">MANAGEMENT BUILDING CLEANING SERVICE</div>
         </div>
-        <div style="display:flex; align-items:center; gap:6px;">
-            <div class="sync-badge" onclick="refreshKorlapLivePositions()">
-                <i class="fas fa-sync-alt"></i> <span>Sync</span>
-            </div>
-            <div class="user-badge">
-                <i class="fas fa-user-shield"></i>
-                <span>AMP001</span>
-            </div>
+
+        <div class="pin-card">
+          <label class="pin-label" for="usernameInput">ID / USERNAME</label>
+          <div class="pin-input-wrap">
+            <input type="text" id="usernameInput" class="text-input-login" placeholder="Masukkan ID / Username" autocomplete="off" />
+          </div>
+
+          <label class="pin-label" for="pinInput">PIN</label>
+          <div class="pin-input-wrap">
+            <input type="password" id="pinInput" class="pin-input" value="" maxlength="12" placeholder="Masukkan PIN" autocomplete="off" />
+            <button type="button" class="eye-btn" id="togglePinEye" title="Tampilkan / Sembunyikan PIN">👁️</button>
+          </div>
+
+          <button type="button" class="btn-masuk" id="btnMasukSistem">Login &rsaquo;</button>
+
+          <div class="auth-links-stack">
+            <div>Belum punya akun ? <button type="button" class="auth-link-btn" onclick="openModal('modalRegister')">Registrasi</button></div>
+            <div><button type="button" class="auth-link-btn" onclick="openModal('modalForgot')">Lupa ID / PIN</button></div>
+          </div>
+
+          <div class="login-error" id="loginErrorMsg"></div>
         </div>
+
+        <div class="badges-row">
+          <div class="badge-item"><span class="b-ico">🛡️</span><span class="b-txt">AMAN</span></div>
+          <div class="badge-item"><span class="b-ico">🔒</span><span class="b-txt">1 DEVICE</span></div>
+          <div class="badge-item"><span class="b-ico">📊</span><span class="b-txt">TERINTEGRASI</span></div>
+          <div class="badge-item"><span class="b-ico">👥</span><span class="b-txt">MULTI USER</span></div>
+        </div>
+      </div>
+
+      <div id="pwaInstallBox" style="margin-top:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div style="font-size:11px; color:#1e3a8a; line-height:1.35;">
+          <strong>Pasang ke Menu HP</strong><br/>
+          <span id="pwaInstallHint">Bisa di semua HP Android (Chrome / Samsung Internet) lewat link HTTPS.</span>
+        </div>
+        <button type="button" id="btnInstallPwa" style="background:#0b1f44; color:#fff; border:none; border-radius:8px; padding:7px 11px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">+ Install</button>
+      </div>
+
+      <div class="login-footer-left">
+        <div>&copy; 2026 PT. Ardina Mulya Perkasa. All Rights Reserved.</div>
+        <div class="tagline-italic">Think clean - Work smart</div>
+      </div>
     </div>
 
-    <div id="mod-1" class="screen-panel active">
-        <div class="card" style="border: 2px solid var(--gold-accent); background: #fffbeb;">
-            <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-                <span><i class="fas fa-map-marked-alt" style="color:var(--danger);"></i> Peta Detail Jalan, Gedung &amp; Radar Korlap</span>
-                <div style="display:flex; gap:5px;">
-                    <button type="button" class="btn btn-primary" style="padding:4px 8px; font-size:9.5px;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
-                    <button type="button" class="btn btn-outline" style="padding:4px 8px; font-size:9.5px;" onclick="resetMapViewDetail()"><i class="fas fa-compress-arrows-alt"></i> Reset</button>
-                </div>
-            </div>
+    <div class="login-right">
+      <div class="pln-banner">
+        <div class="p-sub">MENDUKUNG OPERASIONAL</div>
+        <div class="p-main">PT PLN (Persero)</div>
+        <div class="p-main" style="font-size:14px; color:#bae6fd;">UIT JBT &amp; UIT JBB</div>
+      </div>
 
-            <div class="radar-legend">
-                <span><i class="fas fa-layer-group" style="color:var(--blue-accent);"></i> Google Maps / Hybrid / Jalan &amp; Gedung</span>
-                <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">4 Titik Aktif</span>
-            </div>
+      <div class="lock-notice-banner">
+        <span>🔒 <strong>Modul Terkunci Sebelum Login:</strong> Silakan masukkan <strong>ID/Username</strong> dan <strong>PIN</strong> terlebih dahulu untuk membuka modul operasional satu per satu.</span>
+      </div>
 
-            <div class="search-row">
-                <input type="text" id="mapSearchInput" class="form-control" placeholder="Cari nama jalan, gedung, kantor PLN, atau lokasi detail..." onkeydown="if(event.key==='Enter'){searchLocationDetail();}" />
-                <button type="button" class="btn btn-primary" onclick="searchLocationDetail()"><i class="fas fa-search"></i> Cari</button>
-            </div>
-
-            <div id="detail-address-banner" class="detail-address-box">
-                <i class="fas fa-info-circle" style="color:var(--blue-accent);"></i> Klik salah satu titik Korlap di bawah atau cari nama jalan/gedung untuk menampilkan <strong>alamat lengkap, nama jalan, dan gedung sekitar</strong>.
-            </div>
-
-            <div id="satellite-radar-map"></div>
-
-            <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:6px;">Klik titik Korlap untuk zoom detail jalan &amp; gedung (zoom 17 + POI sekitar):</p>
-            <div id="korlap-live-radar-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+      <div class="menu-grid-8">
+        <div class="menu-card-8" onclick="requireLoginNotice('DASHBOARD')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#1d4ed8;">🏠</div>
+          <div class="m-title">DASHBOARD</div>
+          <div class="m-desc">Rekap kinerja, KPI, SLA, dan performa lokasi</div>
         </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('MONITORING PEKERJAAN')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#2563eb;">📋</div>
+          <div class="m-title">MONITORING PEKERJAAN</div>
+          <div class="m-desc">Input aktivitas, checklist, SLA dan evidence</div>
+        </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('MANPOWER')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#059669;">👥</div>
+          <div class="m-title">MANPOWER</div>
+          <div class="m-desc">Absensi, grooming, APD/K3 dan penilaian</div>
+        </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('MCP & DAC')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#ea580c;">🗂️</div>
+          <div class="m-title">MCP &amp; DAC</div>
+          <div class="m-desc">Monitoring pelaksanaan, temuan dan tindak lanjut</div>
+        </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('TEMUAN & ACTION PLAN')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#7c3aed;">🔍</div>
+          <div class="m-title">TEMUAN &amp; ACTION PLAN</div>
+          <div class="m-desc">Register temuan, PIC, target dan verifikasi</div>
+        </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('MATERIAL & ASSET')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#e11d48;">📦</div>
+          <div class="m-title">MATERIAL &amp; ASSET</div>
+          <div class="m-desc">Stok, pemakaian, peralatan dan MR</div>
+        </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('LAPORAN')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#0d9488;">📊</div>
+          <div class="m-title">LAPORAN</div>
+          <div class="m-desc">Rekap bulanan, export Excel &amp; PDF</div>
+        </div>
+        <div class="menu-card-8" onclick="requireLoginNotice('PENGATURAN')">
+          <span class="lock-pill">🔒 Login</span>
+          <div class="m-icon-box" style="background:#475569;">⚙️</div>
+          <div class="m-title">PENGATURAN</div>
+          <div class="m-desc">User, lokasi, data master dan backup</div>
+        </div>
+      </div>
+
+      <div class="login-right-footer">
+        <div><strong>AMP</strong> &bull; Facilities Service Specialist &bull; Business Support Service</div>
+        <div style="font-style:italic;">Think clean - Work smart</div>
+      </div>
     </div>
+  </section>
 
-    <div class="bottom-nav">
-        <div class="nav-link active" onclick="showModule(1)">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>Peta Detail</span>
-        </div>
-        <div class="nav-link" onclick="refreshKorlapLivePositions()">
-            <i class="fas fa-satellite-dish"></i>
-            <span>Radar Live</span>
-        </div>
-        <div class="nav-link" onclick="resetMapViewDetail()">
-            <i class="fas fa-location-arrow"></i>
-            <span>Area JBT/JBB</span>
-        </div>
+  <!-- ================= MODAL REGISTRASI AKUN BARU ================= -->
+  <div class="modal-backdrop" id="modalRegister">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Registrasi Akun Korlap Baru</div>
+        <button type="button" class="modal-close" onclick="closeModal('modalRegister')">&times;</button>
+      </div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Contoh: Budi Santoso" />
+      </div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>ID / Username Baru</label>
+        <input type="text" id="regUsername" placeholder="Contoh: Budi_S" />
+      </div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Area Tugas PLN</label>
+        <input type="text" id="regArea" placeholder="Contoh: UPT Bekasi / ULTG Cikarang" />
+      </div>
+      <div class="field-group" style="margin-bottom:12px;">
+        <label>Buat PIN (6 digit angka)</label>
+        <input type="password" id="regPin" maxlength="10" placeholder="Contoh: 111414" />
+      </div>
+      <button type="button" class="btn-masuk" onclick="submitRegister()">Daftarkan Akun</button>
     </div>
-</div>
+  </div>
 
-<script>
-    const KORLAP_SITES = [
-        { id: "Dede_Rusmana", name: "Dede Rusmana", area: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756, status: "LIVE" },
-        { id: "Dede_Purnama", name: "Dede Purnama", area: "ULTG Karet & ULTG Mampang", lat: -6.2165, lng: 106.8168, status: "LIVE" },
-        { id: "Dadang_Darsono", name: "Dadang Darsono", area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah", lat: -6.1835, lng: 106.9065, status: "LIVE" },
-        { id: "Rizky_Badrul_Z", name: "Rizky Badrul Zaman", area: "Kantor Induk Bandung & ULTG Bandung Barat", lat: -6.9147, lng: 107.6098, status: "LIVE" }
+  <!-- ================= MODAL LUPA ID / PIN ================= -->
+  <div class="modal-backdrop" id="modalForgot">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Bantuan Lupa ID / PIN &amp; Reset Sesi Perangkat</div>
+        <button type="button" class="modal-close" onclick="closeModal('modalForgot')">&times;</button>
+      </div>
+      <p style="font-size:12px; color:var(--slate-600); margin-bottom:10px; line-height:1.45;">
+        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk melihat pengingat akun atau mereset kunci perangkat apabila akun terkunci di perangkat sebelumnya.
+      </p>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Nama Lengkap / ID / Username</label>
+        <input type="text" id="forgotLookupInput" placeholder="Contoh: Dede Rusmana atau Dede_Rusmana" />
+      </div>
+      <div id="forgotResultBox" style="font-size:12px; color:var(--navy-900); background:var(--slate-50); border:1px solid var(--slate-200); border-radius:8px; padding:10px; margin-bottom:12px; display:none;"></div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-primary" style="flex:1;" onclick="lookupAccountRecovery()">Cek Akun</button>
+        <button type="button" class="btn-secondary" style="flex:1;" onclick="unlockDeviceSessionByInput()">Reset Kunci Perangkat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APLIKASI UTAMA ================= -->
+  <section id="appShell">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <img class="topbar-logo-img" id="topbarLogoImg" alt="Logo AMP" />
+        <div>
+          <div style="font-size:14px; font-weight:900;">PT. ARDINA MULYA PERKASA — MONITORING OPERASIONAL</div>
+          <div style="font-size:11px; color:#93c5fd;">PT PLN (Persero) UIT JBT &amp; UIT JBB &bull; 14 Modul Terintegrasi</div>
+        </div>
+      </div>
+      <div class="topbar-user">
+        <span class="pill-info" id="activeUserBadge">User: -</span>
+        <span class="pill-info" id="activeRoleBadge">Role: -</span>
+        <span class="pill-info" id="activeAreaBadge">Area: -</span>
+        <span class="pill-info pill-gps-off" id="gpsStatusBadge">GPS: Menunggu Izin...</span>
+        <button type="button" class="btn-logout" id="btnLogout">Keluar</button>
+      </div>
+    </header>
+
+    <nav class="modules-nav-wrap" id="modulesNav"></nav>
+
+    <main class="main-container">
+      <!-- MODUL 1: DASHBOARD & GPS RADAR LIVE -->
+      <div id="mod-1" class="module-panel active">
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="k-lbl" id="kpiCard1Label">AKUN AKTIF</div>
+            <div class="k-val" id="kpiKorlapTotal">-</div>
+            <div class="k-note" id="kpiCard1Note">UIT JBT &amp; UIT JBB</div>
+          </div>
+          <div class="kpi-box" style="border-left-color:#059669;">
+            <div class="k-lbl">STATUS GPS PERANGKAT</div>
+            <div class="k-val" id="kpiGpsLiveCount">0</div>
+            <div class="k-note">Pelacakan lokasi aktif</div>
+          </div>
+          <div class="kpi-box" style="border-left-color:#ea580c;">
+            <div class="k-lbl">ITEM MCP (SESUAI HAK AKSES)</div>
+            <div class="k-val" id="kpiMcpTotal">0</div>
+            <div class="k-note">Lantai 1, Lantai 2, Halaman &amp; Crass</div>
+          </div>
+          <div class="kpi-box" style="border-left-color:#7c3aed;">
+            <div class="k-lbl">REALISASI MCP (TANDA X)</div>
+            <div class="k-val" id="kpiMcpDone">0</div>
+            <div class="k-note" id="kpiMcpPct">0% dari rencana aktif</div>
+          </div>
+        </div>
+
+        <!-- PANEL RADAR GPS: HANYA BISA DIAKSES ADMIN / HEAD OF OPS -->
+        <div class="card" id="adminRadarCard" style="display:none;">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Radar Pergerakan GPS Nyata (Live) Semua Korlap</div>
+              <div class="card-sub" id="liveCoordsReadout">Mode Head of Operation / Admin: memantau seluruh pergerakan GPS &amp; data Korlap.</div>
+            </div>
+            <div class="controls-bar" style="margin-bottom:0;">
+              <select id="radarFilterKorlap" class="form-select" onchange="focusSelectedKorlap()">
+                <option value="ALL">Semua Korlap</option>
+              </select>
+              <button type="button" class="btn-success" onclick="triggerLiveGpsOnce()">📍 Refresh GPS</button>
+              <button type="button" class="btn-primary" onclick="fitAllLiveKorlap()">🎯 Fokus Korlap Live</button>
+              <button type="button" class="btn-secondary" onclick="resetRadarView()">🗺️ Reset Peta</button>
+            </div>
+          </div>
+
+          <div class="controls-bar" style="margin-bottom:10px;">
+            <input type="text" id="radarSearchAddressInput" class="form-control" placeholder="Cari nama jalan, gedung, kantor PLN, atau lokasi detail..." onkeydown="if(event.key==='Enter'){searchMapLocationDetail();}" style="flex:1; min-width:240px;" />
+            <button type="button" class="btn-primary" onclick="searchMapLocationDetail()">🔍 Cari Jalan / Gedung</button>
+          </div>
+          <div id="radarDetailAddressBanner" style="margin-bottom:10px; padding:8px 12px; border-radius:10px; background:#f8fafc; border:1px solid #cbd5e1; font-size:12px; color:#0f172a;">
+            📍 Klik salah satu Korlap di daftar atau pilih Korlap pada filter untuk menampilkan <strong>nama jalan, gedung, dan alamat detail</strong> secara otomatis.
+          </div>
+
+          <div class="radar-layout">
+            <div id="korlapRadarMap"></div>
+            <div class="korlap-roster-list" id="korlapRosterList"></div>
+          </div>
+        </div>
+
+        <!-- PANEL KHUSUS KORLAP (NON-ADMIN): RADAR SEMUA KORLAP TERKUNCI -->
+        <div class="card" id="korlapRestrictedRadarCard" style="display:none;">
+          <div class="restricted-box">
+            <strong>🔒 Akses Radar GPS &amp; Rekap Seluruh Korlap Dibatasi</strong><br/>
+            Radar pemantauan GPS dan rekap seluruh data Korlap hanya dapat diakses oleh akun <strong>Admin / Head of Operation</strong>.
+            Perangkat Anda tetap mengirimkan sinyal kehadiran dan titik lokasi Anda sendiri ke sistem pusat.<br/>
+            <span id="korlapOwnGpsStatus" style="display:inline-block; margin-top:6px; font-weight:700;">Status GPS perangkat Anda: menunggu izin lokasi...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODUL 2: MONITORING PEKERJAAN -->
+      <div id="mod-2" class="module-panel">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Modul 2 — Monitoring Pekerjaan Harian &amp; SLA</div>
+              <div class="card-sub" id="mod2Sub">Pencatatan aktivitas pembersihan, SLA, dan evidence</div>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label>Area / Fasilitas PLN</label>
+              <select id="jobAreaInput"></select>
+            </div>
+            <div class="field-group">
+              <label>Uraian Pekerjaan</label>
+              <input type="text" id="jobDescInput" placeholder="Contoh: Cleaning Lobby, Toilet & Area Gardu" />
+            </div>
+            <div class="field-group">
+              <label>Capaian SLA (%)</label>
+              <input type="number" id="jobSlaInput" min="0" max="100" value="98" />
+            </div>
+            <div class="field-group">
+              <label>Catatan / Evidence</label>
+              <input type="text" id="jobNoteInput" placeholder="Foto / keterangan kondisi lapangan" />
+            </div>
+          </div>
+          <button type="button" class="btn-primary" onclick="addJobLog()">+ Simpan Log Pekerjaan</button>
+          <div class="table-wrap" style="margin-top:14px;">
+            <table>
+              <thead>
+                <tr><th>Waktu</th><th>Korlap</th><th>Area / Fasilitas</th><th>Uraian Pekerjaan</th><th>SLA</th><th>Keterangan</th></tr>
+              </thead>
+              <tbody id="jobLogBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODUL 3: MANPOWER & ABSENSI -->
+      <div id="mod-3" class="module-panel">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Modul 3 — Manpower, Absensi &amp; Roster</div>
+              <div class="card-sub" id="mod3Sub">Data absensi dan status perangkat sesuai hak akses akun</div>
+            </div>
+            <button type="button" class="btn-success" onclick="recordAttendanceNow()">✅ Absen Hadir + Lokasi GPS</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID / Username</th><th>Nama Personel</th><th>Area Tugas PLN</th><th>Koordinat Referensi / Live</th><th>Status Sesi &amp; GPS</th></tr>
+              </thead>
+              <tbody id="manpowerTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODUL 4: MCP & DAC -->
+      <div id="mod-4" class="module-panel">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Modul 4 — Master Cleaning Program (MCP) &amp; DAC</div>
+              <div class="card-sub" id="mod4Sub">Korlap hanya melihat area tugasnya sendiri; Admin/HeadOfOps dapat melihat semua area</div>
+            </div>
+          </div>
+
+          <div class="controls-bar">
+            <div id="mcpAdminFilterWrap" style="display:none; align-items:center; gap:8px;">
+              <label style="font-size:12px; font-weight:700;">Filter Korlap (Admin):</label>
+              <select id="mcpKorlapFilter" class="form-select" onchange="renderMcpTable()">
+                <option value="ALL">Semua Area / Semua Korlap</option>
+              </select>
+            </div>
+            <select id="mcpStatusFilter" class="form-select" onchange="renderMcpTable()">
+              <option value="ALL">Semua Status</option>
+              <option value="X">Sudah Dikerjakan (X)</option>
+              <option value="RENCANA">Rencana (Tanpa X)</option>
+            </select>
+            <input type="text" id="mcpSearchInput" class="form-control" placeholder="Cari uraian pekerjaan / area..." oninput="renderMcpTable()" style="min-width:210px;" />
+            <button type="button" class="btn-secondary" id="btnExportMcp" onclick="exportMcpCsv()">⬇️ Export CSV MCP</button>
+          </div>
+
+          <div class="mcp-subtabs" id="mcpSubtabs">
+            <button type="button" class="mcp-subtab active" data-sheet="LANTAI 1" onclick="switchMcpSheet('LANTAI 1')">LANTAI 1</button>
+            <button type="button" class="mcp-subtab" data-sheet="LANTAI 2" onclick="switchMcpSheet('LANTAI 2')">LANTAI 2</button>
+            <button type="button" class="mcp-subtab" data-sheet="HALAMAN" onclick="switchMcpSheet('HALAMAN')">HALAMAN</button>
+            <button type="button" class="mcp-subtab" data-sheet="CRASS" onclick="switchMcpSheet('CRASS')">CRASS</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Area / Lokasi</th>
+                  <th>Uraian Pekerjaan</th>
+                  <th>Kode</th>
+                  <th>Frekuensi</th>
+                  <th>Bulan / Minggu Pelaksanaan (Klik Sel untuk Toggle Tanda X)</th>
+                </tr>
+              </thead>
+              <tbody id="mcpTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="legend-grid">
+            <div><strong>Kode:</strong> D = Daily &bull; W = Weekly &bull; M = Monthly &bull; Q = Quarterly &bull; SA = Semi-Annual &bull; A = Annual</div>
+            <div><strong>Tanda X:</strong> Klik sel bulan untuk menandai atau menghapus tanda <strong>X</strong>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODUL 5: TEMUAN & ACTION PLAN -->
+      <div id="mod-5" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 5 — Register Temuan Lapangan &amp; Action Plan</div>
+          <div class="card-sub">Korlap hanya melihat temuan di areanya sendiri; Admin/HeadOfOps memantau seluruh temuan</div>
+          <div class="form-grid-2" style="margin-top:12px;">
+            <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Contoh: ULTG Cikarang / UPT Bekasi" /></div>
+            <div class="field-group"><label>Uraian Temuan</label><input type="text" id="findDescInput" placeholder="Contoh: Saluran air halaman perlu pembersihan rutin" /></div>
+            <div class="field-group"><label>PIC Penanggung Jawab</label><input type="text" id="findPicInput" readonly /></div>
+            <div class="field-group"><label>Status</label>
+              <select id="findStatusInput">
+                <option value="Rencana">Rencana</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Kendala">Kendala</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" class="btn-primary" onclick="addFindingItem()">+ Tambah Temuan</button>
+          <div class="table-wrap" style="margin-top:14px;">
+            <table>
+              <thead><tr><th>Tanggal</th><th>Lokasi</th><th>Temuan</th><th>PIC</th><th>Status</th></tr></thead>
+              <tbody id="findingsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODUL 6: MATERIAL & ASSET -->
+      <div id="mod-6" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 6 — Material &amp; Asset Operasional (Chemical, Tools &amp; APD)</div>
+          <div class="card-sub">Pemantauan stok material kebersihan, peralatan, dan kelengkapan APD</div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>Kode Item</th><th>Nama Material / Asset</th><th>Kategori</th><th>Stok Tersedia</th><th>Satuan</th><th>Kondisi</th></tr></thead>
+              <tbody id="materialTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODUL 7: LAPORAN (ADMIN / HEAD OF OPS ONLY FOR FULL REPORTS) -->
+      <div id="mod-7" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 7 — Rekapitulasi Laporan &amp; Ekspor Data</div>
+          <div class="card-sub" id="mod7Sub">Rekap data operasional sesuai tingkat hak akses akun</div>
+          <div class="controls-bar" style="margin-top:12px;" id="mod7Actions">
+            <button type="button" class="btn-success" onclick="exportMcpCsv()">⬇️ Unduh CSV Rekap</button>
+            <button type="button" class="btn-primary" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+          </div>
+          <div id="reportSummaryText" style="font-size:12.5px; color:var(--slate-700); line-height:1.6;"></div>
+        </div>
+      </div>
+
+      <!-- MODUL 8: PENGATURAN -->
+      <div id="mod-8" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 8 — Pengaturan Sistem, Koneksi Supabase &amp; Manajemen Sesi</div>
+          <div class="card-sub" id="mod8Sub">Pengaturan sistem pusat dan kontrol sesi perangkat</div>
+          <div id="adminSettingsContent">
+            <div class="form-grid-2" style="margin-top:12px;">
+              <div class="field-group"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" placeholder="https://xxxx.supabase.co" /></div>
+              <div class="field-group"><label>Supabase Anon Key</label><input type="text" id="sbKeyInput" placeholder="eyJ..." /></div>
+            </div>
+            <div class="controls-bar">
+              <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan &amp; Hubungkan Supabase</button>
+              <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Uji &amp; Sinkron GPS Sekarang</button>
+              <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">🔗 Salin Link Auto-Connect Korlap</button>
+              <button type="button" class="btn-secondary" onclick="backupJsonData()">⬇️ Backup JSON</button>
+              <button type="button" class="btn-secondary" style="color:#b91c1c;" onclick="resetAllDeviceLocks()">🔓 Buka Semua Kunci Perangkat Korlap</button>
+            </div>
+            <div id="supabaseSyncStatusBox" style="margin-top:8px; padding:10px 12px; border-radius:10px; background:#f8fafc; border:1px solid #cbd5e1; font-size:12px; color:#334155;">
+              Status Sinkronisasi GPS Cloud: <strong>Belum dikonfigurasi</strong> (isi Project URL &amp; Anon Key di atas).
+            </div>
+            <details style="margin-top:10px; font-size:12px; color:#334155; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px;">
+              <summary style="font-weight:800; color:#1e3a8a; cursor:pointer;">📋 Lihat Script SQL Tabel Supabase (Jalankan 1x di SQL Editor Supabase)</summary>
+              <pre style="margin-top:8px; background:#0f172a; color:#e2e8f0; padding:10px; border-radius:8px; overflow-x:auto; font-size:11px;">create table if not exists public.amp_live_gps (
+  korlap_id text primary key,
+  korlap_name text,
+  area text,
+  lat double precision not null,
+  lng double precision not null,
+  accuracy integer,
+  is_real_device boolean default true,
+  updated_at timestamptz default now()
+);
+
+alter table public.amp_live_gps enable row level security;
+
+create policy "Allow public read amp_live_gps"
+  on public.amp_live_gps for select using (true);
+
+create policy "Allow public upsert amp_live_gps"
+  on public.amp_live_gps for insert with check (true);
+
+create policy "Allow public update amp_live_gps"
+  on public.amp_live_gps for update using (true);</pre>
+            </details>
+          </div>
+          <div id="korlapSettingsRestricted" class="restricted-box" style="display:none; margin-top:12px;">
+            <strong>🔒 Pengaturan Pusat Hanya untuk Admin / Head of Operation</strong><br/>
+            Akun Korlap tidak memiliki akses ke konfigurasi sistem, backup seluruh data, maupun manajemen akun lain.
+          </div>
+        </div>
+      </div>
+
+      <div id="mod-9" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 9 — Inspeksi Kualitas Kebersihan &amp; 5R</div>
+          <div class="card-sub" id="mod9Sub">Evaluasi Ringkas, Rapi, Resik, Rawat, Rajin (5R) pada area tugas Anda.</div>
+        </div>
+      </div>
+      <div id="mod-10" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 10 — Kepatuhan K3, Safety Briefing &amp; APD</div>
+          <div class="card-sub" id="mod10Sub">Pencatatan safety briefing harian, penggunaan APD, dan nihil kecelakaan kerja (Zero Accident).</div>
+        </div>
+      </div>
+      <div id="mod-11" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 11 — Jadwal Shift &amp; Penugasan Personel</div>
+          <div class="card-sub" id="mod11Sub">Pengaturan shift pagi/siang/patroli sesuai wilayah tugas.</div>
+        </div>
+      </div>
+      <div id="mod-12" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 12 — Keluhan Pelanggan / Service Request (PLN)</div>
+          <div class="card-sub" id="mod12Sub">Pelacakan permintaan layanan tambahan dan respon cepat tindak lanjut di lapangan.</div>
+        </div>
+      </div>
+      <div id="mod-13" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 13 — Audit Peralatan &amp; Kalibrasi Mesin</div>
+          <div class="card-sub" id="mod13Sub">Pemeriksaan kesiapan polisher, vacuum cleaner, tangga, dan alat kerja lapangan.</div>
+        </div>
+      </div>
+      <div id="mod-14" class="module-panel">
+        <div class="card">
+          <div class="card-title">Modul 14 — Log Aktivitas &amp; Sesi Perangkat</div>
+          <div class="card-sub" id="mod14Sub">Log sesi aktif perangkat dan aktivitas login.</div>
+          <div id="sessionLogContent" style="margin-top:12px; font-size:12.5px; color:var(--slate-700);"></div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <script>
+    // Logo resmi PT. Ardina Mulya Perkasa
+    const AMP_LOGO_DATA_URI = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='28' fill='%230b1f44'/%3E%3Cpolygon points='100,12 122,70 180,42 140,92 188,130 130,130 140,188 100,146 60,188 70,130 12,130 60,92 20,42 78,70' fill='%231e3a8a' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='52' y='74' width='96' height='48' rx='10' fill='%2300a8ff'/%3E%3Ctext x='100' y='108' font-family='Arial,sans-serif' font-weight='900' font-size='32' fill='%23ffffff' text-anchor='middle'%3EAMP%3C/text%3E%3C/svg%3E";
+
+    // ================= DATA AKUN ADMIN / HEAD OF OPS + 13 KORLAP SESUAI DATA RESMI =================
+    const DEFAULT_ACCOUNTS = [
+      {
+        id: "M.Soheh",
+        username: "M.Soheh",
+        name: "M.Soheh (Head Of Operation)",
+        role: "ADMIN",
+        pin: "990099",
+        area: "Seluruh Wilayah PLN UIT JBT & UIT JBB",
+        lat: -6.2432,
+        lng: 106.8689
+      },
+      {
+        id: "Dede_Rusmana",
+        username: "Dede_Rusmana",
+        name: "Dede Rusmana",
+        role: "KORLAP",
+        pin: "110101",
+        area: "UPT Bekasi & ULTG Cikarang",
+        lat: -6.2383,
+        lng: 106.9756
+      },
+      {
+        id: "Dede_Purnama",
+        username: "Dede_Purnama",
+        name: "Dede Purnama",
+        role: "KORLAP",
+        pin: "110202",
+        area: "ULTG Karet & ULTG Mampang",
+        lat: -6.2165,
+        lng: 106.8168
+      },
+      {
+        id: "Dadang_Darsono",
+        username: "Dadang_Darsono",
+        name: "Dadang Darsono",
+        role: "KORLAP",
+        pin: "110303",
+        area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
+        lat: -6.1835,
+        lng: 106.9065
+      },
+      {
+        id: "Rizky_Badrul Z",
+        username: "Rizky_Badrul Z",
+        name: "Rizky Badrul Zaman",
+        role: "KORLAP",
+        pin: "110404",
+        area: "Kantor Induk Bandung & ULTG Bandung Barat",
+        lat: -6.9147,
+        lng: 107.6098
+      },
+      {
+        id: "Irfan_AS",
+        username: "Irfan_AS",
+        name: "Irfan Ardiatma S",
+        role: "KORLAP",
+        pin: "110505",
+        area: "UPT Cawang & ULTG Mampang",
+        lat: -6.2432,
+        lng: 106.8689
+      },
+      {
+        id: "Yan_S",
+        username: "Yan_S",
+        name: "Yan Saputra",
+        role: "KORLAP",
+        pin: "110606",
+        area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah",
+        lat: -6.1525,
+        lng: 106.8421
+      },
+      {
+        id: "Yadi_S",
+        username: "Yadi_S",
+        name: "Yadi Supriyadi",
+        role: "KORLAP",
+        pin: "110707",
+        area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan",
+        lat: -6.9326,
+        lng: 107.6278
+      },
+      {
+        id: "Tegar_D",
+        username: "Tegar_D",
+        name: "Tegar Dwitama",
+        role: "KORLAP",
+        pin: "110808",
+        area: "ULTG Cikarang",
+        lat: -6.2654,
+        lng: 107.1512
+      },
+      {
+        id: "Andi_I",
+        username: "Andi_I",
+        name: "Andi Ilmanto",
+        role: "KORLAP",
+        pin: "110909",
+        area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel",
+        lat: -6.3189,
+        lng: 106.7745
+      },
+      {
+        id: "Tamam_2",
+        username: "Tamam_2",
+        name: "Tamam",
+        role: "KORLAP",
+        pin: "111010",
+        area: "UPT Bogor & ULTG Sukabumi",
+        lat: -6.5971,
+        lng: 106.8060
+      },
+      {
+        id: "Haerudin_3",
+        username: "Haerudin_3",
+        name: "Haerudin",
+        role: "KORLAP",
+        pin: "111111",
+        area: "ULTG Purwakarta",
+        lat: -6.5569,
+        lng: 107.4463
+      },
+      {
+        id: "Iswanto_R",
+        username: "Iswanto_R",
+        name: "Iswanto Riansyah",
+        role: "KORLAP",
+        pin: "111212",
+        area: "UPT Bogor & ULTG Sukabumi",
+        lat: -6.9277,
+        lng: 106.9271
+      },
+      {
+        id: "Rifky_Y",
+        username: "Rifky_Y",
+        name: "Rifkiyansyah",
+        role: "KORLAP",
+        pin: "111313",
+        area: "UPT Karawang, UPT Bogor & ULTG Sukabumi",
+        lat: -6.3036,
+        lng: 107.3009
+      }
     ];
 
-    let mapInstance = null;
-    let markersMap = {};
-    let poiLayerGroup = null;
-    let lastPoiKey = "";
+    const MODULES_14 = [
+      { id: "mod-1", label: "1. Dashboard" },
+      { id: "mod-2", label: "2. Monitoring Pekerjaan" },
+      { id: "mod-3", label: "3. Manpower & Absensi" },
+      { id: "mod-4", label: "4. MCP & DAC" },
+      { id: "mod-5", label: "5. Temuan & Action Plan" },
+      { id: "mod-6", label: "6. Material & Asset" },
+      { id: "mod-7", label: "7. Laporan & Ekspor" },
+      { id: "mod-8", label: "8. Pengaturan" },
+      { id: "mod-9", label: "9. Inspeksi 5R" },
+      { id: "mod-10", label: "10. K3 & APD" },
+      { id: "mod-11", label: "11. Jadwal Shift" },
+      { id: "mod-12", label: "12. Service Request" },
+      { id: "mod-13", label: "13. Audit Peralatan" },
+      { id: "mod-14", label: "14. Log Aktivitas" }
+    ];
 
-    function initDetailMap() {
-        if (mapInstance || typeof L === "undefined") return;
-        mapInstance = L.map("satellite-radar-map", { zoomControl: true }).setView([-6.35, 106.90], 11);
-
-        const googleRoad = L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-            maxZoom: 21, attribution: "&copy; Google Maps"
-        });
-        const googleHybrid = L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
-            maxZoom: 21, attribution: "&copy; Google Maps"
-        });
-        const googleTraffic = L.tileLayer("https://mt1.google.com/vt/lyrs=m,traffic&x={x}&y={y}&z={z}", {
-            maxZoom: 21, attribution: "&copy; Google Maps Traffic"
-        });
-        const cartoVoyager = L.tileLayer("https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-            maxZoom: 20, attribution: "&copy; CARTO"
-        });
-        const osmStreet = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19, attribution: "&copy; OpenStreetMap"
-        });
-
-        googleRoad.addTo(mapInstance);
-        googleRoad.on("tileerror", function () {
-            if (mapInstance.hasLayer(googleRoad) && !mapInstance.hasLayer(cartoVoyager)) {
-                mapInstance.removeLayer(googleRoad);
-                cartoVoyager.addTo(mapInstance);
-            }
-        });
-
-        poiLayerGroup = L.layerGroup().addTo(mapInstance);
-
-        L.control.layers(
-            {
-                "Google Maps (Jalan & Gedung)": googleRoad,
-                "Google Hybrid (Satelit + Label)": googleHybrid,
-                "Google Maps + Lalu Lintas": googleTraffic,
-                "CARTO Voyager (Detail Bangunan)": cartoVoyager,
-                "OpenStreetMap Detail": osmStreet
-            },
-            { "Gedung, Jalan & Fasilitas Sekitar": poiLayerGroup },
-            { position: "topright", collapsed: true }
-        ).addTo(mapInstance);
-
-        mapInstance.on("moveend", function () {
-            if (mapInstance.getZoom() >= 15) {
-                const c = mapInstance.getCenter();
-                loadNearbyBuildingsAndStreets(c.lat, c.lng);
-            }
-        });
-
-        renderKorlapListAndMarkers();
-    }
-
-    function renderKorlapListAndMarkers() {
-        const listEl = document.getElementById("korlap-live-radar-list");
-        const countEl = document.getElementById("radar-marker-count");
-        if (!listEl) return;
-        listEl.innerHTML = "";
-        if (countEl) countEl.textContent = `${KORLAP_SITES.length} Titik Aktif`;
-
-        KORLAP_SITES.forEach((k) => {
-            const card = document.createElement("div");
-            card.className = "korlap-card-item";
-            card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="font-size:11.5px; color:#0a192f;">${k.name}</strong>
-                    <span style="background:#dcfce7; color:#166534; font-size:9px; font-weight:800; padding:2px 6px; border-radius:999px;">${k.status}</span>
-                </div>
-                <div style="font-size:10px; color:#475569; margin-top:2px;">${k.area}</div>
-                <div style="font-size:9.5px; color:#64748b; margin-top:2px;">${k.lat.toFixed(5)}, ${k.lng.toFixed(5)}</div>
-            `;
-            card.onclick = () => focusKorlapOnDetailMap(k);
-            listEl.appendChild(card);
-
-            if (mapInstance && typeof L !== "undefined") {
-                const popupText = `<b>${k.name}</b><br/>${k.area}<br/><small>${k.lat.toFixed(5)}, ${k.lng.toFixed(5)}</small>`;
-                if (!markersMap[k.id]) {
-                    markersMap[k.id] = L.circleMarker([k.lat, k.lng], {
-                        radius: 9, color: "#ffffff", weight: 2, fillColor: "#dc2626", fillOpacity: 0.95
-                    }).addTo(mapInstance).bindPopup(popupText);
-                } else {
-                    markersMap[k.id].setLatLng([k.lat, k.lng]).setPopupContent(popupText);
-                }
-            }
-        });
-    }
-
-    function focusKorlapOnDetailMap(k) {
-        if (!mapInstance) return;
-        mapInstance.setView([k.lat, k.lng], 17);
-        if (markersMap[k.id]) markersMap[k.id].openPopup();
-        loadNearbyBuildingsAndStreets(k.lat, k.lng);
-        reverseGeocodeAddress(k.lat, k.lng, k.name, k.area);
-    }
-
-    async function loadNearbyBuildingsAndStreets(lat, lng) {
-        if (!mapInstance || !poiLayerGroup) return;
-        const key = `${lat.toFixed(3)}_${lng.toFixed(3)}`;
-        if (key === lastPoiKey) return;
-        lastPoiKey = key;
-
-        try {
-            const q = `[out:json][timeout:10];(node["name"]["amenity"](around:650,${lat},${lng});way["name"]["building"](around:650,${lat},${lng});way["name"]["highway"~"primary|secondary|tertiary|residential|unclassified"](around:650,${lat},${lng});node["name"]["shop|office|public_transport"](around:650,${lat},${lng}););out center 35;`;
-            const res = await fetch("https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(q));
-            if (!res.ok) return;
-            const data = await res.json();
-            poiLayerGroup.clearLayers();
-
-            (data.elements || []).forEach((el) => {
-                const name = el.tags && el.tags.name;
-                if (!name) return;
-                const pLat = el.lat || (el.center && el.center.lat);
-                const pLng = el.lon || (el.center && el.center.lon);
-                if (typeof pLat !== "number" || typeof pLng !== "number") return;
-
-                const isRoad = Boolean(el.tags.highway);
-                const labelType = el.tags.highway ? `Jalan (${el.tags.highway})`
-                    : el.tags.building ? `Gedung (${el.tags.building})`
-                    : el.tags.amenity ? `Fasilitas (${el.tags.amenity})`
-                    : "Lokasi Sekitar";
-
-                const m = L.circleMarker([pLat, pLng], {
-                    radius: isRoad ? 4 : 5, color: "#0f172a", weight: 1.5,
-                    fillColor: isRoad ? "#f59e0b" : "#2563eb", fillOpacity: 0.9
-                });
-                m.bindTooltip(name, { permanent: false, direction: "top", offset: [0, -4] });
-                m.bindPopup(`<b>${name}</b><br/><small>${labelType}</small><br/><small>${pLat.toFixed(5)}, ${pLng.toFixed(5)}</small>`);
-                m.addTo(poiLayerGroup);
-            });
-        } catch (e) {}
-    }
-
-    async function reverseGeocodeAddress(lat, lng, korlapName, areaName) {
-        const banner = document.getElementById("detail-address-banner");
-        if (!banner) return;
-        banner.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memuat nama jalan &amp; gedung detail untuk <strong>${korlapName}</strong>...`;
-        try {
-            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`;
-            const res = await fetch(url, { headers: { "Accept": "application/json" } });
-            if (!res.ok) return;
-            const json = await res.json();
-            if (json && json.display_name) {
-                banner.innerHTML = `<strong>${korlapName}</strong> (${areaName})<br/>📍 <strong>Alamat &amp; Jalan Detail:</strong> ${json.display_name}`;
-            }
-        } catch (e) {
-            banner.innerHTML = `<strong>${korlapName}</strong> (${areaName})<br/>📍 Koordinat: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        }
-    }
-
-    async function searchLocationDetail() {
-        const input = document.getElementById("mapSearchInput");
-        const banner = document.getElementById("detail-address-banner");
-        if (!input || !mapInstance) return;
-        const q = input.value.trim();
-        if (!q) return;
-
-        try {
-            const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q + " Indonesia")}&limit=1&addressdetails=1`;
-            const res = await fetch(url, { headers: { "Accept": "application/json" } });
-            if (!res.ok) return;
-            const arr = await res.json();
-            if (arr && arr.length > 0) {
-                const item = arr[0];
-                const lat = parseFloat(item.lat);
-                const lon = parseFloat(item.lon);
-                mapInstance.setView([lat, lon], 17);
-                loadNearbyBuildingsAndStreets(lat, lon);
-                if (banner) {
-                    banner.innerHTML = `🔎 <strong>Hasil Pencarian:</strong> ${item.display_name}`;
-                }
-            } else {
-                alert("Jalan / gedung / lokasi tidak ditemukan. Coba kata kunci yang lebih spesifik.");
-            }
-        } catch (e) {
-            alert("Gagal mencari lokasi.");
-        }
-    }
-
-    function refreshKorlapLivePositions() {
-        renderKorlapListAndMarkers();
-        if (mapInstance) {
-            const c = mapInstance.getCenter();
-            loadNearbyBuildingsAndStreets(c.lat, c.lng);
-        }
-    }
-
-    function resetMapViewDetail() {
-        if (mapInstance) mapInstance.setView([-6.35, 106.90], 11);
-    }
-
-    function showModule(num) {
-        document.querySelectorAll(".screen-panel").forEach((el) => el.classList.remove("active"));
-        const target = document.getElementById("mod-" + num);
-        if (target) target.classList.add("active");
-        if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 120);
-    }
-
-    window.addEventListener("DOMContentLoaded", initDetailMap);
-</script>
-</body>
-</html>
+    const MCP_TEMPLATES = {
+      "LANTAI 1": [
+        { uraian: "Cleaning Lobby Utama & Area Penerimaan Tamu", kode: "D", freq: "Harian (2x Shift)" },
+        { uraian: "Pembersihan Toilet & Wastafel Lantai 1", kode: "D", freq: "Harian (3x)" },
+        { uraian: "Sweeping & Mopping Koridor serta Tangga Utama", kode: "D", freq: "Harian" },
+        { uraian: "Dusting Kaca Partitions, Kusen & Panel Informasi", kode: "W", freq: "Mingguan" },
+        { uraian: "Polishing / Buffing Lantai Granit & Area Selasar", kode: "M", freq: "Bulanan" }
+      ],
+      "LANTAI 2": [
+        { uraian: "Cleaning Ruang Rapat, Ruang Kerja & Pantry Lantai 2", kode: "D", freq: "Harian" },
+        { uraian: "Pembersihan Toilet & Area Cuci Tangan Lantai 2", kode: "D", freq: "Harian (2x)" },
+        { uraian: "Vacuum Karpet / Pembersihan Kisi-Kisi AC & Ventilasi", kode: "W", freq: "Mingguan" },
+        { uraian: "Pembersihan Kaca Jendela Tinggi & Dinding Partisi", kode: "M", freq: "Bulanan" },
+        { uraian: "Deep Cleaning Ruang Arsip & Area Penunjang", kode: "Q", freq: "Triwulanan" }
+      ],
+      "HALAMAN": [
+        { uraian: "Sapubersih Halaman Parkir, Akses Masuk & Trotoar", kode: "D", freq: "Harian" },
+        { uraian: "Pengangkutan Sampah Domestik ke TPS", kode: "D", freq: "Harian" },
+        { uraian: "Pembersihan Saluran Drainase & Bak Kontrol Halaman", kode: "W", freq: "Mingguan" },
+        { uraian: "Pemangkasan Rumput Liar / Penataan Taman Area Site", kode: "M", freq: "Bulanan" },
+        { uraian: "Pencucian Area Jalan Lingkungan & Pos Keamanan", kode: "Q", freq: "Triwulanan" }
+      ],
+      "CRASS": [
+        { uraian: "Pembersihan Area Perimeter & Jalur
