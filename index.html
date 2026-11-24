@@ -1,972 +1,881 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMP Operation Monitoring V3.9 - Satellite Radar Admin</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a192f">
-<meta name="description" content="Sistem Monitoring Operasional PT Ardina Mulya Perkasa">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/html5-qrcode"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AMP Operation Monitoring — PT. Ardina Mulya Perkasa</title>
 
-<style>
-:root {
-  --navy-primary: #0a192f;
-  --navy-header: #112240;
-  --blue-accent: #1e3a8a;
-  --gold-accent: #d97706;
-  --light-bg: #f3f4f6;
-  --white: #ffffff;
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+  <style>
+    :root {
+      --navy-primary: #0a192f;
+      --blue-accent: #1e3a8a;
+      --sky-accent: #0284c7;
+      --gold-accent: #d97706;
+      --bg-canvas: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-soft: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+    }
 
-body {
-  background-color: var(--light-bg);
-  color: var(--text-main);
-  display: flex;
-  justify-content: center;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
 
-.app-container {
-  width: 100%;
-  max-width: 480px;
-  background: var(--white);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-  position: relative;
-  padding-bottom: 70px;
-}
+    body {
+      background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 72px;
+    }
 
-.app-header {
-  background: linear-gradient(135deg, var(--navy-primary), var(--blue-accent));
-  color: var(--white);
-  padding: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 3px solid var(--gold-accent);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+    #main-app {
+      max-width: 540px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg-canvas);
+      box-shadow: 0 10px 30px rgba(10, 25, 47, 0.12);
+      position: relative;
+    }
 
-.brand-box { display: flex; align-items: center; gap: 10px; }
-.logo-svg { width: 36px; height: 36px; }
-.brand-text h1 { font-size: 13px; font-weight: 700; color: #fff; }
-.brand-text p { font-size: 8.5px; color: var(--gold-accent); font-weight: 600; text-transform: uppercase; }
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 400;
+      background: linear-gradient(135deg, var(--navy-primary), var(--blue-accent));
+      color: #fff;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 3px solid var(--gold-accent);
+    }
 
-.user-badge {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+    .brand-box { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .logo-svg { width: 34px; height: 34px; flex-shrink: 0; }
+    .brand-text h1 { font-size: 11.5px; font-weight: 800; letter-spacing: 0.3px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-text p { font-size: 9px; color: #cbd5e1; }
 
-.sync-badge {
-  background: var(--gold-accent);
-  color: var(--navy-primary);
-  font-weight: bold;
-  padding: 3px 8px;
-  border-radius: 10px;
-  font-size: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+    .sync-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .sync-badge.connected { background: rgba(22, 163, 74, 0.28); border-color: #4ade80; color: #dcfce7; }
 
-.auth-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(10, 25, 47, 0.95);
-  z-index: 9999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  overflow-y: auto;
-}
+    .user-badge {
+      background: rgba(10, 25, 47, 0.45);
+      border: 1px solid rgba(217, 119, 6, 0.6);
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
 
-.auth-overlay.active { display: flex; }
+    .screen-panel { display: none; padding: 12px; animation: fadeIn 0.2s ease; }
+    .screen-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0.4; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 
-.auth-card-asli {
-  background: #ffffff;
-  width: 100%;
-  max-width: 360px;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  max-height: 92vh;
-  overflow-y: auto;
-  position: relative;
-  z-index: 10000;
-}
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
 
-.screen-panel { display: none; padding: 14px; animation: fadeIn 0.2s ease-in-out; }
-.screen-panel.active { display: block; }
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy-primary);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+    .form-group { margin-bottom: 9px; }
+    .form-group label { display: block; font-size: 10px; font-weight: 600; color: #334155; margin-bottom: 4px; }
+    .form-control {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text-main);
+    }
+    .form-control:focus { outline: none; border-color: var(--sky-accent); box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15); }
 
-.card {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 14px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-}
+    .btn {
+      width: 100%;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      transition: transform 0.08s ease, opacity 0.15s ease;
+    }
+    .btn:active { transform: scale(0.99); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary { background: var(--blue-accent); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-dark { background: var(--navy-primary); color: #fff; }
+    .btn-outline { background: #fff; color: var(--navy-primary); border: 1px solid #cbd5e1; }
 
-.card-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--navy-primary);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid #f3f4f6;
-  padding-bottom: 8px;
-}
+    .modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .module-item {
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 9px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .module-item:hover { background: #eff6ff; border-color: #93c5fd; transform: translateY(-1px); }
+    .module-icon {
+      width: 30px; height: 30px; margin: 0 auto 5px;
+      border-radius: 8px;
+      background: #e0e7ff;
+      color: var(--blue-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+    .module-label { font-size: 9px; font-weight: 600; color: var(--text-main); line-height: 1.2; }
 
-#satellite-radar-map {
-  width: 100%;
-  height: 240px;
-  border-radius: 10px;
-  border: 2px solid var(--navy-primary);
-  margin-bottom: 10px;
-  z-index: 15;
-  background: #0f172a;
-}
+    .digital-clock-box {
+      background: var(--navy-primary);
+      color: #38bdf8;
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
 
-.radar-legend {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 9px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  background: #ffffff;
-  padding: 5px 8px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-}
+    .camera-box {
+      position: relative;
+      width: 100%;
+      height: 195px;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .camera-box video, .camera-box img { width: 100%; height: 100%; object-fit: cover; }
 
-.modules-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-top: 8px;
-}
+    .status-checklist {
+      display: flex;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 10px;
+      margin-top: 8px;
+    }
 
-.module-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 10px 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-}
+    .log-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .log-item {
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .log-thumb { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; flex-shrink: 0; border: 1px solid #cbd5e1; }
 
-.module-item:hover { background: #e2e8f0; transform: translateY(-2px); }
-.module-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: var(--navy-primary);
-  color: var(--gold-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  margin-bottom: 4px;
-}
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 8.5px; font-weight: 700; }
+    .badge-in { background: #dcfce7; color: #166534; }
+    .badge-out { background: #fee2e2; color: #991b1b; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
 
-.module-label { font-size: 9px; font-weight: 600; color: var(--navy-primary); line-height: 1.2; }
+    #satellite-radar-map { width: 100%; height: 235px; border-radius: 8px; margin-bottom: 8px; z-index: 1; border: 1px solid #cbd5e1; }
+    .radar-legend { display: flex; justify-content: space-between; font-size: 9.5px; margin-bottom: 6px; }
 
-.camera-box {
-  width: 100%;
-  height: 190px;
-  background: #000;
-  border-radius: 12px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-}
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 540px;
+      background: #fff;
+      border-top: 1px solid var(--border-soft);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 500;
+    }
+    .nav-link {
+      padding: 7px 4px;
+      text-align: center;
+      font-size: 9px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .nav-link.active { color: var(--blue-accent); font-weight: 700; }
 
-#webcam, #photo-preview { width: 100%; height: 100%; object-fit: cover; }
-.camera-overlay {
-  position: absolute;
-  border: 2px dashed rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  width: 120px;
-  height: 150px;
-  pointer-events: none;
-}
-
-.digital-clock-box {
-  background: var(--navy-primary);
-  color: var(--gold-accent);
-  text-align: center;
-  padding: 8px;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  border: 1px solid var(--gold-accent);
-}
-
-.btn {
-  width: 100%;
-  padding: 10px 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 11.5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  transition: 0.2s;
-  position: relative;
-  z-index: 20;
-  touch-action: manipulation;
-}
-
-.btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.btn-primary { background: var(--navy-primary); color: var(--white); }
-.btn-success { background: var(--success); color: var(--white); }
-.btn-warning { background: var(--gold-accent); color: var(--white); }
-.btn-danger { background: var(--danger); color: var(--white); }
-.btn-outline { background: transparent; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
-
-.form-group { margin-bottom: 8px; text-align: left; }
-.form-group label { display: block; font-size: 10.5px; font-weight: 600; margin-bottom: 3px; color: var(--text-main); }
-.form-control { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; outline: none; }
-
-.badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #fff; }
-.badge-in { background: var(--success); }
-.badge-out { background: var(--danger); }
-.badge-warning { background: var(--warning); color: #000; }
-
-.log-list { list-style: none; }
-.log-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 10px;
-  gap: 8px;
-}
-.log-item:last-child { border-bottom: none; }
-.log-thumb { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1; flex-shrink: 0; }
-
-.status-checklist {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 10px;
-  margin-top: 8px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  max-width: 480px;
-  height: 60px;
-  background: var(--navy-primary);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-top: 2px solid var(--gold-accent);
-  z-index: 200;
-}
-
-.nav-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #94a3b8;
-  text-decoration: none;
-  font-size: 9.5px;
-  cursor: pointer;
-}
-.nav-link i { font-size: 17px; margin-bottom: 2px; }
-.nav-link.active { color: var(--gold-accent); font-weight: bold; }
-</style>
+    #auth-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 25, 47, 0.88);
+      z-index: 900;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    #auth-modal-overlay.active { display: flex; }
+    .auth-card-asli {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      border-top: 4px solid var(--gold-accent);
+    }
+  </style>
 </head>
 <body>
 
-<div class="app-container">
+<div id="auth-modal-overlay">
+  <div id="login-box-asli" class="auth-card-asli">
+    <h3 style="font-size:13px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-lock"></i> Login AMP Operation Monitoring</h3>
+    <div class="form-group"><label>ID / Username</label><input type="text" id="login-id" class="form-control" placeholder="Contoh: M.Soheh atau Dede_Rusmana"></div>
+    <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="login-pin" class="form-control" placeholder="Masukkan PIN 6 Digit"></div>
+    <button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK APLIKASI</button>
+    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:10px;">
+      <a href="javascript:void(0)" onclick="switchAuthSubView('register')" style="color:var(--blue-accent);">Daftar / Lengkapi Akun</a>
+      <a href="javascript:void(0)" onclick="switchAuthSubView('reset-pin')" style="color:var(--gold-accent);">Ganti / Reset PIN</a>
+    </div>
+  </div>
 
-  <!-- MODAL AUTH LOGIN -->
-  <div id="auth-modal-overlay" class="auth-overlay">
-    <div id="login-box-asli" class="auth-card-asli">
-      <svg class="logo-svg" viewBox="0 0 200 200" style="width:50px; height:50px; margin-bottom:4px;">
+  <div id="register-box-asli" class="auth-card-asli" style="display:none;">
+    <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran / Lengkapi Akun Resmi</h3>
+    <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
+    <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Dede_Rusmana"></div>
+    <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
+    <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
+    <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
+    <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit"></div>
+    <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN</button>
+    <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
+  </div>
+
+  <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
+    <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
+    <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
+    <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control"></div>
+    <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
+    <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
+    <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+  </div>
+</div>
+
+<div id="main-app">
+
+  <div class="app-header">
+    <div class="brand-box">
+      <svg class="logo-svg" viewBox="0 0 200 200">
         <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
         <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
         <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
       </svg>
-      <h2 style="font-size:14px; font-weight:bold; color:var(--navy-primary);">PT ARDINA MULYA PERKASA</h2>
-      <p style="font-size:9px; color:var(--gold-accent); font-weight:bold; margin-bottom:10px;">AMP Operation Monitoring V3.9</p>
-
-      <div class="form-group">
-        <label>ID / Username Karyawan</label>
-        <input type="text" id="login-id" class="form-control" placeholder="Contoh: M.Soheh, Dede_Rusmana">
+      <div class="brand-text">
+        <h1>PT. ARDINA MULYA PERKASA</h1>
+        <p>Facility Service Specialist</p>
       </div>
-
-      <div class="form-group">
-        <label>PIN Keamanan (6 Digit)</label>
-        <input type="password" id="login-pin" class="form-control" placeholder="Masukkan 6 Digit PIN">
+    </div>
+    <div style="display:flex; align-items:center; gap:6px;">
+      <div class="sync-badge" id="header-sync-badge" onclick="showModule(14)" title="Buka Pusat Sinkronisasi & Konfigurasi Supabase">
+        <i class="fas fa-database" id="sync-icon"></i> <span id="sync-badge-text">Sync</span>
       </div>
-
-      <button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK SYSTEM</button>
-      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('register')"><i class="fas fa-user-plus"></i> DAFTAR AKUN BARU</button>
-      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('reset-pin')" style="border:none; color:var(--text-muted); font-size:10px;"><i class="fas fa-key"></i> Lupa / Ganti PIN</button>
-    </div>
-
-    <div id="register-box-asli" class="auth-card-asli" style="display:none;">
-      <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran Akun Baru</h3>
-      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-      <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Nama_Belakang"></div>
-      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
-      <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
-      <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
-      <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit"></div>
-      <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN BARU</button>
-      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
-    </div>
-
-    <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
-      <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
-      <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
-      <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control"></div>
-      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control"></div>
-      <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
-      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+      <div class="user-badge">
+        <i class="fas fa-user-circle"></i>
+        <span id="header-user-id">M.Soheh</span>
+        <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:4px; cursor:pointer;" title="Keluar"></i>
+      </div>
     </div>
   </div>
 
-  <!-- MAIN APP WRAPPER -->
-  <div id="main-app">
-
-    <div class="app-header">
-      <div class="brand-box">
-        <svg class="logo-svg" viewBox="0 0 200 200">
-          <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
-          <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
-          <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
-        </svg>
-        <div class="brand-text">
-          <h1>PT. ARDINA MULYA PERKASA</h1>
-          <p>Facility Service Specialist</p>
+  <!-- MODUL 1: DASHBOARD -->
+  <div id="mod-1" class="screen-panel active">
+    <div class="card" style="background: linear-gradient(135deg, #0a192f, #1e3a8a); color: #fff;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div>
+          <h2 id="dash-user-name" style="font-size:15px;">M.Soheh</h2>
+          <p id="dash-user-role" style="font-size:10px; color:#f59e0b; font-weight:700;">Head Of Operation / Admin</p>
+          <p id="dash-user-site" style="font-size:9px; opacity:0.88; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: Seluruh Wilayah PLN UIT JBT & UIT JBB</p>
         </div>
-      </div>
-      <div style="display:flex; align-items:center; gap:6px;">
-        <div class="sync-badge" onclick="showModule(14)" title="Buka Pusat Sinkronisasi Supabase">
-          <i class="fas fa-database" id="sync-icon"></i> <span id="sync-badge-text">Sync</span>
-        </div>
-        <div class="user-badge">
-          <i class="fas fa-user-circle"></i>
-          <span id="header-user-id">M.Soheh</span>
-          <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:6px; cursor:pointer;" title="Keluar"></i>
+        <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
+          <i class="fas fa-user-tie" id="dash-avatar-icon" style="font-size:24px; color:var(--navy-primary);"></i>
         </div>
       </div>
     </div>
 
-    <!-- MODUL 1: DASHBOARD -->
-    <div id="mod-1" class="screen-panel active">
-      <div class="card" style="background: linear-gradient(135deg, #0a192f, #1e3a8a); color: #fff;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <h2 id="dash-user-name" style="font-size:15px;">M.Soheh</h2>
-            <p id="dash-user-role" style="font-size:10px; color:#d97706;">Head Of Operation / Admin</p>
-            <p id="dash-user-site" style="font-size:9px; opacity:0.85; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: Seluruh Wilayah PLN UIT JBT & UIT JBB</p>
-          </div>
-          <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center;">
-            <img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
-            <i class="fas fa-user-tie" id="dash-avatar-icon" style="font-size:24px; color:var(--navy-primary);"></i>
-          </div>
-        </div>
+    <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
+      <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
+        <span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap (Admin / Head of Ops)</span>
+        <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
       </div>
-
-      <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
-        <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-          <span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap (Admin / Head of Ops)</span>
-          <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-        <div class="radar-legend">
-          <span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Akses Terbatas: Admin & Head of Ops</span>
-          <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Titik Aktif</span>
-        </div>
-        <div id="satellite-radar-map"></div>
-        <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta satelit):</p>
-        <div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+      <div class="radar-legend">
+        <span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Akses Terbatas: Admin & Head of Ops</span>
+        <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Titik Aktif</span>
       </div>
+      <div id="satellite-radar-map"></div>
+      <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta satelit):</p>
+      <div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+    </div>
 
-      <div id="admin-export-card" class="card" style="display:none;">
-        <div class="card-title"><i class="fas fa-download"></i> Output & Download Rekap Terpusat (Admin)</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
-          <button type="button" class="btn btn-primary" onclick="exportGPSLogToCSV()"><i class="fas fa-map-marked-alt"></i> Rekap GPS Korlap (.CSV)</button>
-          <button type="button" class="btn btn-warning" onclick="exportIncidentLogToCSV()"><i class="fas fa-file-alt"></i> Rekap Kejadian (.CSV)</button>
-          <button type="button" class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-th-large"></i> 14 Modul Terintegrasi</div>
-        <div class="modules-grid">
-          <div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
-          <div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
-          <div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
-          <div class="module-item" onclick="showModule(4)"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label">MR (Req)</div></div>
-          <div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin & Cuti</div></div>
-          <div class="module-item" onclick="showModule(6)"><div class="module-icon" style="background:var(--danger); color:#fff;"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label" style="color:var(--danger); font-weight:bold;">Kejadian</div></div>
-          <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
-          <div class="module-item" onclick="showModule(8)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
-          <div class="module-item" onclick="showModule(9)"><div class="module-icon"><i class="fas fa-hard-hat"></i></div><div class="module-label">High Risk K3</div></div>
-          <div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-users"></i></div><div class="module-label">Data Tim</div></div>
-          <div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
-          <div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-exclamation-circle"></i></div><div class="module-label">Outstanding</div></div>
-          <div class="module-item" onclick="showModule(13)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI & News</div></div>
-          <div class="module-item" onclick="showModule(14)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
-        </div>
+    <div id="admin-export-card" class="card" style="display:none;">
+      <div class="card-title"><i class="fas fa-download"></i> Output & Download Rekap Terpusat (Admin)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
+        <button type="button" class="btn btn-primary" onclick="exportGPSLogToCSV()"><i class="fas fa-map-marked-alt"></i> Rekap GPS Korlap (.CSV)</button>
+        <button type="button" class="btn btn-warning" onclick="exportIncidentLogToCSV()"><i class="fas fa-file-alt"></i> Rekap Kejadian (.CSV)</button>
+        <button type="button" class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
       </div>
     </div>
 
-    <!-- MODUL 2: PROFIL & EDIT FOTO PROFIL -->
-    <div id="mod-2" class="screen-panel">
-      <div class="card">
-        <div class="card-title"><i class="fas fa-id-card"></i> Identitas & Digital ID Card Karyawan</div>
-        <div style="text-align:center; padding:10px;">
-          <div id="profile-avatar-display" style="width:80px; height:80px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 10px; overflow:hidden; border:3px solid var(--gold-accent); position:relative;">
-            <img id="prof-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
-            <i class="fas fa-user-tie" id="prof-avatar-icon"></i>
-          </div>
-          <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M.Soheh</h3>
-          <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">ID: M.Soheh</p>
-          <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Peran: Head Of Operation / Admin</p>
-        </div>
-        <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
-          <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Area Tugas PLN:</strong> <span id="prof-site">Seluruh Wilayah PLN UIT JBT & UIT JBB</span></p>
-          <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
-        </div>
-      </div>
-
-      <div class="card" style="border-top: 3px solid var(--gold-accent);">
-        <div class="card-title"><i class="fas fa-camera-retro"></i> Edit Foto Profil Anda</div>
-        <div class="camera-box" style="height: 160px; margin-bottom: 8px;">
-          <video id="profile-webcam" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
-          <img id="profile-photo-preview" src="" style="display:none; width:100%; height:100%; object-fit:cover;" />
-          <div id="profile-cam-placeholder" style="color:#fff; text-align:center;">
-            <i class="fas fa-user-circle fa-2x" style="margin-bottom:6px; color:var(--gold-accent);"></i>
-            <p style="font-size:9.5px;">Pratinjau Foto Profil</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
-          <button type="button" class="btn btn-outline" style="font-size:10px; padding:8px;" onclick="startProfileWebcam()"><i class="fas fa-video"></i> Buka Kamera</button>
-          <button type="button" class="btn btn-primary" style="font-size:10px; padding:8px;" onclick="captureProfileSnapshot()"><i class="fas fa-camera"></i> Ambil Foto</button>
-        </div>
-        <div class="form-group" style="margin-top:6px;">
-          <label style="font-size:10px; font-weight:bold;"><i class="fas fa-image"></i> Unggah Foto dari Galeri</label>
-          <input type="file" id="profile-gallery-input" accept="image/*" class="form-control" onchange="loadProfileFromGallery(event)" style="font-size:10px; padding:6px;">
-        </div>
-        <button type="button" class="btn btn-success" style="margin-top:8px;" onclick="saveProfileAvatar()"><i class="fas fa-save"></i> SIMPAN FOTO PROFIL</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-user-edit"></i> Edit Informasi Profil</div>
-        <div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control"></div>
-        <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
-        <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="edit-prof-site" class="form-control"></div>
-        <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control"></div>
-        <button type="button" class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
-        <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control"></div>
-        <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control"></div>
-        <button type="button" class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN</button>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-th-large"></i> 14 Modul Terintegrasi</div>
+      <div class="modules-grid">
+        <div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
+        <div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
+        <div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
+        <div class="module-item" onclick="showModule(4)"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label">MR (Req)</div></div>
+        <div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin & Cuti</div></div>
+        <div class="module-item" onclick="showModule(6)"><div class="module-icon" style="background:var(--danger); color:#fff;"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label" style="color:var(--danger); font-weight:bold;">Kejadian</div></div>
+        <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
+        <div class="module-item" onclick="showModule(8)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
+        <div class="module-item" onclick="showModule(9)"><div class="module-icon"><i class="fas fa-hard-hat"></i></div><div class="module-label">High Risk K3</div></div>
+        <div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-users"></i></div><div class="module-label">Data Tim</div></div>
+        <div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
+        <div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-exclamation-circle"></i></div><div class="module-label">Outstanding</div></div>
+        <div class="module-item" onclick="showModule(13)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI & News</div></div>
+        <div class="module-item" onclick="showModule(14)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
       </div>
     </div>
-
-    <!-- MODUL 3: ABSENSI -->
-    <div id="mod-3" class="screen-panel">
-      <div class="card">
-        <div class="card-title"><i class="fas fa-clock"></i> Absensi Live Foto Wajib & GPS Gedung/PT</div>
-        <div class="digital-clock-box" id="live-clock">00:00:00 WIB</div>
-
-        <div class="camera-box">
-          <video id="webcam" autoplay playsinline style="display:none;"></video>
-          <img id="photo-preview" src="" style="display:none;" />
-          <div id="camera-placeholder" style="color:#fff; text-align:center;">
-            <i class="fas fa-camera fa-2x" style="margin-bottom:8px; color:var(--gold-accent);"></i>
-            <p style="font-size:10px;">Wajib Live Foto Kamera Perangkat</p>
-          </div>
-          <div class="camera-overlay"></div>
-        </div>
-
-        <button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Nyalakan Kamera Live</button>
-        <button type="button" class="btn btn-primary" id="btn-take-snapshot" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
-
-        <div style="margin-top:10px;" class="form-group">
-          <button type="button" class="btn btn-warning" id="btn-tarik-gps" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> 3. Tarik GPS Gedung / PT / Lokasi</button>
-          <input type="text" id="gps-coords" class="form-control" placeholder="Nama Gedung / PT / Jalan & Koordinat..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold; font-size:10px;">
-          <div id="gmaps-link-box" style="margin-top:4px; text-align:center;"></div>
-        </div>
-
-        <div class="status-checklist">
-          <span id="status-foto-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> Foto: Belum</span>
-          <span id="status-gps-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> GPS: Belum</span>
-        </div>
-
-        <div style="display:flex; gap:8px; margin-top:10px;">
-          <button type="button" class="btn btn-success" id="btn-checkin" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
-          <button type="button" class="btn btn-danger" id="btn-checkout" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-history"></i> Riwayat Absensi Hari Ini</span>
-          <span id="absen-count-badge" class="badge badge-in">0 Data</span>
-        </div>
-        <ul id="attendance-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan absensi tersimpan pada sesi ini.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 4: MR (MATERIAL REQUEST) -->
-    <div id="mod-4" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-file-invoice-dollar"></i> Material Request (MR)</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group">
-          <label>Area Tugas / Site (UPT / ULTG / Kantor)</label>
-          <input type="text" id="mr-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang">
-        </div>
-        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
-          <div class="form-group"><label>Nama Material / Kebutuhan</label><input type="text" id="mr-item" class="form-control" placeholder="Contoh: Chemical Pembersih / APD"></div>
-          <div class="form-group"><label>Jumlah & Satuan</label><input type="text" id="mr-qty" class="form-control" placeholder="Contoh: 10 Pack"></div>
-        </div>
-        <div class="form-group">
-          <label>Prioritas & Catatan Operasional</label>
-          <select id="mr-priority" class="form-control" style="margin-bottom:6px;">
-            <option value="Normal">Normal</option>
-            <option value="Urgent">Urgent (Kebutuhan Segera)</option>
-            <option value="K3 / Safety">K3 / Safety</option>
-          </select>
-          <input type="text" id="mr-notes" class="form-control" placeholder="Alasan permintaan / spesifikasi singkat...">
-        </div>
-        <button type="button" class="btn btn-warning" onclick="submitMR()"><i class="fas fa-paper-plane"></i> AJUKAN MATERIAL REQUEST (MR)</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-list-alt"></i> Daftar Pengajuan MR</span>
-          <span id="mr-count-badge" class="badge badge-warning">0 MR</span>
-        </div>
-        <ul id="mr-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 5: IZIN & CUTI -->
-    <div id="mod-5" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-file-signature"></i> Pengajuan Izin, Sakit & Cuti</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group">
-          <label>Jenis Pengajuan</label>
-          <select id="leave-type" class="form-control">
-            <option value="Izin">Izin Keperluan Penting</option>
-            <option value="Sakit">Sakit</option>
-            <option value="Cuti Tahunan">Cuti Tahunan</option>
-            <option value="Dinas Luar">Dinas Luar / Penugasan Site</option>
-          </select>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="leave-start" class="form-control"></div>
-          <div class="form-group"><label>Tanggal Selesai</label><input type="date" id="leave-end" class="form-control"></div>
-        </div>
-        <div class="form-group">
-          <label>Keterangan / Pengganti Tugas di Lapangan</label>
-          <input type="text" id="leave-reason" class="form-control" placeholder="Jelaskan alasan dan backup personil site...">
-        </div>
-        <button type="button" class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-check-circle"></i> KIRIM PENGAJUAN IZIN / CUTI</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-calendar-check"></i> Riwayat Izin & Cuti</div>
-        <ul id="leave-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada riwayat izin atau cuti.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 6: KEJADIAN -->
-    <div id="mod-6" class="screen-panel">
-      <div class="card" style="border-top: 3px solid var(--danger);">
-        <div class="card-title">
-          <span><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Pelaporan Kejadian / Insiden</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group">
-          <label>Kategori Kejadian</label>
-          <select id="incident-category" class="form-control">
-            <option value="Near Miss / Potensi Bahaya">Near Miss / Potensi Bahaya</option>
-            <option value="Insiden K3 / Kecelakaan Kerja">Insiden K3 / Kecelakaan Kerja</option>
-            <option value="Kerusakan Fasilitas / Peralatan">Kerusakan Fasilitas / Peralatan</option>
-            <option value="Komplain Pelanggan / Pengguna Gedung">Komplain Pelanggan / Pengguna Gedung</option>
-            <option value="Gangguan Keamanan / Akses">Gangguan Keamanan / Akses</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Lokasi Kejadian & Area PLN</label>
-          <input type="text" id="incident-location" class="form-control" placeholder="Contoh: ULTG Cikarang / UPT Cawang">
-        </div>
-        <div class="form-group">
-          <label>Kronologi & Tindakan Segera</label>
-          <textarea id="incident-desc" class="form-control" rows="3" placeholder="Uraikan kronologi kejadian dan langkah penanganan awal..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Foto Bukti Kejadian</label>
-          <input type="file" id="incident-photo-input" accept="image/*" class="form-control" style="font-size:10px; padding:6px;">
-        </div>
-        <button type="button" class="btn btn-danger" onclick="submitIncident()"><i class="fas fa-bullhorn"></i> LAPORKAN KEJADIAN SEKARANG</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-clipboard-list"></i> Log Kejadian Tercatat</div>
-        <ul id="incident-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 7: MCP CLEANING -->
-    <div id="mod-7" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-broom"></i> MCP Cleaning (Master Cleaning Program)</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group"><label>Zona / Area Cleaning</label><input type="text" id="mcp-zone" class="form-control" placeholder="Contoh: Lobby Utama, Ruang Rapat, Koridor"></div>
-        <div class="form-group">
-          <label>Frekuensi Pekerjaan</label>
-          <select id="mcp-freq" class="form-control">
-            <option value="Daily (Harian)">Daily (Harian)</option>
-            <option value="Weekly (Mingguan)">Weekly (Mingguan)</option>
-            <option value="Monthly (Bulanan)">Monthly (Bulanan)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Item Pekerjaan MCP</label>
-          <div style="display:flex; flex-direction:column; gap:6px; font-size:10.5px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Sweeping & Mopping Lantai"> Sweeping & Mopping Lantai</label>
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Dusting Meja, Kursi & Partisi"> Dusting Meja, Kursi & Partisi</label>
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Sanitasi & Pembersihan Kaca/Pintu"> Sanitasi & Pembersihan Kaca/Pintu</label>
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Pengosongan Tempat Sampah"> Pengosongan Tempat Sampah</label>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Status Penyelesaian</label>
-          <select id="mcp-status" class="form-control">
-            <option value="Selesai 100%">Selesai 100%</option>
-            <option value="Dalam Proses">Dalam Proses</option>
-            <option value="Tertunda">Tertunda</option>
-          </select>
-        </div>
-        <button type="button" class="btn btn-success" onclick="saveMCPReport()"><i class="fas fa-save"></i> SIMPAN LAPORAN MCP CLEANING</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-check-double"></i> Riwayat MCP Cleaning</div>
-        <ul id="mcp-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan MCP Cleaning.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 8: CHEKLIS AREA -->
-    <div id="mod-8" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-restroom"></i> Cheklis Area (Daily Activity & 5S)</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group"><label>Nama Area / Ruangan / Toilet</label><input type="text" id="area-name" class="form-control" placeholder="Contoh: Toilet Lantai 1 / Ruang Kontrol"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group">
-            <label>Kondisi Kebersihan (5S)</label>
-            <select id="area-5s" class="form-control">
-              <option value="Baik / Bersih">Baik / Bersih</option>
-              <option value="Cukup">Cukup</option>
-              <option value="Perlu Perbaikan">Perlu Perbaikan</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Amenitas / Sabun / Tissue</label>
-            <select id="area-amenities" class="form-control">
-              <option value="Lengkap">Lengkap</option>
-              <option value="Hampir Habis">Hampir Habis</option>
-              <option value="Kosong">Kosong</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group"><label>Catatan Inspeksi Area</label><input type="text" id="area-notes" class="form-control" placeholder="Catatan tambahan kondisi area..."></div>
-        <button type="button" class="btn btn-primary" onclick="saveAreaChecklist()"><i class="fas fa-clipboard-check"></i> SIMPAN CHEKLIS AREA</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-history"></i> Log Cheklis Area</div>
-        <ul id="area-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data cheklis area.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 9: HIGH RISK K3 -->
-    <div id="mod-9" class="screen-panel">
-      <div class="card" style="border-top: 3px solid var(--gold-accent);">
-        <div class="card-title">
-          <span><i class="fas fa-hard-hat" style="color:var(--gold-accent);"></i> Pengawasan Pekerjaan High Risk K3</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group">
-          <label>Jenis Pekerjaan Berisiko Tinggi</label>
-          <select id="k3-work-type" class="form-control">
-            <option value="Working at Height / Rope Access">Working at Height / Rope Access</option>
-            <option value="Pekerjaan Elektrikal / Area Bertegangan">Pekerjaan Elektrikal / Area Bertegangan</option>
-            <option value="Confined Space / Ruang Terbatas">Confined Space / Ruang Terbatas</option>
-            <option value="Pekerjaan Panas / Alat Berat">Pekerjaan Panas / Alat Berat</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Verifikasi APD & Izin Kerja</label>
-          <div style="display:flex; flex-direction:column; gap:6px; font-size:10.5px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Work Permit & JSA Terverifikasi"> Work Permit & JSA Terverifikasi</label>
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Helm Safety, Body Harness & Sepatu Safety"> Helm Safety, Body Harness & Sepatu Safety</label>
-            <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Barikade Area & Safety Briefing"> Barikade Area & Safety Briefing</label>
-          </div>
-        </div>
-        <div class="form-group"><label>Lokasi & Nama Petugas Pelaksana</label><input type="text" id="k3-officer" class="form-control" placeholder="Contoh: Fasade Gedung Utama - Tim Rope Access"></div>
-        <button type="button" class="btn btn-warning" onclick="saveHighRiskK3()"><i class="fas fa-shield-alt"></i> CATAT VERIFIKASI HIGH RISK K3</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-hard-hat"></i> Riwayat Pengawasan High Risk K3</div>
-        <ul id="k3-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan High Risk K3.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 10: DATA TIM -->
-    <div id="mod-10" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-users"></i> Data Tim Korlap & Admin</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group">
-          <label>Cari Nama / Username / Area Tugas PLN</label>
-          <input type="text" id="team-search-input" class="form-control" placeholder="Ketik nama, username, atau area tugas..." oninput="renderTeamList()">
-        </div>
-        <ul id="team-member-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Memuat data tim...</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 11: EQUIPMENT -->
-    <div id="mod-11" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-tools"></i> Inventaris & Kondisi Equipment</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
-          <div class="form-group"><label>Nama Peralatan / Mesin</label><input type="text" id="eq-name" class="form-control" placeholder="Contoh: Floor Polisher / Vacuum"></div>
-          <div class="form-group"><label>Jumlah Unit</label><input type="number" id="eq-qty" class="form-control" value="1" min="1"></div>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group"><label>Area / Site</label><input type="text" id="eq-site" class="form-control" placeholder="Contoh: UPT Bandung"></div>
-          <div class="form-group">
-            <label>Kondisi Alat</label>
-            <select id="eq-condition" class="form-control">
-              <option value="Baik / Layak Pakai">Baik / Layak Pakai</option>
-              <option value="Perlu Servis">Perlu Servis</option>
-              <option value="Rusak / Tidak Layak">Rusak / Tidak Layak</option>
-            </select>
-          </div>
-        </div>
-        <button type="button" class="btn btn-primary" onclick="saveEquipment()"><i class="fas fa-plus-circle"></i> SIMPAN DATA EQUIPMENT</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-boxes"></i> Daftar Equipment Terdaftar</div>
-        <ul id="equipment-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 12: OUTSTANDING -->
-    <div id="mod-12" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-exclamation-circle"></i> Daftar Temuan & Tindak Lanjut (Outstanding)</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div class="form-group"><label>Judul Temuan / Action Item</label><input type="text" id="out-title" class="form-control" placeholder="Contoh: Perbaikan selang vacuum / Tindak lanjut audit"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group"><label>PIC / Penanggung Jawab</label><input type="text" id="out-pic" class="form-control" placeholder="Nama Korlap / PIC"></div>
-          <div class="form-group"><label>Target Selesai (Due Date)</label><input type="date" id="out-due" class="form-control"></div>
-        </div>
-        <button type="button" class="btn btn-warning" onclick="addOutstandingItem()"><i class="fas fa-plus"></i> TAMBAH ITEM OUTSTANDING</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-tasks"></i> Status Outstanding</div>
-        <ul id="outstanding-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding aktif.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 13: KPI & NEWS -->
-    <div id="mod-13" class="screen-panel">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fas fa-chart-pie"></i> Ringkasan KPI & Performa Operasional</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:10.5px;">
-          <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px;">
-            <div style="color:#166534; font-weight:bold;">Kepatuhan Absensi & GPS</div>
-            <div id="kpi-attendance-score" style="font-size:16px; font-weight:800; color:var(--success); margin-top:4px;">98.5%</div>
-          </div>
-          <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:8px;">
-            <div style="color:#1e40af; font-weight:bold;">Penyelesaian MCP & Area</div>
-            <div id="kpi-mcp-score" style="font-size:16px; font-weight:800; color:var(--blue-accent); margin-top:4px;">96.0%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-bullhorn"></i> Pengumuman & Buletin Operasional AMP</div>
-        <ul id="news-feed-list" class="log-list">
-          <li class="log-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
-            <span class="badge badge-in">INFO OPERASIONAL</span>
-            <strong>Standardisasi Live Foto & GPS Gedung/PT</strong>
-            <span style="color:var(--text-muted);">Pastikan GPS aktif dan foto wajah/lokasi jelas saat Check-In dan Check-Out.</span>
-          </li>
-          <li class="log-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
-            <span class="badge badge-warning">K3 & SAFETY</span>
-            <strong>Wajib Verifikasi APD Sebelum Pekerjaan High Risk</strong>
-            <span style="color:var(--text-muted);">Seluruh aktivitas berisiko tinggi wajib disertai pemeriksaan kelengkapan APD dan izin kerja.</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MODUL 14: MODUL SYNC -->
-    <div id="mod-14" class="screen-panel">
-      <div class="card" style="border-top: 3px solid #0284c7;">
-        <div class="card-title">
-          <span><i class="fas fa-database" style="color:#0284c7;"></i> Pusat Sinkronisasi Data (Supabase)</span>
-          <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-        </div>
-        <p style="font-size:10px; color:var(--text-muted); margin-bottom:10px;">
-          Kelola sinkronisasi data lokal dengan database cloud Supabase agar catatan absensi, GPS Korlap, kejadian, dan MR tetap aman.
-        </p>
-        <div class="status-checklist" style="margin-bottom:10px;">
-          <span id="sync-queue-count" style="font-weight:bold; color:var(--navy-primary);"><i class="fas fa-cloud-upload-alt"></i> Antrean Pending: 0 Data</span>
-          <span id="sync-last-time" style="color:var(--text-muted);">Terakhir Sync: -</span>
-        </div>
-        <button type="button" class="btn btn-primary" onclick="syncAllToSupabase()"><i class="fas fa-sync-alt"></i> SINKRONKAN SEMUA DATA KE SUPABASE</button>
-        <button type="button" class="btn btn-outline" onclick="pullLatestFromSupabase()"><i class="fas fa-cloud-download-alt"></i> TARIK DATA TERBARU DARI SERVER</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><i class="fas fa-terminal"></i> Log Status Sinkronisasi</div>
-        <ul id="sync-log-list" class="log-list">
-          <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada aktivitas sinkronisasi pada sesi ini.</li>
-        </ul>
-      </div>
-    </div>
-
   </div>
 
-  <!-- BOTTOM NAVIGATION -->
-  <nav class="bottom-nav">
-    <a class="nav-link active" onclick="showModule(1)"><i class="fas fa-home"></i><span>Home</span></a>
-    <a class="nav-link" onclick="showModule(3)"><i class="fas fa-camera"></i><span>Absen</span></a>
-    <a class="nav-link" onclick="showModule(6)"><i class="fas fa-exclamation-triangle"></i><span>Kejadian</span></a>
-    <a class="nav-link" onclick="showModule(2)"><i class="fas fa-user"></i><span>Profil</span></a>
-  </nav>
+  <!-- MODUL 2: PROFIL & EDIT FOTO PROFIL -->
+  <div id="mod-2" class="screen-panel">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-id-card"></i> Identitas & Digital ID Card Karyawan</div>
+      <div style="text-align:center; padding:10px;">
+        <div id="profile-avatar-display" style="width:80px; height:80px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 10px; overflow:hidden; border:3px solid var(--gold-accent);">
+          <img id="prof-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
+          <i class="fas fa-user-tie" id="prof-avatar-icon"></i>
+        </div>
+        <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">M.Soheh</h3>
+        <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">ID: M.Soheh</p>
+        <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Peran: Head Of Operation / Admin</p>
+      </div>
+      <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
+        <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Area Tugas PLN:</strong> <span id="prof-site">Seluruh Wilayah PLN UIT JBT & UIT JBB</span></p>
+        <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
+      </div>
+    </div>
+
+    <div class="card" style="border-top: 3px solid var(--gold-accent);">
+      <div class="card-title"><i class="fas fa-camera-retro"></i> Edit Foto Profil Anda</div>
+      <div class="camera-box" style="height: 160px; margin-bottom: 8px;">
+        <video id="profile-webcam" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+        <img id="profile-photo-preview" src="" style="display:none; width:100%; height:100%; object-fit:cover;" />
+        <div id="profile-cam-placeholder" style="color:#fff; text-align:center;">
+          <i class="fas fa-user-circle fa-2x" style="margin-bottom:6px; color:var(--gold-accent);"></i>
+          <p style="font-size:9.5px;">Pratinjau Foto Profil</p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
+        <button type="button" class="btn btn-outline" style="font-size:10px; padding:8px;" onclick="startProfileWebcam()"><i class="fas fa-video"></i> Buka Kamera</button>
+        <button type="button" class="btn btn-primary" style="font-size:10px; padding:8px;" onclick="captureProfileSnapshot()"><i class="fas fa-camera"></i> Ambil Foto</button>
+      </div>
+      <div class="form-group" style="margin-top:6px;">
+        <label style="font-size:10px; font-weight:bold;"><i class="fas fa-image"></i> Unggah Foto dari Galeri</label>
+        <input type="file" id="profile-gallery-input" accept="image/*" class="form-control" onchange="loadProfileFromGallery(event)" style="font-size:10px; padding:6px;">
+      </div>
+      <button type="button" class="btn btn-success" style="margin-top:8px;" onclick="saveProfileAvatar()"><i class="fas fa-save"></i> SIMPAN FOTO PROFIL</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-user-edit"></i> Edit Informasi Profil</div>
+      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control"></div>
+      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="edit-prof-jabatan" class="form-control"></div>
+      <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="edit-prof-site" class="form-control"></div>
+      <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control"></div>
+      <button type="button" class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
+      <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control"></div>
+      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control"></div>
+      <button type="button" class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN</button>
+    </div>
+  </div>
+
+  <!-- MODUL 3: ABSENSI -->
+  <div id="mod-3" class="screen-panel">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-clock"></i> Absensi Live Foto Wajib & GPS Gedung/PT</div>
+      <div class="digital-clock-box" id="live-clock">00:00:00 WIB</div>
+
+      <div class="camera-box">
+        <video id="webcam" autoplay playsinline style="display:none;"></video>
+        <img id="photo-preview" src="" style="display:none;" />
+        <div id="camera-placeholder" style="color:#fff; text-align:center;">
+          <i class="fas fa-camera fa-2x" style="margin-bottom:8px; color:var(--gold-accent);"></i>
+          <p style="font-size:10px;">Wajib Live Foto Kamera Perangkat</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Nyalakan Kamera Live</button>
+      <button type="button" class="btn btn-primary" id="btn-take-snapshot" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
+
+      <div style="margin-top:10px;" class="form-group">
+        <button type="button" class="btn btn-warning" id="btn-tarik-gps" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> 3. Tarik GPS Gedung / PT / Lokasi</button>
+        <input type="text" id="gps-coords" class="form-control" placeholder="Nama Gedung / PT / Jalan & Koordinat..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold; font-size:10px;">
+        <div id="gmaps-link-box" style="margin-top:4px; text-align:center;"></div>
+      </div>
+
+      <div class="status-checklist">
+        <span id="status-foto-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> Foto: Belum</span>
+        <span id="status-gps-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> GPS: Belum</span>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="btn btn-success" id="btn-checkin" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
+        <button type="button" class="btn btn-danger" id="btn-checkout" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-history"></i> Riwayat Absensi Hari Ini</span>
+        <span id="absen-count-badge" class="badge badge-in">0 Data</span>
+      </div>
+      <ul id="attendance-log-list" class="log-list">
+        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan absensi tersimpan pada sesi ini.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MODUL 4: MR -->
+  <div id="mod-4" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-file-invoice-dollar"></i> Material Request (MR)</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group"><label>Area Tugas / Site (UPT / ULTG / Kantor)</label><input type="text" id="mr-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
+        <div class="form-group"><label>Nama Material / Kebutuhan</label><input type="text" id="mr-item" class="form-control" placeholder="Contoh: Chemical Pembersih / APD"></div>
+        <div class="form-group"><label>Jumlah & Satuan</label><input type="text" id="mr-qty" class="form-control" placeholder="Contoh: 10 Pack"></div>
+      </div>
+      <div class="form-group">
+        <label>Prioritas & Catatan Operasional</label>
+        <select id="mr-priority" class="form-control" style="margin-bottom:6px;">
+          <option value="Normal">Normal</option>
+          <option value="Urgent">Urgent (Kebutuhan Segera)</option>
+          <option value="K3 / Safety">K3 / Safety</option>
+        </select>
+        <input type="text" id="mr-notes" class="form-control" placeholder="Alasan permintaan / spesifikasi singkat...">
+      </div>
+      <button type="button" class="btn btn-warning" onclick="submitMR()"><i class="fas fa-paper-plane"></i> AJUKAN MATERIAL REQUEST (MR)</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-list-alt"></i> Daftar Pengajuan MR</span>
+        <span id="mr-count-badge" class="badge badge-warning">0 MR</span>
+      </div>
+      <ul id="mr-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 5: IZIN & CUTI -->
+  <div id="mod-5" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-file-signature"></i> Pengajuan Izin, Sakit & Cuti</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group">
+        <label>Jenis Pengajuan</label>
+        <select id="leave-type" class="form-control">
+          <option value="Izin">Izin Keperluan Penting</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Cuti Tahunan">Cuti Tahunan</option>
+          <option value="Dinas Luar">Dinas Luar / Penugasan Site</option>
+        </select>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="leave-start" class="form-control"></div>
+        <div class="form-group"><label>Tanggal Selesai</label><input type="date" id="leave-end" class="form-control"></div>
+      </div>
+      <div class="form-group"><label>Keterangan / Pengganti Tugas di Lapangan</label><input type="text" id="leave-reason" class="form-control" placeholder="Jelaskan alasan dan backup personil site..."></div>
+      <button type="button" class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-check-circle"></i> KIRIM PENGAJUAN IZIN / CUTI</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-calendar-check"></i> Riwayat Izin & Cuti</div>
+      <ul id="leave-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada riwayat izin atau cuti.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 6: KEJADIAN -->
+  <div id="mod-6" class="screen-panel">
+    <div class="card" style="border-top: 3px solid var(--danger);">
+      <div class="card-title">
+        <span><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Pelaporan Kejadian / Insiden</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group">
+        <label>Kategori Kejadian</label>
+        <select id="incident-category" class="form-control">
+          <option value="Near Miss / Potensi Bahaya">Near Miss / Potensi Bahaya</option>
+          <option value="Insiden K3 / Kecelakaan Kerja">Insiden K3 / Kecelakaan Kerja</option>
+          <option value="Kerusakan Fasilitas / Peralatan">Kerusakan Fasilitas / Peralatan</option>
+          <option value="Komplain Pelanggan / Pengguna Gedung">Komplain Pelanggan / Pengguna Gedung</option>
+          <option value="Gangguan Keamanan / Akses">Gangguan Keamanan / Akses</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Lokasi Kejadian & Area PLN</label><input type="text" id="incident-location" class="form-control" placeholder="Contoh: ULTG Cikarang / UPT Cawang"></div>
+      <div class="form-group"><label>Kronologi & Tindakan Segera</label><textarea id="incident-desc" class="form-control" rows="3" placeholder="Uraikan kronologi kejadian dan langkah penanganan awal..."></textarea></div>
+      <div class="form-group"><label>Foto Bukti Kejadian</label><input type="file" id="incident-photo-input" accept="image/*" class="form-control" style="font-size:10px; padding:6px;"></div>
+      <button type="button" class="btn btn-danger" onclick="submitIncident()"><i class="fas fa-bullhorn"></i> LAPORKAN KEJADIAN SEKARANG</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-clipboard-list"></i> Log Kejadian Tercatat</div>
+      <ul id="incident-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 7: MCP CLEANING -->
+  <div id="mod-7" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-broom"></i> MCP Cleaning (Master Cleaning Program)</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group"><label>Zona / Area Cleaning</label><input type="text" id="mcp-zone" class="form-control" placeholder="Contoh: Lobby Utama, Ruang Rapat, Koridor"></div>
+      <div class="form-group">
+        <label>Frekuensi Pekerjaan</label>
+        <select id="mcp-freq" class="form-control">
+          <option value="Daily (Harian)">Daily (Harian)</option>
+          <option value="Weekly (Mingguan)">Weekly (Mingguan)</option>
+          <option value="Monthly (Bulanan)">Monthly (Bulanan)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Item Pekerjaan MCP</label>
+        <div style="display:flex; flex-direction:column; gap:6px; font-size:10.5px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Sweeping & Mopping Lantai"> Sweeping & Mopping Lantai</label>
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Dusting Meja, Kursi & Partisi"> Dusting Meja, Kursi & Partisi</label>
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Sanitasi & Pembersihan Kaca/Pintu"> Sanitasi & Pembersihan Kaca/Pintu</label>
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Pengosongan Tempat Sampah"> Pengosongan Tempat Sampah</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status Penyelesaian</label>
+        <select id="mcp-status" class="form-control">
+          <option value="Selesai 100%">Selesai 100%</option>
+          <option value="Dalam Proses">Dalam Proses</option>
+          <option value="Tertunda">Tertunda</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-success" onclick="saveMCPReport()"><i class="fas fa-save"></i> SIMPAN LAPORAN MCP CLEANING</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-check-double"></i> Riwayat MCP Cleaning</div>
+      <ul id="mcp-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan MCP Cleaning.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 8: CHEKLIS AREA -->
+  <div id="mod-8" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-restroom"></i> Cheklis Area (Daily Activity & 5S)</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group"><label>Nama Area / Ruangan / Toilet</label><input type="text" id="area-name" class="form-control" placeholder="Contoh: Toilet Lantai 1 / Ruang Kontrol"></div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <div class="form-group">
+          <label>Kondisi Kebersihan (5S)</label>
+          <select id="area-5s" class="form-control">
+            <option value="Baik / Bersih">Baik / Bersih</option>
+            <option value="Cukup">Cukup</option>
+            <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amenitas / Sabun / Tissue</label>
+          <select id="area-amenities" class="form-control">
+            <option value="Lengkap">Lengkap</option>
+            <option value="Hampir Habis">Hampir Habis</option>
+            <option value="Kosong">Kosong</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Catatan Inspeksi Area</label><input type="text" id="area-notes" class="form-control" placeholder="Catatan tambahan kondisi area..."></div>
+      <button type="button" class="btn btn-primary" onclick="saveAreaChecklist()"><i class="fas fa-clipboard-check"></i> SIMPAN CHEKLIS AREA</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-history"></i> Log Cheklis Area</div>
+      <ul id="area-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data cheklis area.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 9: HIGH RISK K3 -->
+  <div id="mod-9" class="screen-panel">
+    <div class="card" style="border-top: 3px solid var(--gold-accent);">
+      <div class="card-title">
+        <span><i class="fas fa-hard-hat" style="color:var(--gold-accent);"></i> Pengawasan Pekerjaan High Risk K3</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group">
+        <label>Jenis Pekerjaan Berisiko Tinggi</label>
+        <select id="k3-work-type" class="form-control">
+          <option value="Working at Height / Rope Access">Working at Height / Rope Access</option>
+          <option value="Pekerjaan Elektrikal / Area Bertegangan">Pekerjaan Elektrikal / Area Bertegangan</option>
+          <option value="Confined Space / Ruang Terbatas">Confined Space / Ruang Terbatas</option>
+          <option value="Pekerjaan Panas / Alat Berat">Pekerjaan Panas / Alat Berat</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Verifikasi APD & Izin Kerja</label>
+        <div style="display:flex; flex-direction:column; gap:6px; font-size:10.5px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Work Permit & JSA Terverifikasi"> Work Permit & JSA Terverifikasi</label>
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Helm Safety, Body Harness & Sepatu Safety"> Helm Safety, Body Harness & Sepatu Safety</label>
+          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Barikade Area & Safety Briefing"> Barikade Area & Safety Briefing</label>
+        </div>
+      </div>
+      <div class="form-group"><label>Lokasi & Nama Petugas Pelaksana</label><input type="text" id="k3-officer" class="form-control" placeholder="Contoh: Fasade Gedung Utama - Tim Rope Access"></div>
+      <button type="button" class="btn btn-warning" onclick="saveHighRiskK3()"><i class="fas fa-shield-alt"></i> CATAT VERIFIKASI HIGH RISK K3</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-hard-hat"></i> Riwayat Pengawasan High Risk K3</div>
+      <ul id="k3-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan High Risk K3.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 10: DATA TIM -->
+  <div id="mod-10" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-users"></i> Data Tim Korlap & Admin</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group"><label>Cari Nama / Username / Area Tugas PLN</label><input type="text" id="team-search-input" class="form-control" placeholder="Ketik nama, username, atau area tugas..." oninput="renderTeamList()"></div>
+      <ul id="team-member-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Memuat data tim...</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 11: EQUIPMENT -->
+  <div id="mod-11" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-tools"></i> Inventaris & Kondisi Equipment</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
+        <div class="form-group"><label>Nama Peralatan / Mesin</label><input type="text" id="eq-name" class="form-control" placeholder="Contoh: Floor Polisher / Vacuum"></div>
+        <div class="form-group"><label>Jumlah Unit</label><input type="number" id="eq-qty" class="form-control" value="1" min="1"></div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <div class="form-group"><label>Area / Site</label><input type="text" id="eq-site" class="form-control" placeholder="Contoh: UPT Bandung"></div>
+        <div class="form-group">
+          <label>Kondisi Alat</label>
+          <select id="eq-condition" class="form-control">
+            <option value="Baik / Layak Pakai">Baik / Layak Pakai</option>
+            <option value="Perlu Servis">Perlu Servis</option>
+            <option value="Rusak / Tidak Layak">Rusak / Tidak Layak</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="saveEquipment()"><i class="fas fa-plus-circle"></i> SIMPAN DATA EQUIPMENT</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-boxes"></i> Daftar Equipment Terdaftar</div>
+      <ul id="equipment-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 12: OUTSTANDING -->
+  <div id="mod-12" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-exclamation-circle"></i> Daftar Temuan & Tindak Lanjut (Outstanding)</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group"><label>Judul Temuan / Action Item</label><input type="text" id="out-title" class="form-control" placeholder="Contoh: Perbaikan selang vacuum / Tindak lanjut audit"></div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <div class="form-group"><label>PIC / Penanggung Jawab</label><input type="text" id="out-pic" class="form-control" placeholder="Nama Korlap / PIC"></div>
+        <div class="form-group"><label>Target Selesai (Due Date)</label><input type="date" id="out-due" class="form-control"></div>
+      </div>
+      <button type="button" class="btn btn-warning" onclick="addOutstandingItem()"><i class="fas fa-plus"></i> TAMBAH ITEM OUTSTANDING</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-tasks"></i> Status Outstanding</div>
+      <ul id="outstanding-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding aktif.</li></ul>
+    </div>
+  </div>
+
+  <!-- MODUL 13: KPI & NEWS -->
+  <div id="mod-13" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-chart-pie"></i> Ringkasan KPI & Performa Operasional</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:10.5px;">
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px;">
+          <div style="color:#166534; font-weight:bold;">Kepatuhan Absensi & GPS</div>
+          <div id="kpi-attendance-score" style="font-size:16px; font-weight:800; color:var(--success); margin-top:4px;">98.5%</div>
+        </div>
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:8px;">
+          <div style="color:#1e40af; font-weight:bold;">Penyelesaian MCP & Area</div>
+          <div id="kpi-mcp-score" style="font-size:16px; font-weight:800; color:var(--sky-accent); margin-top:4px;">96.0%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-bullhorn"></i> Pengumuman & Buletin Operasional AMP</div>
+      <ul id="news-feed-list" class="log-list">
+        <li class="log-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+          <span class="badge badge-in">INFO OPERASIONAL</span>
+          <strong>Standardisasi Live Foto & GPS Gedung/PT</strong>
+          <span style="color:var(--text-muted);">Pastikan GPS aktif dan foto wajah/lokasi jelas saat Check-In dan Check-Out.</span>
+        </li>
+        <li class="log-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+          <span class="badge badge-warning">K3 & SAFETY</span>
+          <strong>Wajib Verifikasi APD Sebelum Pekerjaan High Risk</strong>
+          <span style="color:var(--text-muted);">Seluruh aktivitas berisiko tinggi wajib disertai pemeriksaan kelengkapan APD dan izin kerja.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MODUL 14: MODUL SYNC & KONFIGURASI SUPABASE -->
+  <div id="mod-14" class="screen-panel">
+    <div class="card" style="border-top: 3px solid #0f766e;">
+      <div class="card-title">
+        <span><i class="fas fa-plug" style="color:#0f766e;"></i> Konfigurasi URL & Anon Key Supabase</span>
+        <span id="supabase-conn-badge" class="badge badge-warning">Belum Terhubung</span>
+      </div>
+      <div class="form-group">
+        <label>Supabase Project URL</label>
+        <input type="text" id="cfg-supabase-url" class="form-control" placeholder="https://xxxxxxxxxxxx.supabase.co">
+      </div>
+      <div class="form-group">
+        <label>Supabase Anon / Public Key</label>
+        <div style="display:flex; gap:6px;">
+          <input type="password" id="cfg-supabase-key" class="form-control" placeholder="Masukkan anon / public key Supabase">
+          <button type="button" class="btn btn-outline" style="width:auto; padding:0 10px; margin:0;" onclick="toggleKeyVisibility()" title="Lihat / Sembunyikan Key">
+            <i class="fas fa-eye" id="toggle-key-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
+        <button type="button" class="btn btn-success" style="margin:0;" onclick="saveSupabaseConfig()"><i class="fas fa-save"></i> SIMPAN</button>
+        <button type="button" class="btn btn-primary" style="margin:0;" onclick="testSupabaseConnection()"><i class="fas fa-wifi"></i> TES KONEKSI</button>
+        <button type="button" class="btn btn-outline" style="margin:0;" onclick="clearSupabaseConfig()"><i class="fas fa-trash"></i> RESET</button>
+      </div>
+    </div>
+
+    <div class="card" style="border-top: 3px solid #0284c7;">
+      <div class="card-title">
+        <span><i class="fas fa-database" style="color:#0284c7;"></i> Pusat Sinkronisasi Data (Supabase)</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <p style="font-size:10px; color:var(--text-muted); margin-bottom:10px;">
+        Kelola sinkronisasi data lokal dengan database cloud Supabase agar catatan absensi, GPS Korlap, kejadian, dan MR tetap aman.
+      </p>
+      <div class="status-checklist" style="margin-bottom:10px;">
+        <span id="sync-queue-count" style="font-weight:bold; color:var(--navy-primary);"><i class="fas fa-cloud-upload-alt"></i> Antrean Pending: 0 Data</span>
+        <span id="sync-last-time" style="color:var(--text-muted);">Terakhir Sync: -</span>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="syncAllToSupabase()"><i class="fas fa-sync-alt"></i> SINKRONKAN SEMUA DATA KE SUPABASE</button>
+      <button type="button" class="btn btn-outline" onclick="pullLatestFromSupabase()"><i class="fas fa-cloud-download-alt"></i> TARIK DATA TERBARU DARI SERVER</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-terminal"></i> Log Status Sinkronisasi</div>
+      <ul id="sync-log-list" class="log-list">
+        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada aktivitas sinkronisasi pada sesi ini.</li>
+      </ul>
+    </div>
+  </div>
 
 </div>
+
+<nav class="bottom-nav">
+  <a class="nav-link active" onclick="showModule(1)"><i class="fas fa-home"></i><span>Home</span></a>
+  <a class="nav-link" onclick="showModule(3)"><i class="fas fa-camera"></i><span>Absen</span></a>
+  <a class="nav-link" onclick="showModule(6)"><i class="fas fa-exclamation-triangle"></i><span>Kejadian</span></a>
+  <a class="nav-link" onclick="showModule(2)"><i class="fas fa-user"></i><span>Profil</span></a>
+</nav>
 
 <script>
 const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 let supabaseClient = null;
-if (window.supabase && SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_PROJECT_REF')) {
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
 
 const DEFAULT_USERS = [
   { id: 'M.Soheh', name: 'M.Soheh', role: 'Admin', jabatan: 'Head Of Operation / Admin', site: 'Seluruh Wilayah PLN UIT JBT & UIT JBB', phone: '-', pin: '990099', avatar: '' },
@@ -1001,6 +910,14 @@ const DEFAULT_KORLAP_POSITIONS = [
   { id: 'Rifky_Y', name: 'Rifkiyansyah', site: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', placeName: 'UPT Karawang', street: 'Jl. Ahmad Yani / Karawang', lat: -6.3065, lng: 107.2907, updated: '4 mnt lalu' }
 ];
 
+function escapeHTML(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function normalizeId(val) {
   return String(val || '').trim().toLowerCase().replace(/\s+/g, '_');
 }
@@ -1015,16 +932,7 @@ function buildOfficialUsers() {
   return DEFAULT_USERS.map(def => {
     const match = saved.find(s => normalizeId(s.id) === normalizeId(def.id));
     if (!match) return { ...def };
-    return {
-      ...def,
-      name: match.name || def.name,
-      role: match.role || def.role,
-      jabatan: match.jabatan || def.jabatan,
-      site: match.site || def.site,
-      phone: match.phone || def.phone,
-      pin: match.pin || def.pin,
-      avatar: match.avatar || ''
-    };
+    return { ...def, ...match, id: def.id };
   });
 }
 
@@ -1070,6 +978,98 @@ let profileStream = null;
 let capturedAttendancePhoto = '';
 let capturedGPS = '';
 let tempProfileAvatar = '';
+
+function getEffectiveSupabaseConfig() {
+  const savedUrl = (localStorage.getItem('amp_supabase_url') || '').trim();
+  const savedKey = (localStorage.getItem('amp_supabase_key') || '').trim();
+  const codeUrlHasRealRef = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_PROJECT_REF');
+  const url = savedUrl || (codeUrlHasRealRef ? SUPABASE_URL : '');
+  const key = savedKey || (codeUrlHasRealRef ? SUPABASE_ANON_KEY : '');
+  return { url, key };
+}
+
+function setConnectionIndicator(connected) {
+  const badge = document.getElementById('supabase-conn-badge');
+  const headerBadge = document.getElementById('header-sync-badge');
+  if (badge) {
+    badge.className = connected ? 'badge badge-in' : 'badge badge-warning';
+    badge.textContent = connected ? 'Terhubung' : 'Belum Terhubung';
+  }
+  if (headerBadge) {
+    headerBadge.classList.toggle('connected', Boolean(connected));
+  }
+}
+
+function initSupabaseConnection() {
+  const { url, key } = getEffectiveSupabaseConfig();
+  const urlInput = document.getElementById('cfg-supabase-url');
+  const keyInput = document.getElementById('cfg-supabase-key');
+  if (urlInput && !urlInput.value && url) urlInput.value = url;
+  if (keyInput && !keyInput.value && key) keyInput.value = key;
+
+  if (window.supabase && url.startsWith('https://') && key) {
+    supabaseClient = window.supabase.createClient(url, key);
+    setConnectionIndicator(true);
+    subscribeRealtimeKorlapRadar();
+    startRadarAutoPolling();
+  } else {
+    supabaseClient = null;
+    setConnectionIndicator(false);
+  }
+}
+
+function toggleKeyVisibility() {
+  const input = document.getElementById('cfg-supabase-key');
+  const icon = document.getElementById('toggle-key-icon');
+  if (!input) return;
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  if (icon) icon.className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+
+function saveSupabaseConfig() {
+  const url = (document.getElementById('cfg-supabase-url')?.value || '').trim().replace(/\/+$/, '');
+  const key = (document.getElementById('cfg-supabase-key')?.value || '').trim();
+  if (!url.startsWith('https://') || !key) {
+    return alert('Masukkan Supabase Project URL (diawali https://) dan Anon Key dengan lengkap.');
+  }
+  localStorage.setItem('amp_supabase_url', url);
+  localStorage.setItem('amp_supabase_key', key);
+  initSupabaseConnection();
+  appendSyncLog('Konfigurasi Supabase disimpan dan koneksi diaktifkan.');
+  alert('Supabase URL & Anon Key berhasil disimpan.');
+}
+
+async function testSupabaseConnection() {
+  const url = (document.getElementById('cfg-supabase-url')?.value || '').trim().replace(/\/+$/, '');
+  const key = (document.getElementById('cfg-supabase-key')?.value || '').trim();
+  if (!url.startsWith('https://') || !key || !window.supabase) {
+    return alert('Lengkapi Supabase URL dan Anon Key terlebih dahulu.');
+  }
+  const client = window.supabase.createClient(url, key);
+  const { error } = await client.from('korlap_positions').select('id').limit(1);
+  if (error) {
+    appendSyncLog(`Tes koneksi gagal/tabel belum siap: ${error.message}`);
+    alert(`Koneksi terbaca, tetapi tabel korlap_positions belum siap atau akses ditolak: ${error.message}`);
+  } else {
+    localStorage.setItem('amp_supabase_url', url);
+    localStorage.setItem('amp_supabase_key', key);
+    initSupabaseConnection();
+    appendSyncLog('Tes koneksi berhasil! Tabel korlap_positions aktif.');
+    alert('Koneksi Supabase berhasil dan tabel korlap_positions siap digunakan.');
+  }
+}
+
+function clearSupabaseConfig() {
+  localStorage.removeItem('amp_supabase_url');
+  localStorage.removeItem('amp_supabase_key');
+  const urlInput = document.getElementById('cfg-supabase-url');
+  const keyInput = document.getElementById('cfg-supabase-key');
+  if (urlInput) urlInput.value = '';
+  if (keyInput) keyInput.value = '';
+  initSupabaseConnection();
+  appendSyncLog('Konfigurasi Supabase di layar telah direset.');
+}
 
 function persistState() {
   localStorage.setItem('amp_users', JSON.stringify(state.users));
@@ -1118,6 +1118,7 @@ function showModule(modNum) {
   }
   if (modNum === 2) fillProfileForm();
   if (modNum === 10) renderTeamList();
+  if (modNum === 14) initSupabaseConnection();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1132,7 +1133,7 @@ function refreshUserUI() {
   document.getElementById('header-user-id').textContent = u.id;
   document.getElementById('dash-user-name').textContent = u.name;
   document.getElementById('dash-user-role').textContent = u.jabatan || u.role;
-  document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Area Tugas PLN: ${u.site || '-'}`;
+  document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Area Tugas PLN: ${escapeHTML(u.site || '-')}`;
 
   const showAdmin = isAdminOrHead();
   document.getElementById('admin-radar-card').style.display = showAdmin ? 'block' : 'none';
@@ -1380,11 +1381,8 @@ async function pushKorlapPositionToCloud(posItem) {
 async function pullKorlapPositionsFromCloud() {
   if (!supabaseClient) return false;
   try {
-    const { data, error } = await supabaseClient
-      .from('korlap_positions')
-      .select('*');
+    const { data, error } = await supabaseClient.from('korlap_positions').select('*');
     if (error || !Array.isArray(data) || !data.length) return false;
-
     state.korlapPositions = DEFAULT_KORLAP_POSITIONS.map(def => {
       const remote = data.find(r => normalizeId(r.id) === normalizeId(def.id));
       if (!remote) return def;
@@ -1442,15 +1440,11 @@ function subscribeRealtimeKorlapRadar() {
   if (!supabaseClient || supabaseRealtimeChannel) return;
   supabaseRealtimeChannel = supabaseClient
     .channel('korlap-live-radar-channel')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'korlap_positions' },
-      async () => {
-        if (!isAdminOrHead()) return;
-        await pullKorlapPositionsFromCloud();
-        if (radarMap) refreshKorlapLivePositions();
-      }
-    )
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'korlap_positions' }, async () => {
+      if (!isAdminOrHead()) return;
+      await pullKorlapPositionsFromCloud();
+      if (radarMap) refreshKorlapLivePositions();
+    })
     .subscribe();
 }
 
@@ -1474,13 +1468,11 @@ function getRealtimeGPS() {
       const lng = pos.coords.longitude.toFixed(6);
       capturedGPS = `${lat}, ${lng}`;
       document.getElementById('gps-coords').value = `Lat ${lat}, Lng ${lng}`;
-      document.getElementById('gmaps-link-box').innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" rel="noopener" style="font-size:10px; color:var(--blue-accent);">Buka di Google Maps</a>`;
+      document.getElementById('gmaps-link-box').innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" rel="noopener" style="font-size:10px; color:var(--sky-accent);">Buka di Google Maps</a>`;
       const badge = document.getElementById('status-gps-badge');
       badge.style.color = 'var(--success)';
       badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Siap';
-
       updateKorlapCoordEntry(Number(lat), Number(lng), null, null, true);
-
       fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
@@ -1488,9 +1480,7 @@ function getRealtimeGPS() {
           const road = addr.road || addr.pedestrian || addr.suburb || '';
           const buildingOrPt = data?.name || addr.building || addr.office || addr.industrial || addr.amenity || state.currentUser.site;
           const fullDesc = [buildingOrPt, road, addr.city || addr.county || ''].filter(Boolean).join(' - ');
-          if (fullDesc) {
-            document.getElementById('gps-coords').value = `${fullDesc} (${lat}, ${lng})`;
-          }
+          if (fullDesc) document.getElementById('gps-coords').value = `${fullDesc} (${lat}, ${lng})`;
           updateKorlapCoordEntry(Number(lat), Number(lng), buildingOrPt, road, true);
         })
         .catch(() => {});
@@ -1506,19 +1496,11 @@ function getRealtimeGPS() {
 function saveAttendance(type) {
   if (!capturedAttendancePhoto) return alert('Ambil foto live terlebih dahulu sebelum absen.');
   if (!capturedGPS) return alert('Tarik lokasi GPS terlebih dahulu sebelum absen.');
-  const record = {
-    id: Date.now(),
-    type,
-    userId: state.currentUser.id,
-    userName: state.currentUser.name,
-    site: state.currentUser.site,
-    gps: capturedGPS,
-    photo: capturedAttendancePhoto,
-    time: new Date().toLocaleString('id-ID')
-  };
-  state.attendance.unshift(record);
-  capturedAttendancePhoto = '';
-  capturedGPS = '';
+  state.attendance.unshift({
+    id: Date.now(), type, userId: state.currentUser.id, userName: state.currentUser.name,
+    site: state.currentUser.site, gps: capturedGPS, photo: capturedAttendancePhoto, time: new Date().toLocaleString('id-ID')
+  });
+  capturedAttendancePhoto = ''; capturedGPS = '';
   document.getElementById('photo-preview').style.display = 'none';
   document.getElementById('camera-placeholder').style.display = 'block';
   document.getElementById('gps-coords').value = '';
@@ -1543,9 +1525,9 @@ function renderAttendanceLog() {
     <li class="log-item">
       <img src="${a.photo}" class="log-thumb" alt="Foto Absen">
       <div style="flex:1;">
-        <div><strong>${a.userName}</strong> (${a.userId}) <span class="badge ${a.type === 'IN' ? 'badge-in' : 'badge-out'}">${a.type}</span></div>
-        <div style="color:var(--text-muted);">${a.site} • ${a.gps}</div>
-        <div style="color:var(--text-muted); font-size:9px;">${a.time}</div>
+        <div><strong>${escapeHTML(a.userName)}</strong> (${escapeHTML(a.userId)}) <span class="badge ${a.type === 'IN' ? 'badge-in' : 'badge-out'}">${escapeHTML(a.type)}</span></div>
+        <div style="color:var(--text-muted);">${escapeHTML(a.site)} • ${escapeHTML(a.gps)}</div>
+        <div style="color:var(--text-muted); font-size:9px;">${escapeHTML(a.time)}</div>
       </div>
     </li>
   `).join('');
@@ -1559,29 +1541,16 @@ function submitMR() {
   const notes = document.getElementById('mr-notes').value.trim();
   if (!site || !item || !qty) return alert('Lengkapi area tugas, nama material, dan jumlah.');
   state.mr.unshift({ id: Date.now(), site, item, qty, priority, notes, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-  document.getElementById('mr-item').value = '';
-  document.getElementById('mr-qty').value = '';
-  document.getElementById('mr-notes').value = '';
-  incrementPendingQueue();
-  renderMRLog();
+  document.getElementById('mr-item').value = ''; document.getElementById('mr-qty').value = ''; document.getElementById('mr-notes').value = '';
+  incrementPendingQueue(); renderMRLog();
 }
 
 function renderMRLog() {
   const list = document.getElementById('mr-log-list');
   document.getElementById('mr-count-badge').textContent = `${state.mr.length} MR`;
-  if (!state.mr.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li>';
-    return;
-  }
-  list.innerHTML = state.mr.map(m => `
-    <li class="log-item">
-      <div>
-        <div><strong>${m.item}</strong> (${m.qty}) <span class="badge badge-warning">${m.priority}</span></div>
-        <div style="color:var(--text-muted);">Area: ${m.site} • Oleh: ${m.by}</div>
-        <div style="font-size:9px; color:var(--text-muted);">${m.notes || '-'} • ${m.time}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.mr.length ? state.mr.map(m => `
+    <li class="log-item"><div><div><strong>${escapeHTML(m.item)}</strong> (${escapeHTML(m.qty)}) <span class="badge badge-warning">${escapeHTML(m.priority)}</span></div><div style="color:var(--text-muted);">Area: ${escapeHTML(m.site)} • Oleh: ${escapeHTML(m.by)}</div><div style="font-size:9px; color:var(--text-muted);">${escapeHTML(m.notes || '-')} • ${escapeHTML(m.time)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li>';
 }
 
 function submitLeaveRequest() {
@@ -1592,24 +1561,14 @@ function submitLeaveRequest() {
   if (!start || !end || !reason) return alert('Lengkapi tanggal mulai, tanggal selesai, dan keterangan.');
   state.leaves.unshift({ id: Date.now(), type, start, end, reason, by: state.currentUser.name, status: 'Diajukan' });
   document.getElementById('leave-reason').value = '';
-  incrementPendingQueue();
-  renderLeaveLog();
+  incrementPendingQueue(); renderLeaveLog();
 }
 
 function renderLeaveLog() {
   const list = document.getElementById('leave-log-list');
-  if (!state.leaves.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada riwayat izin atau cuti.</li>';
-    return;
-  }
-  list.innerHTML = state.leaves.map(l => `
-    <li class="log-item">
-      <div>
-        <div><strong>${l.type}</strong> — ${l.by} <span class="badge badge-in">${l.status}</span></div>
-        <div style="color:var(--text-muted);">${l.start} s.d. ${l.end} • ${l.reason}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.leaves.length ? state.leaves.map(l => `
+    <li class="log-item"><div><div><strong>${escapeHTML(l.type)}</strong> — ${escapeHTML(l.by)} <span class="badge badge-in">${escapeHTML(l.status)}</span></div><div style="color:var(--text-muted);">${escapeHTML(l.start)} s.d. ${escapeHTML(l.end)} • ${escapeHTML(l.reason)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada riwayat izin atau cuti.</li>';
 }
 
 function submitIncident() {
@@ -1618,45 +1577,19 @@ function submitIncident() {
   const desc = document.getElementById('incident-desc').value.trim();
   const file = document.getElementById('incident-photo-input').files[0];
   if (!location || !desc) return alert('Lengkapi lokasi kejadian dan kronologi.');
-
   const saveRecord = (photoData) => {
-    state.incidents.unshift({
-      id: Date.now(), category, location, desc, photo: photoData || '',
-      by: state.currentUser.name, time: new Date().toLocaleString('id-ID')
-    });
-    document.getElementById('incident-location').value = '';
-    document.getElementById('incident-desc').value = '';
-    document.getElementById('incident-photo-input').value = '';
-    incrementPendingQueue();
-    renderIncidentLog();
-    alert('Laporan kejadian berhasil dicatat.');
+    state.incidents.unshift({ id: Date.now(), category, location, desc, photo: photoData || '', by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
+    document.getElementById('incident-location').value = ''; document.getElementById('incident-desc').value = ''; document.getElementById('incident-photo-input').value = '';
+    incrementPendingQueue(); renderIncidentLog(); alert('Laporan kejadian berhasil dicatat.');
   };
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = ev => saveRecord(ev.target.result);
-    reader.readAsDataURL(file);
-  } else {
-    saveRecord('');
-  }
+  if (file) { const r = new FileReader(); r.onload = ev => saveRecord(ev.target.result); r.readAsDataURL(file); } else saveRecord('');
 }
 
 function renderIncidentLog() {
   const list = document.getElementById('incident-log-list');
-  if (!state.incidents.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>';
-    return;
-  }
-  list.innerHTML = state.incidents.map(inc => `
-    <li class="log-item">
-      ${inc.photo ? `<img src="${inc.photo}" class="log-thumb" alt="Bukti">` : ''}
-      <div style="flex:1;">
-        <div><span class="badge badge-out">${inc.category}</span> <strong>${inc.location}</strong></div>
-        <div style="margin-top:2px;">${inc.desc}</div>
-        <div style="font-size:9px; color:var(--text-muted);">Pelapor: ${inc.by} • ${inc.time}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.incidents.length ? state.incidents.map(inc => `
+    <li class="log-item">${inc.photo ? `<img src="${inc.photo}" class="log-thumb" alt="Bukti">` : ''}<div style="flex:1;"><div><span class="badge badge-out">${escapeHTML(inc.category)}</span> <strong>${escapeHTML(inc.location)}</strong></div><div style="margin-top:2px;">${escapeHTML(inc.desc)}</div><div style="font-size:9px; color:var(--text-muted);">Pelapor: ${escapeHTML(inc.by)} • ${escapeHTML(inc.time)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>';
 }
 
 function saveMCPReport() {
@@ -1668,25 +1601,14 @@ function saveMCPReport() {
   state.mcp.unshift({ id: Date.now(), zone, freq, status, tasks, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
   document.getElementById('mcp-zone').value = '';
   document.querySelectorAll('.mcp-task').forEach(c => { c.checked = false; });
-  incrementPendingQueue();
-  renderMCPLog();
+  incrementPendingQueue(); renderMCPLog();
 }
 
 function renderMCPLog() {
   const list = document.getElementById('mcp-log-list');
-  if (!state.mcp.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan MCP Cleaning.</li>';
-    return;
-  }
-  list.innerHTML = state.mcp.map(m => `
-    <li class="log-item">
-      <div>
-        <div><strong>${m.zone}</strong> (${m.freq}) <span class="badge badge-in">${m.status}</span></div>
-        <div style="color:var(--text-muted);">${m.tasks.join(', ')}</div>
-        <div style="font-size:9px; color:var(--text-muted);">Oleh: ${m.by} • ${m.time}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.mcp.length ? state.mcp.map(m => `
+    <li class="log-item"><div><div><strong>${escapeHTML(m.zone)}</strong> (${escapeHTML(m.freq)}) <span class="badge badge-in">${escapeHTML(m.status)}</span></div><div style="color:var(--text-muted);">${escapeHTML(m.tasks.join(', '))}</div><div style="font-size:9px; color:var(--text-muted);">Oleh: ${escapeHTML(m.by)} • ${escapeHTML(m.time)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan MCP Cleaning.</li>';
 }
 
 function saveAreaChecklist() {
@@ -1696,26 +1618,15 @@ function saveAreaChecklist() {
   const notes = document.getElementById('area-notes').value.trim();
   if (!area) return alert('Masukkan nama area.');
   state.areas.unshift({ id: Date.now(), area, s5, amenities, notes, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-  document.getElementById('area-name').value = '';
-  document.getElementById('area-notes').value = '';
-  incrementPendingQueue();
-  renderAreaLog();
+  document.getElementById('area-name').value = ''; document.getElementById('area-notes').value = '';
+  incrementPendingQueue(); renderAreaLog();
 }
 
 function renderAreaLog() {
   const list = document.getElementById('area-log-list');
-  if (!state.areas.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data cheklis area.</li>';
-    return;
-  }
-  list.innerHTML = state.areas.map(a => `
-    <li class="log-item">
-      <div>
-        <div><strong>${a.area}</strong> — 5S: <strong>${a.s5}</strong> | Amenitas: ${a.amenities}</div>
-        <div style="font-size:9px; color:var(--text-muted);">${a.notes || '-'} • ${a.by} • ${a.time}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.areas.length ? state.areas.map(a => `
+    <li class="log-item"><div><div><strong>${escapeHTML(a.area)}</strong> — 5S: <strong>${escapeHTML(a.s5)}</strong> | Amenitas: ${escapeHTML(a.amenities)}</div><div style="font-size:9px; color:var(--text-muted);">${escapeHTML(a.notes || '-')} • ${escapeHTML(a.by)} • ${escapeHTML(a.time)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data cheklis area.</li>';
 }
 
 function saveHighRiskK3() {
@@ -1726,40 +1637,22 @@ function saveHighRiskK3() {
   state.k3.unshift({ id: Date.now(), workType, officer, checks, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
   document.getElementById('k3-officer').value = '';
   document.querySelectorAll('.k3-check').forEach(c => { c.checked = false; });
-  incrementPendingQueue();
-  renderK3Log();
+  incrementPendingQueue(); renderK3Log();
 }
 
 function renderK3Log() {
   const list = document.getElementById('k3-log-list');
-  if (!state.k3.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan High Risk K3.</li>';
-    return;
-  }
-  list.innerHTML = state.k3.map(k => `
-    <li class="log-item">
-      <div>
-        <div><span class="badge badge-warning">${k.workType}</span> <strong>${k.officer}</strong></div>
-        <div style="color:var(--text-muted);">${k.checks.join(' • ')}</div>
-        <div style="font-size:9px; color:var(--text-muted);">Pengawas: ${k.by} • ${k.time}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.k3.length ? state.k3.map(k => `
+    <li class="log-item"><div><div><span class="badge badge-warning">${escapeHTML(k.workType)}</span> <strong>${escapeHTML(k.officer)}</strong></div><div style="color:var(--text-muted);">${escapeHTML(k.checks.join(' • '))}</div><div style="font-size:9px; color:var(--text-muted);">Pengawas: ${escapeHTML(k.by)} • ${escapeHTML(k.time)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan High Risk K3.</li>';
 }
 
 function renderTeamList() {
   const q = (document.getElementById('team-search-input')?.value || '').toLowerCase();
   const list = document.getElementById('team-member-list');
-  const filtered = state.users.filter(u =>
-    `${u.name} ${u.id} ${u.site} ${u.jabatan}`.toLowerCase().includes(q)
-  );
+  const filtered = state.users.filter(u => `${u.name} ${u.id} ${u.site} ${u.jabatan}`.toLowerCase().includes(q));
   list.innerHTML = filtered.map(u => `
-    <li class="log-item">
-      <div>
-        <div><strong>${u.name}</strong> <code>(${u.id})</code> <span class="badge ${u.role === 'Admin' ? 'badge-warning' : 'badge-in'}">${u.jabatan || u.role}</span></div>
-        <div style="color:var(--text-muted); margin-top:2px;">Area Tugas PLN: <strong>${u.site}</strong></div>
-      </div>
-    </li>
+    <li class="log-item"><div><div><strong>${escapeHTML(u.name)}</strong> <code>(${escapeHTML(u.id)})</code> <span class="badge ${u.role === 'Admin' ? 'badge-warning' : 'badge-in'}">${escapeHTML(u.jabatan || u.role)}</span></div><div style="color:var(--text-muted); margin-top:2px;">Area Tugas PLN: <strong>${escapeHTML(u.site)}</strong></div></div></li>
   `).join('') || '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Personil tidak ditemukan.</li>';
 }
 
@@ -1771,24 +1664,14 @@ function saveEquipment() {
   if (!name) return alert('Masukkan nama peralatan.');
   state.equipment.unshift({ id: Date.now(), name, qty, site, condition });
   document.getElementById('eq-name').value = '';
-  incrementPendingQueue();
-  renderEquipmentLog();
+  incrementPendingQueue(); renderEquipmentLog();
 }
 
 function renderEquipmentLog() {
   const list = document.getElementById('equipment-log-list');
-  if (!state.equipment.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li>';
-    return;
-  }
-  list.innerHTML = state.equipment.map(e => `
-    <li class="log-item">
-      <div>
-        <div><strong>${e.name}</strong> (${e.qty} unit) — <span class="badge ${e.condition.includes('Baik') ? 'badge-in' : 'badge-warning'}">${e.condition}</span></div>
-        <div style="color:var(--text-muted);">Area: ${e.site}</div>
-      </div>
-    </li>
-  `).join('');
+  list.innerHTML = state.equipment.length ? state.equipment.map(e => `
+    <li class="log-item"><div><div><strong>${escapeHTML(e.name)}</strong> (${escapeHTML(e.qty)} unit) — <span class="badge ${e.condition.includes('Baik') ? 'badge-in' : 'badge-warning'}">${escapeHTML(e.condition)}</span></div><div style="color:var(--text-muted);">Area: ${escapeHTML(e.site)}</div></div></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li>';
 }
 
 function addOutstandingItem() {
@@ -1798,84 +1681,39 @@ function addOutstandingItem() {
   if (!title) return alert('Masukkan judul temuan / action item.');
   state.outstanding.unshift({ id: Date.now(), title, pic, due, done: false });
   document.getElementById('out-title').value = '';
-  incrementPendingQueue();
-  renderOutstandingLog();
+  incrementPendingQueue(); renderOutstandingLog();
 }
 
 function toggleOutstanding(id) {
   const item = state.outstanding.find(o => o.id === id);
-  if (item) {
-    item.done = !item.done;
-    incrementPendingQueue();
-    renderOutstandingLog();
-  }
+  if (item) { item.done = !item.done; incrementPendingQueue(); renderOutstandingLog(); }
 }
 
 function renderOutstandingLog() {
   const list = document.getElementById('outstanding-log-list');
-  if (!state.outstanding.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding aktif.</li>';
-    return;
-  }
-  list.innerHTML = state.outstanding.map(o => `
-    <li class="log-item">
-      <div style="flex:1;">
-        <div style="${o.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}"><strong>${o.title}</strong></div>
-        <div style="font-size:9px; color:var(--text-muted);">PIC: ${o.pic} • Target: ${o.due}</div>
-      </div>
-      <button type="button" class="btn ${o.done ? 'btn-outline' : 'btn-success'}" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="toggleOutstanding(${o.id})">
-        ${o.done ? 'Buka' : 'Selesai'}
-      </button>
-    </li>
-  `).join('');
+  list.innerHTML = state.outstanding.length ? state.outstanding.map(o => `
+    <li class="log-item"><div style="flex:1;"><div style="${o.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}"><strong>${escapeHTML(o.title)}</strong></div><div style="font-size:9px; color:var(--text-muted);">PIC: ${escapeHTML(o.pic)} • Target: ${escapeHTML(o.due)}</div></div><button type="button" class="btn ${o.done ? 'btn-outline' : 'btn-success'}" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="toggleOutstanding(${o.id})">${o.done ? 'Buka' : 'Selesai'}</button></li>
+  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding aktif.</li>';
 }
 
 function initRadarMap() {
   if (!isAdminOrHead()) return;
   const mapEl = document.getElementById('satellite-radar-map');
   if (!mapEl || !window.L) return;
-
   if (!radarMap) {
     radarMap = L.map('satellite-radar-map').setView([-6.45, 106.95], 9);
-
-    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-      attribution: 'Google Maps Hybrid'
-    });
-
-    const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-      attribution: 'Google Maps'
-    });
-
-    const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-      attribution: 'Google Satellite'
-    });
-
-    const detailStreetMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      subdomains: 'abcd',
-      attribution: '© OpenStreetMap, © CARTO'
-    });
-
+    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: 'Google Maps Hybrid' });
+    const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: 'Google Maps' });
+    const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: 'Google Satellite' });
+    const detailStreetMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', attribution: '© OpenStreetMap, © CARTO' });
     googleHybrid.addTo(radarMap);
-
-    radarLayerControl = L.control.layers(
-      {
-        'Google Hybrid (Satelit + Jalan/PT)': googleHybrid,
-        'Google Map (Jalan, Gedung & PT)': googleRoadmap,
-        'Detail Jalan & Lokasi': detailStreetMap,
-        'Google Satellite': googleSatellite
-      },
-      null,
-      { position: 'topright', collapsed: true }
-    ).addTo(radarMap);
+    radarLayerControl = L.control.layers({
+      'Google Hybrid (Satelit + Jalan/PT)': googleHybrid,
+      'Google Map (Jalan, Gedung & PT)': googleRoadmap,
+      'Detail Jalan & Lokasi': detailStreetMap,
+      'Google Satellite': googleSatellite
+    }, null, { position: 'topright', collapsed: true }).addTo(radarMap);
   }
-
   setTimeout(() => radarMap.invalidateSize(), 150);
   pullKorlapPositionsFromCloud().then(() => refreshKorlapLivePositions());
 }
@@ -1884,121 +1722,76 @@ function refreshKorlapLivePositions() {
   if (!isAdminOrHead()) return;
   const listEl = document.getElementById('korlap-live-radar-list');
   document.getElementById('radar-marker-count').textContent = `${state.korlapPositions.length} Titik Aktif`;
-
-  if (radarMap) {
-    radarMarkers.forEach(m => radarMap.removeLayer(m));
-    radarMarkers = [];
-  }
-
+  if (radarMap) { radarMarkers.forEach(m => radarMap.removeLayer(m)); radarMarkers = []; }
   const bounds = [];
-
   listEl.innerHTML = state.korlapPositions.map(k => {
     const hasCoords = typeof k.lat === 'number' && typeof k.lng === 'number';
     const placeLabel = k.placeName || k.site || 'Area Tugas PLN';
     const roadLabel = k.street || 'Jl. / Kawasan Operasional';
     const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${k.lat},${k.lng}`;
-
     if (radarMap && hasCoords) {
       bounds.push([k.lat, k.lng]);
-
-      const marker = L.circleMarker([k.lat, k.lng], {
-        radius: 8,
-        color: '#ffffff',
-        weight: 2,
-        fillColor: '#ef4444',
-        fillOpacity: 0.95
-      }).addTo(radarMap);
-
-      marker.bindTooltip(`${k.name} — ${k.site}`, {
-        permanent: false,
-        direction: 'top'
-      });
-
-      marker.bindPopup(`
-        <div style="font-size:11px; line-height:1.45; min-width:185px;">
-          <strong style="color:#0a192f;">${k.name}</strong><br>
-          <span>ID: <b>${k.id}</b></span><br>
-          <span>Area Tugas: <b>${k.site}</b></span><br>
-          <span>Lokasi/Jalan: ${placeLabel} (${roadLabel})</span><br>
-          <span style="color:#6b7280; font-size:10px;">Koordinat: ${k.lat}, ${k.lng} • ${k.updated}</span><br>
-          <a href="${gmapsUrl}" target="_blank" rel="noopener" style="display:inline-block; margin-top:4px; color:#1e3a8a; font-weight:bold; text-decoration:underline;">
-            Buka di Google Maps →
-          </a>
-        </div>
-      `);
-
+      const marker = L.circleMarker([k.lat, k.lng], { radius: 8, color: '#ffffff', weight: 2, fillColor: '#ef4444', fillOpacity: 0.95 }).addTo(radarMap);
+      marker.bindTooltip(`${k.name} — ${k.site}`, { permanent: false, direction: 'top' });
+      marker.bindPopup(`<div style="font-size:11px; line-height:1.45; min-width:185px;"><strong style="color:#0a192f;">${escapeHTML(k.name)}</strong><br><span>ID: <b>${escapeHTML(k.id)}</b></span><br><span>Area Tugas: <b>${escapeHTML(k.site)}</b></span><br><span>Lokasi/Jalan: ${escapeHTML(placeLabel)} (${escapeHTML(roadLabel)})</span><br><span style="color:#6b7280; font-size:10px;">Koordinat: ${k.lat}, ${k.lng} • ${escapeHTML(k.updated)}</span><br><a href="${gmapsUrl}" target="_blank" rel="noopener" style="display:inline-block; margin-top:4px; color:#1e3a8a; font-weight:bold; text-decoration:underline;">Buka di Google Maps →</a></div>`);
       radarMarkers.push(marker);
     }
-
-    return `
-      <div onclick="focusRadarPoint(${k.lat}, ${k.lng})" style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:8px; cursor:pointer; font-size:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-          <strong>${k.name}</strong>
-          <span class="badge badge-in" style="text-align:right; max-width:58%;">${k.site}</span>
-        </div>
-        <div style="color:var(--navy-primary); font-size:9.5px; margin-top:2px;">
-          <i class="fas fa-id-badge"></i> ${k.id} • <i class="fas fa-road"></i> ${roadLabel}
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:9px; margin-top:2px;">
-          <span>Lat/Lng: ${k.lat}, ${k.lng} (${k.updated})</span>
-          <a href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();" style="color:var(--blue-accent); font-weight:bold;">Google Maps</a>
-        </div>
-      </div>
-    `;
+    return `<div onclick="focusRadarPoint(${k.lat}, ${k.lng})" style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:8px; cursor:pointer; font-size:10px;"><div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;"><strong>${escapeHTML(k.name)}</strong><span class="badge badge-in" style="text-align:right; max-width:58%;">${escapeHTML(k.site)}</span></div><div style="color:var(--navy-primary); font-size:9.5px; margin-top:2px;"><i class="fas fa-id-badge"></i> ${escapeHTML(k.id)} • <i class="fas fa-road"></i> ${escapeHTML(roadLabel)}</div><div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:9px; margin-top:2px;"><span>Lat/Lng: ${k.lat}, ${k.lng} (${escapeHTML(k.updated)})</span><a href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();" style="color:var(--sky-accent); font-weight:bold;">Google Maps</a></div></div>`;
   }).join('');
-
-  if (radarMap && bounds.length > 0) {
-    radarMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 14 });
-  }
+  if (radarMap && bounds.length > 0) radarMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 14 });
 }
 
 function focusRadarPoint(lat, lng) {
-  if (radarMap && typeof lat === 'number' && typeof lng === 'number') {
-    radarMap.setView([lat, lng], 15);
-  }
+  if (radarMap && typeof lat === 'number' && typeof lng === 'number') radarMap.setView([lat, lng], 15);
 }
 
 function downloadCSV(filename, rows) {
   const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
 }
-
-function exportToExcel() {
-  downloadCSV('rekap_absensi_amp.csv', [['Tipe', 'ID/Username', 'Nama', 'Area Tugas PLN', 'GPS', 'Waktu'], ...state.attendance.map(a => [a.type, a.userId, a.userName, a.site, a.gps, a.time])]);
-}
-function exportGPSLogToCSV() {
-  downloadCSV('rekap_gps_korlap_amp.csv', [['ID/Username', 'Nama', 'Area Tugas PLN', 'Lokasi/Gedung', 'Jalan', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.placeName || '', k.street || '', k.lat, k.lng, k.updated])]);
-}
-function exportIncidentLogToCSV() {
-  downloadCSV('rekap_kejadian_amp.csv', [['Kategori', 'Lokasi', 'Kronologi', 'Pelapor', 'Waktu'], ...state.incidents.map(i => [i.category, i.location, i.desc, i.by, i.time])]);
-}
-function exportMRToCSV() {
-  downloadCSV('rekap_mr_amp.csv', [['Area Tugas', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Pengaju', 'Waktu'], ...state.mr.map(m => [m.site, m.item, m.qty, m.priority, m.notes, m.by, m.time])]);
-}
+function exportToExcel() { downloadCSV('rekap_absensi_amp.csv', [['Tipe', 'ID/Username', 'Nama', 'Area Tugas PLN', 'GPS', 'Waktu'], ...state.attendance.map(a => [a.type, a.userId, a.userName, a.site, a.gps, a.time])]); }
+function exportGPSLogToCSV() { downloadCSV('rekap_gps_korlap_amp.csv', [['ID/Username', 'Nama', 'Area Tugas PLN', 'Lokasi/Gedung', 'Jalan', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.placeName || '', k.street || '', k.lat, k.lng, k.updated])]); }
+function exportIncidentLogToCSV() { downloadCSV('rekap_kejadian_amp.csv', [['Kategori', 'Lokasi', 'Kronologi', 'Pelapor', 'Waktu'], ...state.incidents.map(i => [i.category, i.location, i.desc, i.by, i.time])]); }
+function exportMRToCSV() { downloadCSV('rekap_mr_amp.csv', [['Area Tugas', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Pengaju', 'Waktu'], ...state.mr.map(m => [m.site, m.item, m.qty, m.priority, m.notes, m.by, m.time])]); }
 
 function appendSyncLog(msg) {
   const list = document.getElementById('sync-log-list');
   if (list.querySelector('li')?.textContent.includes('Belum ada aktivitas')) list.innerHTML = '';
-  const li = document.createElement('li');
-  li.className = 'log-item';
-  li.innerHTML = `<span>${msg}</span><span style="font-size:9px; color:var(--text-muted);">${new Date().toLocaleTimeString('id-ID')}</span>`;
+  const li = document.createElement('li'); li.className = 'log-item';
+  li.innerHTML = `<span>${escapeHTML(msg)}</span><span style="font-size:9px; color:var(--text-muted);">${new Date().toLocaleTimeString('id-ID')}</span>`;
   list.prepend(li);
+}
+
+async function pushOperationSummaryToCloud() {
+  if (!supabaseClient) return;
+  try {
+    await supabaseClient
+      .from('amp_operation_logs')
+      .upsert({
+        id: `snapshot_${state.currentUser.id}`,
+        user_id: state.currentUser.id,
+        user_name: state.currentUser.name,
+        payload: {
+          attendance_count: state.attendance.length,
+          mr_count: state.mr.length,
+          incidents_count: state.incidents.length,
+          mcp_count: state.mcp.length,
+          k3_count: state.k3.length
+        },
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+  } catch (_) {}
 }
 
 async function syncAllToSupabase() {
   if (supabaseClient && Array.isArray(state.korlapPositions)) {
-    for (const item of state.korlapPositions) {
-      await pushKorlapPositionToCloud(item);
-    }
+    for (const item of state.korlapPositions) await pushKorlapPositionToCloud(item);
+    await pushOperationSummaryToCloud();
   }
-  state.pendingQueue = 0;
-  state.lastSync = new Date().toLocaleTimeString('id-ID');
+  state.pendingQueue = 0; state.lastSync = new Date().toLocaleTimeString('id-ID');
   persistState();
-  appendSyncLog(supabaseClient ? 'Sinkronisasi ke Supabase selesai.' : 'Data lokal diperbarui (atur SUPABASE_URL & KEY untuk cloud).');
+  appendSyncLog(supabaseClient ? 'Sinkronisasi ke Supabase selesai.' : 'Data lokal diperbarui (isi URL & Key Supabase di form atas untuk cloud).');
   alert('Status sinkronisasi diperbarui.');
 }
 
@@ -2012,23 +1805,14 @@ async function pullLatestFromSupabase() {
 }
 
 function renderAllLogs() {
-  renderAttendanceLog();
-  renderMRLog();
-  renderLeaveLog();
-  renderIncidentLog();
-  renderMCPLog();
-  renderAreaLog();
-  renderK3Log();
-  renderTeamList();
-  renderEquipmentLog();
-  renderOutstandingLog();
+  renderAttendanceLog(); renderMRLog(); renderLeaveLog(); renderIncidentLog(); renderMCPLog();
+  renderAreaLog(); renderK3Log(); renderTeamList(); renderEquipmentLog(); renderOutstandingLog();
 }
 
 persistState();
 refreshUserUI();
+initSupabaseConnection();
 startLiveKorlapGPSWatch();
-subscribeRealtimeKorlapRadar();
-startRadarAutoPolling();
 </script>
 </body>
 </html>
