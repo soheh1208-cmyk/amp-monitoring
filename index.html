@@ -966,7 +966,6 @@ body {
 </div>
 
 <script>
-// Konfigurasi Supabase (ganti dengan URL & anon key proyek Anda jika terhubung ke cloud)
 const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 let supabaseClient = null;
@@ -981,9 +980,9 @@ const DEFAULT_USERS = [
 ];
 
 const DEFAULT_KORLAP_POSITIONS = [
-  { id: 'KOR001', name: 'Koordinator Lapangan 01', site: 'UPT Cawang', lat: -6.2435, lng: 106.8685, updated: 'Baru saja' },
-  { id: 'KOR002', name: 'Koordinator Lapangan 02', site: 'ULTG Cikarang', lat: -6.2980, lng: 107.1480, updated: '5 mnt lalu' },
-  { id: 'KOR003', name: 'Koordinator Lapangan 03', site: 'UPT Bandung', lat: -6.9175, lng: 107.6191, updated: '10 mnt lalu' }
+  { id: 'KOR001', name: 'Koordinator Lapangan 01', site: 'UPT Cawang', placeName: 'GISTET 500Kv & 150Kv Cawang Baru', street: 'Jl. Mayjen Sutoyo / Cawang', lat: -6.2435, lng: 106.8685, updated: 'Baru saja' },
+  { id: 'KOR002', name: 'Koordinator Lapangan 02', site: 'ULTG Cikarang', placeName: 'ULTG Cikarang - PT PLN (Persero)', street: 'Jl. Jababeka / Cikarang', lat: -6.2980, lng: 107.1480, updated: '5 mnt lalu' },
+  { id: 'KOR003', name: 'Koordinator Lapangan 03', site: 'UPT Bandung', placeName: 'UPT Bandung - PT PLN (Persero)', street: 'Jl. Soekarno Hatta / Bandung', lat: -6.9175, lng: 107.6191, updated: '10 mnt lalu' }
 ];
 
 const state = {
@@ -1005,6 +1004,7 @@ const state = {
 
 let radarMap = null;
 let radarMarkers = [];
+let radarLayerControl = null;
 let webcamStream = null;
 let profileStream = null;
 let capturedAttendancePhoto = '';
@@ -1294,16 +1294,44 @@ function getRealtimeGPS() {
       const lng = pos.coords.longitude.toFixed(6);
       capturedGPS = `${lat}, ${lng}`;
       document.getElementById('gps-coords').value = `Lat ${lat}, Lng ${lng}`;
-      document.getElementById('gmaps-link-box').innerHTML = `<a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" style="font-size:10px; color:var(--blue-accent);">Buka di Google Maps</a>`;
+      document.getElementById('gmaps-link-box').innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" rel="noopener" style="font-size:10px; color:var(--blue-accent);">Buka di Google Maps</a>`;
       const badge = document.getElementById('status-gps-badge');
       badge.style.color = 'var(--success)';
       badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Siap';
 
       if (state.currentUser.role.toLowerCase().includes('korlap')) {
         const idx = state.korlapPositions.findIndex(k => k.id === state.currentUser.id);
-        const entry = { id: state.currentUser.id, name: state.currentUser.name, site: state.currentUser.site, lat: Number(lat), lng: Number(lng), updated: new Date().toLocaleTimeString('id-ID') };
+        const entry = {
+          id: state.currentUser.id,
+          name: state.currentUser.name,
+          site: state.currentUser.site,
+          placeName: state.currentUser.site,
+          street: 'Lokasi Terkini',
+          lat: Number(lat),
+          lng: Number(lng),
+          updated: new Date().toLocaleTimeString('id-ID')
+        };
         if (idx >= 0) state.korlapPositions[idx] = entry; else state.korlapPositions.push(entry);
       }
+
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          const addr = data?.address || {};
+          const road = addr.road || addr.pedestrian || addr.suburb || '';
+          const buildingOrPt = data?.name || addr.building || addr.office || addr.industrial || addr.amenity || state.currentUser.site;
+          const fullDesc = [buildingOrPt, road, addr.city || addr.county || ''].filter(Boolean).join(' - ');
+          if (fullDesc) {
+            document.getElementById('gps-coords').value = `${fullDesc} (${lat}, ${lng})`;
+          }
+          const idx = state.korlapPositions.findIndex(k => k.id === state.currentUser.id);
+          if (idx >= 0) {
+            state.korlapPositions[idx].placeName = buildingOrPt;
+            state.korlapPositions[idx].street = road || state.currentUser.site;
+            persistState();
+          }
+        })
+        .catch(() => {});
     },
     () => {
       btn.disabled = false;
@@ -1332,6 +1360,7 @@ function saveAttendance(type) {
   document.getElementById('photo-preview').style.display = 'none';
   document.getElementById('camera-placeholder').style.display = 'block';
   document.getElementById('gps-coords').value = '';
+  document.getElementById('gmaps-link-box').innerHTML = '';
   document.getElementById('status-foto-badge').style.color = 'var(--danger)';
   document.getElementById('status-foto-badge').innerHTML = '<i class="fas fa-times-circle"></i> Foto: Belum';
   document.getElementById('status-gps-badge').style.color = 'var(--danger)';
@@ -1643,13 +1672,48 @@ function initRadarMap() {
   if (!isAdminOrHead()) return;
   const mapEl = document.getElementById('satellite-radar-map');
   if (!mapEl || !window.L) return;
+
   if (!radarMap) {
-    radarMap = L.map('satellite-radar-map').setView([-6.45, 106.95], 9);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      attribution: 'Esri Satellite'
-    }).addTo(radarMap);
+    radarMap = L.map('satellite-radar-map').setView([-6.2435, 106.8685], 12);
+
+    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: 'Google Maps Hybrid'
+    });
+
+    const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: 'Google Maps'
+    });
+
+    const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: 'Google Satellite'
+    });
+
+    const detailStreetMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 20,
+      subdomains: 'abcd',
+      attribution: '© OpenStreetMap, © CARTO'
+    });
+
+    googleHybrid.addTo(radarMap);
+
+    radarLayerControl = L.control.layers(
+      {
+        'Google Hybrid (Satelit + Jalan/PT)': googleHybrid,
+        'Google Map (Jalan, Gedung & PT)': googleRoadmap,
+        'Detail Jalan & Lokasi': detailStreetMap,
+        'Google Satellite': googleSatellite
+      },
+      null,
+      { position: 'topright', collapsed: true }
+    ).addTo(radarMap);
   }
+
   setTimeout(() => radarMap.invalidateSize(), 150);
   refreshKorlapLivePositions();
 }
@@ -1664,25 +1728,70 @@ function refreshKorlapLivePositions() {
     radarMarkers = [];
   }
 
+  const bounds = [];
+
   listEl.innerHTML = state.korlapPositions.map(k => {
-    if (radarMap && typeof k.lat === 'number' && typeof k.lng === 'number') {
-      const marker = L.circleMarker([k.lat, k.lng], { radius: 8, color: '#ffffff', weight: 2, fillColor: '#ef4444', fillOpacity: 0.9 })
-        .addTo(radarMap)
-        .bindPopup(`<b>${k.name}</b><br>${k.site}<br><small>${k.updated}</small>`);
+    const hasCoords = typeof k.lat === 'number' && typeof k.lng === 'number';
+    const placeLabel = k.placeName || k.site || 'Lokasi Site';
+    const roadLabel = k.street || 'Jl. / Kawasan Operasional';
+    const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${k.lat},${k.lng}`;
+
+    if (radarMap && hasCoords) {
+      bounds.push([k.lat, k.lng]);
+
+      const marker = L.circleMarker([k.lat, k.lng], {
+        radius: 8,
+        color: '#ffffff',
+        weight: 2,
+        fillColor: '#ef4444',
+        fillOpacity: 0.95
+      }).addTo(radarMap);
+
+      marker.bindTooltip(`${placeLabel} (${k.name})`, {
+        permanent: false,
+        direction: 'top'
+      });
+
+      marker.bindPopup(`
+        <div style="font-size:11px; line-height:1.45; min-width:175px;">
+          <strong style="color:#0a192f;">${placeLabel}</strong><br>
+          <span>Petugas: <b>${k.name}</b> (${k.id})</span><br>
+          <span>Jalan/Area: ${roadLabel}</span><br>
+          <span style="color:#6b7280; font-size:10px;">Koordinat: ${k.lat}, ${k.lng} • ${k.updated}</span><br>
+          <a href="${gmapsUrl}" target="_blank" rel="noopener" style="display:inline-block; margin-top:4px; color:#1e3a8a; font-weight:bold; text-decoration:underline;">
+            Buka di Google Maps →
+          </a>
+        </div>
+      `);
+
       radarMarkers.push(marker);
     }
+
     return `
       <div onclick="focusRadarPoint(${k.lat}, ${k.lng})" style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:8px; cursor:pointer; font-size:10px;">
-        <div><strong>${k.name}</strong> <span class="badge badge-in">${k.site}</span></div>
-        <div style="color:var(--text-muted); font-size:9px;">Koordinat: ${k.lat}, ${k.lng} • Update: ${k.updated}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+          <strong>${placeLabel}</strong>
+          <span class="badge badge-in">${k.site}</span>
+        </div>
+        <div style="color:var(--navy-primary); font-size:9.5px; margin-top:2px;">
+          <i class="fas fa-user-tie"></i> ${k.name} • <i class="fas fa-road"></i> ${roadLabel}
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:9px; margin-top:2px;">
+          <span>Lat/Lng: ${k.lat}, ${k.lng} (${k.updated})</span>
+          <a href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();" style="color:var(--blue-accent); font-weight:bold;">Google Maps</a>
+        </div>
       </div>
     `;
   }).join('');
+
+  if (radarMap && bounds.length > 0) {
+    radarMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 15 });
+  }
 }
 
 function focusRadarPoint(lat, lng) {
   if (radarMap && typeof lat === 'number' && typeof lng === 'number') {
-    radarMap.setView([lat, lng], 14);
+    radarMap.setView([lat, lng], 15);
   }
 }
 
@@ -1699,7 +1808,7 @@ function exportToExcel() {
   downloadCSV('rekap_absensi_amp.csv', [['Tipe', 'NIP', 'Nama', 'Site', 'GPS', 'Waktu'], ...state.attendance.map(a => [a.type, a.userId, a.userName, a.site, a.gps, a.time])]);
 }
 function exportGPSLogToCSV() {
-  downloadCSV('rekap_gps_korlap_amp.csv', [['ID', 'Nama', 'Site', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.lat, k.lng, k.updated])]);
+  downloadCSV('rekap_gps_korlap_amp.csv', [['ID', 'Nama', 'Site', 'Gedung/PT', 'Jalan', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.placeName || '', k.street || '', k.lat, k.lng, k.updated])]);
 }
 function exportIncidentLogToCSV() {
   downloadCSV('rekap_kejadian_amp.csv', [['Kategori', 'Lokasi', 'Kronologi', 'Pelapor', 'Waktu'], ...state.incidents.map(i => [i.category, i.location, i.desc, i.by, i.time])]);
