@@ -538,13 +538,11 @@
 <div id="auth-modal-overlay" class="active">
   <div class="mbcs-front-shell">
 
-    <!-- Dekorasi gelombang biru di pojok kanan atas -->
     <svg class="mbcs-top-wave" viewBox="0 0 460 170" preserveAspectRatio="none">
       <path d="M210,0 L460,0 L460,155 C385,125 315,75 210,0 Z" fill="#1d4ed8" opacity="0.92"/>
       <path d="M275,0 L460,0 L460,112 C395,90 345,52 275,0 Z" fill="#0284c7" opacity="0.65"/>
     </svg>
 
-    <!-- Bagian Atas: Logo AMP, Judul MBCS AMP & Ilustrasi Peta/Satelit/Kendaraan -->
     <div class="mbcs-hero">
       <svg class="mbcs-star-logo" viewBox="0 0 200 200">
         <polygon points="100,8 122,68 184,38 142,90 192,130 130,130 142,192 96,146 58,192 64,130 8,130 56,90 18,38 76,68" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
@@ -558,9 +556,7 @@
       <div class="mbcs-brand-highlight">MBCS AMP</div>
       <div class="mbcs-tagline">Real Time Tracking &bull; Better Control &bull; Greater Performance</div>
 
-      <!-- Ilustrasi Smartphone Peta, Pin Lokasi, Satelit & Kendaraan Operasional -->
       <svg class="mbcs-scene-box" viewBox="0 0 420 135">
-        <!-- Horizon & Gedung Kota -->
         <ellipse cx="210" cy="118" rx="195" ry="12" fill="#bfdbfe"/>
         <g fill="#93c5fd" opacity="0.65">
           <rect x="25" y="54" width="16" height="58" rx="2"/>
@@ -574,7 +570,6 @@
           <rect x="368" y="64" width="16" height="48" rx="2"/>
         </g>
 
-        <!-- Smartphone dengan Peta & Rute -->
         <g transform="translate(86, 10) rotate(-6)">
           <rect x="0" y="0" width="76" height="114" rx="10" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
           <rect x="4" y="8" width="68" height="96" rx="6" fill="#dbeafe"/>
@@ -583,14 +578,12 @@
           <path d="M54,44 C54,39 61,39 61,44 C61,49 57.5,54 57.5,54 C57.5,54 54,49 54,44 Z" fill="#dc2626"/>
         </g>
 
-        <!-- Pin Lokasi Besar di Tengah -->
         <g transform="translate(178, 34)">
           <ellipse cx="18" cy="64" rx="12" ry="4" fill="rgba(15,35,84,0.22)"/>
           <path d="M18,2 C8,2 2,10 2,19 C2,33 18,54 18,54 C18,54 34,33 34,19 C34,10 28,2 18,2 Z" fill="#1d4ed8" stroke="#ffffff" stroke-width="2.5"/>
           <circle cx="18" cy="18" r="7" fill="#38bdf8"/>
         </g>
 
-        <!-- Kendaraan Operasional Putih -->
         <g transform="translate(226, 62)">
           <ellipse cx="48" cy="48" rx="44" ry="6" fill="rgba(15,35,84,0.2)"/>
           <path d="M10,34 L18,16 C20,12 24,10 29,10 L62,10 C67,10 71,12 74,17 L86,29 L86,42 L10,42 Z" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
@@ -603,7 +596,6 @@
           <circle cx="70" cy="42" r="3.5" fill="#e2e8f0"/>
         </g>
 
-        <!-- Satelit & Gelombang Sinyal -->
         <g transform="translate(324, 8)">
           <path d="M6,44 Q20,34 32,42" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
           <path d="M12,50 Q22,42 30,48" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
@@ -617,7 +609,6 @@
       </svg>
     </div>
 
-    <!-- Sub-view 1: Kartu Login Utama -->
     <div id="login-box-asli" class="mbcs-card-container">
       <div class="mbcs-avatar-badge">
         <i class="fas fa-user"></i>
@@ -655,7 +646,6 @@
       </button>
     </div>
 
-    <!-- Sub-view 2: Pendaftaran / Lengkapi Akun -->
     <div id="register-box-asli" class="mbcs-card-container" style="display:none;">
       <div class="mbcs-avatar-badge">
         <i class="fas fa-user-plus"></i>
@@ -673,7 +663,6 @@
       <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
     </div>
 
-    <!-- Sub-view 3: Lupa / Reset PIN -->
     <div id="reset-box-asli" class="mbcs-card-container" style="display:none;">
       <div class="mbcs-avatar-badge">
         <i class="fas fa-key"></i>
@@ -688,7 +677,6 @@
       <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
     </div>
 
-    <!-- Footer Perusahaan -->
     <div class="mbcs-footer-banner">
       <div class="f-title">PT. Ardina Mulya Perkasa</div>
       <div class="f-sub">Bersama Membangun Operasional yang Lebih Baik</div>
@@ -1063,11 +1051,14 @@
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
       <div class="form-group"><label>Nama Personel</label><input type="text" id="team-name" class="form-control" placeholder="Nama lengkap personel"></div>
-      <div class="form-group"><label>Posisi & Site Tugas</label><input type="text" id="team-role-site" class="form-control" placeholder="Contoh: Cleaning Service - UPT Bekasi"></div>
+      <div class="form-group"><label>Posisi & Site Tugas</label><input type="text" id="team-role-site" class="form-control" placeholder="Contoh: Korlap - UPT Bekasi & ULTG Cikarang"></div>
       <button type="button" class="btn btn-primary" onclick="addTeamMember()"><i class="fas fa-user-plus"></i> TAMBAH DATA TIM</button>
     </div>
     <div class="card">
-      <div class="card-title"><i class="fas fa-address-book"></i> Daftar Personel Tim</div>
+      <div class="card-title">
+        <span><i class="fas fa-address-book"></i> Daftar Personel Tim</span>
+        <span id="team-count-badge" class="badge badge-in">0 Personel</span>
+      </div>
       <ul id="team-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data tim tersimpan.</li></ul>
     </div>
   </div>
@@ -1143,6 +1134,36 @@
 </div>
 
 <script>
+  const DEFAULT_TEAM = [
+    { id: 'Dede_Rusmana', name: 'Dede Rusmana', roleSite: 'Koordinator Lapangan — UPT Bekasi & ULTG Cikarang' },
+    { id: 'Dede_Purnama', name: 'Dede Purnama', roleSite: 'Koordinator Lapangan — ULTG Karet & ULTG Mampang (JBB)' },
+    { id: 'Dadang_Darsono', name: 'Dadang Darsono', roleSite: 'Koordinator Lapangan — UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah (JBB)' },
+    { id: 'Irfan_AS', name: 'Irfan Ardiatma S', roleSite: 'Koordinator Lapangan — UPT Cawang & ULTG Mampang (JBB)' },
+    { id: 'Yan_S', name: 'Yan Saputra', roleSite: 'Koordinator Lapangan — UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah (JBB)' },
+    { id: 'Andi_I', name: 'Andi Ilmanto', roleSite: 'Koordinator Lapangan — ULTG Gandul, ULTG Petukangan & ULTG Tangsel (JBB)' },
+    { id: 'Rizky_Badrul Z', name: 'Rizky Badrul Zaman', roleSite: 'Koordinator Lapangan — Kantor Induk Bandung & ULTG Bandung Barat' },
+    { id: 'Yadi_S', name: 'Yadi Supriyadi', roleSite: 'Koordinator Lapangan — UPT Bandung, ULTG Bandung Timur & Bandung Selatan' },
+    { id: 'Tegar_D', name: 'Tegar Dwitama', roleSite: 'Koordinator Lapangan — ULTG Cikarang' },
+    { id: 'Tamam_2', name: 'Tamam', roleSite: 'Koordinator Lapangan — UPT Bogor & ULTG Sukabumi' },
+    { id: 'Haerudin_3', name: 'Haerudin', roleSite: 'Koordinator Lapangan — ULTG Purwakarta' },
+    { id: 'Iswanto_R', name: 'Iswanto Riansyah', roleSite: 'Koordinator Lapangan — UPT Bogor & ULTG Sukabumi' },
+    { id: 'Rifky_Y', name: 'Rifkiyansyah', roleSite: 'Koordinator Lapangan — UPT Karawang, UPT Bogor & ULTG Sukabumi' }
+  ];
+
+  function loadInitialTeam() {
+    const raw = localStorage.getItem('amp_team');
+    if (!raw) {
+      localStorage.setItem('amp_team', JSON.stringify(DEFAULT_TEAM));
+      return [...DEFAULT_TEAM];
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length ? parsed : [...DEFAULT_TEAM];
+    } catch (_) {
+      return [...DEFAULT_TEAM];
+    }
+  }
+
   const APP_STATE = {
     currentUser: null,
     users: JSON.parse(localStorage.getItem('amp_users') || '[]'),
@@ -1153,7 +1174,7 @@
     mcp: JSON.parse(localStorage.getItem('amp_mcp') || '[]'),
     dac: JSON.parse(localStorage.getItem('amp_dac') || '[]'),
     k3: JSON.parse(localStorage.getItem('amp_k3') || '[]'),
-    team: JSON.parse(localStorage.getItem('amp_team') || '[]'),
+    team: loadInitialTeam(),
     equipment: JSON.parse(localStorage.getItem('amp_equipment') || '[]'),
     outstanding: JSON.parse(localStorage.getItem('amp_outstanding') || '[]'),
     sbConfig: JSON.parse(localStorage.getItem('amp_sb_config') || '{"url":"","key":""}'),
@@ -1265,6 +1286,7 @@
 
     renderUserUI();
     renderAttendanceList();
+    renderTeamList();
     initRadarMapIfAdmin();
     showModule(1);
   }
@@ -1322,6 +1344,7 @@
     const navEl = document.getElementById(`nav-${num}`);
     if (navEl) navEl.classList.add('active');
 
+    if (num === 10) renderTeamList();
     if (num === 1 && radarMap) {
       setTimeout(() => radarMap.invalidateSize(), 150);
     }
@@ -1432,6 +1455,46 @@
     `).join('');
   }
 
+  function addTeamMember() {
+    const name = document.getElementById('team-name').value.trim();
+    const roleSite = document.getElementById('team-role-site').value.trim();
+    if (!name || !roleSite) {
+      alert('Lengkapi Nama Personel dan Posisi & Site Tugas.');
+      return;
+    }
+    APP_STATE.team.unshift({
+      id: name.replace(/\s+/g, '_'),
+      name,
+      roleSite
+    });
+    localStorage.setItem('amp_team', JSON.stringify(APP_STATE.team));
+    document.getElementById('team-name').value = '';
+    document.getElementById('team-role-site').value = '';
+    renderTeamList();
+    alert('Data tim berhasil ditambahkan.');
+  }
+
+  function renderTeamList() {
+    const list = document.getElementById('team-log-list');
+    const badge = document.getElementById('team-count-badge');
+    if (badge) badge.textContent = `${APP_STATE.team.length} Personel`;
+    if (!APP_STATE.team.length) {
+      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data tim tersimpan.</li>';
+      return;
+    }
+    list.innerHTML = APP_STATE.team.map(t => `
+      <li class="log-item">
+        <div style="width:28px; height:28px; border-radius:8px; background:#e0e7ff; color:var(--blue-accent); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i class="fas fa-user-check"></i>
+        </div>
+        <div>
+          <strong>${t.name}</strong> ${t.id ? `<span class="badge badge-in">${t.id}</span>` : ''}<br/>
+          <span style="color:var(--text-muted);">${t.roleSite}</span>
+        </div>
+      </li>
+    `).join('');
+  }
+
   function initRadarMapIfAdmin() {
     const mapEl = document.getElementById('satellite-radar-map');
     if (!mapEl || radarMap || typeof L === 'undefined') return;
@@ -1470,7 +1533,6 @@
   function saveMCP() { alert('Progress MCP disimpan.'); }
   function saveDAC() { alert('Cheklis area disimpan.'); }
   function saveK3() { alert('Verifikasi K3 disimpan.'); }
-  function addTeamMember() { alert('Data tim ditambahkan.'); }
   function saveEquipment() { alert('Data equipment disimpan.'); }
   function saveOutstanding() { alert('Item outstanding ditambahkan.'); }
   function saveSupabaseConfig() {
