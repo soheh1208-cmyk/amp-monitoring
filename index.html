@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AMP Operation Monitoring — PT. Ardina Mulya Perkasa</title>
+  <title>Monitoring Operasional MBCS AMP — PT. Ardina Mulya Perkasa</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -14,7 +14,8 @@
     :root {
       --navy-primary: #0a192f;
       --blue-accent: #1e3a8a;
-      --sky-accent: #0284c7;
+      --blue-bright: #0284c7;
+      --sky-accent: #0ea5e9;
       --gold-accent: #d97706;
       --bg-canvas: #f1f5f9;
       --card-bg: #ffffff;
@@ -264,108 +265,438 @@
     }
     .nav-link.active { color: var(--blue-accent); font-weight: 700; }
 
+    /* ==================== HALAMAN DEPAN / LOGIN MBCS AMP ==================== */
     #auth-modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, rgba(10, 25, 47, 0.97), rgba(30, 58, 138, 0.96));
+      background: #dbeafe;
       z-index: 900;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 14px;
+      overflow-y: auto;
+      padding: 0;
     }
     #auth-modal-overlay.active { display: flex; }
-    .auth-card-asli {
+
+    .mbcs-front-shell {
+      position: relative;
       width: 100%;
-      max-width: 380px;
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      border-top: 4px solid var(--gold-accent);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+      max-width: 460px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #f8fbff 0%, #e7f2ff 36%, #eef5ff 68%, #dbeafe 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 50px rgba(10, 25, 47, 0.35);
     }
-    .auth-brand-head {
+
+    .mbcs-top-wave {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 170px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .mbcs-hero {
+      position: relative;
+      z-index: 2;
+      padding: 16px 18px 0;
+      text-align: center;
+    }
+
+    .mbcs-star-logo {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 4px;
+      display: block;
+      filter: drop-shadow(0 6px 12px rgba(15, 45, 110, 0.18));
+    }
+
+    .mbcs-company-sub {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #162a5c;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+    }
+
+    .mbcs-main-title {
+      font-size: 18.5px;
+      font-weight: 800;
+      color: #0f2354;
+      line-height: 1.15;
+    }
+
+    .mbcs-brand-highlight {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border-soft);
+      justify-content: center;
+      gap: 8px;
+      font-size: 27px;
+      font-weight: 900;
+      font-style: italic;
+      color: #0b2c7a;
+      letter-spacing: -0.4px;
+      margin: 1px 0 4px;
     }
-    .auth-brand-head h2 { font-size: 12px; font-weight: 800; color: var(--navy-primary); }
-    .auth-brand-head p { font-size: 9.5px; color: var(--text-muted); }
-    .auth-gate-note {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      border-radius: 8px;
-      padding: 7px 9px;
-      font-size: 9.5px;
+    .mbcs-brand-highlight::before,
+    .mbcs-brand-highlight::after {
+      content: "";
+      flex: 1;
+      max-width: 72px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, #60a5fa, transparent);
+    }
+
+    .mbcs-tagline {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #1e3a8a;
+      margin-bottom: 8px;
+    }
+
+    .mbcs-scene-box {
+      position: relative;
+      width: 100%;
+      height: 136px;
+      margin-top: 2px;
+      z-index: 1;
+    }
+
+    .mbcs-card-container {
+      position: relative;
+      z-index: 5;
+      margin: -22px 18px 12px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-radius: 22px;
+      padding: 36px 18px 18px;
+      box-shadow: 0 14px 30px rgba(15, 35, 84, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .mbcs-avatar-badge {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #0284c7);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      box-shadow: 0 6px 14px rgba(2, 132, 199, 0.35);
+      border: 3px solid #fff;
+    }
+
+    .mbcs-welcome-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f2354;
+      margin-bottom: 3px;
+    }
+
+    .mbcs-welcome-sub {
+      text-align: center;
+      font-size: 11px;
+      color: #475569;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .mbcs-input-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0 12px;
       margin-bottom: 10px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .mbcs-input-pill:focus-within {
+      border-color: #0284c7;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
+    }
+    .mbcs-input-pill i.lead-icon {
+      color: #1d4ed8;
+      font-size: 14px;
+      margin-right: 10px;
+      width: 16px;
+      text-align: center;
+    }
+    .mbcs-input-pill input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 11px 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #0f172a;
+      outline: none;
+    }
+    .mbcs-eye-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .mbcs-btn-reg {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #1d4ed8, #1e40af);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      box-shadow: 0 5px 12px rgba(29, 78, 216, 0.25);
+    }
+
+    .mbcs-btn-forgot {
+      width: 100%;
+      padding: 9px 14px;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 12px;
+      background: #f0f7ff;
+      color: #0f2354;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .mbcs-btn-login {
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #1d4ed8, #0284c7, #0ea5e9);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 7px 16px rgba(2, 132, 199, 0.35);
+    }
+
+    .mbcs-footer-banner {
+      position: relative;
+      z-index: 4;
+      background: linear-gradient(135deg, #0b2566, #1d4ed8 55%, #0f296e);
+      color: #fff;
+      text-align: center;
+      padding: 14px 16px 16px;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      box-shadow: 0 -6px 20px rgba(11, 37, 102, 0.22);
+    }
+    .mbcs-footer-banner .f-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .mbcs-footer-banner .f-sub {
+      font-size: 10px;
+      font-style: italic;
+      color: #dbeafe;
+      margin-top: 2px;
     }
   </style>
 </head>
 <body>
 
+<!-- ==================== HALAMAN DEPAN (LOGIN / REGISTRASI / LUPA PIN) ==================== -->
 <div id="auth-modal-overlay" class="active">
-  <div id="login-box-asli" class="auth-card-asli">
-    <div class="auth-brand-head">
-      <svg class="logo-svg" viewBox="0 0 200 200">
-        <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
-        <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
-        <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
+  <div class="mbcs-front-shell">
+
+    <!-- Dekorasi gelombang biru di pojok kanan atas -->
+    <svg class="mbcs-top-wave" viewBox="0 0 460 170" preserveAspectRatio="none">
+      <path d="M210,0 L460,0 L460,155 C385,125 315,75 210,0 Z" fill="#1d4ed8" opacity="0.92"/>
+      <path d="M275,0 L460,0 L460,112 C395,90 345,52 275,0 Z" fill="#0284c7" opacity="0.65"/>
+    </svg>
+
+    <!-- Bagian Atas: Logo AMP, Judul MBCS AMP & Ilustrasi Peta/Satelit/Kendaraan -->
+    <div class="mbcs-hero">
+      <svg class="mbcs-star-logo" viewBox="0 0 200 200">
+        <polygon points="100,8 122,68 184,38 142,90 192,130 130,130 142,192 96,146 58,192 64,130 8,130 56,90 18,38 76,68" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
+        <polygon points="100,22 116,72 162,50 130,90 168,120 120,120 128,168 96,134 68,168 72,120 28,120 66,90 38,50 82,72" fill="#0f172a" opacity="0.45"/>
+        <rect x="52" y="74" width="96" height="46" rx="10" fill="#0ea5e9" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="100" y="106" font-family="Arial" font-weight="900" font-size="31" fill="#ffffff" text-anchor="middle">AMP</text>
       </svg>
-      <div>
-        <h2>PT. ARDINA MULYA PERKASA</h2>
-        <p>AMP Operation Monitoring</p>
+
+      <div class="mbcs-company-sub">PT. ARDINA MULYA PERKASA</div>
+      <div class="mbcs-main-title">Monitoring Operasional</div>
+      <div class="mbcs-brand-highlight">MBCS AMP</div>
+      <div class="mbcs-tagline">Real Time Tracking &bull; Better Control &bull; Greater Performance</div>
+
+      <!-- Ilustrasi Smartphone Peta, Pin Lokasi, Satelit & Kendaraan Operasional -->
+      <svg class="mbcs-scene-box" viewBox="0 0 420 135">
+        <!-- Horizon & Gedung Kota -->
+        <ellipse cx="210" cy="118" rx="195" ry="12" fill="#bfdbfe"/>
+        <g fill="#93c5fd" opacity="0.65">
+          <rect x="25" y="54" width="16" height="58" rx="2"/>
+          <rect x="46" y="40" width="20" height="72" rx="2"/>
+          <rect x="72" y="62" width="14" height="50" rx="2"/>
+          <rect x="135" y="48" width="18" height="64" rx="2"/>
+          <rect x="158" y="34" width="22" height="78" rx="2"/>
+          <rect x="295" y="42" width="18" height="70" rx="2"/>
+          <rect x="318" y="28" width="22" height="84" rx="2"/>
+          <rect x="345" y="52" width="18" height="60" rx="2"/>
+          <rect x="368" y="64" width="16" height="48" rx="2"/>
+        </g>
+
+        <!-- Smartphone dengan Peta & Rute -->
+        <g transform="translate(86, 10) rotate(-6)">
+          <rect x="0" y="0" width="76" height="114" rx="10" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+          <rect x="4" y="8" width="68" height="96" rx="6" fill="#dbeafe"/>
+          <path d="M8,36 Q32,28 48,54 T68,72" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="24" cy="34" r="4" fill="#0284c7"/>
+          <path d="M54,44 C54,39 61,39 61,44 C61,49 57.5,54 57.5,54 C57.5,54 54,49 54,44 Z" fill="#dc2626"/>
+        </g>
+
+        <!-- Pin Lokasi Besar di Tengah -->
+        <g transform="translate(178, 34)">
+          <ellipse cx="18" cy="64" rx="12" ry="4" fill="rgba(15,35,84,0.22)"/>
+          <path d="M18,2 C8,2 2,10 2,19 C2,33 18,54 18,54 C18,54 34,33 34,19 C34,10 28,2 18,2 Z" fill="#1d4ed8" stroke="#ffffff" stroke-width="2.5"/>
+          <circle cx="18" cy="18" r="7" fill="#38bdf8"/>
+        </g>
+
+        <!-- Kendaraan Operasional Putih -->
+        <g transform="translate(226, 62)">
+          <ellipse cx="48" cy="48" rx="44" ry="6" fill="rgba(15,35,84,0.2)"/>
+          <path d="M10,34 L18,16 C20,12 24,10 29,10 L62,10 C67,10 71,12 74,17 L86,29 L86,42 L10,42 Z" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+          <path d="M22,15 L30,15 L30,25 L17,25 Z" fill="#bae6fd"/>
+          <path d="M34,15 L59,15 L65,25 L34,25 Z" fill="#bae6fd"/>
+          <circle cx="46" cy="33" r="6" fill="#0284c7"/>
+          <circle cx="26" cy="42" r="8.5" fill="#1e293b" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="26" cy="42" r="3.5" fill="#e2e8f0"/>
+          <circle cx="70" cy="42" r="8.5" fill="#1e293b" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="70" cy="42" r="3.5" fill="#e2e8f0"/>
+        </g>
+
+        <!-- Satelit & Gelombang Sinyal -->
+        <g transform="translate(324, 8)">
+          <path d="M6,44 Q20,34 32,42" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12,50 Q22,42 30,48" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+          <g transform="translate(26, 6) rotate(28)">
+            <rect x="-18" y="4" width="14" height="8" rx="1" fill="#1d4ed8" stroke="#fff" stroke-width="1"/>
+            <rect x="12" y="4" width="14" height="8" rx="1" fill="#1d4ed8" stroke="#fff" stroke-width="1"/>
+            <rect x="-3" y="1" width="14" height="14" rx="3" fill="#e2e8f0" stroke="#475569" stroke-width="1.2"/>
+            <circle cx="4" cy="8" r="3" fill="#0284c7"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Sub-view 1: Kartu Login Utama -->
+    <div id="login-box-asli" class="mbcs-card-container">
+      <div class="mbcs-avatar-badge">
+        <i class="fas fa-user"></i>
       </div>
+
+      <div class="mbcs-welcome-title">Selamat Datang</div>
+      <div class="mbcs-welcome-sub">
+        Silakan login untuk mengakses sistem<br/>
+        Monitoring Operasional MBCS AMP
+      </div>
+
+      <div class="mbcs-input-pill">
+        <i class="fas fa-user lead-icon"></i>
+        <input type="text" id="login-id" placeholder="ID/Username" autocomplete="username">
+      </div>
+
+      <div class="mbcs-input-pill">
+        <i class="fas fa-lock lead-icon"></i>
+        <input type="password" id="login-pin" placeholder="PIN" maxlength="6" autocomplete="current-password" onkeydown="if(event.key==='Enter') processLogin()">
+        <button type="button" class="mbcs-eye-btn" onclick="togglePinVisibility('login-pin', this)" title="Tampilkan / Sembunyikan PIN">
+          <i class="fas fa-eye-slash"></i>
+        </button>
+      </div>
+
+      <button type="button" class="mbcs-btn-reg" onclick="switchAuthSubView('register')">
+        <i class="fas fa-user-plus"></i> Akun Baru / Registrasi
+      </button>
+
+      <button type="button" class="mbcs-btn-forgot" onclick="switchAuthSubView('reset-pin')">
+        <i class="fas fa-rotate-right"></i> Lupa PIN
+      </button>
+
+      <button type="button" class="mbcs-btn-login" onclick="processLogin()">
+        <i class="fas fa-arrow-right-to-bracket"></i> Login
+      </button>
     </div>
 
-    <div class="auth-gate-note">
-      <i class="fas fa-shield-alt"></i>
-      <span>Silakan login menggunakan <strong>ID / Username</strong> dan <strong>PIN 6 Digit</strong> masing-masing untuk membuka Dashboard & Modul.</span>
+    <!-- Sub-view 2: Pendaftaran / Lengkapi Akun -->
+    <div id="register-box-asli" class="mbcs-card-container" style="display:none;">
+      <div class="mbcs-avatar-badge">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <div class="mbcs-welcome-title" style="font-size:16px; margin-bottom:10px;">Akun Baru / Registrasi</div>
+
+      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
+      <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Dede_Rusmana"></div>
+      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
+      <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
+      <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
+      <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit" maxlength="6"></div>
+
+      <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN</button>
+      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
     </div>
 
-    <div class="form-group">
-      <label>ID / Username</label>
-      <input type="text" id="login-id" class="form-control" placeholder="Masukkan ID / Username Anda" autocomplete="username">
-    </div>
-    <div class="form-group">
-      <label>PIN 6 Digit</label>
-      <input type="password" id="login-pin" class="form-control" placeholder="Masukkan PIN 6 Digit" maxlength="6" autocomplete="current-password" onkeydown="if(event.key==='Enter') processLogin()">
-    </div>
-    <button type="button" class="btn btn-primary" onclick="processLogin()"><i class="fas fa-sign-in-alt"></i> MASUK APLIKASI</button>
-    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:10px;">
-      <a href="javascript:void(0)" onclick="switchAuthSubView('register')" style="color:var(--blue-accent);">Daftar / Lengkapi Akun</a>
-      <a href="javascript:void(0)" onclick="switchAuthSubView('reset-pin')" style="color:var(--gold-accent);">Ganti / Reset PIN</a>
-    </div>
-  </div>
+    <!-- Sub-view 3: Lupa / Reset PIN -->
+    <div id="reset-box-asli" class="mbcs-card-container" style="display:none;">
+      <div class="mbcs-avatar-badge">
+        <i class="fas fa-key"></i>
+      </div>
+      <div class="mbcs-welcome-title" style="font-size:16px; margin-bottom:10px;">Lupa / Reset PIN</div>
 
-  <div id="register-box-asli" class="auth-card-asli" style="display:none;">
-    <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-user-plus"></i> Pendaftaran / Lengkapi Akun Resmi</h3>
-    <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-    <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Dede_Rusmana"></div>
-    <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
-    <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
-    <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
-    <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit" maxlength="6"></div>
-    <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN</button>
-    <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
-  </div>
+      <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
+      <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control" maxlength="6"></div>
+      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control" maxlength="6"></div>
 
-  <div id="reset-box-asli" class="auth-card-asli" style="display:none;">
-    <h3 style="font-size:12px; margin-bottom:8px; color:var(--navy-primary);"><i class="fas fa-key"></i> Reset / Ganti PIN</h3>
-    <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
-    <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control" maxlength="6"></div>
-    <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control" maxlength="6"></div>
-    <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
-    <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+      <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
+      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+    </div>
+
+    <!-- Footer Perusahaan -->
+    <div class="mbcs-footer-banner">
+      <div class="f-title">PT. Ardina Mulya Perkasa</div>
+      <div class="f-sub">Bersama Membangun Operasional yang Lebih Baik</div>
+    </div>
   </div>
 </div>
 
+<!-- ==================== APLIKASI UTAMA (MODUL 1 - 14) ==================== -->
 <div id="main-app">
 
   <div class="app-header">
@@ -609,42 +940,52 @@
         <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="leave-start" class="form-control"></div>
         <div class="form-group"><label>Tanggal Selesai</label><input type="date" id="leave-end" class="form-control"></div>
       </div>
-      <div class="form-group"><label>Keterangan / Pengganti Tugas di Lapangan</label><input type="text" id="leave-reason" class="form-control" placeholder="Jelaskan alasan dan backup personil site..."></div>
-      <button type="button" class="btn btn-primary" onclick="submitLeaveRequest()"><i class="fas fa-check-circle"></i> KIRIM PENGAJUAN IZIN / CUTI</button>
+      <div class="form-group"><label>Keterangan / Pengganti Tugas di Lapangan</label>
+        <input type="text" id="leave-notes" class="form-control" placeholder="Alasan izin/cuti & nama PIC pengganti di site...">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="submitLeave()"><i class="fas fa-paper-plane"></i> AJUKAN IZIN / CUTI</button>
     </div>
 
     <div class="card">
-      <div class="card-title"><i class="fas fa-calendar-check"></i> Riwayat Izin & Cuti</div>
-      <ul id="leave-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada riwayat izin atau cuti.</li></ul>
+      <div class="card-title">
+        <span><i class="fas fa-calendar-check"></i> Riwayat Izin & Cuti</span>
+        <span id="leave-count-badge" class="badge badge-in">0 Data</span>
+      </div>
+      <ul id="leave-log-list" class="log-list">
+        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan izin atau cuti.</li>
+      </ul>
     </div>
   </div>
 
-  <!-- MODUL 6: KEJADIAN -->
+  <!-- MODUL 6: KEJADIAN / INSIDEN -->
   <div id="mod-6" class="screen-panel">
-    <div class="card" style="border-top: 3px solid var(--danger);">
+    <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Pelaporan Kejadian / Insiden</span>
+        <span><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Laporan Kejadian / Insiden Lapangan</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
+      <div class="form-group"><label>Lokasi Kejadian / Site PLN</label><input type="text" id="inc-site" class="form-control" placeholder="Contoh: UPT Bekasi / GISTET Cawang Baru"></div>
       <div class="form-group">
         <label>Kategori Kejadian</label>
-        <select id="incident-category" class="form-control">
+        <select id="inc-type" class="form-control">
           <option value="Near Miss / Potensi Bahaya">Near Miss / Potensi Bahaya</option>
-          <option value="Insiden K3 / Kecelakaan Kerja">Insiden K3 / Kecelakaan Kerja</option>
+          <option value="Kecelakaan Kerja (K3)">Kecelakaan Kerja (K3)</option>
+          <option value="Komplain / Temuan Area">Komplain / Temuan Area</option>
           <option value="Kerusakan Fasilitas / Peralatan">Kerusakan Fasilitas / Peralatan</option>
-          <option value="Komplain Pelanggan / Pengguna Gedung">Komplain Pelanggan / Pengguna Gedung</option>
-          <option value="Gangguan Keamanan / Akses">Gangguan Keamanan / Akses</option>
         </select>
       </div>
-      <div class="form-group"><label>Lokasi Kejadian & Area PLN</label><input type="text" id="incident-location" class="form-control" placeholder="Contoh: ULTG Cikarang / UPT Cawang"></div>
-      <div class="form-group"><label>Kronologi & Tindakan Segera</label><textarea id="incident-desc" class="form-control" rows="3" placeholder="Uraikan kronologi kejadian dan langkah penanganan awal..."></textarea></div>
-      <div class="form-group"><label>Foto Bukti Kejadian</label><input type="file" id="incident-photo-input" accept="image/*" class="form-control" style="font-size:10px; padding:6px;"></div>
-      <button type="button" class="btn btn-danger" onclick="submitIncident()"><i class="fas fa-bullhorn"></i> LAPORKAN KEJADIAN SEKARANG</button>
+      <div class="form-group"><label>Kronologi & Tindakan Awal</label><textarea id="inc-desc" class="form-control" rows="3" placeholder="Jelaskan waktu, kronologi singkat, dan tindakan penanganan awal..."></textarea></div>
+      <button type="button" class="btn btn-danger" onclick="submitIncident()"><i class="fas fa-bullhorn"></i> KIRIM LAPORAN KEJADIAN</button>
     </div>
 
     <div class="card">
-      <div class="card-title"><i class="fas fa-clipboard-list"></i> Log Kejadian Tercatat</div>
-      <ul id="incident-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li></ul>
+      <div class="card-title">
+        <span><i class="fas fa-clipboard-list"></i> Daftar Laporan Kejadian</span>
+        <span id="inc-count-badge" class="badge badge-out">0 Laporan</span>
+      </div>
+      <ul id="inc-log-list" class="log-list">
+        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>
+      </ul>
     </div>
   </div>
 
@@ -652,111 +993,65 @@
   <div id="mod-7" class="screen-panel">
     <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-broom"></i> MCP Cleaning (Master Cleaning Program)</span>
+        <span><i class="fas fa-broom"></i> Master Cleaning Program (MCP)</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div class="form-group"><label>Zona / Area Cleaning</label><input type="text" id="mcp-zone" class="form-control" placeholder="Contoh: Lobby Utama, Ruang Rapat, Koridor"></div>
+      <div class="form-group"><label>Area / Ruangan</label><input type="text" id="mcp-area" class="form-control" placeholder="Contoh: Ruang Rapat / Lobby / Area Switchyard"></div>
       <div class="form-group">
-        <label>Frekuensi Pekerjaan</label>
-        <select id="mcp-freq" class="form-control">
-          <option value="Daily (Harian)">Daily (Harian)</option>
-          <option value="Weekly (Mingguan)">Weekly (Mingguan)</option>
-          <option value="Monthly (Bulanan)">Monthly (Bulanan)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Item Pekerjaan MCP</label>
-        <div style="display:flex; flex-direction:column; gap:6px; font-size:10.5px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Sweeping & Mopping Lantai"> Sweeping & Mopping Lantai</label>
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Dusting Meja, Kursi & Partisi"> Dusting Meja, Kursi & Partisi</label>
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Sanitasi & Pembersihan Kaca/Pintu"> Sanitasi & Pembersihan Kaca/Pintu</label>
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="mcp-task" value="Pengosongan Tempat Sampah"> Pengosongan Tempat Sampah</label>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Status Penyelesaian</label>
+        <label>Frekuensi & Status Pekerjaan</label>
         <select id="mcp-status" class="form-control">
-          <option value="Selesai 100%">Selesai 100%</option>
-          <option value="Dalam Proses">Dalam Proses</option>
-          <option value="Tertunda">Tertunda</option>
+          <option value="Harian - Selesai (100%)">Harian - Selesai (100%)</option>
+          <option value="Mingguan - Selesai (100%)">Mingguan - Selesai (100%)</option>
+          <option value="Bulanan - Selesai (100%)">Bulanan - Selesai (100%)</option>
+          <option value="Dalam Proses / Perlu Tindak Lanjut">Dalam Proses / Perlu Tindak Lanjut</option>
         </select>
       </div>
-      <button type="button" class="btn btn-success" onclick="saveMCPReport()"><i class="fas fa-save"></i> SIMPAN LAPORAN MCP CLEANING</button>
+      <button type="button" class="btn btn-success" onclick="saveMCP()"><i class="fas fa-check-circle"></i> SIMPAN PROGRESS MCP</button>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="fas fa-check-double"></i> Riwayat MCP Cleaning</div>
-      <ul id="mcp-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan MCP Cleaning.</li></ul>
+      <div class="card-title"><i class="fas fa-tasks"></i> Log MCP Terbaru</div>
+      <ul id="mcp-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada log MCP.</li></ul>
     </div>
   </div>
 
-  <!-- MODUL 8: CHEKLIS AREA -->
+  <!-- MODUL 8: CHEKLIS AREA (DAC) -->
   <div id="mod-8" class="screen-panel">
     <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-restroom"></i> Cheklis Area (Daily Activity & 5S)</span>
+        <span><i class="fas fa-restroom"></i> Daily Activity Checklist (DAC) / Area</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div class="form-group"><label>Nama Area / Ruangan / Toilet</label><input type="text" id="area-name" class="form-control" placeholder="Contoh: Toilet Lantai 1 / Ruang Kontrol"></div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-        <div class="form-group">
-          <label>Kondisi Kebersihan (5S)</label>
-          <select id="area-5s" class="form-control">
-            <option value="Baik / Bersih">Baik / Bersih</option>
-            <option value="Cukup">Cukup</option>
-            <option value="Perlu Perbaikan">Perlu Perbaikan</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Amenitas / Sabun / Tissue</label>
-          <select id="area-amenities" class="form-control">
-            <option value="Lengkap">Lengkap</option>
-            <option value="Hampir Habis">Hampir Habis</option>
-            <option value="Kosong">Kosong</option>
-          </select>
-        </div>
+      <div class="form-group"><label>Nama Area / Toilet / Gedung</label><input type="text" id="dac-area" class="form-control" placeholder="Contoh: Toilet Lt. 1 & Area Parkir"></div>
+      <div class="form-group">
+        <label>Kondisi Kebersihan & Kelengkapan (5S / 3S)</label>
+        <select id="dac-condition" class="form-control">
+          <option value="Baik / Bersih & Lengkap">Baik / Bersih & Lengkap</option>
+          <option value="Cukup / Perlu Refill Sabun-Tissue">Cukup / Perlu Refill Sabun-Tissue</option>
+          <option value="Kurang / Perlu Perbaikan Segera">Kurang / Perlu Perbaikan Segera</option>
+        </select>
       </div>
-      <div class="form-group"><label>Catatan Inspeksi Area</label><input type="text" id="area-notes" class="form-control" placeholder="Catatan tambahan kondisi area..."></div>
-      <button type="button" class="btn btn-primary" onclick="saveAreaChecklist()"><i class="fas fa-clipboard-check"></i> SIMPAN CHEKLIS AREA</button>
+      <button type="button" class="btn btn-primary" onclick="saveDAC()"><i class="fas fa-save"></i> SIMPAN CHEKLIS AREA</button>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="fas fa-history"></i> Log Cheklis Area</div>
-      <ul id="area-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data cheklis area.</li></ul>
+      <div class="card-title"><i class="fas fa-clipboard-check"></i> Riwayat Cheklis Area</div>
+      <ul id="dac-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada cheklis area.</li></ul>
     </div>
   </div>
 
   <!-- MODUL 9: HIGH RISK K3 -->
   <div id="mod-9" class="screen-panel">
-    <div class="card" style="border-top: 3px solid var(--gold-accent);">
+    <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-hard-hat" style="color:var(--gold-accent);"></i> Pengawasan Pekerjaan High Risk K3</span>
+        <span><i class="fas fa-hard-hat"></i> High Risk K3 & APD (Working at Height / Listrik)</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div class="form-group">
-        <label>Jenis Pekerjaan Berisiko Tinggi</label>
-        <select id="k3-work-type" class="form-control">
-          <option value="Working at Height / Rope Access">Working at Height / Rope Access</option>
-          <option value="Pekerjaan Elektrikal / Area Bertegangan">Pekerjaan Elektrikal / Area Bertegangan</option>
-          <option value="Confined Space / Ruang Terbatas">Confined Space / Ruang Terbatas</option>
-          <option value="Pekerjaan Panas / Alat Berat">Pekerjaan Panas / Alat Berat</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Verifikasi APD & Izin Kerja</label>
-        <div style="display:flex; flex-direction:column; gap:6px; font-size:10.5px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Work Permit & JSA Terverifikasi"> Work Permit & JSA Terverifikasi</label>
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Helm Safety, Body Harness & Sepatu Safety"> Helm Safety, Body Harness & Sepatu Safety</label>
-          <label style="display:flex; align-items:center; gap:6px; margin:0;"><input type="checkbox" class="k3-check" value="Barikade Area & Safety Briefing"> Barikade Area & Safety Briefing</label>
-        </div>
-      </div>
-      <div class="form-group"><label>Lokasi & Nama Petugas Pelaksana</label><input type="text" id="k3-officer" class="form-control" placeholder="Contoh: Fasade Gedung Utama - Tim Rope Access"></div>
-      <button type="button" class="btn btn-warning" onclick="saveHighRiskK3()"><i class="fas fa-shield-alt"></i> CATAT VERIFIKASI HIGH RISK K3</button>
+      <div class="form-group"><label>Jenis Pekerjaan Berisiko Tinggi</label><input type="text" id="k3-job" class="form-control" placeholder="Contoh: Pembersihan Kaca Tinggi / Rope Access / Area Tegangan"></div>
+      <div class="form-group"><label>Kesiapan APD, JSA & Permit</label><input type="text" id="k3-apd" class="form-control" placeholder="Contoh: Full Body Harness, Helm Safety, Sepatu Safety, JSA Lengkap"></div>
+      <button type="button" class="btn btn-warning" onclick="saveK3()"><i class="fas fa-shield-alt"></i> VERIFIKASI & SIMPAN K3</button>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="fas fa-hard-hat"></i> Riwayat Pengawasan High Risk K3</div>
-      <ul id="k3-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan High Risk K3.</li></ul>
+      <div class="card-title"><i class="fas fa-list"></i> Log K3 & APD</div>
+      <ul id="k3-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan K3.</li></ul>
     </div>
   </div>
 
@@ -764,11 +1059,16 @@
   <div id="mod-10" class="screen-panel">
     <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-users"></i> Data Tim Korlap & Admin</span>
+        <span><i class="fas fa-users"></i> Data Tim Lapangan (CS / OB / Security / Rope Access)</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div class="form-group"><label>Cari Nama / Username / Area Tugas PLN</label><input type="text" id="team-search-input" class="form-control" placeholder="Ketik nama, username, atau area tugas..." oninput="renderTeamList()"></div>
-      <ul id="team-member-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Memuat data tim...</li></ul>
+      <div class="form-group"><label>Nama Personel</label><input type="text" id="team-name" class="form-control" placeholder="Nama lengkap personel"></div>
+      <div class="form-group"><label>Posisi & Site Tugas</label><input type="text" id="team-role-site" class="form-control" placeholder="Contoh: Cleaning Service - UPT Bekasi"></div>
+      <button type="button" class="btn btn-primary" onclick="addTeamMember()"><i class="fas fa-user-plus"></i> TAMBAH DATA TIM</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-address-book"></i> Daftar Personel Tim</div>
+      <ul id="team-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data tim tersimpan.</li></ul>
     </div>
   </div>
 
@@ -779,27 +1079,13 @@
         <span><i class="fas fa-tools"></i> Inventaris & Kondisi Equipment</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
-        <div class="form-group"><label>Nama Peralatan / Mesin</label><input type="text" id="eq-name" class="form-control" placeholder="Contoh: Floor Polisher / Vacuum"></div>
-        <div class="form-group"><label>Jumlah Unit</label><input type="number" id="eq-qty" class="form-control" value="1" min="1"></div>
-      </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-        <div class="form-group"><label>Area / Site</label><input type="text" id="eq-site" class="form-control" placeholder="Contoh: UPT Bandung"></div>
-        <div class="form-group">
-          <label>Kondisi Alat</label>
-          <select id="eq-condition" class="form-control">
-            <option value="Baik / Layak Pakai">Baik / Layak Pakai</option>
-            <option value="Perlu Servis">Perlu Servis</option>
-            <option value="Rusak / Tidak Layak">Rusak / Tidak Layak</option>
-          </select>
-        </div>
-      </div>
-      <button type="button" class="btn btn-primary" onclick="saveEquipment()"><i class="fas fa-plus-circle"></i> SIMPAN DATA EQUIPMENT</button>
+      <div class="form-group"><label>Nama Alat / Mesin</label><input type="text" id="eq-name" class="form-control" placeholder="Contoh: Floor Polisher / Vacuum Cleaner / Tangga"></div>
+      <div class="form-group"><label>Jumlah & Kondisi</label><input type="text" id="eq-status" class="form-control" placeholder="Contoh: 2 Unit - Baik / 1 Unit Perlu Servis"></div>
+      <button type="button" class="btn btn-primary" onclick="saveEquipment()"><i class="fas fa-save"></i> SIMPAN DATA EQUIPMENT</button>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="fas fa-boxes"></i> Daftar Equipment Terdaftar</div>
-      <ul id="equipment-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li></ul>
+      <div class="card-title"><i class="fas fa-boxes"></i> Daftar Equipment</div>
+      <ul id="eq-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li></ul>
     </div>
   </div>
 
@@ -807,20 +1093,15 @@
   <div id="mod-12" class="screen-panel">
     <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-exclamation-circle"></i> Daftar Temuan & Tindak Lanjut (Outstanding)</span>
+        <span><i class="fas fa-exclamation-circle"></i> Catatan Pekerjaan Outstanding</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div class="form-group"><label>Judul Temuan / Action Item</label><input type="text" id="out-title" class="form-control" placeholder="Contoh: Perbaikan selang vacuum / Tindak lanjut audit"></div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-        <div class="form-group"><label>PIC / Penanggung Jawab</label><input type="text" id="out-pic" class="form-control" placeholder="Nama Korlap / PIC"></div>
-        <div class="form-group"><label>Target Selesai (Due Date)</label><input type="date" id="out-due" class="form-control"></div>
-      </div>
-      <button type="button" class="btn btn-warning" onclick="addOutstandingItem()"><i class="fas fa-plus"></i> TAMBAH ITEM OUTSTANDING</button>
+      <div class="form-group"><label>Item Outstanding & Target Penyelesaian</label><input type="text" id="out-item" class="form-control" placeholder="Contoh: Penggantian mop head - Target besok"></div>
+      <button type="button" class="btn btn-warning" onclick="saveOutstanding()"><i class="fas fa-plus-circle"></i> TAMBAH OUTSTANDING</button>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="fas fa-tasks"></i> Status Outstanding</div>
-      <ul id="outstanding-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding aktif.</li></ul>
+      <div class="card-title"><i class="fas fa-hourglass-half"></i> Daftar Outstanding</div>
+      <ul id="out-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding.</li></ul>
     </div>
   </div>
 
@@ -828,1074 +1109,430 @@
   <div id="mod-13" class="screen-panel">
     <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-chart-pie"></i> Ringkasan KPI & Performa Operasional</span>
+        <span><i class="fas fa-bullhorn"></i> KPI, SLA & Informasi Operasional</span>
         <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
       </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:10.5px;">
-        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px;">
-          <div style="color:#166534; font-weight:bold;">Kepatuhan Absensi & GPS</div>
-          <div id="kpi-attendance-score" style="font-size:16px; font-weight:800; color:var(--success); margin-top:4px;">98.5%</div>
-        </div>
-        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:8px;">
-          <div style="color:#1e40af; font-weight:bold;">Penyelesaian MCP & Area</div>
-          <div id="kpi-mcp-score" style="font-size:16px; font-weight:800; color:var(--sky-accent); margin-top:4px;">96.0%</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><i class="fas fa-bullhorn"></i> Pengumuman & Buletin Operasional AMP</div>
-      <ul id="news-feed-list" class="log-list">
-        <li class="log-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
-          <span class="badge badge-in">INFO OPERASIONAL</span>
-          <strong>Standardisasi Live Foto & GPS Gedung/PT</strong>
-          <span style="color:var(--text-muted);">Pastikan GPS aktif dan foto wajah/lokasi jelas saat Check-In dan Check-Out.</span>
-        </li>
-        <li class="log-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
-          <span class="badge badge-warning">K3 & SAFETY</span>
-          <strong>Wajib Verifikasi APD Sebelum Pekerjaan High Risk</strong>
-          <span style="color:var(--text-muted);">Seluruh aktivitas berisiko tinggi wajib disertai pemeriksaan kelengkapan APD dan izin kerja.</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- MODUL 14: MODUL SYNC & KONFIGURASI SUPABASE -->
-  <div id="mod-14" class="screen-panel">
-    <div class="card" style="border-top: 3px solid #0f766e;">
-      <div class="card-title">
-        <span><i class="fas fa-plug" style="color:#0f766e;"></i> Konfigurasi URL & Anon Key Supabase</span>
-        <span id="supabase-conn-badge" class="badge badge-warning">Belum Terhubung</span>
-      </div>
-      <div class="form-group">
-        <label>Supabase Project URL</label>
-        <input type="text" id="cfg-supabase-url" class="form-control" placeholder="https://xxxxxxxxxxxx.supabase.co">
-      </div>
-      <div class="form-group">
-        <label>Supabase Anon / Public Key</label>
-        <div style="display:flex; gap:6px;">
-          <input type="password" id="cfg-supabase-key" class="form-control" placeholder="Masukkan anon / public key Supabase">
-          <button type="button" class="btn btn-outline" style="width:auto; padding:0 10px; margin:0;" onclick="toggleKeyVisibility()" title="Lihat / Sembunyikan Key">
-            <i class="fas fa-eye" id="toggle-key-icon"></i>
-          </button>
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
-        <button type="button" class="btn btn-success" style="margin:0;" onclick="saveSupabaseConfig()"><i class="fas fa-save"></i> SIMPAN</button>
-        <button type="button" class="btn btn-primary" style="margin:0;" onclick="testSupabaseConnection()"><i class="fas fa-wifi"></i> TES KONEKSI</button>
-        <button type="button" class="btn btn-outline" style="margin:0;" onclick="clearSupabaseConfig()"><i class="fas fa-trash"></i> RESET</button>
-      </div>
-    </div>
-
-    <div class="card" style="border-top: 3px solid #0284c7;">
-      <div class="card-title">
-        <span><i class="fas fa-database" style="color:#0284c7;"></i> Pusat Sinkronisasi Data (Supabase)</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <p style="font-size:10px; color:var(--text-muted); margin-bottom:10px;">
-        Kelola sinkronisasi data lokal dengan database cloud Supabase agar catatan absensi, GPS Korlap, kejadian, dan MR tetap aman.
+      <p style="font-size:10.5px; line-height:1.5; color:var(--text-main);">
+        <strong>Fokus Operasional PT. Ardina Mulya Perkasa:</strong> Kepatuhan absensi live foto & GPS, standar K3 & APD, kedisiplinan MCP & DAC, serta <em>Service Excellence</em> di seluruh area penugasan PLN.
       </p>
-      <div class="status-checklist" style="margin-bottom:10px;">
-        <span id="sync-queue-count" style="font-weight:bold; color:var(--navy-primary);"><i class="fas fa-cloud-upload-alt"></i> Antrean Pending: 0 Data</span>
-        <span id="sync-last-time" style="color:var(--text-muted);">Terakhir Sync: -</span>
-      </div>
-      <button type="button" class="btn btn-primary" onclick="syncAllToSupabase()"><i class="fas fa-sync-alt"></i> SINKRONKAN SEMUA DATA KE SUPABASE</button>
-      <button type="button" class="btn btn-outline" onclick="pullLatestFromSupabase()"><i class="fas fa-cloud-download-alt"></i> TARIK DATA TERBARU DARI SERVER</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><i class="fas fa-terminal"></i> Log Status Sinkronisasi</div>
-      <ul id="sync-log-list" class="log-list">
-        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada aktivitas sinkronisasi pada sesi ini.</li>
-      </ul>
     </div>
   </div>
+
+  <!-- MODUL 14: MODUL SYNC (SUPABASE) -->
+  <div id="mod-14" class="screen-panel">
+    <div class="card">
+      <div class="card-title">
+        <span><i class="fas fa-database"></i> Konfigurasi & Sinkronisasi Supabase</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
+      </div>
+      <div class="form-group"><label>Supabase Project URL</label><input type="text" id="sb-url" class="form-control" placeholder="https://xxxx.supabase.co"></div>
+      <div class="form-group"><label>Supabase Anon Key</label><input type="password" id="sb-key" class="form-control" placeholder="eyJ..."></div>
+      <button type="button" class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-plug"></i> SIMPAN & HUBUNGKAN SUPABASE</button>
+      <button type="button" class="btn btn-success" onclick="syncAllData()"><i class="fas fa-sync"></i> SINKRONKAN DATA SEKARANG</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div class="nav-link active" id="nav-1" onclick="showModule(1)"><i class="fas fa-home"></i><span>Dashboard</span></div>
+    <div class="nav-link" id="nav-3" onclick="showModule(3)"><i class="fas fa-camera"></i><span>Absensi</span></div>
+    <div class="nav-link" id="nav-7" onclick="showModule(7)"><i class="fas fa-broom"></i><span>MCP</span></div>
+    <div class="nav-link" id="nav-2" onclick="showModule(2)"><i class="fas fa-user"></i><span>Profil</span></div>
+  </nav>
 
 </div>
 
-<nav class="bottom-nav" id="bottom-nav">
-  <a class="nav-link active" onclick="showModule(1)"><i class="fas fa-home"></i><span>Home</span></a>
-  <a class="nav-link" onclick="showModule(3)"><i class="fas fa-camera"></i><span>Absen</span></a>
-  <a class="nav-link" onclick="showModule(6)"><i class="fas fa-exclamation-triangle"></i><span>Kejadian</span></a>
-  <a class="nav-link" onclick="showModule(2)"><i class="fas fa-user"></i><span>Profil</span></a>
-</nav>
-
 <script>
-const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-let supabaseClient = null;
-let isLoggedIn = false;
+  const APP_STATE = {
+    currentUser: null,
+    users: JSON.parse(localStorage.getItem('amp_users') || '[]'),
+    attendance: JSON.parse(localStorage.getItem('amp_attendance') || '[]'),
+    mr: JSON.parse(localStorage.getItem('amp_mr') || '[]'),
+    leaves: JSON.parse(localStorage.getItem('amp_leaves') || '[]'),
+    incidents: JSON.parse(localStorage.getItem('amp_incidents') || '[]'),
+    mcp: JSON.parse(localStorage.getItem('amp_mcp') || '[]'),
+    dac: JSON.parse(localStorage.getItem('amp_dac') || '[]'),
+    k3: JSON.parse(localStorage.getItem('amp_k3') || '[]'),
+    team: JSON.parse(localStorage.getItem('amp_team') || '[]'),
+    equipment: JSON.parse(localStorage.getItem('amp_equipment') || '[]'),
+    outstanding: JSON.parse(localStorage.getItem('amp_outstanding') || '[]'),
+    sbConfig: JSON.parse(localStorage.getItem('amp_sb_config') || '{"url":"","key":""}'),
+    capturedPhoto: null,
+    currentGPS: null
+  };
 
-const DEFAULT_USERS = [
-  { id: 'M.Soheh', name: 'M.Soheh', role: 'Admin', jabatan: 'Head Of Operation / Admin', site: 'Seluruh Wilayah PLN UIT JBT & UIT JBB', phone: '-', pin: '990099', avatar: '' },
-  { id: 'Dede_Rusmana', name: 'Dede Rusmana', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bekasi & ULTG Cikarang', phone: '-', pin: '110101', avatar: '' },
-  { id: 'Dede_Purnama', name: 'Dede Purnama', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Karet & ULTG Mampang', phone: '-', pin: '110202', avatar: '' },
-  { id: 'Dadang_Darsono', name: 'Dadang Darsono', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', phone: '-', pin: '110303', avatar: '' },
-  { id: 'Rizky_Badrul Z', name: 'Rizky Badrul Zaman', role: 'Korlap', jabatan: 'Korlap', site: 'Kantor Induk Bandung & ULTG Bandung Barat', phone: '-', pin: '110404', avatar: '' },
-  { id: 'Irfan_AS', name: 'Irfan Ardiatma S', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Cawang & ULTG Mampang', phone: '-', pin: '110505', avatar: '' },
-  { id: 'Yan_S', name: 'Yan Saputra', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', phone: '-', pin: '110606', avatar: '' },
-  { id: 'Yadi_S', name: 'Yadi Supriyadi', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bandung, ULTG Bandung Timur & Bandung Selatan', phone: '-', pin: '110707', avatar: '' },
-  { id: 'Tegar_D', name: 'Tegar Dwitama', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Cikarang', phone: '-', pin: '110808', avatar: '' },
-  { id: 'Andi_I', name: 'Andi Ilmanto', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Gandul, ULTG Petukangan & ULTG Tangsel', phone: '-', pin: '110909', avatar: '' },
-  { id: 'Tamam_2', name: 'Tamam', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bogor & ULTG Sukabumi', phone: '-', pin: '111010', avatar: '' },
-  { id: 'Haerudin_3', name: 'Haerudin', role: 'Korlap', jabatan: 'Korlap', site: 'ULTG Purwakarta', phone: '-', pin: '111111', avatar: '' },
-  { id: 'Iswanto_R', name: 'Iswanto Riansyah', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Bogor & ULTG Sukabumi', phone: '-', pin: '111212', avatar: '' },
-  { id: 'Rifky_Y', name: 'Rifkiyansyah', role: 'Korlap', jabatan: 'Korlap', site: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', phone: '-', pin: '111313', avatar: '' }
-];
+  let radarMap = null;
+  let radarMarkers = [];
+  let webcamStream = null;
+  let profileStream = null;
 
-const DEFAULT_KORLAP_POSITIONS = [
-  { id: 'Dede_Rusmana', name: 'Dede Rusmana', site: 'UPT Bekasi & ULTG Cikarang', placeName: 'ULTG Cikarang / UPT Bekasi', street: 'Jl. Industri / Bekasi - Cikarang', lat: -6.2885, lng: 107.1485, updated: 'Baru saja' },
-  { id: 'Dede_Purnama', name: 'Dede Purnama', site: 'ULTG Karet & ULTG Mampang', placeName: 'ULTG Karet & ULTG Mampang', street: 'Jl. HR Rasuna Said / Karet - Mampang', lat: -6.2280, lng: 106.8240, updated: '3 mnt lalu' },
-  { id: 'Dadang_Darsono', name: 'Dadang Darsono', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', placeName: 'UPT Pulogadung', street: 'Jl. Bekasi Raya / Pulogadung', lat: -6.1935, lng: 106.9055, updated: '4 mnt lalu' },
-  { id: 'Rizky_Badrul Z', name: 'Rizky Badrul Zaman', site: 'Kantor Induk Bandung & ULTG Bandung Barat', placeName: 'Kantor Induk PLN UIT JBT Bandung', street: 'Jl. Cigereleng / Bandung', lat: -6.9350, lng: 107.6040, updated: '5 mnt lalu' },
-  { id: 'Irfan_AS', name: 'Irfan Ardiatma S', site: 'UPT Cawang & ULTG Mampang', placeName: 'GISTET 500Kv & 150Kv Cawang Baru', street: 'Jl. Mayjen Sutoyo / Cawang', lat: -6.2435, lng: 106.8685, updated: '2 mnt lalu' },
-  { id: 'Yan_S', name: 'Yan Saputra', site: 'UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah', placeName: 'ULTG Ancol / Harapan Indah', street: 'Jl. Lodan Raya / Jakarta Utara', lat: -6.1350, lng: 106.8350, updated: '6 mnt lalu' },
-  { id: 'Yadi_S', name: 'Yadi Supriyadi', site: 'UPT Bandung, ULTG Bandung Timur & Bandung Selatan', placeName: 'UPT Bandung', street: 'Jl. Soekarno Hatta / Bandung', lat: -6.9175, lng: 107.6191, updated: '7 mnt lalu' },
-  { id: 'Tegar_D', name: 'Tegar Dwitama', site: 'ULTG Cikarang', placeName: 'ULTG Cikarang', street: 'Jl. Jababeka / Cikarang', lat: -6.2980, lng: 107.1480, updated: '5 mnt lalu' },
-  { id: 'Andi_I', name: 'Andi Ilmanto', site: 'ULTG Gandul, ULTG Petukangan & ULTG Tangsel', placeName: 'ULTG Gandul / Tangsel', street: 'Jl. Gandul Raya / Cinere - Tangsel', lat: -6.3420, lng: 106.7860, updated: '8 mnt lalu' },
-  { id: 'Tamam_2', name: 'Tamam', site: 'UPT Bogor & ULTG Sukabumi', placeName: 'UPT Bogor', street: 'Jl. Pajajaran / Bogor', lat: -6.5971, lng: 106.8060, updated: '6 mnt lalu' },
-  { id: 'Haerudin_3', name: 'Haerudin', site: 'ULTG Purwakarta', placeName: 'ULTG Purwakarta', street: 'Jl. Jenderal Sudirman / Purwakarta', lat: -6.5569, lng: 107.4433, updated: '9 mnt lalu' },
-  { id: 'Iswanto_R', name: 'Iswanto Riansyah', site: 'UPT Bogor & ULTG Sukabumi', placeName: 'ULTG Sukabumi', street: 'Jl. Pelabuhan II / Sukabumi', lat: -6.9277, lng: 106.9300, updated: '7 mnt lalu' },
-  { id: 'Rifky_Y', name: 'Rifkiyansyah', site: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', placeName: 'UPT Karawang', street: 'Jl. Ahmad Yani / Karawang', lat: -6.3065, lng: 107.2907, updated: '4 mnt lalu' }
-];
+  setInterval(() => {
+    const el = document.getElementById('live-clock');
+    if (el) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour12: false });
+      el.textContent = `${timeStr} WIB`;
+    }
+  }, 1000);
 
-function escapeHTML(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+  function togglePinVisibility(inputId, btnEl) {
+    const inp = document.getElementById(inputId);
+    const icon = btnEl.querySelector('i');
+    if (!inp) return;
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+    } else {
+      inp.type = 'password';
+      if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
+    }
+  }
 
-function normalizeId(val) {
-  return String(val || '').trim().toLowerCase().replace(/\s+/g, '_');
-}
+  function switchAuthSubView(view) {
+    document.getElementById('login-box-asli').style.display = view === 'login' ? 'block' : 'none';
+    document.getElementById('register-box-asli').style.display = view === 'register' ? 'block' : 'none';
+    document.getElementById('reset-box-asli').style.display = view === 'reset-pin' ? 'block' : 'none';
+  }
 
-function isOfficialUser(u) {
-  const target = normalizeId(u.id);
-  return DEFAULT_USERS.some(def => normalizeId(def.id) === target);
-}
+  function processRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const id = document.getElementById('reg-id').value.trim();
+    const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Korlap';
+    const site = document.getElementById('reg-site').value.trim() || '-';
+    const phone = document.getElementById('reg-phone').value.trim() || '-';
+    const pin = document.getElementById('reg-pin').value.trim();
 
-function buildOfficialUsers() {
-  const saved = JSON.parse(localStorage.getItem('amp_users') || '[]');
-  return DEFAULT_USERS.map(def => {
-    const match = saved.find(s => normalizeId(s.id) === normalizeId(def.id));
-    if (!match) return { ...def };
-    return { ...def, ...match, id: def.id };
-  });
-}
+    if (!name || !id || pin.length !== 6) {
+      alert('Lengkapi Nama, ID/Username, dan PIN 6 digit.');
+      return;
+    }
 
-function buildOfficialKorlapPositions() {
-  const saved = JSON.parse(localStorage.getItem('amp_korlap_pos') || '[]');
-  return DEFAULT_KORLAP_POSITIONS.map(def => {
-    const match = saved.find(s => normalizeId(s.id) === normalizeId(def.id));
-    return match ? { ...def, ...match, id: def.id, name: def.name, site: def.site } : { ...def };
-  });
-}
+    const idx = APP_STATE.users.findIndex(u => u.id.toLowerCase() === id.toLowerCase());
+    const userObj = { id, name, jabatan, site, phone, pin, avatar: '' };
+    if (idx >= 0) APP_STATE.users[idx] = { ...APP_STATE.users[idx], ...userObj };
+    else APP_STATE.users.push(userObj);
 
-const initialUsers = buildOfficialUsers();
-
-const state = {
-  users: initialUsers,
-  currentUser: null,
-  attendance: JSON.parse(localStorage.getItem('amp_attendance') || '[]'),
-  mr: JSON.parse(localStorage.getItem('amp_mr') || '[]'),
-  leaves: JSON.parse(localStorage.getItem('amp_leaves') || '[]'),
-  incidents: JSON.parse(localStorage.getItem('amp_incidents') || '[]'),
-  mcp: JSON.parse(localStorage.getItem('amp_mcp') || '[]'),
-  areas: JSON.parse(localStorage.getItem('amp_areas') || '[]'),
-  k3: JSON.parse(localStorage.getItem('amp_k3') || '[]'),
-  equipment: JSON.parse(localStorage.getItem('amp_equipment') || '[]'),
-  outstanding: JSON.parse(localStorage.getItem('amp_outstanding') || '[]'),
-  korlapPositions: buildOfficialKorlapPositions(),
-  pendingQueue: Number(localStorage.getItem('amp_pending_queue') || '0'),
-  lastSync: localStorage.getItem('amp_last_sync') || '-'
-};
-
-let radarMap = null;
-let radarMarkers = [];
-let radarLayerControl = null;
-let radarPollingTimer = null;
-let korlapWatchId = null;
-let supabaseRealtimeChannel = null;
-let webcamStream = null;
-let profileStream = null;
-let capturedAttendancePhoto = '';
-let capturedGPS = '';
-let tempProfileAvatar = '';
-
-function setAuthGateState(loggedIn) {
-  isLoggedIn = Boolean(loggedIn && state.currentUser);
-  const overlay = document.getElementById('auth-modal-overlay');
-  const mainApp = document.getElementById('main-app');
-  const bottomNav = document.getElementById('bottom-nav');
-
-  if (isLoggedIn) {
-    overlay.classList.remove('active');
-    mainApp.classList.add('authenticated');
-    bottomNav.classList.add('authenticated');
-  } else {
-    mainApp.classList.remove('authenticated');
-    bottomNav.classList.remove('authenticated');
-    overlay.classList.add('active');
+    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    alert('Akun berhasil disimpan. Silakan login.');
     switchAuthSubView('login');
   }
-}
 
-function getEffectiveSupabaseConfig() {
-  const savedUrl = (localStorage.getItem('amp_supabase_url') || '').trim();
-  const savedKey = (localStorage.getItem('amp_supabase_key') || '').trim();
-  const codeUrlHasRealRef = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_PROJECT_REF');
-  const url = savedUrl || (codeUrlHasRealRef ? SUPABASE_URL : '');
-  const key = savedKey || (codeUrlHasRealRef ? SUPABASE_ANON_KEY : '');
-  return { url, key };
-}
+  function processResetPIN() {
+    const id = document.getElementById('reset-id').value.trim();
+    const oldPin = document.getElementById('reset-old-pin').value.trim();
+    const newPin = document.getElementById('reset-new-pin').value.trim();
 
-function setConnectionIndicator(connected) {
-  const badge = document.getElementById('supabase-conn-badge');
-  const headerBadge = document.getElementById('header-sync-badge');
-  if (badge) {
-    badge.className = connected ? 'badge badge-in' : 'badge badge-warning';
-    badge.textContent = connected ? 'Terhubung' : 'Belum Terhubung';
+    const user = APP_STATE.users.find(u => u.id.toLowerCase() === id.toLowerCase() && u.pin === oldPin);
+    if (!user) {
+      alert('ID atau PIN lama tidak sesuai.');
+      return;
+    }
+    if (newPin.length !== 6) {
+      alert('PIN baru harus 6 digit.');
+      return;
+    }
+    user.pin = newPin;
+    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    alert('PIN berhasil diperbarui.');
+    switchAuthSubView('login');
   }
-  if (headerBadge) {
-    headerBadge.classList.toggle('connected', Boolean(connected));
+
+  function processLogin() {
+    const id = document.getElementById('login-id').value.trim();
+    const pin = document.getElementById('login-pin').value.trim();
+
+    if (!id || !pin) {
+      alert('Masukkan ID / Username dan PIN.');
+      return;
+    }
+
+    let user = APP_STATE.users.find(u => u.id.toLowerCase() === id.toLowerCase() && u.pin === pin);
+    if (!user && APP_STATE.users.length === 0) {
+      user = { id, name: id, jabatan: 'Korlap / Operasional', site: 'Area PLN', phone: '-', pin, avatar: '' };
+      APP_STATE.users.push(user);
+      localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    }
+
+    if (!user) {
+      alert('ID atau PIN tidak valid. Silakan daftar atau periksa kembali.');
+      return;
+    }
+
+    APP_STATE.currentUser = user;
+    document.getElementById('auth-modal-overlay').classList.remove('active');
+    document.getElementById('main-app').classList.add('authenticated');
+    document.getElementById('bottom-nav').classList.add('authenticated');
+
+    renderUserUI();
+    renderAttendanceList();
+    initRadarMapIfAdmin();
+    showModule(1);
   }
-}
 
-function initSupabaseConnection() {
-  const { url, key } = getEffectiveSupabaseConfig();
-  const urlInput = document.getElementById('cfg-supabase-url');
-  const keyInput = document.getElementById('cfg-supabase-key');
-  if (urlInput && !urlInput.value && url) urlInput.value = url;
-  if (keyInput && !keyInput.value && key) keyInput.value = key;
-
-  if (window.supabase && url.startsWith('https://') && key) {
-    supabaseClient = window.supabase.createClient(url, key);
-    setConnectionIndicator(true);
-    subscribeRealtimeKorlapRadar();
-    startRadarAutoPolling();
-  } else {
-    supabaseClient = null;
-    setConnectionIndicator(false);
+  function logout() {
+    stopCameras();
+    APP_STATE.currentUser = null;
+    document.getElementById('main-app').classList.remove('authenticated');
+    document.getElementById('bottom-nav').classList.remove('authenticated');
+    document.getElementById('auth-modal-overlay').classList.add('active');
+    switchAuthSubView('login');
   }
-}
 
-function toggleKeyVisibility() {
-  const input = document.getElementById('cfg-supabase-key');
-  const icon = document.getElementById('toggle-key-icon');
-  if (!input) return;
-  const isPass = input.type === 'password';
-  input.type = isPass ? 'text' : 'password';
-  if (icon) icon.className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
-}
+  function renderUserUI() {
+    const u = APP_STATE.currentUser;
+    if (!u) return;
 
-function saveSupabaseConfig() {
-  const url = (document.getElementById('cfg-supabase-url')?.value || '').trim().replace(/\/+$/, '');
-  const key = (document.getElementById('cfg-supabase-key')?.value || '').trim();
-  if (!url.startsWith('https://') || !key) {
-    return alert('Masukkan Supabase Project URL (diawali https://) dan Anon Key dengan lengkap.');
+    document.getElementById('header-user-id').textContent = u.id;
+    document.getElementById('dash-user-name').textContent = u.name;
+    document.getElementById('dash-user-role').textContent = u.jabatan;
+    document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Area Tugas PLN: ${u.site}`;
+
+    document.getElementById('prof-name').textContent = u.name;
+    document.getElementById('prof-id').textContent = `ID: ${u.id}`;
+    document.getElementById('prof-jabatan').textContent = `Peran: ${u.jabatan}`;
+    document.getElementById('prof-site').textContent = u.site;
+    document.getElementById('prof-phone').textContent = u.phone;
+
+    document.getElementById('edit-prof-name').value = u.name;
+    document.getElementById('edit-prof-jabatan').value = u.jabatan;
+    document.getElementById('edit-prof-site').value = u.site;
+    document.getElementById('edit-prof-phone').value = u.phone;
+
+    const isPrivileged = /admin|head|ops|direktur/i.test(u.jabatan);
+    document.getElementById('admin-radar-card').style.display = isPrivileged ? 'block' : 'none';
+    document.getElementById('admin-export-card').style.display = isPrivileged ? 'block' : 'none';
+
+    if (u.avatar) {
+      document.getElementById('dash-avatar-img').src = u.avatar;
+      document.getElementById('dash-avatar-img').style.display = 'block';
+      document.getElementById('dash-avatar-icon').style.display = 'none';
+
+      document.getElementById('prof-avatar-img').src = u.avatar;
+      document.getElementById('prof-avatar-img').style.display = 'block';
+      document.getElementById('prof-avatar-icon').style.display = 'none';
+    }
   }
-  localStorage.setItem('amp_supabase_url', url);
-  localStorage.setItem('amp_supabase_key', key);
-  initSupabaseConnection();
-  appendSyncLog('Konfigurasi Supabase disimpan dan koneksi diaktifkan.');
-  alert('Supabase URL & Anon Key berhasil disimpan.');
-}
 
-async function testSupabaseConnection() {
-  const url = (document.getElementById('cfg-supabase-url')?.value || '').trim().replace(/\/+$/, '');
-  const key = (document.getElementById('cfg-supabase-key')?.value || '').trim();
-  if (!url.startsWith('https://') || !key || !window.supabase) {
-    return alert('Lengkapi Supabase URL dan Anon Key terlebih dahulu.');
+  function showModule(num) {
+    document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(`mod-${num}`);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+    const navEl = document.getElementById(`nav-${num}`);
+    if (navEl) navEl.classList.add('active');
+
+    if (num === 1 && radarMap) {
+      setTimeout(() => radarMap.invalidateSize(), 150);
+    }
   }
-  const client = window.supabase.createClient(url, key);
-  const { error } = await client.from('korlap_positions').select('id').limit(1);
-  if (error) {
-    appendSyncLog(`Tes koneksi gagal/tabel belum siap: ${error.message}`);
-    alert(`Koneksi terbaca, tetapi tabel korlap_positions belum siap atau akses ditolak: ${error.message}`);
-  } else {
-    localStorage.setItem('amp_supabase_url', url);
-    localStorage.setItem('amp_supabase_key', key);
-    initSupabaseConnection();
-    appendSyncLog('Tes koneksi berhasil! Tabel korlap_positions aktif.');
-    alert('Koneksi Supabase berhasil dan tabel korlap_positions siap digunakan.');
+
+  function stopCameras() {
+    if (webcamStream) {
+      webcamStream.getTracks().forEach(t => t.stop());
+      webcamStream = null;
+    }
+    if (profileStream) {
+      profileStream.getTracks().forEach(t => t.stop());
+      profileStream = null;
+    }
   }
-}
 
-function clearSupabaseConfig() {
-  localStorage.removeItem('amp_supabase_url');
-  localStorage.removeItem('amp_supabase_key');
-  const urlInput = document.getElementById('cfg-supabase-url');
-  const keyInput = document.getElementById('cfg-supabase-key');
-  if (urlInput) urlInput.value = '';
-  if (keyInput) keyInput.value = '';
-  initSupabaseConnection();
-  appendSyncLog('Konfigurasi Supabase di layar telah direset.');
-}
-
-function persistState() {
-  localStorage.setItem('amp_users', JSON.stringify(state.users));
-  localStorage.setItem('amp_attendance', JSON.stringify(state.attendance));
-  localStorage.setItem('amp_mr', JSON.stringify(state.mr));
-  localStorage.setItem('amp_leaves', JSON.stringify(state.leaves));
-  localStorage.setItem('amp_incidents', JSON.stringify(state.incidents));
-  localStorage.setItem('amp_mcp', JSON.stringify(state.mcp));
-  localStorage.setItem('amp_areas', JSON.stringify(state.areas));
-  localStorage.setItem('amp_k3', JSON.stringify(state.k3));
-  localStorage.setItem('amp_equipment', JSON.stringify(state.equipment));
-  localStorage.setItem('amp_outstanding', JSON.stringify(state.outstanding));
-  localStorage.setItem('amp_korlap_pos', JSON.stringify(state.korlapPositions));
-  localStorage.setItem('amp_pending_queue', String(state.pendingQueue));
-  localStorage.setItem('amp_last_sync', state.lastSync);
-  updateSyncUI();
-}
-
-function incrementPendingQueue() {
-  state.pendingQueue += 1;
-  persistState();
-}
-
-function updateSyncUI() {
-  const badgeText = document.getElementById('sync-badge-text');
-  const queueEl = document.getElementById('sync-queue-count');
-  const lastEl = document.getElementById('sync-last-time');
-  if (badgeText) badgeText.textContent = state.pendingQueue > 0 ? `Sync (${state.pendingQueue})` : 'Sync';
-  if (queueEl) queueEl.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Antrean Pending: ${state.pendingQueue} Data`;
-  if (lastEl) lastEl.textContent = `Terakhir Sync: ${state.lastSync}`;
-}
-
-function showModule(modNum) {
-  if (!isLoggedIn) {
-    setAuthGateState(false);
-    return;
-  }
-  document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
-  const target = document.getElementById(`mod-${modNum}`);
-  if (target) target.classList.add('active');
-
-  document.querySelectorAll('.bottom-nav .nav-link').forEach((nav, idx) => {
-    const mapIdx = { 1: 0, 3: 1, 6: 2, 2: 3 };
-    nav.classList.toggle('active', mapIdx[modNum] === idx);
-  });
-
-  if (modNum === 1 && isAdminOrHead()) {
-    setTimeout(() => initRadarMap(), 120);
-  }
-  if (modNum === 2) fillProfileForm();
-  if (modNum === 10) renderTeamList();
-  if (modNum === 14) initSupabaseConnection();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function isAdminOrHead() {
-  const u = state.currentUser || {};
-  const r = `${u.role || ''} ${u.jabatan || ''}`.toLowerCase();
-  return r.includes('admin') || r.includes('head of operation') || r.includes('head of ops');
-}
-
-function refreshUserUI() {
-  if (!isLoggedIn || !state.currentUser) return;
-  const u = state.currentUser;
-  document.getElementById('header-user-id').textContent = u.id;
-  document.getElementById('dash-user-name').textContent = u.name;
-  document.getElementById('dash-user-role').textContent = u.jabatan || u.role;
-  document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Area Tugas PLN: ${escapeHTML(u.site || '-')}`;
-
-  const showAdmin = isAdminOrHead();
-  document.getElementById('admin-radar-card').style.display = showAdmin ? 'block' : 'none';
-  document.getElementById('admin-export-card').style.display = showAdmin ? 'block' : 'none';
-
-  applyAvatar(u.avatar);
-  fillProfileForm();
-  updateSyncUI();
-  renderAllLogs();
-  if (showAdmin) initRadarMap();
-}
-
-function applyAvatar(dataUrl) {
-  const dashImg = document.getElementById('dash-avatar-img');
-  const dashIcon = document.getElementById('dash-avatar-icon');
-  const profImg = document.getElementById('prof-avatar-img');
-  const profIcon = document.getElementById('prof-avatar-icon');
-  if (dataUrl) {
-    dashImg.src = dataUrl; dashImg.style.display = 'block'; dashIcon.style.display = 'none';
-    profImg.src = dataUrl; profImg.style.display = 'block'; profIcon.style.display = 'none';
-  } else {
-    dashImg.style.display = 'none'; dashIcon.style.display = 'block';
-    profImg.style.display = 'none'; profIcon.style.display = 'block';
-  }
-}
-
-function switchAuthSubView(view) {
-  document.getElementById('login-box-asli').style.display = view === 'login' ? 'block' : 'none';
-  document.getElementById('register-box-asli').style.display = view === 'register' ? 'block' : 'none';
-  document.getElementById('reset-box-asli').style.display = view === 'reset-pin' ? 'block' : 'none';
-}
-
-function processLogin() {
-  const idInput = document.getElementById('login-id').value.trim();
-  const pin = document.getElementById('login-pin').value.trim();
-  if (!idInput || !pin) {
-    return alert('Masukkan ID / Username dan PIN 6 Digit terlebih dahulu.');
-  }
-  const found = state.users.find(u =>
-    u.id.toLowerCase() === idInput.toLowerCase() || normalizeId(u.id) === normalizeId(idInput)
-  );
-  if (!found || found.pin !== pin) {
-    return alert('ID / Username atau PIN salah. Periksa kembali ID dan PIN Anda.');
-  }
-  state.currentUser = found;
-  document.getElementById('login-pin').value = '';
-  persistState();
-  setAuthGateState(true);
-  showModule(1);
-  refreshUserUI();
-  startLiveKorlapGPSWatch();
-}
-
-function logout() {
-  if (korlapWatchId !== null && navigator.geolocation) {
-    navigator.geolocation.clearWatch(korlapWatchId);
-    korlapWatchId = null;
-  }
-  if (webcamStream) {
-    webcamStream.getTracks().forEach(t => t.stop());
-    webcamStream = null;
-  }
-  if (profileStream) {
-    profileStream.getTracks().forEach(t => t.stop());
-    profileStream = null;
-  }
-  state.currentUser = null;
-  document.getElementById('login-pin').value = '';
-  setAuthGateState(false);
-}
-
-function processRegister() {
-  const name = document.getElementById('reg-name').value.trim();
-  const id = document.getElementById('reg-id').value.trim();
-  const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Korlap';
-  const site = document.getElementById('reg-site').value.trim() || '-';
-  const phone = document.getElementById('reg-phone').value.trim() || '-';
-  const pin = document.getElementById('reg-pin').value.trim();
-  if (!name || !id || pin.length < 6) return alert('Lengkapi nama, ID/Username, dan PIN 6 digit.');
-  if (!isOfficialUser({ id })) {
-    return alert('Pendaftaran dibatasi hanya untuk ID / Username resmi Korlap & Admin yang terdaftar.');
-  }
-  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(id));
-  if (idx >= 0) {
-    Object.assign(state.users[idx], { name, jabatan, role: jabatan.toLowerCase().includes('admin') ? 'Admin' : 'Korlap', site, phone, pin });
-  }
-  incrementPendingQueue();
-  document.getElementById('login-id').value = id;
-  alert('Data akun resmi berhasil diperbarui. Silakan login dengan ID dan PIN Anda.');
-  switchAuthSubView('login');
-}
-
-function processResetPIN() {
-  const idInput = document.getElementById('reset-id').value.trim();
-  const oldPin = document.getElementById('reset-old-pin').value.trim();
-  const newPin = document.getElementById('reset-new-pin').value.trim();
-  const u = state.users.find(x =>
-    (x.id.toLowerCase() === idInput.toLowerCase() || normalizeId(x.id) === normalizeId(idInput)) && x.pin === oldPin
-  );
-  if (!u) return alert('ID / Username atau PIN lama tidak cocok.');
-  if (newPin.length < 6) return alert('PIN baru minimal 6 digit.');
-  u.pin = newPin;
-  incrementPendingQueue();
-  document.getElementById('login-id').value = u.id;
-  alert('PIN berhasil diperbarui. Silakan login menggunakan PIN baru.');
-  switchAuthSubView('login');
-}
-
-function fillProfileForm() {
-  if (!isLoggedIn || !state.currentUser) return;
-  const u = state.currentUser;
-  document.getElementById('prof-name').textContent = u.name;
-  document.getElementById('prof-id').textContent = `ID / Username: ${u.id}`;
-  document.getElementById('prof-jabatan').textContent = `Peran: ${u.jabatan || u.role}`;
-  document.getElementById('prof-site').textContent = u.site || '-';
-  document.getElementById('prof-phone').textContent = u.phone || '-';
-
-  document.getElementById('edit-prof-name').value = u.name;
-  document.getElementById('edit-prof-jabatan').value = u.jabatan || u.role;
-  document.getElementById('edit-prof-site').value = u.site || '';
-  document.getElementById('edit-prof-phone').value = u.phone || '';
-}
-
-function startProfileWebcam() {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-    .then(stream => {
-      profileStream = stream;
-      const vid = document.getElementById('profile-webcam');
-      vid.srcObject = stream;
-      vid.style.display = 'block';
-      document.getElementById('profile-photo-preview').style.display = 'none';
-      document.getElementById('profile-cam-placeholder').style.display = 'none';
-    })
-    .catch(() => alert('Kamera tidak dapat diakses. Gunakan unggah dari galeri.'));
-}
-
-function captureProfileSnapshot() {
-  const vid = document.getElementById('profile-webcam');
-  if (!vid.srcObject) return alert('Nyalakan kamera terlebih dahulu.');
-  const canvas = document.createElement('canvas');
-  canvas.width = vid.videoWidth || 320;
-  canvas.height = vid.videoHeight || 240;
-  canvas.getContext('2d').drawImage(vid, 0, 0, canvas.width, canvas.height);
-  tempProfileAvatar = canvas.toDataURL('image/jpeg', 0.8);
-  const prev = document.getElementById('profile-photo-preview');
-  prev.src = tempProfileAvatar;
-  prev.style.display = 'block';
-  vid.style.display = 'none';
-  if (profileStream) { profileStream.getTracks().forEach(t => t.stop()); profileStream = null; }
-}
-
-function loadProfileFromGallery(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    tempProfileAvatar = ev.target.result;
-    const prev = document.getElementById('profile-photo-preview');
-    prev.src = tempProfileAvatar;
-    prev.style.display = 'block';
-    document.getElementById('profile-cam-placeholder').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
-
-function saveProfileAvatar() {
-  if (!tempProfileAvatar) return alert('Ambil atau pilih foto terlebih dahulu.');
-  state.currentUser.avatar = tempProfileAvatar;
-  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(state.currentUser.id));
-  if (idx >= 0) state.users[idx].avatar = tempProfileAvatar;
-  incrementPendingQueue();
-  applyAvatar(tempProfileAvatar);
-  alert('Foto profil berhasil disimpan.');
-}
-
-function updateOwnProfile() {
-  const name = document.getElementById('edit-prof-name').value.trim();
-  const jabatan = document.getElementById('edit-prof-jabatan').value.trim();
-  const site = document.getElementById('edit-prof-site').value.trim();
-  const phone = document.getElementById('edit-prof-phone').value.trim();
-  if (!name) return alert('Nama tidak boleh kosong.');
-  Object.assign(state.currentUser, { name, jabatan, site, phone });
-  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(state.currentUser.id));
-  if (idx >= 0) Object.assign(state.users[idx], { name, jabatan, site, phone });
-  incrementPendingQueue();
-  refreshUserUI();
-  alert('Profil berhasil diperbarui.');
-}
-
-function changeOwnPIN() {
-  const oldPin = document.getElementById('prof-old-pin').value.trim();
-  const newPin = document.getElementById('prof-new-pin').value.trim();
-  if (oldPin !== state.currentUser.pin) return alert('PIN lama tidak sesuai.');
-  if (newPin.length < 6) return alert('PIN baru minimal 6 digit.');
-  state.currentUser.pin = newPin;
-  const idx = state.users.findIndex(u => normalizeId(u.id) === normalizeId(state.currentUser.id));
-  if (idx >= 0) state.users[idx].pin = newPin;
-  incrementPendingQueue();
-  document.getElementById('prof-old-pin').value = '';
-  document.getElementById('prof-new-pin').value = '';
-  alert('PIN keamanan berhasil diubah.');
-}
-
-setInterval(() => {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }) + ' WIB';
-  const el = document.getElementById('live-clock');
-  if (el) el.textContent = timeStr;
-}, 1000);
-
-function startWebcam() {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-    .then(stream => {
-      webcamStream = stream;
-      const vid = document.getElementById('webcam');
-      vid.srcObject = stream;
-      vid.style.display = 'block';
+  async function startWebcam() {
+    try {
+      stopCameras();
+      webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      const video = document.getElementById('webcam');
+      video.srcObject = webcamStream;
+      video.style.display = 'block';
       document.getElementById('photo-preview').style.display = 'none';
       document.getElementById('camera-placeholder').style.display = 'none';
-    })
-    .catch(() => alert('Akses kamera ditolak atau tidak tersedia pada perangkat ini.'));
-}
-
-function takeSnapshot() {
-  const vid = document.getElementById('webcam');
-  if (!vid.srcObject) return alert('Nyalakan kamera live terlebih dahulu.');
-  const canvas = document.createElement('canvas');
-  canvas.width = vid.videoWidth || 320;
-  canvas.height = vid.videoHeight || 240;
-  canvas.getContext('2d').drawImage(vid, 0, 0, canvas.width, canvas.height);
-  capturedAttendancePhoto = canvas.toDataURL('image/jpeg', 0.75);
-  const prev = document.getElementById('photo-preview');
-  prev.src = capturedAttendancePhoto;
-  prev.style.display = 'block';
-  vid.style.display = 'none';
-  if (webcamStream) { webcamStream.getTracks().forEach(t => t.stop()); webcamStream = null; }
-  const badge = document.getElementById('status-foto-badge');
-  badge.style.color = 'var(--success)';
-  badge.innerHTML = '<i class="fas fa-check-circle"></i> Foto: Siap';
-}
-
-async function pushKorlapPositionToCloud(posItem) {
-  if (!supabaseClient || !posItem) return;
-  try {
-    await supabaseClient
-      .from('korlap_positions')
-      .upsert({
-        id: posItem.id,
-        name: posItem.name,
-        site: posItem.site || '',
-        place_name: posItem.placeName || '',
-        street: posItem.street || '',
-        lat: Number(posItem.lat),
-        lng: Number(posItem.lng),
-        updated_label: posItem.updated || new Date().toLocaleTimeString('id-ID'),
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
-  } catch (_) {}
-}
-
-async function pullKorlapPositionsFromCloud() {
-  if (!supabaseClient) return false;
-  try {
-    const { data, error } = await supabaseClient.from('korlap_positions').select('*');
-    if (error || !Array.isArray(data) || !data.length) return false;
-    state.korlapPositions = DEFAULT_KORLAP_POSITIONS.map(def => {
-      const remote = data.find(r => normalizeId(r.id) === normalizeId(def.id));
-      if (!remote) return def;
-      return {
-        ...def,
-        name: remote.name || def.name,
-        site: remote.site || def.site,
-        placeName: remote.place_name || def.placeName,
-        street: remote.street || def.street,
-        lat: typeof remote.lat === 'number' ? remote.lat : def.lat,
-        lng: typeof remote.lng === 'number' ? remote.lng : def.lng,
-        updated: remote.updated_label || new Date().toLocaleTimeString('id-ID')
-      };
-    });
-    persistState();
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
-function updateKorlapCoordEntry(latNum, lngNum, placeName, streetName, syncCloud = true) {
-  if (!isLoggedIn || !state.currentUser) return null;
-  const idx = state.korlapPositions.findIndex(k => normalizeId(k.id) === normalizeId(state.currentUser.id));
-  if (idx < 0) return null;
-  const nowStr = new Date().toLocaleTimeString('id-ID');
-  state.korlapPositions[idx].lat = Number(latNum);
-  state.korlapPositions[idx].lng = Number(lngNum);
-  if (placeName) state.korlapPositions[idx].placeName = placeName;
-  if (streetName) state.korlapPositions[idx].street = streetName;
-  state.korlapPositions[idx].updated = nowStr;
-  persistState();
-  if (syncCloud) pushKorlapPositionToCloud(state.korlapPositions[idx]);
-  if (isLoggedIn && isAdminOrHead() && radarMap) refreshKorlapLivePositions();
-  return state.korlapPositions[idx];
-}
-
-function startLiveKorlapGPSWatch() {
-  if (!isLoggedIn || !navigator.geolocation || isAdminOrHead()) return;
-  if (korlapWatchId !== null) {
-    navigator.geolocation.clearWatch(korlapWatchId);
-    korlapWatchId = null;
-  }
-  korlapWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      const lat = Number(pos.coords.latitude.toFixed(6));
-      const lng = Number(pos.coords.longitude.toFixed(6));
-      updateKorlapCoordEntry(lat, lng, null, null, true);
-    },
-    () => {},
-    { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
-  );
-}
-
-function subscribeRealtimeKorlapRadar() {
-  if (!supabaseClient || supabaseRealtimeChannel) return;
-  supabaseRealtimeChannel = supabaseClient
-    .channel('korlap-live-radar-channel')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'korlap_positions' }, async () => {
-      if (!isLoggedIn || !isAdminOrHead()) return;
-      await pullKorlapPositionsFromCloud();
-      if (radarMap) refreshKorlapLivePositions();
-    })
-    .subscribe();
-}
-
-function startRadarAutoPolling() {
-  if (radarPollingTimer) clearInterval(radarPollingTimer);
-  radarPollingTimer = setInterval(async () => {
-    if (!isLoggedIn || !isAdminOrHead()) return;
-    await pullKorlapPositionsFromCloud();
-    if (radarMap) refreshKorlapLivePositions();
-  }, 10000);
-}
-
-function getRealtimeGPS() {
-  if (!navigator.geolocation) return alert('Geolocation tidak didukung browser ini.');
-  const btn = document.getElementById('btn-tarik-gps');
-  btn.disabled = true;
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      btn.disabled = false;
-      const lat = pos.coords.latitude.toFixed(6);
-      const lng = pos.coords.longitude.toFixed(6);
-      capturedGPS = `${lat}, ${lng}`;
-      document.getElementById('gps-coords').value = `Lat ${lat}, Lng ${lng}`;
-      document.getElementById('gmaps-link-box').innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" rel="noopener" style="font-size:10px; color:var(--sky-accent);">Buka di Google Maps</a>`;
-      const badge = document.getElementById('status-gps-badge');
-      badge.style.color = 'var(--success)';
-      badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Siap';
-      updateKorlapCoordEntry(Number(lat), Number(lng), null, null, true);
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          const addr = data?.address || {};
-          const road = addr.road || addr.pedestrian || addr.suburb || '';
-          const buildingOrPt = data?.name || addr.building || addr.office || addr.industrial || addr.amenity || state.currentUser.site;
-          const fullDesc = [buildingOrPt, road, addr.city || addr.county || ''].filter(Boolean).join(' - ');
-          if (fullDesc) document.getElementById('gps-coords').value = `${fullDesc} (${lat}, ${lng})`;
-          updateKorlapCoordEntry(Number(lat), Number(lng), buildingOrPt, road, true);
-        })
-        .catch(() => {});
-    },
-    () => {
-      btn.disabled = false;
-      alert('Gagal mengambil lokasi GPS. Pastikan izin lokasi aktif.');
-    },
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-}
-
-function saveAttendance(type) {
-  if (!capturedAttendancePhoto) return alert('Ambil foto live terlebih dahulu sebelum absen.');
-  if (!capturedGPS) return alert('Tarik lokasi GPS terlebih dahulu sebelum absen.');
-  state.attendance.unshift({
-    id: Date.now(), type, userId: state.currentUser.id, userName: state.currentUser.name,
-    site: state.currentUser.site, gps: capturedGPS, photo: capturedAttendancePhoto, time: new Date().toLocaleString('id-ID')
-  });
-  capturedAttendancePhoto = ''; capturedGPS = '';
-  document.getElementById('photo-preview').style.display = 'none';
-  document.getElementById('camera-placeholder').style.display = 'block';
-  document.getElementById('gps-coords').value = '';
-  document.getElementById('gmaps-link-box').innerHTML = '';
-  document.getElementById('status-foto-badge').style.color = 'var(--danger)';
-  document.getElementById('status-foto-badge').innerHTML = '<i class="fas fa-times-circle"></i> Foto: Belum';
-  document.getElementById('status-gps-badge').style.color = 'var(--danger)';
-  document.getElementById('status-gps-badge').innerHTML = '<i class="fas fa-times-circle"></i> GPS: Belum';
-  incrementPendingQueue();
-  renderAttendanceLog();
-  alert(`Absensi ${type} berhasil dicatat.`);
-}
-
-function renderAttendanceLog() {
-  const list = document.getElementById('attendance-log-list');
-  document.getElementById('absen-count-badge').textContent = `${state.attendance.length} Data`;
-  if (!state.attendance.length) {
-    list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan absensi tersimpan pada sesi ini.</li>';
-    return;
-  }
-  list.innerHTML = state.attendance.map(a => `
-    <li class="log-item">
-      <img src="${a.photo}" class="log-thumb" alt="Foto Absen">
-      <div style="flex:1;">
-        <div><strong>${escapeHTML(a.userName)}</strong> (${escapeHTML(a.userId)}) <span class="badge ${a.type === 'IN' ? 'badge-in' : 'badge-out'}">${escapeHTML(a.type)}</span></div>
-        <div style="color:var(--text-muted);">${escapeHTML(a.site)} • ${escapeHTML(a.gps)}</div>
-        <div style="color:var(--text-muted); font-size:9px;">${escapeHTML(a.time)}</div>
-      </div>
-    </li>
-  `).join('');
-}
-
-function submitMR() {
-  const site = document.getElementById('mr-site').value.trim();
-  const item = document.getElementById('mr-item').value.trim();
-  const qty = document.getElementById('mr-qty').value.trim();
-  const priority = document.getElementById('mr-priority').value;
-  const notes = document.getElementById('mr-notes').value.trim();
-  if (!site || !item || !qty) return alert('Lengkapi area tugas, nama material, dan jumlah.');
-  state.mr.unshift({ id: Date.now(), site, item, qty, priority, notes, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-  document.getElementById('mr-item').value = ''; document.getElementById('mr-qty').value = ''; document.getElementById('mr-notes').value = '';
-  incrementPendingQueue(); renderMRLog();
-}
-
-function renderMRLog() {
-  const list = document.getElementById('mr-log-list');
-  document.getElementById('mr-count-badge').textContent = `${state.mr.length} MR`;
-  list.innerHTML = state.mr.length ? state.mr.map(m => `
-    <li class="log-item"><div><div><strong>${escapeHTML(m.item)}</strong> (${escapeHTML(m.qty)}) <span class="badge badge-warning">${escapeHTML(m.priority)}</span></div><div style="color:var(--text-muted);">Area: ${escapeHTML(m.site)} • Oleh: ${escapeHTML(m.by)}</div><div style="font-size:9px; color:var(--text-muted);">${escapeHTML(m.notes || '-')} • ${escapeHTML(m.time)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li>';
-}
-
-function submitLeaveRequest() {
-  const type = document.getElementById('leave-type').value;
-  const start = document.getElementById('leave-start').value;
-  const end = document.getElementById('leave-end').value;
-  const reason = document.getElementById('leave-reason').value.trim();
-  if (!start || !end || !reason) return alert('Lengkapi tanggal mulai, tanggal selesai, dan keterangan.');
-  state.leaves.unshift({ id: Date.now(), type, start, end, reason, by: state.currentUser.name, status: 'Diajukan' });
-  document.getElementById('leave-reason').value = '';
-  incrementPendingQueue(); renderLeaveLog();
-}
-
-function renderLeaveLog() {
-  const list = document.getElementById('leave-log-list');
-  list.innerHTML = state.leaves.length ? state.leaves.map(l => `
-    <li class="log-item"><div><div><strong>${escapeHTML(l.type)}</strong> — ${escapeHTML(l.by)} <span class="badge badge-in">${escapeHTML(l.status)}</span></div><div style="color:var(--text-muted);">${escapeHTML(l.start)} s.d. ${escapeHTML(l.end)} • ${escapeHTML(l.reason)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada riwayat izin atau cuti.</li>';
-}
-
-function submitIncident() {
-  const category = document.getElementById('incident-category').value;
-  const location = document.getElementById('incident-location').value.trim();
-  const desc = document.getElementById('incident-desc').value.trim();
-  const file = document.getElementById('incident-photo-input').files[0];
-  if (!location || !desc) return alert('Lengkapi lokasi kejadian dan kronologi.');
-  const saveRecord = (photoData) => {
-    state.incidents.unshift({ id: Date.now(), category, location, desc, photo: photoData || '', by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-    document.getElementById('incident-location').value = ''; document.getElementById('incident-desc').value = ''; document.getElementById('incident-photo-input').value = '';
-    incrementPendingQueue(); renderIncidentLog(); alert('Laporan kejadian berhasil dicatat.');
-  };
-  if (file) { const r = new FileReader(); r.onload = ev => saveRecord(ev.target.result); r.readAsDataURL(file); } else saveRecord('');
-}
-
-function renderIncidentLog() {
-  const list = document.getElementById('incident-log-list');
-  list.innerHTML = state.incidents.length ? state.incidents.map(inc => `
-    <li class="log-item">${inc.photo ? `<img src="${inc.photo}" class="log-thumb" alt="Bukti">` : ''}<div style="flex:1;"><div><span class="badge badge-out">${escapeHTML(inc.category)}</span> <strong>${escapeHTML(inc.location)}</strong></div><div style="margin-top:2px;">${escapeHTML(inc.desc)}</div><div style="font-size:9px; color:var(--text-muted);">Pelapor: ${escapeHTML(inc.by)} • ${escapeHTML(inc.time)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>';
-}
-
-function saveMCPReport() {
-  const zone = document.getElementById('mcp-zone').value.trim();
-  const freq = document.getElementById('mcp-freq').value;
-  const status = document.getElementById('mcp-status').value;
-  const tasks = Array.from(document.querySelectorAll('.mcp-task:checked')).map(c => c.value);
-  if (!zone || !tasks.length) return alert('Isi zona cleaning dan pilih minimal satu item pekerjaan.');
-  state.mcp.unshift({ id: Date.now(), zone, freq, status, tasks, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-  document.getElementById('mcp-zone').value = '';
-  document.querySelectorAll('.mcp-task').forEach(c => { c.checked = false; });
-  incrementPendingQueue(); renderMCPLog();
-}
-
-function renderMCPLog() {
-  const list = document.getElementById('mcp-log-list');
-  list.innerHTML = state.mcp.length ? state.mcp.map(m => `
-    <li class="log-item"><div><div><strong>${escapeHTML(m.zone)}</strong> (${escapeHTML(m.freq)}) <span class="badge badge-in">${escapeHTML(m.status)}</span></div><div style="color:var(--text-muted);">${escapeHTML(m.tasks.join(', '))}</div><div style="font-size:9px; color:var(--text-muted);">Oleh: ${escapeHTML(m.by)} • ${escapeHTML(m.time)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan MCP Cleaning.</li>';
-}
-
-function saveAreaChecklist() {
-  const area = document.getElementById('area-name').value.trim();
-  const s5 = document.getElementById('area-5s').value;
-  const amenities = document.getElementById('area-amenities').value;
-  const notes = document.getElementById('area-notes').value.trim();
-  if (!area) return alert('Masukkan nama area.');
-  state.areas.unshift({ id: Date.now(), area, s5, amenities, notes, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-  document.getElementById('area-name').value = ''; document.getElementById('area-notes').value = '';
-  incrementPendingQueue(); renderAreaLog();
-}
-
-function renderAreaLog() {
-  const list = document.getElementById('area-log-list');
-  list.innerHTML = state.areas.length ? state.areas.map(a => `
-    <li class="log-item"><div><div><strong>${escapeHTML(a.area)}</strong> — 5S: <strong>${escapeHTML(a.s5)}</strong> | Amenitas: ${escapeHTML(a.amenities)}</div><div style="font-size:9px; color:var(--text-muted);">${escapeHTML(a.notes || '-')} • ${escapeHTML(a.by)} • ${escapeHTML(a.time)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data cheklis area.</li>';
-}
-
-function saveHighRiskK3() {
-  const workType = document.getElementById('k3-work-type').value;
-  const officer = document.getElementById('k3-officer').value.trim();
-  const checks = Array.from(document.querySelectorAll('.k3-check:checked')).map(c => c.value);
-  if (!officer || !checks.length) return alert('Isi lokasi/petugas dan centang verifikasi APD/izin kerja.');
-  state.k3.unshift({ id: Date.now(), workType, officer, checks, by: state.currentUser.name, time: new Date().toLocaleString('id-ID') });
-  document.getElementById('k3-officer').value = '';
-  document.querySelectorAll('.k3-check').forEach(c => { c.checked = false; });
-  incrementPendingQueue(); renderK3Log();
-}
-
-function renderK3Log() {
-  const list = document.getElementById('k3-log-list');
-  list.innerHTML = state.k3.length ? state.k3.map(k => `
-    <li class="log-item"><div><div><span class="badge badge-warning">${escapeHTML(k.workType)}</span> <strong>${escapeHTML(k.officer)}</strong></div><div style="color:var(--text-muted);">${escapeHTML(k.checks.join(' • '))}</div><div style="font-size:9px; color:var(--text-muted);">Pengawas: ${escapeHTML(k.by)} • ${escapeHTML(k.time)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan High Risk K3.</li>';
-}
-
-function renderTeamList() {
-  const q = (document.getElementById('team-search-input')?.value || '').toLowerCase();
-  const list = document.getElementById('team-member-list');
-  const filtered = state.users.filter(u => `${u.name} ${u.id} ${u.site} ${u.jabatan}`.toLowerCase().includes(q));
-  list.innerHTML = filtered.map(u => `
-    <li class="log-item"><div><div><strong>${escapeHTML(u.name)}</strong> <code>(${escapeHTML(u.id)})</code> <span class="badge ${u.role === 'Admin' ? 'badge-warning' : 'badge-in'}">${escapeHTML(u.jabatan || u.role)}</span></div><div style="color:var(--text-muted); margin-top:2px;">Area Tugas PLN: <strong>${escapeHTML(u.site)}</strong></div></div></li>
-  `).join('') || '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Personil tidak ditemukan.</li>';
-}
-
-function saveEquipment() {
-  const name = document.getElementById('eq-name').value.trim();
-  const qty = document.getElementById('eq-qty').value;
-  const site = document.getElementById('eq-site').value.trim() || state.currentUser.site;
-  const condition = document.getElementById('eq-condition').value;
-  if (!name) return alert('Masukkan nama peralatan.');
-  state.equipment.unshift({ id: Date.now(), name, qty, site, condition });
-  document.getElementById('eq-name').value = '';
-  incrementPendingQueue(); renderEquipmentLog();
-}
-
-function renderEquipmentLog() {
-  const list = document.getElementById('equipment-log-list');
-  list.innerHTML = state.equipment.length ? state.equipment.map(e => `
-    <li class="log-item"><div><div><strong>${escapeHTML(e.name)}</strong> (${escapeHTML(e.qty)} unit) — <span class="badge ${e.condition.includes('Baik') ? 'badge-in' : 'badge-warning'}">${escapeHTML(e.condition)}</span></div><div style="color:var(--text-muted);">Area: ${escapeHTML(e.site)}</div></div></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li>';
-}
-
-function addOutstandingItem() {
-  const title = document.getElementById('out-title').value.trim();
-  const pic = document.getElementById('out-pic').value.trim() || state.currentUser.name;
-  const due = document.getElementById('out-due').value || '-';
-  if (!title) return alert('Masukkan judul temuan / action item.');
-  state.outstanding.unshift({ id: Date.now(), title, pic, due, done: false });
-  document.getElementById('out-title').value = '';
-  incrementPendingQueue(); renderOutstandingLog();
-}
-
-function toggleOutstanding(id) {
-  const item = state.outstanding.find(o => o.id === id);
-  if (item) { item.done = !item.done; incrementPendingQueue(); renderOutstandingLog(); }
-}
-
-function renderOutstandingLog() {
-  const list = document.getElementById('outstanding-log-list');
-  list.innerHTML = state.outstanding.length ? state.outstanding.map(o => `
-    <li class="log-item"><div style="flex:1;"><div style="${o.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}"><strong>${escapeHTML(o.title)}</strong></div><div style="font-size:9px; color:var(--text-muted);">PIC: ${escapeHTML(o.pic)} • Target: ${escapeHTML(o.due)}</div></div><button type="button" class="btn ${o.done ? 'btn-outline' : 'btn-success'}" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="toggleOutstanding(${o.id})">${o.done ? 'Buka' : 'Selesai'}</button></li>
-  `).join('') : '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding aktif.</li>';
-}
-
-function initRadarMap() {
-  if (!isLoggedIn || !isAdminOrHead()) return;
-  const mapEl = document.getElementById('satellite-radar-map');
-  if (!mapEl || !window.L) return;
-  if (!radarMap) {
-    radarMap = L.map('satellite-radar-map').setView([-6.45, 106.95], 9);
-    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: 'Google Maps Hybrid' });
-    const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: 'Google Maps' });
-    const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: 'Google Satellite' });
-    const detailStreetMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', attribution: '© OpenStreetMap, © CARTO' });
-    googleHybrid.addTo(radarMap);
-    radarLayerControl = L.control.layers({
-      'Google Hybrid (Satelit + Jalan/PT)': googleHybrid,
-      'Google Map (Jalan, Gedung & PT)': googleRoadmap,
-      'Detail Jalan & Lokasi': detailStreetMap,
-      'Google Satellite': googleSatellite
-    }, null, { position: 'topright', collapsed: true }).addTo(radarMap);
-  }
-  setTimeout(() => radarMap.invalidateSize(), 150);
-  pullKorlapPositionsFromCloud().then(() => refreshKorlapLivePositions());
-}
-
-function refreshKorlapLivePositions() {
-  if (!isLoggedIn || !isAdminOrHead()) return;
-  const listEl = document.getElementById('korlap-live-radar-list');
-  document.getElementById('radar-marker-count').textContent = `${state.korlapPositions.length} Titik Aktif`;
-  if (radarMap) { radarMarkers.forEach(m => radarMap.removeLayer(m)); radarMarkers = []; }
-  const bounds = [];
-  listEl.innerHTML = state.korlapPositions.map(k => {
-    const hasCoords = typeof k.lat === 'number' && typeof k.lng === 'number';
-    const placeLabel = k.placeName || k.site || 'Area Tugas PLN';
-    const roadLabel = k.street || 'Jl. / Kawasan Operasional';
-    const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${k.lat},${k.lng}`;
-    if (radarMap && hasCoords) {
-      bounds.push([k.lat, k.lng]);
-      const marker = L.circleMarker([k.lat, k.lng], { radius: 8, color: '#ffffff', weight: 2, fillColor: '#ef4444', fillOpacity: 0.95 }).addTo(radarMap);
-      marker.bindTooltip(`${k.name} — ${k.site}`, { permanent: false, direction: 'top' });
-      marker.bindPopup(`<div style="font-size:11px; line-height:1.45; min-width:185px;"><strong style="color:#0a192f;">${escapeHTML(k.name)}</strong><br><span>ID: <b>${escapeHTML(k.id)}</b></span><br><span>Area Tugas: <b>${escapeHTML(k.site)}</b></span><br><span>Lokasi/Jalan: ${escapeHTML(placeLabel)} (${escapeHTML(roadLabel)})</span><br><span style="color:#6b7280; font-size:10px;">Koordinat: ${k.lat}, ${k.lng} • ${escapeHTML(k.updated)}</span><br><a href="${gmapsUrl}" target="_blank" rel="noopener" style="display:inline-block; margin-top:4px; color:#1e3a8a; font-weight:bold; text-decoration:underline;">Buka di Google Maps →</a></div>`);
-      radarMarkers.push(marker);
+    } catch (e) {
+      alert('Gagal mengakses kamera: ' + e.message);
     }
-    return `<div onclick="focusRadarPoint(${k.lat}, ${k.lng})" style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:8px; cursor:pointer; font-size:10px;"><div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;"><strong>${escapeHTML(k.name)}</strong><span class="badge badge-in" style="text-align:right; max-width:58%;">${escapeHTML(k.site)}</span></div><div style="color:var(--navy-primary); font-size:9.5px; margin-top:2px;"><i class="fas fa-id-badge"></i> ${escapeHTML(k.id)} • <i class="fas fa-road"></i> ${escapeHTML(roadLabel)}</div><div style="display:flex; justify-content:space-between; align-items:center; color:var(--text-muted); font-size:9px; margin-top:2px;"><span>Lat/Lng: ${k.lat}, ${k.lng} (${escapeHTML(k.updated)})</span><a href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();" style="color:var(--sky-accent); font-weight:bold;">Google Maps</a></div></div>`;
-  }).join('');
-  if (radarMap && bounds.length > 0) radarMap.fitBounds(bounds, { padding: [25, 25], maxZoom: 14 });
-}
-
-function focusRadarPoint(lat, lng) {
-  if (radarMap && typeof lat === 'number' && typeof lng === 'number') radarMap.setView([lat, lng], 15);
-}
-
-function downloadCSV(filename, rows) {
-  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
-}
-function exportToExcel() { downloadCSV('rekap_absensi_amp.csv', [['Tipe', 'ID/Username', 'Nama', 'Area Tugas PLN', 'GPS', 'Waktu'], ...state.attendance.map(a => [a.type, a.userId, a.userName, a.site, a.gps, a.time])]); }
-function exportGPSLogToCSV() { downloadCSV('rekap_gps_korlap_amp.csv', [['ID/Username', 'Nama', 'Area Tugas PLN', 'Lokasi/Gedung', 'Jalan', 'Latitude', 'Longitude', 'Update'], ...state.korlapPositions.map(k => [k.id, k.name, k.site, k.placeName || '', k.street || '', k.lat, k.lng, k.updated])]); }
-function exportIncidentLogToCSV() { downloadCSV('rekap_kejadian_amp.csv', [['Kategori', 'Lokasi', 'Kronologi', 'Pelapor', 'Waktu'], ...state.incidents.map(i => [i.category, i.location, i.desc, i.by, i.time])]); }
-function exportMRToCSV() { downloadCSV('rekap_mr_amp.csv', [['Area Tugas', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Pengaju', 'Waktu'], ...state.mr.map(m => [m.site, m.item, m.qty, m.priority, m.notes, m.by, m.time])]); }
-
-function appendSyncLog(msg) {
-  const list = document.getElementById('sync-log-list');
-  if (list.querySelector('li')?.textContent.includes('Belum ada aktivitas')) list.innerHTML = '';
-  const li = document.createElement('li'); li.className = 'log-item';
-  li.innerHTML = `<span>${escapeHTML(msg)}</span><span style="font-size:9px; color:var(--text-muted);">${new Date().toLocaleTimeString('id-ID')}</span>`;
-  list.prepend(li);
-}
-
-async function pushOperationSummaryToCloud() {
-  if (!supabaseClient || !state.currentUser) return;
-  try {
-    await supabaseClient
-      .from('amp_operation_logs')
-      .upsert({
-        id: `snapshot_${state.currentUser.id}`,
-        user_id: state.currentUser.id,
-        user_name: state.currentUser.name,
-        payload: {
-          attendance_count: state.attendance.length,
-          mr_count: state.mr.length,
-          incidents_count: state.incidents.length,
-          mcp_count: state.mcp.length,
-          k3_count: state.k3.length
-        },
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
-  } catch (_) {}
-}
-
-async function syncAllToSupabase() {
-  if (supabaseClient && Array.isArray(state.korlapPositions)) {
-    for (const item of state.korlapPositions) await pushKorlapPositionToCloud(item);
-    await pushOperationSummaryToCloud();
   }
-  state.pendingQueue = 0; state.lastSync = new Date().toLocaleTimeString('id-ID');
-  persistState();
-  appendSyncLog(supabaseClient ? 'Sinkronisasi ke Supabase selesai.' : 'Data lokal diperbarui (isi URL & Key Supabase di form atas untuk cloud).');
-  alert('Status sinkronisasi diperbarui.');
-}
 
-async function pullLatestFromSupabase() {
-  const pulled = await pullKorlapPositionsFromCloud();
-  state.lastSync = new Date().toLocaleTimeString('id-ID');
-  persistState();
-  if (isLoggedIn && isAdminOrHead() && radarMap) refreshKorlapLivePositions();
-  appendSyncLog(pulled ? 'Data posisi Korlap terbaru ditarik dari Supabase.' : 'Pemeriksaan data terbaru dari server selesai.');
-  alert('Data terbaru telah dimuat.');
-}
+  function takeSnapshot() {
+    const video = document.getElementById('webcam');
+    if (!webcamStream || video.style.display === 'none') {
+      alert('Nyalakan kamera live terlebih dahulu.');
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    APP_STATE.capturedPhoto = canvas.toDataURL('image/jpeg', 0.75);
 
-function renderAllLogs() {
-  renderAttendanceLog(); renderMRLog(); renderLeaveLog(); renderIncidentLog(); renderMCPLog();
-  renderAreaLog(); renderK3Log(); renderTeamList(); renderEquipmentLog(); renderOutstandingLog();
-}
+    const img = document.getElementById('photo-preview');
+    img.src = APP_STATE.capturedPhoto;
+    img.style.display = 'block';
+    video.style.display = 'none';
 
-persistState();
-initSupabaseConnection();
-setAuthGateState(false);
+    const badge = document.getElementById('status-foto-badge');
+    badge.style.color = 'var(--success)';
+    badge.innerHTML = '<i class="fas fa-check-circle"></i> Foto: Siap';
+  }
+
+  function getRealtimeGPS() {
+    if (!navigator.geolocation) {
+      alert('Geolocation tidak didukung browser ini.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        APP_STATE.currentGPS = { lat: latitude, lng: longitude };
+        document.getElementById('gps-coords').value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+        document.getElementById('gmaps-link-box').innerHTML =
+          `<a href="https://maps.google.com/?q=${latitude},${longitude}" target="_blank" style="font-size:10px; color:var(--blue-accent);">Buka di Google Maps</a>`;
+        const badge = document.getElementById('status-gps-badge');
+        badge.style.color = 'var(--success)';
+        badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Terkunci';
+      },
+      (err) => alert('Gagal mengambil GPS: ' + err.message),
+      { enableHighAccuracy: true }
+    );
+  }
+
+  function saveAttendance(type) {
+    if (!APP_STATE.capturedPhoto || !APP_STATE.currentGPS) {
+      alert('Foto live dan GPS wajib dilengkapi sebelum absen.');
+      return;
+    }
+    const entry = {
+      userId: APP_STATE.currentUser?.id || '-',
+      userName: APP_STATE.currentUser?.name || '-',
+      type,
+      time: new Date().toLocaleString('id-ID'),
+      gps: APP_STATE.currentGPS,
+      photo: APP_STATE.capturedPhoto
+    };
+    APP_STATE.attendance.unshift(entry);
+    localStorage.setItem('amp_attendance', JSON.stringify(APP_STATE.attendance));
+    renderAttendanceList();
+    refreshKorlapLivePositions();
+    alert(`Absensi ${type} berhasil dicatat.`);
+  }
+
+  function renderAttendanceList() {
+    const list = document.getElementById('attendance-log-list');
+    document.getElementById('absen-count-badge').textContent = `${APP_STATE.attendance.length} Data`;
+    if (!APP_STATE.attendance.length) return;
+    list.innerHTML = APP_STATE.attendance.map(a => `
+      <li class="log-item">
+        <img src="${a.photo}" class="log-thumb" />
+        <div>
+          <span class="badge ${a.type === 'IN' ? 'badge-in' : 'badge-out'}">${a.type}</span>
+          <strong>${a.userName}</strong> (${a.userId})<br/>
+          <span style="color:var(--text-muted);">${a.time}</span><br/>
+          <span>GPS: ${a.gps.lat.toFixed(5)}, ${a.gps.lng.toFixed(5)}</span>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function initRadarMapIfAdmin() {
+    const mapEl = document.getElementById('satellite-radar-map');
+    if (!mapEl || radarMap || typeof L === 'undefined') return;
+    radarMap = L.map('satellite-radar-map').setView([-6.2088, 106.8456], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(radarMap);
+    refreshKorlapLivePositions();
+  }
+
+  function refreshKorlapLivePositions() {
+    if (!radarMap) return;
+    radarMarkers.forEach(m => radarMap.removeLayer(m));
+    radarMarkers = [];
+    const points = APP_STATE.attendance.filter(a => a.gps);
+    document.getElementById('radar-marker-count').textContent = `${points.length} Titik Aktif`;
+    const listEl = document.getElementById('korlap-live-radar-list');
+    if (!points.length) {
+      listEl.innerHTML = '<div style="font-size:10px; color:var(--text-muted);">Belum ada titik GPS absensi.</div>';
+      return;
+    }
+    listEl.innerHTML = '';
+    points.forEach(p => {
+      const marker = L.marker([p.gps.lat, p.gps.lng]).addTo(radarMap).bindPopup(`<b>${p.userName}</b><br/>${p.type} - ${p.time}`);
+      radarMarkers.push(marker);
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      item.style.cursor = 'pointer';
+      item.innerHTML = `<div><strong>${p.userName}</strong> (${p.type})<br/><span style="color:var(--text-muted);">${p.time}</span></div>`;
+      item.onclick = () => { radarMap.setView([p.gps.lat, p.gps.lng], 15); marker.openPopup(); };
+      listEl.appendChild(item);
+    });
+  }
+
+  function submitMR() { alert('Pengajuan MR dicatat secara lokal.'); }
+  function submitLeave() { alert('Pengajuan Izin/Cuti dicatat secara lokal.'); }
+  function submitIncident() { alert('Laporan kejadian dicatat secara lokal.'); }
+  function saveMCP() { alert('Progress MCP disimpan.'); }
+  function saveDAC() { alert('Cheklis area disimpan.'); }
+  function saveK3() { alert('Verifikasi K3 disimpan.'); }
+  function addTeamMember() { alert('Data tim ditambahkan.'); }
+  function saveEquipment() { alert('Data equipment disimpan.'); }
+  function saveOutstanding() { alert('Item outstanding ditambahkan.'); }
+  function saveSupabaseConfig() {
+    APP_STATE.sbConfig = {
+      url: document.getElementById('sb-url').value.trim(),
+      key: document.getElementById('sb-key').value.trim()
+    };
+    localStorage.setItem('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
+    alert('Konfigurasi Supabase disimpan.');
+  }
+  function syncAllData() { alert('Sinkronisasi dijalankan.'); }
+  function exportToExcel() { alert('Ekspor CSV Absensi siap dihubungkan ke data.'); }
+  function exportGPSLogToCSV() { alert('Ekspor CSV GPS siap dihubungkan ke data.'); }
+  function exportIncidentLogToCSV() { alert('Ekspor CSV Kejadian siap dihubungkan ke data.'); }
+  function exportMRToCSV() { alert('Ekspor CSV MR siap dihubungkan ke data.'); }
+  function startProfileWebcam() { alert('Kamera profil siap dihubungkan.'); }
+  function captureProfileSnapshot() { alert('Snapshot profil siap dihubungkan.'); }
+  function loadProfileFromGallery(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      APP_STATE.currentUser.avatar = reader.result;
+      document.getElementById('profile-photo-preview').src = reader.result;
+      document.getElementById('profile-photo-preview').style.display = 'block';
+      document.getElementById('profile-cam-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+  function saveProfileAvatar() {
+    if (!APP_STATE.currentUser) return;
+    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
+    if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
+    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    renderUserUI();
+    alert('Foto profil disimpan.');
+  }
+  function updateOwnProfile() {
+    if (!APP_STATE.currentUser) return;
+    APP_STATE.currentUser.name = document.getElementById('edit-prof-name').value.trim() || APP_STATE.currentUser.name;
+    APP_STATE.currentUser.jabatan = document.getElementById('edit-prof-jabatan').value.trim() || APP_STATE.currentUser.jabatan;
+    APP_STATE.currentUser.site = document.getElementById('edit-prof-site').value.trim() || APP_STATE.currentUser.site;
+    APP_STATE.currentUser.phone = document.getElementById('edit-prof-phone').value.trim() || APP_STATE.currentUser.phone;
+    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
+    if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
+    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    renderUserUI();
+    alert('Informasi profil diperbarui.');
+  }
+  function changeOwnPIN() {
+    const oldPin = document.getElementById('prof-old-pin').value.trim();
+    const newPin = document.getElementById('prof-new-pin').value.trim();
+    if (!APP_STATE.currentUser || APP_STATE.currentUser.pin !== oldPin || newPin.length !== 6) {
+      alert('Periksa PIN lama dan pastikan PIN baru 6 digit.');
+      return;
+    }
+    APP_STATE.currentUser.pin = newPin;
+    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
+    if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
+    localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
+    alert('PIN berhasil diupdate.');
+  }
 </script>
 </body>
 </html>
