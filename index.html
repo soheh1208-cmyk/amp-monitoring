@@ -235,8 +235,17 @@
     .badge-out { background: #fee2e2; color: #991b1b; }
     .badge-warning { background: #fef3c7; color: #92400e; }
 
-    #satellite-radar-map { width: 100%; height: 235px; border-radius: 8px; margin-bottom: 8px; z-index: 1; border: 1px solid #cbd5e1; }
+    #satellite-radar-map { width: 100%; height: 245px; border-radius: 8px; margin-bottom: 8px; z-index: 1; border: 1px solid #cbd5e1; }
     .radar-legend { display: flex; justify-content: space-between; font-size: 9.5px; margin-bottom: 6px; }
+    .live-pulse-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25);
+      margin-right: 4px;
+    }
 
     .bottom-nav {
       position: fixed;
@@ -654,7 +663,7 @@
 
       <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
       <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Dede_Rusmana"></div>
-      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap"></div>
+      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / Admin / Head of Ops"></div>
       <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
       <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
       <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit" maxlength="6"></div>
@@ -719,6 +728,7 @@
           <h2 id="dash-user-name" style="font-size:15px;">-</h2>
           <p id="dash-user-role" style="font-size:10px; color:#f59e0b; font-weight:700;">-</p>
           <p id="dash-user-site" style="font-size:9px; opacity:0.88; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: -</p>
+          <p id="korlap-gps-permission-status" style="font-size:9px; color:#7dd3fc; margin-top:4px;"><i class="fas fa-location-crosshairs"></i> Status GPS Live: Menunggu izin...</p>
         </div>
         <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
           <img id="dash-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" />
@@ -727,17 +737,29 @@
       </div>
     </div>
 
+    <div id="korlap-gps-consent-card" class="card" style="display:none; border-left:4px solid var(--sky-accent);">
+      <div class="card-title" style="margin-bottom:6px;">
+        <span><i class="fas fa-location-dot" style="color:var(--blue-accent);"></i> Izin Lokasi GPS Live Korlap</span>
+      </div>
+      <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">
+        Izinkan akses lokasi GPS perangkat Anda agar posisi <em>live</em> dapat terpantau di radar Admin / Head of Ops.
+      </p>
+      <button type="button" class="btn btn-primary" onclick="requestKorlapLiveGPS(true)">
+        <i class="fas fa-location-arrow"></i> Izinkan & Aktifkan Lokasi GPS Live
+      </button>
+    </div>
+
     <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
       <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-        <span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap (Admin / Head of Ops)</span>
-        <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <span><span class="live-pulse-dot"></span><i class="fas fa-satellite" style="color:var(--danger);"></i> Peta Satelit Radar Korlap Live (Admin / Head of Ops)</span>
+        <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Live Refresh</button>
       </div>
       <div class="radar-legend">
-        <span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Akses Terbatas: Admin & Head of Ops</span>
-        <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Titik Aktif</span>
+        <span><i class="fas fa-lock" style="color:var(--navy-primary);"></i> Khusus Admin & Head of Ops</span>
+        <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Korlap Live</span>
       </div>
       <div id="satellite-radar-map"></div>
-      <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta satelit):</p>
+      <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Lokasi GPS live semua Korlap (klik item untuk fokus di peta satelit):</p>
       <div id="korlap-live-radar-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
 
@@ -1164,6 +1186,16 @@
     }
   }
 
+  function loadLiveKorlapGPS() {
+    try {
+      const raw = localStorage.getItem('amp_live_korlap_gps');
+      const parsed = raw ? JSON.parse(raw) : {};
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
   const APP_STATE = {
     currentUser: null,
     users: JSON.parse(localStorage.getItem('amp_users') || '[]'),
@@ -1177,6 +1209,7 @@
     team: loadInitialTeam(),
     equipment: JSON.parse(localStorage.getItem('amp_equipment') || '[]'),
     outstanding: JSON.parse(localStorage.getItem('amp_outstanding') || '[]'),
+    liveKorlapGPS: loadLiveKorlapGPS(),
     sbConfig: JSON.parse(localStorage.getItem('amp_sb_config') || '{"url":"","key":""}'),
     capturedPhoto: null,
     currentGPS: null
@@ -1184,8 +1217,16 @@
 
   let radarMap = null;
   let radarMarkers = [];
+  let radarLiveTimer = null;
+  let korlapWatchId = null;
   let webcamStream = null;
   let profileStream = null;
+
+  function isAdminOrHeadOfOps(user) {
+    if (!user) return false;
+    const roleText = `${user.jabatan || ''} ${user.role || ''} ${user.id || ''}`.toLowerCase();
+    return /\b(admin|administrator|head\s*of\s*operation|head\s*of\s*ops|head|ops|direktur)\b/i.test(roleText);
+  }
 
   setInterval(() => {
     const el = document.getElementById('live-clock');
@@ -1195,6 +1236,15 @@
       el.textContent = `${timeStr} WIB`;
     }
   }, 1000);
+
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'amp_live_korlap_gps') {
+      APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
+      if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+        refreshKorlapLivePositions();
+      }
+    }
+  });
 
   function togglePinVisibility(inputId, btnEl) {
     const inp = document.getElementById(inputId);
@@ -1269,7 +1319,10 @@
 
     let user = APP_STATE.users.find(u => u.id.toLowerCase() === id.toLowerCase() && u.pin === pin);
     if (!user && APP_STATE.users.length === 0) {
-      user = { id, name: id, jabatan: 'Korlap / Operasional', site: 'Area PLN', phone: '-', pin, avatar: '' };
+      const inferredJabatan = /^(admin|headofops|head_of_ops|headofoperation)/i.test(id)
+        ? 'Head of Operation'
+        : 'Korlap / Operasional';
+      user = { id, name: id, jabatan: inferredJabatan, site: 'Area PLN', phone: '-', pin, avatar: '' };
       APP_STATE.users.push(user);
       localStorage.setItem('amp_users', JSON.stringify(APP_STATE.users));
     }
@@ -1287,12 +1340,14 @@
     renderUserUI();
     renderAttendanceList();
     renderTeamList();
-    initRadarMapIfAdmin();
+    setupRoleBasedTracking();
     showModule(1);
   }
 
   function logout() {
     stopCameras();
+    stopKorlapLiveWatch();
+    stopRadarAutoRefresh();
     APP_STATE.currentUser = null;
     document.getElementById('main-app').classList.remove('authenticated');
     document.getElementById('bottom-nav').classList.remove('authenticated');
@@ -1320,9 +1375,14 @@
     document.getElementById('edit-prof-site').value = u.site;
     document.getElementById('edit-prof-phone').value = u.phone;
 
-    const isPrivileged = /admin|head|ops|direktur/i.test(u.jabatan);
-    document.getElementById('admin-radar-card').style.display = isPrivileged ? 'block' : 'none';
-    document.getElementById('admin-export-card').style.display = isPrivileged ? 'block' : 'none';
+    const privileged = isAdminOrHeadOfOps(u);
+    document.getElementById('admin-radar-card').style.display = privileged ? 'block' : 'none';
+    document.getElementById('admin-export-card').style.display = privileged ? 'block' : 'none';
+    document.getElementById('korlap-gps-consent-card').style.display = privileged ? 'none' : 'block';
+
+    if (!privileged) {
+      clearRadarMap();
+    }
 
     if (u.avatar) {
       document.getElementById('dash-avatar-img').src = u.avatar;
@@ -1335,6 +1395,108 @@
     }
   }
 
+  function setupRoleBasedTracking() {
+    const u = APP_STATE.currentUser;
+    if (!u) return;
+
+    if (isAdminOrHeadOfOps(u)) {
+      stopKorlapLiveWatch();
+      updateKorlapPermissionStatus('Mode Monitoring Admin / Head of Ops Aktif');
+      initRadarMapIfAdmin();
+      startRadarAutoRefresh();
+      refreshKorlapLivePositions();
+    } else {
+      stopRadarAutoRefresh();
+      clearRadarMap();
+      requestKorlapLiveGPS(false);
+    }
+  }
+
+  function updateKorlapPermissionStatus(text, isError = false) {
+    const el = document.getElementById('korlap-gps-permission-status');
+    if (!el) return;
+    el.style.color = isError ? '#fca5a5' : '#7dd3fc';
+    el.innerHTML = `<i class="fas fa-location-crosshairs"></i> ${text}`;
+  }
+
+  function stopKorlapLiveWatch() {
+    if (korlapWatchId !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(korlapWatchId);
+      korlapWatchId = null;
+    }
+  }
+
+  function recordKorlapLiveCoordinate(pos) {
+    const u = APP_STATE.currentUser;
+    if (!u || isAdminOrHeadOfOps(u)) return;
+
+    const { latitude, longitude, accuracy } = pos.coords;
+    const nowStr = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+    APP_STATE.currentGPS = { lat: latitude, lng: longitude, accuracy };
+
+    APP_STATE.liveKorlapGPS[u.id] = {
+      userId: u.id,
+      userName: u.name,
+      jabatan: u.jabatan,
+      site: u.site || '-',
+      lat: latitude,
+      lng: longitude,
+      accuracy: Math.round(accuracy || 0),
+      updatedAt: nowStr,
+      timestamp: Date.now()
+    };
+
+    localStorage.setItem('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+    updateKorlapPermissionStatus(`GPS Live Aktif (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`);
+
+    const gpsInput = document.getElementById('gps-coords');
+    if (gpsInput && !gpsInput.value) {
+      gpsInput.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+    }
+    const badge = document.getElementById('status-gps-badge');
+    if (badge) {
+      badge.style.color = 'var(--success)';
+      badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Terkunci';
+    }
+  }
+
+  function requestKorlapLiveGPS(showAlertOnDeny = true) {
+    const u = APP_STATE.currentUser;
+    if (!u || isAdminOrHeadOfOps(u)) return;
+
+    if (!navigator.geolocation) {
+      updateKorlapPermissionStatus('Perangkat tidak mendukung GPS', true);
+      if (showAlertOnDeny) alert('Geolocation tidak didukung pada browser ini.');
+      return;
+    }
+
+    stopKorlapLiveWatch();
+    updateKorlapPermissionStatus('Meminta izin lokasi GPS...');
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        recordKorlapLiveCoordinate(pos);
+      },
+      (err) => {
+        updateKorlapPermissionStatus('Izin lokasi GPS belum diizinkan', true);
+        if (showAlertOnDeny) {
+          alert('Lokasi GPS belum diizinkan: ' + err.message + '. Mohon izinkan akses lokasi di browser/perangkat.');
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+
+    korlapWatchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        recordKorlapLiveCoordinate(pos);
+      },
+      (err) => {
+        updateKorlapPermissionStatus('GPS terhenti / izin ditolak', true);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 3000 }
+    );
+  }
+
   function showModule(num) {
     document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
     const target = document.getElementById(`mod-${num}`);
@@ -1344,9 +1506,14 @@
     const navEl = document.getElementById(`nav-${num}`);
     if (navEl) navEl.classList.add('active');
 
+    if (num === 3 && APP_STATE.currentUser && !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      requestKorlapLiveGPS(false);
+    }
     if (num === 10) renderTeamList();
-    if (num === 1 && radarMap) {
-      setTimeout(() => radarMap.invalidateSize(), 150);
+    if (num === 1 && APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      initRadarMapIfAdmin();
+      refreshKorlapLivePositions();
+      if (radarMap) setTimeout(() => radarMap.invalidateSize(), 150);
     }
   }
 
@@ -1404,17 +1571,21 @@
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude, longitude } = pos.coords;
-        APP_STATE.currentGPS = { lat: latitude, lng: longitude };
+        const { latitude, longitude, accuracy } = pos.coords;
+        APP_STATE.currentGPS = { lat: latitude, lng: longitude, accuracy };
         document.getElementById('gps-coords').value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
         document.getElementById('gmaps-link-box').innerHTML =
           `<a href="https://maps.google.com/?q=${latitude},${longitude}" target="_blank" style="font-size:10px; color:var(--blue-accent);">Buka di Google Maps</a>`;
         const badge = document.getElementById('status-gps-badge');
         badge.style.color = 'var(--success)';
         badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Terkunci';
+
+        if (APP_STATE.currentUser && !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+          recordKorlapLiveCoordinate(pos);
+        }
       },
       (err) => alert('Gagal mengambil GPS: ' + err.message),
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   }
 
@@ -1423,18 +1594,41 @@
       alert('Foto live dan GPS wajib dilengkapi sebelum absen.');
       return;
     }
+    const u = APP_STATE.currentUser;
+    const nowStr = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
     const entry = {
-      userId: APP_STATE.currentUser?.id || '-',
-      userName: APP_STATE.currentUser?.name || '-',
+      userId: u?.id || '-',
+      userName: u?.name || '-',
+      jabatan: u?.jabatan || '-',
+      site: u?.site || '-',
       type,
-      time: new Date().toLocaleString('id-ID'),
+      time: nowStr,
       gps: APP_STATE.currentGPS,
       photo: APP_STATE.capturedPhoto
     };
     APP_STATE.attendance.unshift(entry);
     localStorage.setItem('amp_attendance', JSON.stringify(APP_STATE.attendance));
+
+    if (u && !isAdminOrHeadOfOps(u)) {
+      APP_STATE.liveKorlapGPS[u.id] = {
+        userId: u.id,
+        userName: u.name,
+        jabatan: u.jabatan,
+        site: u.site || '-',
+        lat: APP_STATE.currentGPS.lat,
+        lng: APP_STATE.currentGPS.lng,
+        accuracy: Math.round(APP_STATE.currentGPS.accuracy || 0),
+        lastActivity: `Absen ${type}`,
+        updatedAt: nowStr,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
+    }
+
     renderAttendanceList();
-    refreshKorlapLivePositions();
+    if (u && isAdminOrHeadOfOps(u)) {
+      refreshKorlapLivePositions();
+    }
     alert(`Absensi ${type} berhasil dicatat.`);
   }
 
@@ -1496,35 +1690,159 @@
   }
 
   function initRadarMapIfAdmin() {
+    if (!APP_STATE.currentUser || !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      clearRadarMap();
+      return;
+    }
     const mapEl = document.getElementById('satellite-radar-map');
-    if (!mapEl || radarMap || typeof L === 'undefined') return;
-    radarMap = L.map('satellite-radar-map').setView([-6.2088, 106.8456], 10);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(radarMap);
-    refreshKorlapLivePositions();
+    if (!mapEl || typeof L === 'undefined') return;
+
+    if (!radarMap) {
+      radarMap = L.map('satellite-radar-map').setView([-6.2088, 106.8456], 10);
+      const satelliteLayer = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, attribution: 'Esri Satellite' }
+      );
+      const osmFallback = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { maxZoom: 19, opacity: 0.35 }
+      );
+      satelliteLayer.addTo(radarMap);
+      osmFallback.addTo(radarMap);
+    }
+    setTimeout(() => {
+      if (radarMap) radarMap.invalidateSize();
+    }, 120);
+  }
+
+  function startRadarAutoRefresh() {
+    stopRadarAutoRefresh();
+    radarLiveTimer = setInterval(() => {
+      if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+        APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
+        refreshKorlapLivePositions();
+      } else {
+        stopRadarAutoRefresh();
+        clearRadarMap();
+      }
+    }, 5000);
+  }
+
+  function stopRadarAutoRefresh() {
+    if (radarLiveTimer !== null) {
+      clearInterval(radarLiveTimer);
+      radarLiveTimer = null;
+    }
+  }
+
+  function clearRadarMap() {
+    radarMarkers.forEach(m => {
+      if (radarMap) radarMap.removeLayer(m);
+    });
+    radarMarkers = [];
+    if (radarMap) {
+      radarMap.remove();
+      radarMap = null;
+    }
+    const countEl = document.getElementById('radar-marker-count');
+    if (countEl) countEl.textContent = '0 Korlap Live';
+    const listEl = document.getElementById('korlap-live-radar-list');
+    if (listEl) listEl.innerHTML = '';
+  }
+
+  function getConsolidatedLiveKorlapPoints() {
+    APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
+    const mapByUser = new Map();
+
+    Object.values(APP_STATE.liveKorlapGPS).forEach((item) => {
+      if (!item || typeof item.lat !== 'number' || typeof item.lng !== 'number') return;
+      if (isAdminOrHeadOfOps({ jabatan: item.jabatan, id: item.userId })) return;
+      mapByUser.set(item.userId, { ...item });
+    });
+
+    APP_STATE.attendance.forEach((att) => {
+      if (!att || !att.gps || typeof att.gps.lat !== 'number' || typeof att.gps.lng !== 'number') return;
+      if (isAdminOrHeadOfOps({ jabatan: att.jabatan, id: att.userId })) return;
+      if (!mapByUser.has(att.userId)) {
+        mapByUser.set(att.userId, {
+          userId: att.userId,
+          userName: att.userName,
+          jabatan: att.jabatan || 'Korlap',
+          site: att.site || '-',
+          lat: att.gps.lat,
+          lng: att.gps.lng,
+          accuracy: Math.round(att.gps.accuracy || 0),
+          lastActivity: `Absen ${att.type}`,
+          updatedAt: att.time,
+          timestamp: 0
+        });
+      }
+    });
+
+    return Array.from(mapByUser.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   }
 
   function refreshKorlapLivePositions() {
-    if (!radarMap) return;
-    radarMarkers.forEach(m => radarMap.removeLayer(m));
-    radarMarkers = [];
-    const points = APP_STATE.attendance.filter(a => a.gps);
-    document.getElementById('radar-marker-count').textContent = `${points.length} Titik Aktif`;
-    const listEl = document.getElementById('korlap-live-radar-list');
-    if (!points.length) {
-      listEl.innerHTML = '<div style="font-size:10px; color:var(--text-muted);">Belum ada titik GPS absensi.</div>';
+    if (!APP_STATE.currentUser || !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      clearRadarMap();
       return;
     }
+    initRadarMapIfAdmin();
+    if (!radarMap) return;
+
+    radarMarkers.forEach(m => radarMap.removeLayer(m));
+    radarMarkers = [];
+
+    const points = getConsolidatedLiveKorlapPoints();
+    const countEl = document.getElementById('radar-marker-count');
+    if (countEl) countEl.textContent = `${points.length} Korlap Live`;
+
+    const listEl = document.getElementById('korlap-live-radar-list');
+    if (!listEl) return;
+
+    if (!points.length) {
+      listEl.innerHTML = '<div style="font-size:10px; color:var(--text-muted);">Belum ada lokasi GPS live Korlap yang masuk. Pastikan Korlap sudah login dan mengizinkan lokasi GPS.</div>';
+      return;
+    }
+
+    const bounds = [];
     listEl.innerHTML = '';
-    points.forEach(p => {
-      const marker = L.marker([p.gps.lat, p.gps.lng]).addTo(radarMap).bindPopup(`<b>${p.userName}</b><br/>${p.type} - ${p.time}`);
+
+    points.forEach((p, idx) => {
+      const marker = L.marker([p.lat, p.lng]).addTo(radarMap).bindPopup(
+        `<b>${p.userName}</b> (${p.userId})<br/>Area: ${p.site}<br/>GPS: ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}<br/>Update: ${p.updatedAt || '-'}`
+      );
       radarMarkers.push(marker);
+      bounds.push([p.lat, p.lng]);
+
       const item = document.createElement('div');
       item.className = 'log-item';
       item.style.cursor = 'pointer';
-      item.innerHTML = `<div><strong>${p.userName}</strong> (${p.type})<br/><span style="color:var(--text-muted);">${p.time}</span></div>`;
-      item.onclick = () => { radarMap.setView([p.gps.lat, p.gps.lng], 15); marker.openPopup(); };
+      item.innerHTML = `
+        <div style="width:100%;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span><span class="live-pulse-dot"></span><strong>${p.userName}</strong> (${p.userId})</span>
+            <span class="badge badge-in">LIVE</span>
+          </div>
+          <div style="color:var(--text-muted); margin-top:2px;">Area: ${p.site}</div>
+          <div style="font-family:monospace; font-size:9.5px; margin-top:2px;">${p.lat.toFixed(6)}, ${p.lng.toFixed(6)} ${p.accuracy ? `(±${p.accuracy}m)` : ''}</div>
+          <div style="color:var(--text-muted); font-size:9px; margin-top:2px;">Update: ${p.updatedAt || '-'}</div>
+        </div>
+      `;
+      item.onclick = () => {
+        radarMap.setView([p.lat, p.lng], 15);
+        marker.openPopup();
+      };
       listEl.appendChild(item);
+
+      if (idx === 0 && bounds.length === 1) {
+        radarMap.setView([p.lat, p.lng], 13);
+      }
     });
+
+    if (bounds.length > 1) {
+      radarMap.fitBounds(bounds, { padding: [24, 24], maxZoom: 14 });
+    }
   }
 
   function submitMR() { alert('Pengajuan MR dicatat secara lokal.'); }
@@ -1543,7 +1861,12 @@
     localStorage.setItem('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
     alert('Konfigurasi Supabase disimpan.');
   }
-  function syncAllData() { alert('Sinkronisasi dijalankan.'); }
+  function syncAllData() {
+    if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      refreshKorlapLivePositions();
+    }
+    alert('Sinkronisasi dijalankan.');
+  }
   function exportToExcel() { alert('Ekspor CSV Absensi siap dihubungkan ke data.'); }
   function exportGPSLogToCSV() { alert('Ekspor CSV GPS siap dihubungkan ke data.'); }
   function exportIncidentLogToCSV() { alert('Ekspor CSV Kejadian siap dihubungkan ke data.'); }
