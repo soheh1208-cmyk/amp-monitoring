@@ -158,6 +158,31 @@
     .btn-dark { background: var(--navy-primary); color: #fff; }
     .btn-outline { background: #fff; color: var(--navy-primary); border: 1px solid #cbd5e1; }
 
+    .btn-approve {
+      width: auto;
+      padding: 5px 10px;
+      font-size: 9.5px;
+      margin: 6px 0 0;
+      border-radius: 6px;
+      background: var(--success);
+      color: #fff;
+    }
+
+    .admin-live-alert {
+      background: #ecfdf5;
+      border: 1px solid #6ee7b7;
+      border-left: 4px solid var(--success);
+      color: #065f46;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
     .modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .module-item {
       background: #f8fafc;
@@ -785,6 +810,10 @@
         <span><span class="live-pulse-dot"></span><i class="fas fa-map-location-dot" style="color:var(--danger);"></i> Radar Peta Detail Jalan, Gedung & PT (Admin / Head of Ops)</span>
         <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Live Refresh</button>
       </div>
+      <div id="admin-attendance-update-banner" class="admin-live-alert" style="display:none;">
+        <span id="admin-attendance-update-text"><i class="fas fa-bell"></i> Update Absensi Korlap terbaru masuk.</span>
+        <button type="button" class="btn btn-outline" style="width:auto; padding:3px 7px; font-size:9px; margin:0;" onclick="showModule(3)">Lihat</button>
+      </div>
       <div class="radar-legend">
         <span id="radar-engine-label"><i class="fas fa-map"></i> Mode Peta: Detail Jalan, Gedung & PT</span>
         <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Korlap Live</span>
@@ -934,7 +963,7 @@
 
     <div class="card">
       <div class="card-title">
-        <span><i class="fas fa-history"></i> Riwayat Absensi Hari Ini</span>
+        <span><i class="fas fa-history"></i> Riwayat Absensi (Update Live Korlap)</span>
         <span id="absen-count-badge" class="badge badge-in">0 Data</span>
       </div>
       <ul id="attendance-log-list" class="log-list">
@@ -1190,9 +1219,6 @@
       <div class="form-group"><label>Google Maps JavaScript API Key (Opsional)</label><input type="password" id="sb-gmaps-key" class="form-control" placeholder="AIzaSy..."></div>
       <button type="button" class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-plug"></i> SIMPAN & HUBUNGKAN</button>
       <button type="button" class="btn btn-success" onclick="syncAllData()"><i class="fas fa-sync"></i> SINKRONKAN DATA SEKARANG</button>
-      <div style="margin-top:8px; padding:8px; background:#f8fafc; border-radius:8px; border:1px solid var(--border-soft); font-size:9px; color:#475569; line-height:1.45;">
-        <strong>Tabel Supabase yang dipakai:</strong> <code>amp_live_gps</code> (kolom: <code>user_id</code> primary key, <code>user_name</code>, <code>jabatan</code>, <code>site</code>, <code>lat</code>, <code>lng</code>, <code>accuracy</code>, <code>place_name</code>, <code>last_activity</code>, <code>updated_at</code>, <code>timestamp_ms</code>) dan <code>amp_attendance</code> (kolom: <code>id</code>, <code>user_id</code>, <code>user_name</code>, <code>jabatan</code>, <code>site</code>, <code>place_name</code>, <code>att_type</code>, <code>att_time</code>, <code>lat</code>, <code>lng</code>, <code>accuracy</code>, <code>photo_data</code>).
-      </div>
     </div>
   </div>
 
@@ -1288,6 +1314,7 @@
   let radarLiveTimer = null;
   let korlapWatchId = null;
   let lastCloudPushMs = 0;
+  let lastSeenAttendanceId = APP_STATE.attendance[0]?.id || '';
   let webcamStream = null;
   let profileStream = null;
   const geocodeCache = new Map();
@@ -1406,6 +1433,14 @@
     } catch (_) {}
   }
 
+  function showAdminAttendanceBanner(entry) {
+    const banner = document.getElementById('admin-attendance-update-banner');
+    const textEl = document.getElementById('admin-attendance-update-text');
+    if (!banner || !textEl || !entry) return;
+    banner.style.display = 'flex';
+    textEl.innerHTML = `<i class="fas fa-bell"></i> <strong>${entry.userName}</strong> (${entry.type}) absen pada ${entry.time}${entry.placeName ? ` — ${entry.placeName}` : ''}`;
+  }
+
   async function pullAttendanceFromSupabase() {
     if (!supabaseClient) return;
     try {
@@ -1418,13 +1453,34 @@
       if (error || !Array.isArray(data) || !data.length) return;
 
       const existingIds = new Set(APP_STATE.attendance.map(a => a.id).filter(Boolean));
-      const merged = [...APP_STATE.attendance];
+      let hasNewEntry = false;
+      let newestNewEntry = null;
 
-      data.forEach((row) => {
+      const fetched = data.map((row) => {
         const rid = row.id || `${row.user_id}_${row.att_time}`;
-        if (existingIds.has(rid)) return;
-        existingIds.add(rid);
-        merged.push({
+        if (!existingIds.has(rid)) {
+          hasNewEntry = true;
+          if (!newestNewEntry) {
+            newestNewEntry = {
+              id: rid,
+              userId: row.user_id,
+              userName: row.user_name,
+              jabatan: row.jabatan || '-',
+              site: row.site || '-',
+              placeName: row.place_name || '',
+              type: row.att_type,
+              time: row.att_time,
+              gps: {
+                lat: Number(row.lat || 0),
+                lng: Number(row.lng || 0),
+                accuracy: Number(row.accuracy || 0),
+                placeName: row.place_name || ''
+              },
+              photo: row.photo_data || ''
+            };
+          }
+        }
+        return {
           id: rid,
           userId: row.user_id,
           userName: row.user_name,
@@ -1440,10 +1496,16 @@
             placeName: row.place_name || ''
           },
           photo: row.photo_data || ''
-        });
+        };
       });
 
-      APP_STATE.attendance = merged.slice(0, 50);
+      const mergedMap = new Map();
+      [...fetched, ...APP_STATE.attendance].forEach(item => {
+        const key = item.id || `${item.userId}_${item.time}_${item.type}`;
+        if (!mergedMap.has(key)) mergedMap.set(key, item);
+      });
+
+      APP_STATE.attendance = Array.from(mergedMap.values()).slice(0, 50);
       const slimForStorage = APP_STATE.attendance.map((item, idx) =>
         idx < 6 ? item : { ...item, photo: '' }
       );
@@ -1451,6 +1513,11 @@
         safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance.slice(0, 5).map(x => ({ ...x, photo: '' }))));
       }
       renderAttendanceList();
+
+      if (hasNewEntry && newestNewEntry && APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+        lastSeenAttendanceId = newestNewEntry.id;
+        showAdminAttendanceBanner(newestNewEntry);
+      }
     } catch (_) {}
   }
 
@@ -1469,6 +1536,35 @@
       if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
         refreshKorlapLivePositions();
       }
+    }
+    if (e.key === 'amp_attendance') {
+      try {
+        const latest = JSON.parse(e.newValue || '[]');
+        if (Array.isArray(latest) && latest.length) {
+          APP_STATE.attendance = latest;
+          renderAttendanceList();
+          const topItem = latest[0];
+          if (
+            topItem &&
+            topItem.id &&
+            topItem.id !== lastSeenAttendanceId &&
+            APP_STATE.currentUser &&
+            isAdminOrHeadOfOps(APP_STATE.currentUser)
+          ) {
+            lastSeenAttendanceId = topItem.id;
+            showAdminAttendanceBanner(topItem);
+          }
+        }
+      } catch (_) {}
+    }
+    if (e.key === 'amp_mr') {
+      try { APP_STATE.mr = JSON.parse(e.newValue || '[]'); renderMRList(); } catch (_) {}
+    }
+    if (e.key === 'amp_leaves') {
+      try { APP_STATE.leaves = JSON.parse(e.newValue || '[]'); renderLeaveList(); } catch (_) {}
+    }
+    if (e.key === 'amp_incidents') {
+      try { APP_STATE.incidents = JSON.parse(e.newValue || '[]'); renderIncidentList(); } catch (_) {}
     }
   });
 
@@ -1566,6 +1662,9 @@
     initSupabaseClient();
     renderUserUI();
     renderAttendanceList();
+    renderMRList();
+    renderLeaveList();
+    renderIncidentList();
     renderTeamList();
     setupRoleBasedTracking();
     showModule(1);
@@ -1620,6 +1719,8 @@
 
     if (!privileged) {
       clearRadarMap();
+      const banner = document.getElementById('admin-attendance-update-banner');
+      if (banner) banner.style.display = 'none';
     }
 
     if (u.avatar) {
@@ -1880,13 +1981,22 @@
     const navEl = document.getElementById(`nav-${num}`);
     if (navEl) navEl.classList.add('active');
 
-    if (num === 3 && APP_STATE.currentUser && !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      requestKorlapLiveGPS(false);
+    if (num === 3) {
+      renderAttendanceList();
+      if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+        pullAttendanceFromSupabase();
+      } else if (APP_STATE.currentUser) {
+        requestKorlapLiveGPS(false);
+      }
     }
+    if (num === 4) renderMRList();
+    if (num === 5) renderLeaveList();
+    if (num === 6) renderIncidentList();
     if (num === 10) renderTeamList();
     if (num === 1 && APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
       initRadarMapIfAdmin();
       refreshKorlapLivePositions();
+      pullAttendanceFromSupabase();
       if (radarMap) setTimeout(() => radarMap.invalidateSize(), 150);
     }
   }
@@ -2003,6 +2113,7 @@
       };
 
       APP_STATE.attendance.unshift(entry);
+      lastSeenAttendanceId = entry.id;
 
       let saved = safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance));
       if (!saved) {
@@ -2040,6 +2151,7 @@
       renderAttendanceList();
 
       if (u && isAdminOrHeadOfOps(u)) {
+        showAdminAttendanceBanner(entry);
         try {
           refreshKorlapLivePositions();
         } catch (_) {}
@@ -2072,7 +2184,167 @@
           <strong>${a.userName}</strong> (${a.userId})<br/>
           <span style="color:var(--text-muted);">${a.time}</span><br/>
           ${a.placeName ? `<span><strong>Lokasi:</strong> ${a.placeName}</span><br/>` : ''}
-          <span>GPS: ${Number(a.gps.lat).toFixed(5)}, ${Number(a.gps.lng).toFixed(5)}</span>
+          <span>GPS: ${Number(a.gps?.lat || 0).toFixed(5)}, ${Number(a.gps?.lng || 0).toFixed(5)}</span>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function approveItem(collectionName, itemId) {
+    if (!isAdminOrHeadOfOps(APP_STATE.currentUser)) {
+      alert('Hanya akun Admin atau Head of Ops yang dapat melakukan Approve.');
+      return;
+    }
+    const arr = APP_STATE[collectionName];
+    if (!Array.isArray(arr)) return;
+    const target = arr.find(it => it.id === itemId);
+    if (!target) return;
+
+    target.status = 'Approved';
+    target.approvedBy = APP_STATE.currentUser.name || APP_STATE.currentUser.id;
+    target.approvedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+
+    const storageKey = collectionName === 'mr' ? 'amp_mr' : collectionName === 'leaves' ? 'amp_leaves' : 'amp_incidents';
+    safeLocalStorageSet(storageKey, JSON.stringify(arr));
+
+    if (collectionName === 'mr') renderMRList();
+    if (collectionName === 'leaves') renderLeaveList();
+    if (collectionName === 'incidents') renderIncidentList();
+  }
+
+  function renderApprovalBadgeAndButton(collectionName, item) {
+    const isApproved = item.status === 'Approved';
+    const badgeHtml = isApproved
+      ? `<span class="badge badge-in">Approved${item.approvedBy ? ` (${item.approvedBy})` : ''}</span>`
+      : `<span class="badge badge-warning">Menunggu Approval</span>`;
+
+    const canApprove = isAdminOrHeadOfOps(APP_STATE.currentUser) && !isApproved;
+    const btnHtml = canApprove
+      ? `<br/><button type="button" class="btn btn-approve" onclick="approveItem('${collectionName}', '${item.id}')"><i class="fas fa-check"></i> Approve</button>`
+      : '';
+
+    return `${badgeHtml}${btnHtml}`;
+  }
+
+  function submitMR() {
+    const site = document.getElementById('mr-site').value.trim();
+    const item = document.getElementById('mr-item').value.trim();
+    const qty = document.getElementById('mr-qty').value.trim();
+    const priority = document.getElementById('mr-priority').value;
+    const notes = document.getElementById('mr-notes').value.trim();
+    if (!site || !item || !qty) { alert('Lengkapi Site, Nama Material, dan Jumlah.'); return; }
+    APP_STATE.mr.unshift({
+      id: `mr_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      time: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      user: APP_STATE.currentUser?.name || '-',
+      site,
+      item,
+      qty,
+      priority,
+      notes,
+      status: 'Menunggu Approval'
+    });
+    safeLocalStorageSet('amp_mr', JSON.stringify(APP_STATE.mr));
+    renderMRList();
+    alert('Pengajuan MR dicatat (Menunggu Approval Admin / Head of Ops).');
+  }
+
+  function renderMRList() {
+    const badge = document.getElementById('mr-count-badge');
+    const list = document.getElementById('mr-log-list');
+    if (badge) badge.textContent = `${APP_STATE.mr.length} MR`;
+    if (!list) return;
+    if (!APP_STATE.mr.length) {
+      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li>';
+      return;
+    }
+    list.innerHTML = APP_STATE.mr.map(m => `
+      <li class="log-item">
+        <div style="width:100%;">
+          <span class="badge badge-warning">${m.priority}</span> ${renderApprovalBadgeAndButton('mr', m)}<br/>
+          <strong>${m.item}</strong> (${m.qty})<br/>
+          Site: ${m.site} — ${m.notes || '-'}<br/>
+          <span style="color:var(--text-muted);">${m.time} oleh ${m.user}</span>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function submitLeave() {
+    const type = document.getElementById('leave-type').value;
+    const start = document.getElementById('leave-start').value;
+    const end = document.getElementById('leave-end').value;
+    const notes = document.getElementById('leave-notes').value.trim();
+    if (!start || !end) { alert('Pilih tanggal mulai dan selesai.'); return; }
+    APP_STATE.leaves.unshift({
+      id: `lv_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      user: APP_STATE.currentUser?.name || '-',
+      type,
+      start,
+      end,
+      notes,
+      status: 'Menunggu Approval'
+    });
+    safeLocalStorageSet('amp_leaves', JSON.stringify(APP_STATE.leaves));
+    renderLeaveList();
+    alert('Pengajuan izin/cuti dicatat (Menunggu Approval Admin / Head of Ops).');
+  }
+
+  function renderLeaveList() {
+    const badge = document.getElementById('leave-count-badge');
+    const list = document.getElementById('leave-log-list');
+    if (badge) badge.textContent = `${APP_STATE.leaves.length} Data`;
+    if (!list) return;
+    if (!APP_STATE.leaves.length) {
+      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan izin atau cuti.</li>';
+      return;
+    }
+    list.innerHTML = APP_STATE.leaves.map(l => `
+      <li class="log-item">
+        <div style="width:100%;">
+          <strong>${l.user}</strong> — <span class="badge badge-in">${l.type}</span> ${renderApprovalBadgeAndButton('leaves', l)}<br/>
+          ${l.start} s/d ${l.end}<br/>
+          <span style="color:var(--text-muted);">${l.notes || '-'}</span>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function submitIncident() {
+    const site = document.getElementById('inc-site').value.trim();
+    const type = document.getElementById('inc-type').value;
+    const desc = document.getElementById('inc-desc').value.trim();
+    if (!site || !desc) { alert('Lengkapi lokasi dan kronologi kejadian.'); return; }
+    APP_STATE.incidents.unshift({
+      id: `inc_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      time: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      user: APP_STATE.currentUser?.name || '-',
+      site,
+      type,
+      desc,
+      status: 'Menunggu Approval'
+    });
+    safeLocalStorageSet('amp_incidents', JSON.stringify(APP_STATE.incidents));
+    renderIncidentList();
+    alert('Laporan kejadian dicatat (Menunggu Approval Admin / Head of Ops).');
+  }
+
+  function renderIncidentList() {
+    const badge = document.getElementById('inc-count-badge');
+    const list = document.getElementById('inc-log-list');
+    if (badge) badge.textContent = `${APP_STATE.incidents.length} Laporan`;
+    if (!list) return;
+    if (!APP_STATE.incidents.length) {
+      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>';
+      return;
+    }
+    list.innerHTML = APP_STATE.incidents.map(i => `
+      <li class="log-item">
+        <div style="width:100%;">
+          <span class="badge badge-out">${i.type}</span> ${renderApprovalBadgeAndButton('incidents', i)}<br/>
+          <strong>${i.site}</strong><br/>
+          ${i.desc}<br/>
+          <span style="color:var(--text-muted);">${i.time} oleh ${i.user}</span>
         </div>
       </li>
     `).join('');
@@ -2101,6 +2373,7 @@
     const list = document.getElementById('team-log-list');
     const badge = document.getElementById('team-count-badge');
     if (badge) badge.textContent = `${APP_STATE.team.length} Personel`;
+    if (!list) return;
     if (!APP_STATE.team.length) {
       list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data tim tersimpan.</li>';
       return;
@@ -2234,6 +2507,7 @@
     radarLiveTimer = setInterval(async () => {
       if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
         await pullLiveGPSFromSupabase();
+        await pullAttendanceFromSupabase();
         APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
         refreshKorlapLivePositions();
       } else {
@@ -2471,54 +2745,15 @@
   }
 
   function exportIncidentLogToCSV() {
-    const rows = [['Waktu', 'Pelapor', 'Site', 'Kategori', 'Kronologi']];
-    APP_STATE.incidents.forEach(i => rows.push([i.time, i.user, i.site, i.type, i.desc]));
+    const rows = [['Waktu', 'Pelapor', 'Site', 'Kategori', 'Kronologi', 'Status']];
+    APP_STATE.incidents.forEach(i => rows.push([i.time, i.user, i.site, i.type, i.desc, i.status || 'Menunggu Approval']));
     downloadCSV('rekap_kejadian_amp.csv', rows);
   }
 
   function exportMRToCSV() {
-    const rows = [['Waktu', 'Pengaju', 'Site', 'Material', 'Jumlah', 'Prioritas', 'Catatan']];
-    APP_STATE.mr.forEach(m => rows.push([m.time, m.user, m.site, m.item, m.qty, m.priority, m.notes]));
+    const rows = [['Waktu', 'Pengaju', 'Site', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Status']];
+    APP_STATE.mr.forEach(m => rows.push([m.time, m.user, m.site, m.item, m.qty, m.priority, m.notes, m.status || 'Menunggu Approval']));
     downloadCSV('rekap_mr_amp.csv', rows);
-  }
-
-  function submitMR() {
-    const site = document.getElementById('mr-site').value.trim();
-    const item = document.getElementById('mr-item').value.trim();
-    const qty = document.getElementById('mr-qty').value.trim();
-    const priority = document.getElementById('mr-priority').value;
-    const notes = document.getElementById('mr-notes').value.trim();
-    if (!site || !item || !qty) { alert('Lengkapi Site, Nama Material, dan Jumlah.'); return; }
-    APP_STATE.mr.unshift({ time: new Date().toLocaleString('id-ID'), user: APP_STATE.currentUser?.name || '-', site, item, qty, priority, notes });
-    safeLocalStorageSet('amp_mr', JSON.stringify(APP_STATE.mr));
-    document.getElementById('mr-count-badge').textContent = `${APP_STATE.mr.length} MR`;
-    document.getElementById('mr-log-list').innerHTML = APP_STATE.mr.map(m => `<li class="log-item"><div><span class="badge badge-warning">${m.priority}</span> <strong>${m.item}</strong> (${m.qty})<br/>Site: ${m.site} — ${m.notes || '-'}<br/><span style="color:var(--text-muted);">${m.time}</span></div></li>`).join('');
-    alert('Pengajuan MR dicatat.');
-  }
-
-  function submitLeave() {
-    const type = document.getElementById('leave-type').value;
-    const start = document.getElementById('leave-start').value;
-    const end = document.getElementById('leave-end').value;
-    const notes = document.getElementById('leave-notes').value.trim();
-    if (!start || !end) { alert('Pilih tanggal mulai dan selesai.'); return; }
-    APP_STATE.leaves.unshift({ user: APP_STATE.currentUser?.name || '-', type, start, end, notes });
-    safeLocalStorageSet('amp_leaves', JSON.stringify(APP_STATE.leaves));
-    document.getElementById('leave-count-badge').textContent = `${APP_STATE.leaves.length} Data`;
-    document.getElementById('leave-log-list').innerHTML = APP_STATE.leaves.map(l => `<li class="log-item"><div><strong>${l.user}</strong> — <span class="badge badge-in">${l.type}</span><br/>${l.start} s/d ${l.end}<br/><span style="color:var(--text-muted);">${l.notes || '-'}</span></div></li>`).join('');
-    alert('Pengajuan izin/cuti dicatat.');
-  }
-
-  function submitIncident() {
-    const site = document.getElementById('inc-site').value.trim();
-    const type = document.getElementById('inc-type').value;
-    const desc = document.getElementById('inc-desc').value.trim();
-    if (!site || !desc) { alert('Lengkapi lokasi dan kronologi kejadian.'); return; }
-    APP_STATE.incidents.unshift({ time: new Date().toLocaleString('id-ID'), user: APP_STATE.currentUser?.name || '-', site, type, desc });
-    safeLocalStorageSet('amp_incidents', JSON.stringify(APP_STATE.incidents));
-    document.getElementById('inc-count-badge').textContent = `${APP_STATE.incidents.length} Laporan`;
-    document.getElementById('inc-log-list').innerHTML = APP_STATE.incidents.map(i => `<li class="log-item"><div><span class="badge badge-out">${i.type}</span> <strong>${i.site}</strong><br/>${i.desc}<br/><span style="color:var(--text-muted);">${i.time} oleh ${i.user}</span></div></li>`).join('');
-    alert('Laporan kejadian dicatat.');
   }
 
   function saveMCP() {
@@ -2588,6 +2823,7 @@
       clearRadarMap();
       initRadarMapIfAdmin();
       refreshKorlapLivePositions();
+      pullAttendanceFromSupabase();
     }
     alert(connected ? 'Konfigurasi Supabase & GMaps disimpan dan terhubung.' : 'Konfigurasi disimpan (periksa URL & Anon Key jika ingin koneksi cloud aktif).');
   }
