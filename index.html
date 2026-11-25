@@ -2,3427 +2,609 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Monitoring Operasional MBCS AMP — PT. Ardina Mulya Perkasa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMP Operation Monitoring - Live Radar & Notifikasi</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Leaflet CSS untuk Google Maps Layer -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- FontAwesome untuk Ikon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
     :root {
-      --navy-primary: #0a192f;
-      --blue-accent: #1e3a8a;
-      --blue-bright: #0284c7;
-      --sky-accent: #0ea5e9;
-      --gold-accent: #d97706;
-      --bg-canvas: #f1f5f9;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-soft: #e2e8f0;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --warning: #d97706;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      --navy-amp: #0a192f;
+      --navy-card: #112240;
+      --accent-blue: #38bdf8;
+      --radar-green: #10b981;
+      --alert-red: #ef4444;
     }
 
     body {
-      background: linear-gradient(180deg, #0a192f 0%, #e2e8f0 38%, #f8fafc 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding-bottom: 74px;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--navy-amp);
+      color: #f8fafc;
     }
 
-    /* Non-blocking Toast / Notice Banner */
-    #app-toast-banner {
-      position: fixed;
-      top: 56px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-16px);
-      width: calc(100% - 24px);
-      max-width: 500px;
-      background: #0f172a;
-      color: #ffffff;
-      border-left: 4px solid var(--sky-accent);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 11px;
-      font-weight: 600;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
-      z-index: 1200;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
+    /* Header Bar */
+    .amp-header {
+      background: var(--navy-card);
+      padding: 12px 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 8px;
-    }
-
-    #app-toast-banner.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    #app-toast-banner.toast-success { border-left-color: var(--success); }
-    #app-toast-banner.toast-warning { border-left-color: var(--gold-accent); }
-    #app-toast-banner.toast-danger { border-left-color: var(--danger); }
-
-    #main-app {
-      max-width: 540px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background: var(--bg-canvas);
-      box-shadow: 0 12px 32px rgba(10, 25, 47, 0.16);
-      position: relative;
-      display: none;
-    }
-    #main-app.authenticated { display: block; }
-
-    .app-header {
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
       position: sticky;
       top: 0;
-      z-index: 400;
-      background: linear-gradient(135deg, var(--navy-primary), var(--blue-accent));
-      color: #fff;
-      padding: 10px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 3px solid var(--gold-accent);
+      z-index: 1000;
     }
 
-    .brand-box { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .logo-svg { width: 34px; height: 34px; flex-shrink: 0; }
-    .brand-text h1 {
-      font-size: 11.5px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .brand-text p { font-size: 9px; color: #cbd5e1; }
-
-    .sync-badge {
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      padding: 5px 8px;
-      border-radius: 999px;
-      font-size: 9.5px;
+    .amp-title {
       font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Lonceng Notifikasi Admin */
+    .notif-bell-wrapper {
+      position: relative;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-    .sync-badge.connected {
-      background: rgba(22, 163, 74, 0.28);
-      border-color: #4ade80;
-      color: #dcfce7;
+      background: #1e293b;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
     }
 
-    .user-badge {
-      background: rgba(10, 25, 47, 0.45);
-      border: 1px solid rgba(217, 119, 6, 0.65);
-      padding: 5px 8px;
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--alert-red);
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 6px;
       border-radius: 999px;
-      font-size: 9.5px;
-      font-weight: 600;
+      animation: pulseBadge 1.5s infinite;
+    }
+
+    @keyframes pulseBadge {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* Container Peta Google Maps & Radar */
+    .radar-section {
+      padding: 16px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .radar-controls {
       display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    .screen-panel { display: none; padding: 12px; animation: fadeIn 0.2s ease; }
-    .screen-panel.active { display: block; }
-    @keyframes fadeIn {
-      from { opacity: 0.4; transform: translateY(3px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 12px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-    }
-
-    .card-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--navy-primary);
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border-soft);
-      display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      gap: 8px;
     }
 
-    .form-group { margin-bottom: 9px; }
-    .form-group label { display: block; font-size: 10px; font-weight: 600; color: #334155; margin-bottom: 4px; }
-    .form-control {
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 11px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background: #fff;
-      color: var(--text-main);
-    }
-    .form-control:focus {
-      outline: none;
-      border-color: var(--sky-accent);
-      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 9px 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 10.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 6px;
-      transition: transform 0.08s ease, opacity 0.15s ease;
-    }
-    .btn:active { transform: scale(0.99); }
-    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
-    .btn-primary { background: var(--blue-accent); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-warning { background: var(--warning); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-dark { background: var(--navy-primary); color: #fff; }
-    .btn-outline { background: #fff; color: var(--navy-primary); border: 1px solid #cbd5e1; }
-
-    .btn-approve {
-      width: auto;
-      padding: 5px 10px;
-      font-size: 9.5px;
-      margin: 6px 0 0;
+    .map-type-btn {
+      background: var(--navy-card);
+      color: #e2e8f0;
+      border: 1px solid var(--accent-blue);
+      padding: 6px 12px;
       border-radius: 6px;
-      background: var(--success);
-      color: #fff;
-    }
-
-    .admin-live-alert {
-      background: #ecfdf5;
-      border: 1px solid #6ee7b7;
-      border-left: 4px solid var(--success);
-      color: #065f46;
-      padding: 8px 10px;
-      border-radius: 8px;
-      font-size: 10px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .module-item {
-      background: #f8fafc;
-      border: 1px solid var(--border-soft);
-      border-radius: 10px;
-      padding: 9px 4px;
-      text-align: center;
       cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .module-item:hover { background: #eff6ff; border-color: #93c5fd; transform: translateY(-1px); }
-    .module-icon {
-      width: 30px;
-      height: 30px;
-      margin: 0 auto 5px;
-      border-radius: 8px;
-      background: #e0e7ff;
-      color: var(--blue-accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 13px;
     }
-    .module-label { font-size: 9px; font-weight: 600; color: var(--text-main); line-height: 1.2; }
 
-    .digital-clock-box {
-      background: var(--navy-primary);
-      color: #38bdf8;
-      font-family: 'Courier New', monospace;
-      font-size: 18px;
-      font-weight: 800;
-      text-align: center;
-      padding: 8px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
+    .map-type-btn.active {
+      background: var(--accent-blue);
+      color: #0a192f;
+      font-weight: bold;
     }
 
-    .camera-box {
-      position: relative;
+    #googleMapRadar {
+      height: 480px;
       width: 100%;
-      height: 195px;
-      background: #0f172a;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .camera-box video, .camera-box img { width: 100%; height: 100%; object-fit: cover; }
-
-    .status-checklist {
-      display: flex;
-      justify-content: space-between;
-      background: #f8fafc;
-      border: 1px solid var(--border-soft);
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-size: 10px;
-      margin-top: 8px;
-    }
-
-    .log-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-    .log-item {
-      background: #f8fafc;
-      border: 1px solid var(--border-soft);
-      border-radius: 8px;
-      padding: 8px;
-      font-size: 10px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .log-thumb {
-      width: 44px;
-      height: 44px;
-      border-radius: 6px;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 1px solid #cbd5e1;
-    }
-
-    .badge { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 8.5px; font-weight: 700; }
-    .badge-in { background: #dcfce7; color: #166534; }
-    .badge-out { background: #fee2e2; color: #991b1b; }
-    .badge-warning { background: #fef3c7; color: #92400e; }
-
-    #satellite-radar-map {
-      width: 100%;
-      height: 270px;
-      border-radius: 8px;
-      margin-bottom: 8px;
+      border-radius: 12px;
+      border: 2px solid #1e3a8a;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       z-index: 1;
-      border: 1px solid #cbd5e1;
     }
-    .radar-legend { display: flex; justify-content: space-between; font-size: 9.5px; margin-bottom: 6px; }
-    .gmaps-key-bar { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
-    .gmaps-key-bar input {
-      flex: 1;
-      padding: 6px 8px;
-      font-size: 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      background: #ffffff;
-    }
-    .radar-layer-toolbar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-    .radar-layer-btn {
-      flex: 1;
-      min-width: 92px;
-      padding: 5px 7px;
-      font-size: 9px;
-      font-weight: 700;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-      color: #1e293b;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-    .radar-layer-btn.active {
-      background: #1e3a8a;
-      color: #ffffff;
-      border-color: #1e3a8a;
-    }
-    .live-pulse-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
+
+    /* Efek Animasi Radar Pulse di Marker Korlap */
+    .radar-pin {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      background: #10b981;
+      border: 3px solid #ffffff;
       border-radius: 50%;
-      background: #16a34a;
-      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25);
-      margin-right: 4px;
+      box-shadow: 0 0 10px #10b981;
     }
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 540px;
-      background: #fff;
-      border-top: 1px solid var(--border-soft);
-      display: none;
-      grid-template-columns: repeat(4, 1fr);
-      z-index: 500;
-    }
-    .bottom-nav.authenticated { display: grid; }
-    .nav-link {
-      padding: 7px 4px;
-      text-align: center;
-      font-size: 9px;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-    .nav-link.active { color: var(--blue-accent); font-weight: 700; }
-
-    /* ==================== HALAMAN DEPAN / LOGIN MBCS AMP ==================== */
-    #auth-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #dbeafe;
-      z-index: 900;
-      align-items: flex-start;
-      justify-content: center;
-      overflow-y: auto;
-      padding: 0;
-    }
-    #auth-modal-overlay.active { display: flex; }
-
-    .mbcs-front-shell {
-      position: relative;
-      width: 100%;
-      max-width: 460px;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #f8fbff 0%, #e7f2ff 36%, #eef5ff 68%, #dbeafe 100%);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 20px 50px rgba(10, 25, 47, 0.35);
-    }
-
-    .mbcs-top-wave {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 100%;
-      height: 170px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .mbcs-hero {
-      position: relative;
-      z-index: 2;
-      padding: 16px 18px 0;
-      text-align: center;
-    }
-
-    .mbcs-star-logo {
-      width: 82px;
-      height: 82px;
-      margin: 0 auto 4px;
-      display: block;
-      filter: drop-shadow(0 6px 12px rgba(15, 45, 110, 0.18));
-    }
-
-    .mbcs-company-sub {
-      font-size: 11.5px;
-      font-weight: 800;
-      color: #162a5c;
-      letter-spacing: 0.4px;
-      margin-bottom: 4px;
-    }
-
-    .mbcs-main-title {
-      font-size: 18.5px;
-      font-weight: 800;
-      color: #0f2354;
-      line-height: 1.15;
-    }
-
-    .mbcs-brand-highlight {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 27px;
-      font-weight: 900;
-      font-style: italic;
-      color: #0b2c7a;
-      letter-spacing: -0.4px;
-      margin: 1px 0 4px;
-    }
-    .mbcs-brand-highlight::before,
-    .mbcs-brand-highlight::after {
+    .radar-pin::after {
       content: "";
-      flex: 1;
-      max-width: 72px;
-      height: 1.5px;
-      background: linear-gradient(90deg, transparent, #60a5fa, transparent);
-    }
-
-    .mbcs-tagline {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: #1e3a8a;
-      margin-bottom: 8px;
-    }
-
-    .mbcs-scene-box {
-      position: relative;
-      width: 100%;
-      height: 136px;
-      margin-top: 2px;
-      z-index: 1;
-    }
-
-    .mbcs-card-container {
-      position: relative;
-      z-index: 5;
-      margin: -22px 18px 12px;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(8px);
-      border-radius: 22px;
-      padding: 36px 18px 18px;
-      box-shadow: 0 14px 30px rgba(15, 35, 84, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-    }
-
-    .mbcs-avatar-badge {
       position: absolute;
-      top: -24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 48px;
-      height: 48px;
+      top: -12px;
+      left: -12px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #2563eb, #0284c7);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 21px;
-      box-shadow: 0 6px 14px rgba(2, 132, 199, 0.35);
-      border: 3px solid #fff;
+      border: 2px solid #10b981;
+      animation: radarWave 1.8s infinite ease-out;
     }
 
-    .mbcs-welcome-title {
-      text-align: center;
-      font-size: 18px;
-      font-weight: 800;
-      color: #0f2354;
-      margin-bottom: 3px;
+    @keyframes radarWave {
+      0% { transform: scale(0.4); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
     }
 
-    .mbcs-welcome-sub {
-      text-align: center;
-      font-size: 11px;
-      color: #475569;
-      line-height: 1.35;
-      margin-bottom: 14px;
+    /* Panel Daftar Korlap & Log Notifikasi */
+    .grid-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
     }
 
-    .mbcs-input-pill {
-      position: relative;
-      display: flex;
-      align-items: center;
-      background: #f8fafc;
-      border: 1.5px solid #cbd5e1;
+    @media (max-width: 768px) {
+      .grid-dashboard { grid-template-columns: 1fr; }
+    }
+
+    .panel-box {
+      background: var(--navy-card);
       border-radius: 12px;
-      padding: 0 12px;
-      margin-bottom: 10px;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-    .mbcs-input-pill:focus-within {
-      border-color: #0284c7;
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
-    }
-    .mbcs-input-pill i.lead-icon {
-      color: #1d4ed8;
-      font-size: 14px;
-      margin-right: 10px;
-      width: 16px;
-      text-align: center;
-    }
-    .mbcs-input-pill input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 11px 4px;
-      font-size: 12px;
-      font-weight: 500;
-      color: #0f172a;
-      outline: none;
-    }
-    .mbcs-eye-btn {
-      background: none;
-      border: none;
-      color: #64748b;
-      font-size: 14px;
-      cursor: pointer;
-      padding: 4px;
+      padding: 14px;
+      border: 1px solid #1e293b;
+      max-height: 340px;
+      overflow-y: auto;
     }
 
-    .mbcs-btn-reg {
-      width: 100%;
-      padding: 10px 14px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #1d4ed8, #1e40af);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
+    .panel-box h3 {
+      margin-top: 0;
+      font-size: 15px;
+      color: var(--accent-blue);
+      border-bottom: 1px solid #334155;
+      padding-bottom: 8px;
+    }
+
+    .item-card {
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 8px;
       margin-bottom: 8px;
-      box-shadow: 0 5px 12px rgba(29, 78, 216, 0.25);
-    }
-
-    .mbcs-btn-forgot {
-      width: 100%;
-      padding: 9px 14px;
-      border: 1.5px solid #bfdbfe;
-      border-radius: 12px;
-      background: #f0f7ff;
-      color: #0f2354;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-
-    .mbcs-btn-login {
-      width: 100%;
-      padding: 11px 14px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #1d4ed8, #0284c7, #0ea5e9);
-      color: #fff;
+      border-left: 4px solid var(--radar-green);
       font-size: 13px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 7px 16px rgba(2, 132, 199, 0.35);
     }
 
-    .mbcs-footer-banner {
-      position: relative;
-      z-index: 4;
-      background: linear-gradient(135deg, #0b2566, #1d4ed8 55%, #0f296e);
+    .item-card.notif-item {
+      border-left-color: #f59e0b;
+    }
+
+    /* Toast Popup Real-Time di Pojok Kanan Bawah */
+    #toastContainer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 340px;
+    }
+
+    .toast-alert {
+      background: #0f172a;
+      border: 1px solid var(--accent-blue);
+      border-left: 5px solid #10b981;
       color: #fff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      font-size: 13px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .restricted-box {
       text-align: center;
-      padding: 14px 16px 16px;
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      box-shadow: 0 -6px 20px rgba(11, 37, 102, 0.22);
-    }
-    .mbcs-footer-banner .f-title {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-    }
-    .mbcs-footer-banner .f-sub {
-      font-size: 10px;
-      font-style: italic;
-      color: #dbeafe;
-      margin-top: 2px;
+      padding: 50px 20px;
+      background: var(--navy-card);
+      margin: 30px auto;
+      max-width: 500px;
+      border-radius: 12px;
+      border: 1px solid var(--alert-red);
     }
   </style>
 </head>
 <body>
 
-<!-- Non-blocking Notification Banner -->
-<div id="app-toast-banner" role="status" aria-live="polite">
-  <span id="app-toast-message">Informasi sistem</span>
-  <button type="button" onclick="hideToast()" style="background:none;border:none;color:#cbd5e1;cursor:pointer;font-size:12px;" aria-label="Tutup">
-    <i class="fas fa-times"></i>
-  </button>
-</div>
-
-<!-- ==================== HALAMAN DEPAN (LOGIN / REGISTRASI / LUPA PIN) ==================== -->
-<div id="auth-modal-overlay" class="active">
-  <div class="mbcs-front-shell">
-
-    <svg class="mbcs-top-wave" viewBox="0 0 460 170" preserveAspectRatio="none">
-      <path d="M210,0 L460,0 L460,155 C385,125 315,75 210,0 Z" fill="#1d4ed8" opacity="0.92"/>
-      <path d="M275,0 L460,0 L460,112 C395,90 345,52 275,0 Z" fill="#0284c7" opacity="0.65"/>
-    </svg>
-
-    <div class="mbcs-hero">
-      <svg class="mbcs-star-logo" viewBox="0 0 200 200">
-        <polygon points="100,8 122,68 184,38 142,90 192,130 130,130 142,192 96,146 58,192 64,130 8,130 56,90 18,38 76,68" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
-        <polygon points="100,22 116,72 162,50 130,90 168,120 120,120 128,168 96,134 68,168 72,120 28,120 66,90 38,50 82,72" fill="#0f172a" opacity="0.45"/>
-        <rect x="52" y="74" width="96" height="46" rx="10" fill="#0ea5e9" stroke="#ffffff" stroke-width="2.5"/>
-        <text x="100" y="106" font-family="Arial" font-weight="900" font-size="31" fill="#ffffff" text-anchor="middle">AMP</text>
-      </svg>
-
-      <div class="mbcs-company-sub">PT. ARDINA MULYA PERKASA</div>
-      <div class="mbcs-main-title">Monitoring Operasional</div>
-      <div class="mbcs-brand-highlight">MBCS AMP</div>
-      <div class="mbcs-tagline">Real Time Tracking &bull; Better Control &bull; Greater Performance</div>
-
-      <svg class="mbcs-scene-box" viewBox="0 0 420 135">
-        <ellipse cx="210" cy="118" rx="195" ry="12" fill="#bfdbfe"/>
-        <g fill="#93c5fd" opacity="0.65">
-          <rect x="25" y="54" width="16" height="58" rx="2"/>
-          <rect x="46" y="40" width="20" height="72" rx="2"/>
-          <rect x="72" y="62" width="14" height="50" rx="2"/>
-          <rect x="135" y="48" width="18" height="64" rx="2"/>
-          <rect x="158" y="34" width="22" height="78" rx="2"/>
-          <rect x="295" y="42" width="18" height="70" rx="2"/>
-          <rect x="318" y="28" width="22" height="84" rx="2"/>
-          <rect x="345" y="52" width="18" height="60" rx="2"/>
-          <rect x="368" y="64" width="16" height="48" rx="2"/>
-        </g>
-
-        <g transform="translate(86, 10) rotate(-6)">
-          <rect x="0" y="0" width="76" height="114" rx="10" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
-          <rect x="4" y="8" width="68" height="96" rx="6" fill="#dbeafe"/>
-          <path d="M8,36 Q32,28 48,54 T68,72" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="24" cy="34" r="4" fill="#0284c7"/>
-          <path d="M54,44 C54,39 61,39 61,44 C61,49 57.5,54 57.5,54 C57.5,54 54,49 54,44 Z" fill="#dc2626"/>
-        </g>
-
-        <g transform="translate(178, 34)">
-          <ellipse cx="18" cy="64" rx="12" ry="4" fill="rgba(15,35,84,0.22)"/>
-          <path d="M18,2 C8,2 2,10 2,19 C2,33 18,54 18,54 C18,54 34,33 34,19 C34,10 28,2 18,2 Z" fill="#1d4ed8" stroke="#ffffff" stroke-width="2.5"/>
-          <circle cx="18" cy="18" r="7" fill="#38bdf8"/>
-        </g>
-
-        <g transform="translate(226, 62)">
-          <ellipse cx="48" cy="48" rx="44" ry="6" fill="rgba(15,35,84,0.2)"/>
-          <path d="M10,34 L18,16 C20,12 24,10 29,10 L62,10 C67,10 71,12 74,17 L86,29 L86,42 L10,42 Z" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
-          <path d="M22,15 L30,15 L30,25 L17,25 Z" fill="#bae6fd"/>
-          <path d="M34,15 L59,15 L65,25 L34,25 Z" fill="#bae6fd"/>
-          <circle cx="46" cy="33" r="6" fill="#0284c7"/>
-          <circle cx="26" cy="42" r="8.5" fill="#1e293b" stroke="#cbd5e1" stroke-width="2"/>
-          <circle cx="26" cy="42" r="3.5" fill="#e2e8f0"/>
-          <circle cx="70" cy="42" r="8.5" fill="#1e293b" stroke="#cbd5e1" stroke-width="2"/>
-          <circle cx="70" cy="42" r="3.5" fill="#e2e8f0"/>
-        </g>
-
-        <g transform="translate(324, 8)">
-          <path d="M6,44 Q20,34 32,42" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
-          <path d="M12,50 Q22,42 30,48" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
-          <g transform="translate(26, 6) rotate(28)">
-            <rect x="-18" y="4" width="14" height="8" rx="1" fill="#1d4ed8" stroke="#fff" stroke-width="1"/>
-            <rect x="12" y="4" width="14" height="8" rx="1" fill="#1d4ed8" stroke="#fff" stroke-width="1"/>
-            <rect x="-3" y="1" width="14" height="14" rx="3" fill="#e2e8f0" stroke="#475569" stroke-width="1.2"/>
-            <circle cx="4" cy="8" r="3" fill="#0284c7"/>
-          </g>
-        </g>
-      </svg>
+  <!-- Header -->
+  <div class="amp-header">
+    <div class="amp-title">
+      <i class="fa-solid fa-satellite-dish" style="color: #10b981;"></i>
+      <span>AMP RADAR MONITORING — PT ARDINA MULYA PERKASA</span>
     </div>
 
-    <div id="login-box-asli" class="mbcs-card-container">
-      <div class="mbcs-avatar-badge">
-        <i class="fas fa-user"></i>
-      </div>
+    <!-- Lonceng Notifikasi (Khusus Admin / Head of Ops) -->
+    <div id="adminNotifBell" class="notif-bell-wrapper" style="display:none;" onclick="resetNotifBadge()">
+      <i class="fa-solid fa-bell" style="color: #38bdf8;"></i>
+      <span id="notifCount" class="notif-badge">0</span>
+    </div>
+  </div>
 
-      <div class="mbcs-welcome-title">Selamat Datang</div>
-      <div class="mbcs-welcome-sub">
-        Silakan login untuk mengakses sistem<br/>
-        Monitoring Operasional MBCS AMP
-      </div>
+  <!-- Pesan Blokir Jika Dibuka oleh Akun Non-Admin / Korlap -->
+  <div id="accessDeniedView" class="restricted-box" style="display: none;">
+    <i class="fa-solid fa-lock fa-2x" style="color: #ef4444; margin-bottom: 10px;"></i>
+    <h3>Akses Terbatas</h3>
+    <p>Fitur <b>GPS Radar Live Korlap</b> dan <b>Log Notifikasi Aktivitas</b> hanya dapat diakses oleh akun <b>Admin</b> dan <b>Head of Operation</b>.</p>
+  </div>
 
-      <div class="mbcs-input-pill">
-        <i class="fas fa-user lead-icon"></i>
-        <input type="text" id="login-id" placeholder="ID/Username" autocomplete="username">
-      </div>
-
-      <div class="mbcs-input-pill">
-        <i class="fas fa-lock lead-icon"></i>
-        <input type="password" id="login-pin" placeholder="PIN" maxlength="6" autocomplete="current-password" onkeydown="if(event.key==='Enter') processLogin()">
-        <button type="button" class="mbcs-eye-btn" onclick="togglePinVisibility('login-pin', this)" title="Tampilkan / Sembunyikan PIN">
-          <i class="fas fa-eye-slash"></i>
+  <!-- Konten Utama Khusus Admin / HeadOfOps -->
+  <div id="adminRadarDashboard" class="radar-section" style="display: none;">
+    <div class="radar-controls">
+      <div>
+        <button class="map-type-btn active" onclick="switchGoogleLayer('streets', this)">
+          <i class="fa-solid fa-map"></i> Google Maps Jalan
+        </button>
+        <button class="map-type-btn" onclick="switchGoogleLayer('hybrid', this)">
+          <i class="fa-solid fa-satellite"></i> Google Satelit + Nama Jalan
         </button>
       </div>
-
-      <button type="button" class="mbcs-btn-reg" onclick="switchAuthSubView('register')">
-        <i class="fas fa-user-plus"></i> Akun Baru / Registrasi
-      </button>
-
-      <button type="button" class="mbcs-btn-forgot" onclick="switchAuthSubView('reset-pin')">
-        <i class="fas fa-rotate-right"></i> Lupa PIN
-      </button>
-
-      <button type="button" class="mbcs-btn-login" onclick="processLogin()">
-        <i class="fas fa-arrow-right-to-bracket"></i> Login
-      </button>
-    </div>
-
-    <div id="register-box-asli" class="mbcs-card-container" style="display:none;">
-      <div class="mbcs-avatar-badge">
-        <i class="fas fa-user-plus"></i>
-      </div>
-      <div class="mbcs-welcome-title" style="font-size:16px; margin-bottom:10px;">Akun Baru / Registrasi</div>
-
-      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="reg-name" class="form-control" placeholder="Nama Karyawan"></div>
-      <div class="form-group"><label>ID / Username</label><input type="text" id="reg-id" class="form-control" placeholder="Contoh: Dede_Rusmana"></div>
-      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="reg-jabatan" class="form-control" placeholder="Contoh: Korlap / Admin / Head of Ops"></div>
-      <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="reg-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang"></div>
-      <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="reg-phone" class="form-control" placeholder="Contoh: 081234567890"></div>
-      <div class="form-group"><label>PIN 6 Digit</label><input type="password" id="reg-pin" class="form-control" placeholder="PIN 6 Digit" maxlength="6"></div>
-
-      <button type="button" class="btn btn-success" onclick="processRegister()"><i class="fas fa-save"></i> SIMPAN AKUN</button>
-      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI KE LOGIN</button>
-    </div>
-
-    <div id="reset-box-asli" class="mbcs-card-container" style="display:none;">
-      <div class="mbcs-avatar-badge">
-        <i class="fas fa-key"></i>
-      </div>
-      <div class="mbcs-welcome-title" style="font-size:16px; margin-bottom:10px;">Lupa / Reset PIN</div>
-
-      <div class="form-group"><label>ID / Username</label><input type="text" id="reset-id" class="form-control" placeholder="ID / Username"></div>
-      <div class="form-group"><label>PIN Lama</label><input type="password" id="reset-old-pin" class="form-control" maxlength="6"></div>
-      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="reset-new-pin" class="form-control" maxlength="6"></div>
-
-      <button type="button" class="btn btn-warning" onclick="processResetPIN()"><i class="fas fa-sync-alt"></i> PERBARUI PIN</button>
-      <button type="button" class="btn btn-outline" onclick="switchAuthSubView('login')"><i class="fas fa-arrow-left"></i> KEMBALI</button>
-    </div>
-
-    <div class="mbcs-footer-banner">
-      <div class="f-title">PT. Ardina Mulya Perkasa</div>
-      <div class="f-sub">Bersama Membangun Operasional yang Lebih Baik</div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== APLIKASI UTAMA (MODUL 1 - 14) ==================== -->
-<div id="main-app">
-
-  <div class="app-header">
-    <div class="brand-box">
-      <svg class="logo-svg" viewBox="0 0 200 200">
-        <polygon points="100,10 120,70 180,40 140,90 190,130 130,130 140,190 95,145 60,190 65,130 10,130 55,90 20,40 75,70" fill="#1e3a8a" stroke="#ffffff" stroke-width="3"/>
-        <rect x="55" y="75" width="90" height="45" rx="8" fill="#00a8ff"/>
-        <text x="100" y="107" font-family="Arial" font-weight="900" font-size="30" fill="#ffffff" text-anchor="middle">AMP</text>
-      </svg>
-      <div class="brand-text">
-        <h1>PT. ARDINA MULYA PERKASA</h1>
-        <p>Facility Service Specialist</p>
+      <div style="font-size: 12px; color: #94a3b8;">
+        <span style="color: #10b981;">●</span> Live Tracking Aktif (Auto-Sync)
       </div>
     </div>
-    <div style="display:flex; align-items:center; gap:6px;">
-      <div class="sync-badge" id="header-sync-badge" onclick="showModule(14)" title="Buka Pusat Sinkronisasi & Konfigurasi Supabase">
-        <i class="fas fa-database" id="sync-icon"></i> <span id="sync-badge-text">Sync</span>
+
+    <!-- Peta Google Maps -->
+    <div id="googleMapRadar"></div>
+
+    <!-- Panel Daftar Korlap & Log Notifikasi Real-Time -->
+    <div class="grid-dashboard">
+      <div class="panel-box">
+        <h3><i class="fa-solid fa-users-viewfinder"></i> Status Radar Korlap Live</h3>
+        <div id="korlapListContainer">Memuat titik koordinat korlap...</div>
       </div>
-      <div class="user-badge">
-        <i class="fas fa-user-circle"></i>
-        <span id="header-user-id">-</span>
-        <i class="fas fa-sign-out-alt" onclick="logout()" style="margin-left:4px; cursor:pointer;" title="Keluar & Kembali ke Login"></i>
+
+      <div class="panel-box">
+        <h3><i class="fa-solid fa-bolt"></i> Feed Notifikasi Aktivitas Korlap</h3>
+        <div id="notifFeedContainer">Belum ada aktivitas baru...</div>
       </div>
     </div>
   </div>
 
-  <!-- MODUL 1: DASHBOARD -->
-  <div id="mod-1" class="screen-panel active">
-    <div class="card" style="background: linear-gradient(135deg, #0a192f, #1e3a8a); color: #fff;">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-        <div>
-          <h2 id="dash-user-name" style="font-size:15px;">-</h2>
-          <p id="dash-user-role" style="font-size:10px; color:#f59e0b; font-weight:700;">-</p>
-          <p id="dash-user-site" style="font-size:9px; opacity:0.88; margin-top:4px;"><i class="fas fa-building"></i> Area Tugas PLN: -</p>
-          <p id="korlap-gps-permission-status" style="font-size:9px; color:#7dd3fc; margin-top:4px;"><i class="fas fa-location-crosshairs"></i> Status GPS Live: Menunggu izin...</p>
-        </div>
-        <div id="dash-avatar-container" style="width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--gold-accent); background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <img id="dash-avatar-img" src="" alt="Avatar" style="width:100%; height:100%; object-fit:cover; display:none;" />
-          <i class="fas fa-user-tie" id="dash-avatar-icon" style="font-size:24px; color:var(--navy-primary);"></i>
-        </div>
-      </div>
-    </div>
-
-    <div id="korlap-gps-consent-card" class="card" style="display:none; border-left:4px solid var(--sky-accent);">
-      <div class="card-title" style="margin-bottom:6px;">
-        <span><i class="fas fa-location-dot" style="color:var(--blue-accent);"></i> Izin Lokasi GPS Live Korlap</span>
-      </div>
-      <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">
-        Izinkan akses lokasi GPS perangkat Anda agar posisi <em>live</em> (beserta nama jalan, gedung, atau PT) terpantau di radar Admin / Head of Ops.
-      </p>
-      <button type="button" class="btn btn-primary" onclick="requestKorlapLiveGPS(true)">
-        <i class="fas fa-location-arrow"></i> Izinkan &amp; Aktifkan Lokasi GPS Live
-      </button>
-    </div>
-
-    <div id="admin-radar-card" class="card" style="display:none; border: 2px solid var(--gold-accent); background: #fffbeb;">
-      <div class="card-title" style="color:var(--navy-primary); border-bottom-color: #fde68a;">
-        <span><span class="live-pulse-dot"></span><i class="fas fa-map-location-dot" style="color:var(--danger);"></i> Radar Peta Detail Jalan, Gedung &amp; PT (Admin / Head of Ops)</span>
-        <button type="button" class="btn btn-primary" style="width:auto; padding:4px 8px; font-size:9px; margin:0;" onclick="refreshKorlapLivePositions()"><i class="fas fa-sync-alt"></i> Live Refresh</button>
-      </div>
-      <div id="admin-attendance-update-banner" class="admin-live-alert" style="display:none;">
-        <span id="admin-attendance-update-text"><i class="fas fa-bell"></i> Update Absensi Korlap terbaru masuk.</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:3px 7px; font-size:9px; margin:0;" onclick="showModule(3)">Lihat</button>
-      </div>
-      <div class="radar-legend">
-        <span id="radar-engine-label"><i class="fas fa-map"></i> Mode Peta: Detail Jalan, Gedung &amp; PT</span>
-        <span id="radar-marker-count" style="font-weight:bold; color:var(--blue-accent);">0 Korlap Live</span>
-      </div>
-      <div class="gmaps-key-bar">
-        <input type="password" id="radar-gmaps-key" placeholder="Google Maps API Key (opsional untuk Google Maps resmi + Places PT/Gedung)" />
-        <button type="button" class="btn btn-dark" style="width:auto; padding:6px 10px; font-size:9px; margin:0;" onclick="applyGoogleMapsKeyFromRadar()">Pakai GMaps</button>
-      </div>
-      <div class="radar-layer-toolbar">
-        <button type="button" class="radar-layer-btn active" id="layer-btn-detail" onclick="switchRadarBaseLayer('detail', this)">
-          <i class="fas fa-road"></i> Peta Jalan, Gedung &amp; PT
-        </button>
-        <button type="button" class="radar-layer-btn" id="layer-btn-hybrid" onclick="switchRadarBaseLayer('hybrid', this)">
-          <i class="fas fa-satellite"></i> Satelit + Label
-        </button>
-        <button type="button" class="radar-layer-btn" id="layer-btn-sat" onclick="switchRadarBaseLayer('satellite', this)">
-          <i class="fas fa-globe-asia"></i> Satelit
-        </button>
-      </div>
-      <div id="satellite-radar-map"></div>
-      <p style="font-size:9.5px; color:var(--text-muted); margin-bottom:8px;">Lokasi GPS live semua Korlap (klik item untuk fokus di peta):</p>
-      <div id="korlap-live-radar-list" style="max-height: 230px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
-    </div>
-
-    <div id="admin-export-card" class="card" style="display:none;">
-      <div class="card-title"><i class="fas fa-download"></i> Output &amp; Download Rekap Terpusat (Admin)</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <button type="button" class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Rekap Absensi (.CSV)</button>
-        <button type="button" class="btn btn-primary" onclick="exportGPSLogToCSV()"><i class="fas fa-map-marked-alt"></i> Rekap GPS Korlap (.CSV)</button>
-        <button type="button" class="btn btn-warning" onclick="exportIncidentLogToCSV()"><i class="fas fa-file-alt"></i> Rekap Kejadian (.CSV)</button>
-        <button type="button" class="btn btn-danger" onclick="exportMRToCSV()"><i class="fas fa-file-invoice"></i> Rekap MR (.CSV)</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><i class="fas fa-th-large"></i> 14 Modul Terintegrasi</div>
-      <div class="modules-grid">
-        <div class="module-item" onclick="showModule(1)"><div class="module-icon"><i class="fas fa-chart-line"></i></div><div class="module-label">Dashboard</div></div>
-        <div class="module-item" onclick="showModule(2)"><div class="module-icon"><i class="fas fa-user"></i></div><div class="module-label">Profil</div></div>
-        <div class="module-item" onclick="showModule(3)"><div class="module-icon"><i class="fas fa-camera"></i></div><div class="module-label">Absensi</div></div>
-        <div class="module-item" onclick="showModule(4)"><div class="module-icon" style="background:var(--gold-accent); color:#fff;"><i class="fas fa-file-invoice-dollar"></i></div><div class="module-label">MR (Req)</div></div>
-        <div class="module-item" onclick="showModule(5)"><div class="module-icon"><i class="fas fa-file-signature"></i></div><div class="module-label">Izin &amp; Cuti</div></div>
-        <div class="module-item" onclick="showModule(6)"><div class="module-icon" style="background:var(--danger); color:#fff;"><i class="fas fa-exclamation-triangle"></i></div><div class="module-label" style="color:var(--danger); font-weight:bold;">Kejadian</div></div>
-        <div class="module-item" onclick="showModule(7)"><div class="module-icon"><i class="fas fa-broom"></i></div><div class="module-label">MCP Cleaning</div></div>
-        <div class="module-item" onclick="showModule(8)"><div class="module-icon"><i class="fas fa-restroom"></i></div><div class="module-label">Cheklis Area</div></div>
-        <div class="module-item" onclick="showModule(9)"><div class="module-icon"><i class="fas fa-hard-hat"></i></div><div class="module-label">High Risk K3</div></div>
-        <div class="module-item" onclick="showModule(10)"><div class="module-icon"><i class="fas fa-users"></i></div><div class="module-label">Data Tim</div></div>
-        <div class="module-item" onclick="showModule(11)"><div class="module-icon"><i class="fas fa-tools"></i></div><div class="module-label">Equipment</div></div>
-        <div class="module-item" onclick="showModule(12)"><div class="module-icon"><i class="fas fa-exclamation-circle"></i></div><div class="module-label">Outstanding</div></div>
-        <div class="module-item" onclick="showModule(13)"><div class="module-icon"><i class="fas fa-bullhorn"></i></div><div class="module-label">KPI &amp; News</div></div>
-        <div class="module-item" onclick="showModule(14)" style="background:#e0f2fe; border:1px solid #0284c7;"><div class="module-icon" style="background:#0284c7; color:#fff;"><i class="fas fa-database"></i></div><div class="module-label" style="color:#0369a1; font-weight:bold;">Modul Sync</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODUL 2: PROFIL & EDIT FOTO PROFIL -->
-  <div id="mod-2" class="screen-panel">
-    <div class="card">
-      <div class="card-title"><i class="fas fa-id-card"></i> Identitas &amp; Digital ID Card Karyawan</div>
-      <div style="text-align:center; padding:10px;">
-        <div id="profile-avatar-display" style="width:80px; height:80px; border-radius:50%; background:var(--navy-primary); color:var(--gold-accent); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 10px; overflow:hidden; border:3px solid var(--gold-accent);">
-          <img id="prof-avatar-img" src="" alt="Foto Profil" style="width:100%; height:100%; object-fit:cover; display:none;" />
-          <i class="fas fa-user-tie" id="prof-avatar-icon"></i>
-        </div>
-        <h3 id="prof-name" style="font-size:16px; font-weight:bold; color:var(--navy-primary);">-</h3>
-        <p id="prof-id" style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">ID: -</p>
-        <p id="prof-jabatan" style="font-size:12px; font-weight:bold; color:var(--blue-accent);">Peran: -</p>
-      </div>
-      <div style="border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; font-size: 11px;">
-        <p style="margin-bottom: 6px;"><i class="fas fa-map-marker-alt" style="color:var(--danger); width:18px;"></i> <strong>Area Tugas PLN:</strong> <span id="prof-site">-</span></p>
-        <p style="margin-bottom: 6px;"><i class="fas fa-phone-alt" style="color:var(--success); width:18px;"></i> <strong>No. Telepon:</strong> <span id="prof-phone">-</span></p>
-      </div>
-    </div>
-
-    <div class="card" style="border-top: 3px solid var(--gold-accent);">
-      <div class="card-title"><i class="fas fa-camera-retro"></i> Edit Foto Profil Anda</div>
-      <div class="camera-box" style="height: 160px; margin-bottom: 8px;">
-        <video id="profile-webcam" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
-        <img id="profile-photo-preview" src="" alt="Pratinjau Foto" style="display:none; width:100%; height:100%; object-fit:cover;" />
-        <div id="profile-cam-placeholder" style="color:#fff; text-align:center;">
-          <i class="fas fa-user-circle fa-2x" style="margin-bottom:6px; color:var(--gold-accent);"></i>
-          <p style="font-size:9.5px;">Pratinjau Foto Profil</p>
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
-        <button type="button" class="btn btn-outline" style="font-size:10px; padding:8px;" onclick="startProfileWebcam()"><i class="fas fa-video"></i> Buka Kamera</button>
-        <button type="button" class="btn btn-primary" style="font-size:10px; padding:8px;" onclick="captureProfileSnapshot()"><i class="fas fa-camera"></i> Ambil Foto</button>
-      </div>
-      <div class="form-group" style="margin-top:6px;">
-        <label style="font-size:10px; font-weight:bold;"><i class="fas fa-image"></i> Unggah Foto dari Galeri</label>
-        <input type="file" id="profile-gallery-input" accept="image/*" class="form-control" onchange="loadProfileFromGallery(event)" style="font-size:10px; padding:6px;" />
-      </div>
-      <button type="button" class="btn btn-success" style="margin-top:8px;" onclick="saveProfileAvatar()"><i class="fas fa-save"></i> SIMPAN FOTO PROFIL</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><i class="fas fa-user-edit"></i> Edit Informasi Profil</div>
-      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="edit-prof-name" class="form-control" /></div>
-      <div class="form-group"><label>Jabatan / Peran</label><input type="text" id="edit-prof-jabatan" class="form-control" /></div>
-      <div class="form-group"><label>Area Tugas PLN</label><input type="text" id="edit-prof-site" class="form-control" /></div>
-      <div class="form-group"><label>No. Telepon / WhatsApp</label><input type="text" id="edit-prof-phone" class="form-control" /></div>
-      <button type="button" class="btn btn-success" onclick="updateOwnProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><i class="fas fa-key"></i> Ganti PIN Keamanan</div>
-      <div class="form-group"><label>PIN Lama</label><input type="password" id="prof-old-pin" class="form-control" maxlength="6" /></div>
-      <div class="form-group"><label>PIN Baru 6 Digit</label><input type="password" id="prof-new-pin" class="form-control" maxlength="6" /></div>
-      <button type="button" class="btn btn-warning" onclick="changeOwnPIN()"><i class="fas fa-save"></i> UPDATE PIN</button>
-    </div>
-  </div>
-
-  <!-- MODUL 3: ABSENSI -->
-  <div id="mod-3" class="screen-panel">
-    <div class="card">
-      <div class="card-title"><i class="fas fa-clock"></i> Absensi Live Foto Wajib &amp; GPS Gedung/PT</div>
-      <div class="digital-clock-box" id="live-clock">00:00:00 WIB</div>
-
-      <div class="camera-box">
-        <video id="webcam" autoplay playsinline style="display:none;"></video>
-        <img id="photo-preview" src="" alt="Foto Absensi" style="display:none;" />
-        <div id="camera-placeholder" style="color:#fff; text-align:center;">
-          <i class="fas fa-camera fa-2x" style="margin-bottom:8px; color:var(--gold-accent);"></i>
-          <p style="font-size:10px;">Wajib Live Foto Kamera Perangkat</p>
-        </div>
-      </div>
-
-      <button type="button" class="btn btn-outline" onclick="startWebcam()"><i class="fas fa-video"></i> 1. Nyalakan Kamera Live</button>
-      <button type="button" class="btn btn-primary" id="btn-take-snapshot" onclick="takeSnapshot()"><i class="fas fa-circle"></i> 2. Ambil Foto Live Sekarang</button>
-
-      <div style="margin-top:10px;" class="form-group">
-        <button type="button" class="btn btn-warning" id="btn-tarik-gps" onclick="getRealtimeGPS()"><i class="fas fa-map-marked-alt"></i> 3. Tarik GPS Gedung / PT / Lokasi</button>
-        <input type="text" id="gps-coords" class="form-control" placeholder="Nama Gedung / PT / Jalan & Koordinat..." readonly style="background:#f1f5f9; text-align:center; font-weight:bold; font-size:10px;" />
-        <div id="gmaps-link-box" style="margin-top:4px; text-align:center;"></div>
-      </div>
-
-      <div class="status-checklist">
-        <span id="status-foto-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> Foto: Belum</span>
-        <span id="status-gps-badge" style="color:var(--danger); font-weight:bold;"><i class="fas fa-times-circle"></i> GPS: Belum</span>
-      </div>
-
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <button type="button" class="btn btn-success" id="btn-checkin" onclick="saveAttendance('IN')"><i class="fas fa-sign-in-alt"></i> CHECK-IN (IN)</button>
-        <button type="button" class="btn btn-danger" id="btn-checkout" onclick="saveAttendance('OUT')"><i class="fas fa-sign-out-alt"></i> CHECK-OUT (OUT)</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-history"></i> Riwayat Absensi (Update Live Korlap)</span>
-        <span id="absen-count-badge" class="badge badge-in">0 Data</span>
-      </div>
-      <ul id="attendance-log-list" class="log-list">
-        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan absensi tersimpan pada sesi ini.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- MODUL 4: MR -->
-  <div id="mod-4" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-file-invoice-dollar"></i> Material Request (MR)</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Area Tugas / Site (UPT / ULTG / Kantor)</label><input type="text" id="mr-site" class="form-control" placeholder="Contoh: UPT Bekasi & ULTG Cikarang" /></div>
-      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
-        <div class="form-group"><label>Nama Material / Kebutuhan</label><input type="text" id="mr-item" class="form-control" placeholder="Contoh: Chemical Pembersih / APD" /></div>
-        <div class="form-group"><label>Jumlah &amp; Satuan</label><input type="text" id="mr-qty" class="form-control" placeholder="Contoh: 10 Pack" /></div>
-      </div>
-      <div class="form-group">
-        <label>Prioritas &amp; Catatan Operasional</label>
-        <select id="mr-priority" class="form-control" style="margin-bottom:6px;">
-          <option value="Normal">Normal</option>
-          <option value="Urgent">Urgent (Kebutuhan Segera)</option>
-          <option value="K3 / Safety">K3 / Safety</option>
-        </select>
-        <input type="text" id="mr-notes" class="form-control" placeholder="Alasan permintaan / spesifikasi singkat..." />
-      </div>
-      <button type="button" class="btn btn-warning" onclick="submitMR()"><i class="fas fa-paper-plane"></i> AJUKAN MATERIAL REQUEST (MR)</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-list-alt"></i> Daftar Pengajuan MR</span>
-        <span id="mr-count-badge" class="badge badge-warning">0 MR</span>
-      </div>
-      <ul id="mr-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li></ul>
-    </div>
-  </div>
-
-  <!-- MODUL 5: IZIN & CUTI -->
-  <div id="mod-5" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-file-signature"></i> Pengajuan Izin, Sakit &amp; Cuti</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group">
-        <label>Jenis Pengajuan</label>
-        <select id="leave-type" class="form-control">
-          <option value="Izin">Izin Keperluan Penting</option>
-          <option value="Sakit">Sakit</option>
-          <option value="Cuti Tahunan">Cuti Tahunan</option>
-          <option value="Dinas Luar">Dinas Luar / Penugasan Site</option>
-        </select>
-      </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-        <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="leave-start" class="form-control" /></div>
-        <div class="form-group"><label>Tanggal Selesai</label><input type="date" id="leave-end" class="form-control" /></div>
-      </div>
-      <div class="form-group"><label>Keterangan / Pengganti Tugas di Lapangan</label>
-        <input type="text" id="leave-notes" class="form-control" placeholder="Alasan izin/cuti & nama PIC pengganti di site..." />
-      </div>
-      <button type="button" class="btn btn-primary" onclick="submitLeave()"><i class="fas fa-paper-plane"></i> AJUKAN IZIN / CUTI</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-calendar-check"></i> Riwayat Izin &amp; Cuti</span>
-        <span id="leave-count-badge" class="badge badge-in">0 Data</span>
-      </div>
-      <ul id="leave-log-list" class="log-list">
-        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan izin atau cuti.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- MODUL 6: KEJADIAN / INSIDEN -->
-  <div id="mod-6" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Laporan Kejadian / Insiden Lapangan</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Lokasi Kejadian / Site PLN</label><input type="text" id="inc-site" class="form-control" placeholder="Contoh: UPT Bekasi / GISTET Cawang Baru" /></div>
-      <div class="form-group">
-        <label>Kategori Kejadian</label>
-        <select id="inc-type" class="form-control">
-          <option value="Near Miss / Potensi Bahaya">Near Miss / Potensi Bahaya</option>
-          <option value="Kecelakaan Kerja (K3)">Kecelakaan Kerja (K3)</option>
-          <option value="Komplain / Temuan Area">Komplain / Temuan Area</option>
-          <option value="Kerusakan Fasilitas / Peralatan">Kerusakan Fasilitas / Peralatan</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Kronologi &amp; Tindakan Awal</label><textarea id="inc-desc" class="form-control" rows="3" placeholder="Jelaskan waktu, kronologi singkat, dan tindakan penanganan awal..."></textarea></div>
-      <button type="button" class="btn btn-danger" onclick="submitIncident()"><i class="fas fa-bullhorn"></i> KIRIM LAPORAN KEJADIAN</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-clipboard-list"></i> Daftar Laporan Kejadian</span>
-        <span id="inc-count-badge" class="badge badge-out">0 Laporan</span>
-      </div>
-      <ul id="inc-log-list" class="log-list">
-        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- MODUL 7: MCP CLEANING -->
-  <div id="mod-7" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-broom"></i> MASTER CLEANING PROGRAM (MCP)</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <div class="form-group">
-          <label>PT PLN (PERSERO) UIT</label>
-          <input type="text" id="mcp-uit" class="form-control" placeholder="Contoh: JBB / JBT" />
-        </div>
-        <div class="form-group">
-          <label>UPT / SITE</label>
-          <input type="text" id="mcp-upt" class="form-control" placeholder="Contoh: UPT Bekasi / Cawang" />
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <div class="form-group">
-          <label>PERIODE</label>
-          <input type="text" id="mcp-periode" class="form-control" placeholder="Contoh: JANUARI - DESEMBER 2026" />
-        </div>
-        <div class="form-group">
-          <label>AREA / LOKASI MCP</label>
-          <select id="mcp-area-select" class="form-control" onchange="renderMCPAreaTemplate()"></select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Sesuaikan / Tambah Item Pekerjaan di Area Ini (Opsional)</label>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:6px;">
-          <input type="text" id="mcp-custom-item" class="form-control" placeholder="Item (mis. Kaca)" />
-          <input type="text" id="mcp-custom-mat" class="form-control" placeholder="Material" />
-          <input type="text" id="mcp-custom-job" class="form-control" placeholder="Job Des" />
-          <button type="button" class="btn btn-primary" style="width:auto; margin:0; padding:0 10px;" onclick="addCustomMCPItem()" title="Tambah Baris Item"><i class="fas fa-plus"></i></button>
-        </div>
-      </div>
-
-      <div style="overflow-x:auto; border:1px solid var(--border-soft); border-radius:8px; margin-bottom:10px; max-height:310px;">
-        <table id="mcp-matrix-table" style="width:100%; border-collapse:collapse; font-size:9px; min-width:680px;">
-          <thead style="position:sticky; top:0; background:var(--navy-primary); color:#fff; z-index:2;">
-            <tr>
-              <th style="padding:6px; border:1px solid #334155; text-align:left;">ITEM</th>
-              <th style="padding:6px; border:1px solid #334155; text-align:left;">JENIS MATERIAL</th>
-              <th style="padding:6px; border:1px solid #334155; text-align:left;">JOB DES</th>
-              <th style="padding:6px; border:1px solid #334155;">FREQ (D/W/2W/M/6M)</th>
-              <th style="padding:6px; border:1px solid #334155;">HARI (SEN-SAB)</th>
-              <th style="padding:6px; border:1px solid #334155;">BULAN &amp; MINGGU (1-4)</th>
-              <th style="padding:6px; border:1px solid #334155;">STATUS / CATATAN</th>
-            </tr>
-          </thead>
-          <tbody id="mcp-matrix-tbody"></tbody>
-        </table>
-      </div>
-
-      <button type="button" class="btn btn-success" onclick="saveMCP()"><i class="fas fa-paper-plane"></i> SIMPAN &amp; KIRIM MCP KORLAP</button>
-    </div>
-
-    <div id="mcp-admin-inbox-card" class="card" style="display:none; border:2px solid var(--gold-accent); background:#fffbeb;">
-      <div class="card-title" style="color:var(--navy-primary);">
-        <span><i class="fas fa-inbox" style="color:var(--gold-accent);"></i> Data MCP Masuk dari Korlap (Khusus Admin / Head of Ops)</span>
-        <span id="mcp-inbox-count" class="badge badge-warning">0 Data</span>
-      </div>
-      <ul id="mcp-admin-inbox-list" class="log-list">
-        <li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data MCP yang masuk dari Korlap.</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- MODUL 8: CHEKLIS AREA (DAC) -->
-  <div id="mod-8" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-restroom"></i> Daily Activity Checklist (DAC) / Area</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Nama Area / Toilet / Gedung</label><input type="text" id="dac-area" class="form-control" placeholder="Contoh: Toilet Lt. 1 & Area Parkir" /></div>
-      <div class="form-group">
-        <label>Kondisi Kebersihan &amp; Kelengkapan (5S / 3S)</label>
-        <select id="dac-condition" class="form-control">
-          <option value="Baik / Bersih & Lengkap">Baik / Bersih &amp; Lengkap</option>
-          <option value="Cukup / Perlu Refill Sabun-Tissue">Cukup / Perlu Refill Sabun-Tissue</option>
-          <option value="Kurang / Perlu Perbaikan Segera">Kurang / Perlu Perbaikan Segera</option>
-        </select>
-      </div>
-      <button type="button" class="btn btn-primary" onclick="saveDAC()"><i class="fas fa-save"></i> SIMPAN CHEKLIS AREA</button>
-    </div>
-    <div class="card">
-      <div class="card-title"><i class="fas fa-clipboard-check"></i> Riwayat Cheklis Area</div>
-      <ul id="dac-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada cheklis area.</li></ul>
-    </div>
-  </div>
-
-  <!-- MODUL 9: HIGH RISK K3 -->
-  <div id="mod-9" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-hard-hat"></i> High Risk K3 &amp; APD (Working at Height / Listrik)</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Jenis Pekerjaan Berisiko Tinggi</label><input type="text" id="k3-job" class="form-control" placeholder="Contoh: Pembersihan Kaca Tinggi / Rope Access / Area Tegangan" /></div>
-      <div class="form-group"><label>Kesiapan APD, JSA &amp; Permit</label><input type="text" id="k3-apd" class="form-control" placeholder="Contoh: Full Body Harness, Helm Safety, Sepatu Safety, JSA Lengkap" /></div>
-      <button type="button" class="btn btn-warning" onclick="saveK3()"><i class="fas fa-shield-alt"></i> VERIFIKASI &amp; SIMPAN K3</button>
-    </div>
-    <div class="card">
-      <div class="card-title"><i class="fas fa-list"></i> Log K3 &amp; APD</div>
-      <ul id="k3-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan K3.</li></ul>
-    </div>
-  </div>
-
-  <!-- MODUL 10: DATA TIM -->
-  <div id="mod-10" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-users"></i> Data Tim Lapangan (CS / OB / Security / Rope Access)</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Nama Personel</label><input type="text" id="team-name" class="form-control" placeholder="Nama lengkap personel" /></div>
-      <div class="form-group"><label>Posisi &amp; Site Tugas</label><input type="text" id="team-role-site" class="form-control" placeholder="Contoh: Korlap - UPT Bekasi & ULTG Cikarang" /></div>
-      <button type="button" class="btn btn-primary" onclick="addTeamMember()"><i class="fas fa-user-plus"></i> TAMBAH DATA TIM</button>
-    </div>
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-address-book"></i> Daftar Personel Tim</span>
-        <span id="team-count-badge" class="badge badge-in">0 Personel</span>
-      </div>
-      <ul id="team-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data tim tersimpan.</li></ul>
-    </div>
-  </div>
-
-  <!-- MODUL 11: EQUIPMENT -->
-  <div id="mod-11" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-tools"></i> Inventaris &amp; Kondisi Equipment</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Nama Alat / Mesin</label><input type="text" id="eq-name" class="form-control" placeholder="Contoh: Floor Polisher / Vacuum Cleaner / Tangga" /></div>
-      <div class="form-group"><label>Jumlah &amp; Kondisi</label><input type="text" id="eq-status" class="form-control" placeholder="Contoh: 2 Unit - Baik / 1 Unit Perlu Servis" /></div>
-      <button type="button" class="btn btn-primary" onclick="saveEquipment()"><i class="fas fa-save"></i> SIMPAN DATA EQUIPMENT</button>
-    </div>
-    <div class="card">
-      <div class="card-title"><i class="fas fa-boxes"></i> Daftar Equipment</div>
-      <ul id="eq-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data equipment.</li></ul>
-    </div>
-  </div>
-
-  <!-- MODUL 12: OUTSTANDING -->
-  <div id="mod-12" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-exclamation-circle"></i> Catatan Pekerjaan Outstanding</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <div class="form-group"><label>Item Outstanding &amp; Target Penyelesaian</label><input type="text" id="out-item" class="form-control" placeholder="Contoh: Penggantian mop head - Target besok" /></div>
-      <button type="button" class="btn btn-warning" onclick="saveOutstanding()"><i class="fas fa-plus-circle"></i> TAMBAH OUTSTANDING</button>
-    </div>
-    <div class="card">
-      <div class="card-title"><i class="fas fa-hourglass-half"></i> Daftar Outstanding</div>
-      <ul id="out-log-list" class="log-list"><li class="log-item" style="justify-content:center; color:var(--text-muted);">Tidak ada item outstanding.</li></ul>
-    </div>
-  </div>
-
-  <!-- MODUL 13: KPI & NEWS -->
-  <div id="mod-13" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-bullhorn"></i> KPI, SLA &amp; Informasi Operasional</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <p style="font-size:10.5px; line-height:1.5; color:var(--text-main);">
-        <strong>Fokus Operasional PT. Ardina Mulya Perkasa:</strong> Kepatuhan absensi live foto &amp; GPS, standar K3 &amp; APD, kedisiplinan MCP &amp; DAC, serta <em>Service Excellence</em> di seluruh area penugasan PLN.
-      </p>
-    </div>
-  </div>
-
-  <!-- MODUL 14: MODUL SYNC (SUPABASE & GOOGLE MAPS) -->
-  <div id="mod-14" class="screen-panel">
-    <div class="card">
-      <div class="card-title">
-        <span><i class="fas fa-database"></i> Konfigurasi &amp; Sinkronisasi Supabase</span>
-        <button type="button" class="btn btn-outline" style="width:auto; padding:4px 8px; font-size:9.5px; margin:0;" onclick="showModule(1)"><i class="fas fa-arrow-left"></i> Dashboard</button>
-      </div>
-      <p id="sb-status-text" style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Status Cloud: Belum terhubung (menggunakan penyimpanan lokal perangkat).</p>
-      <div class="form-group"><label>Supabase Project URL</label><input type="text" id="sb-url" class="form-control" placeholder="https://xxxx.supabase.co" /></div>
-      <div class="form-group"><label>Supabase Anon Key</label><input type="password" id="sb-key" class="form-control" placeholder="eyJ..." /></div>
-      <div class="form-group"><label>Google Maps JavaScript API Key (Opsional)</label><input type="password" id="sb-gmaps-key" class="form-control" placeholder="AIzaSy..." /></div>
-      <button type="button" class="btn btn-primary" onclick="saveSupabaseConfig()"><i class="fas fa-plug"></i> SIMPAN &amp; HUBUNGKAN</button>
-      <button type="button" class="btn btn-success" onclick="syncAllData()"><i class="fas fa-sync"></i> SINKRONKAN DATA SEKARANG</button>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAVIGATION -->
-  <nav class="bottom-nav" id="bottom-nav">
-    <div class="nav-link active" id="nav-1" onclick="showModule(1)"><i class="fas fa-home"></i><span>Dashboard</span></div>
-    <div class="nav-link" id="nav-3" onclick="showModule(3)"><i class="fas fa-camera"></i><span>Absensi</span></div>
-    <div class="nav-link" id="nav-7" onclick="showModule(7)"><i class="fas fa-broom"></i><span>MCP</span></div>
-    <div class="nav-link" id="nav-2" onclick="showModule(2)"><i class="fas fa-user"></i><span>Profil</span></div>
-  </nav>
-
-</div>
-
-<script>
-  /**
-   * Non-blocking toast helper (replaces native alert() across the application).
-   */
-  let toastTimer = null;
-  function showToast(message, variant = 'info') {
-    const banner = document.getElementById('app-toast-banner');
-    const msgEl = document.getElementById('app-toast-message');
-    if (!banner || !msgEl) return;
-    banner.classList.remove('toast-success', 'toast-warning', 'toast-danger');
-    if (variant === 'success') banner.classList.add('toast-success');
-    if (variant === 'warning') banner.classList.add('toast-warning');
-    if (variant === 'danger') banner.classList.add('toast-danger');
-    msgEl.textContent = message;
-    banner.classList.add('visible');
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => hideToast(), 3600);
-  }
-
-  function hideToast() {
-    const banner = document.getElementById('app-toast-banner');
-    if (banner) banner.classList.remove('visible');
-  }
-
-  function escapeHtml(str) {
-    return String(str ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  const DEFAULT_TEAM = [
-    { id: 'Dede_Rusmana', name: 'Dede Rusmana', roleSite: 'Koordinator Lapangan — UPT Bekasi & ULTG Cikarang' },
-    { id: 'Dede_Purnama', name: 'Dede Purnama', roleSite: 'Koordinator Lapangan — ULTG Karet & ULTG Mampang (JBB)' },
-    { id: 'Dadang_Darsono', name: 'Dadang Darsono', roleSite: 'Koordinator Lapangan — UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah (JBB)' },
-    { id: 'Irfan_AS', name: 'Irfan Ardiatma S', roleSite: 'Koordinator Lapangan — UPT Cawang & ULTG Mampang (JBB)' },
-    { id: 'Yan_S', name: 'Yan Saputra', roleSite: 'Koordinator Lapangan — UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah (JBB)' },
-    { id: 'Andi_I', name: 'Andi Ilmanto', roleSite: 'Koordinator Lapangan — ULTG Gandul, ULTG Petukangan & ULTG Tangsel (JBB)' },
-    { id: 'Rizky_Badrul Z', name: 'Rizky Badrul Zaman', roleSite: 'Koordinator Lapangan — Kantor Induk Bandung & ULTG Bandung Barat' },
-    { id: 'Yadi_S', name: 'Yadi Supriyadi', roleSite: 'Koordinator Lapangan — UPT Bandung, ULTG Bandung Timur & Bandung Selatan' },
-    { id: 'Tegar_D', name: 'Tegar Dwitama', roleSite: 'Koordinator Lapangan — ULTG Cikarang' },
-    { id: 'Tamam_2', name: 'Tamam', roleSite: 'Koordinator Lapangan — UPT Bogor & ULTG Sukabumi' },
-    { id: 'Haerudin_3', name: 'Haerudin', roleSite: 'Koordinator Lapangan — ULTG Purwakarta' },
-    { id: 'Iswanto_R', name: 'Iswanto Riansyah', roleSite: 'Koordinator Lapangan — UPT Bogor & ULTG Sukabumi' },
-    { id: 'Rifky_Y', name: 'Rifkiyansyah', roleSite: 'Koordinator Lapangan — UPT Karawang, UPT Bogor & ULTG Sukabumi' }
-  ];
-
-  const MCP_AREAS_TEMPLATE = [
-    {
-      no: 1,
-      area: "1. COMMON AREA / KORIDOR LANTAI 2 & LANTAI 1",
-      rows: [
-        { item: "Ceiling", mat: "Beton & Gipsum", job: "Cleaning Cob Web", freq: "W", days: "SEN", period: "JAN W1-W4" },
-        { item: "Cup Lampu", mat: "Besi", job: "Dusting", freq: "M", days: "SAB", period: "JAN W2" },
-        { item: "Smoke Detector", mat: "Plastik", job: "Dusting", freq: "M", days: "SAB", period: "JAN W2" },
-        { item: "Ac Grill & Box Ac", mat: "Besi & Plastik", job: "Dusting", freq: "2W", days: "SAB", period: "JAN W1, W3" },
-        { item: "Dinding Keramik", mat: "Beton", job: "Dusting", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Dinding Keramik", mat: "Beton", job: "Wall Cleaning, Spotting", freq: "M", days: "SAB", period: "JAN W3" },
-        { item: "Pintu Kaca", mat: "Kaca", job: "Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Frame Kaca", mat: "Frame Kaca", job: "Spotting & Polishing", freq: "M", days: "SAB", period: "JAN W1" },
-        { item: "Tangga Akses / Anak Tangga & Hand Relling", mat: "Keramik", job: "Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Hydrant, Apar", mat: "Besi", job: "Dusting", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Signage", mat: "Plastik", job: "Dusting", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Aksesoris Dinding", mat: "Plastik & Kasa", job: "Dusting", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Meja & Kursi", mat: "Kayu", job: "Dusting", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Musholla", mat: "Keramik & Karpet", job: "Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Dus Met", mat: "Karpet", job: "Sweeping", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah", mat: "Plastik", job: "Dusting & Washing", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Lantai Keramik", mat: "Keramik", job: "Sweeping, Mopping & Brushing", freq: "D / 2W", days: "SEN-SAB", period: "Harian / W1, W3" }
-      ]
-    },
-    {
-      no: 2,
-      area: "2. TOILET PRIA/WANITA LANTAI 2 - 1",
-      rows: [
-        { item: "Ceiling", mat: "Beton & Gipsum", job: "Cleaning Cob Web", freq: "W", days: "SEL", period: "JAN W1-W4" },
-        { item: "Cup Lampu & Exhaust Fan", mat: "Besi", job: "Dusting", freq: "M", days: "SAB", period: "JAN W2" },
-        { item: "Pintu Kaca & Kaca", mat: "Kaca", job: "Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Dinding Keramik", mat: "Beton & Keramik", job: "Dusting / Wall Cleaning", freq: "D / M", days: "SEN-SAB", period: "Harian / W3" },
-        { item: "Closet, Urinal & Washtafel", mat: "Keramik & Stainless", job: "Dusting, Spotting & Polishing", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Dispenser Handsoap & Pipa Leher Angsa", mat: "Plastik & Stainless", job: "Dusting & Spotting", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah & Floor Drain", mat: "Plastik & Besi", job: "Washing, Spotting & Spraying Karbol", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Lantai Keramik", mat: "Keramik", job: "Sweeping, Mopping & Brushing", freq: "D / 2W", days: "SEN-SAB", period: "Harian / W1, W3" }
-      ]
-    },
-    {
-      no: 3,
-      area: "3. JANITOR LANTAI 2",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "RAB / SAB", period: "JAN W1-W4" },
-        { item: "Pintu Kaca, Dinding & Washtafel", mat: "Kaca, Keramik & Stainless", job: "Glass Cleaning, Dusting & Polishing", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah & Lantai Keramik", mat: "Plastik & Keramik", job: "Dusting, Washing, Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" }
-      ]
-    },
-    {
-      no: 4,
-      area: "4. RUANG KERJA LANTAI 2 (SEKRETARIS, MANAGER, SDM, KINERJA, RENEP)",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "KAM / SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Kaca Ruang Manager & Frame", mat: "Beton, Kaca & Frame", job: "Dusting, Glass Cleaning & Polishing", freq: "D / W / 2W", days: "SEN-SAB", period: "Harian / Mingguan" },
-        { item: "Furniture, Meja & Kursi, Pintu Kaca", mat: "Plastik, Kayu & Kaca", job: "Dusting & Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah & Lantai Keramik", mat: "Plastik & Keramik", job: "Dusting, Washing, Sweeping & Mopping", freq: "D / W", days: "SEN-SAB", period: "Harian" }
-      ]
-    },
-    {
-      no: 5,
-      area: "5. RUANG KERJA LANTAI 2 (RUANG RAPAT EDELUWIS)",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "SEN / SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Furniture, Meja & Kursi, Pintu Kaca", mat: "Wall Paper, Plastik, Kayu & Kaca", job: "Dusting & Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah & Lantai Keramik", mat: "Plastik & Keramik", job: "Dusting, Washing, Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Karpet", mat: "Karpet", job: "Vacuuming & Shampooing Karpet", freq: "W / 6M", days: "SEL / SAB", period: "Mingguan / 6 Bulanan" }
-      ]
-    },
-    {
-      no: 6,
-      area: "6. LANTAI 2 RUANG MANAGER",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "RAB / SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Kaca, Furniture, Meja & Kursi, Pintu", mat: "Beton, Kaca, Plastik & Kayu", job: "Dusting, Glass Cleaning & Polishing", freq: "D / W", days: "SEN-SAB", period: "Harian / Mingguan" },
-        { item: "Tempat Sampah, Lantai & Toilet Manager", mat: "Plastik, Keramik & Wipe Clean", job: "Washing, Sweeping, Mopping & General Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" }
-      ]
-    },
-    {
-      no: 7,
-      area: "7. LANTAI 1 RUANG K3, KONTRUKSI, PENGADAAN, LOGUM, ASMEN KEU",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "RAB / SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Kaca, Furniture, Meja & Kursi, Pintu", mat: "Beton, Kaca, Plastik & Kayu", job: "Dusting, Glass Cleaning & Polishing", freq: "D / W", days: "SEN-SAB", period: "Harian / Mingguan" },
-        { item: "Tempat Sampah & Lantai Keramik", mat: "Plastik & Keramik", job: "Dusting, Washing, Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" }
-      ]
-    },
-    {
-      no: 8,
-      area: "8. LANTAI 1 RUANG KACA",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "JUM / SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Furniture, Meja & Kursi, Pintu Kaca", mat: "Wall Paper, Plastik, Kayu & Kaca", job: "Dusting & Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah & Lantai Keramik", mat: "Plastik & Keramik", job: "Dusting, Washing, Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" }
-      ]
-    },
-    {
-      no: 9,
-      area: "9. LOBBY UTAMA",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Furniture, Meja/Kursi/Sofa & Pintu Kaca Otomatis", mat: "Wall Paper, Plastik, Kayu/Kalep & Kaca", job: "Dusting, Dry Dusting & Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah & Lantai Keramik", mat: "Plastik & Keramik", job: "Dusting, Washing, Sweeping & Mopping", freq: "D", days: "SEN-SAB", period: "Harian" }
-      ]
-    },
-    {
-      no: 10,
-      area: "10. LANTAI 1 GEDUNG AULA, CAFFE",
-      rows: [
-        { item: "Ceiling, Cup Lampu & Exhaust Fan", mat: "Beton, Gipsum & Besi", job: "Cleaning Cob Web & Dusting", freq: "W / M", days: "SEN / SAB", period: "JAN W1-W4" },
-        { item: "Dinding, Furniture, Meja & Kursi, Pintu Kaca", mat: "Wall Paper, Plastik, Kayu & Kaca", job: "Dusting & Glass Cleaning", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Tempat Sampah, Lantai Keramik & Matras", mat: "Plastik, Keramik & Matras", job: "Sweeping, Mopping & Sikat Manual", freq: "D / W", days: "SEN-SAB", period: "Harian / Mingguan" }
-      ]
-    },
-    {
-      no: 11,
-      area: "11. HALAMAN",
-      rows: [
-        { item: "Gutter / Selokan Air", mat: "Beton, Aspal", job: "Sweeping", freq: "D", days: "SEN-SAB", period: "Harian" },
-        { item: "Sisi Depan Gulma", mat: "Area Gulma Depan", job: "Spraying & Pemangkasan", freq: "M", days: "SAB", period: "JAN-DES W1" },
-        { item: "Sisi Kiri Gulma", mat: "Area Gulma Kiri", job: "Spraying & Pemangkasan", freq: "M", days: "SAB", period: "JAN-DES W2" },
-        { item: "Sisi Kanan Gulma", mat: "Area Gulma Kanan", job: "Spraying & Pemangkasan", freq: "M", days: "SAB", period: "JAN-DES W3" }
-      ]
-    }
-  ];
-
-  function safeJsonParse(raw, fallback) {
-    if (!raw) return fallback;
-    try {
-      const parsed = JSON.parse(raw);
-      return parsed ?? fallback;
-    } catch (_) {
-      return fallback;
-    }
-  }
-
-  function loadInitialTeam() {
-    const raw = localStorage.getItem('amp_team');
-    if (!raw) {
-      safeLocalStorageSet('amp_team', JSON.stringify(DEFAULT_TEAM));
-      return [...DEFAULT_TEAM];
-    }
-    const parsed = safeJsonParse(raw, []);
-    return Array.isArray(parsed) && parsed.length ? parsed : [...DEFAULT_TEAM];
-  }
-
-  function loadLiveKorlapGPS() {
-    const parsed = safeJsonParse(localStorage.getItem('amp_live_korlap_gps'), {});
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  }
-
-  function safeLocalStorageSet(key, value) {
-    try {
-      localStorage.setItem(key, value);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  const APP_STATE = {
-    currentUser: null,
-    users: safeJsonParse(localStorage.getItem('amp_users'), []),
-    attendance: safeJsonParse(localStorage.getItem('amp_attendance'), []),
-    mr: safeJsonParse(localStorage.getItem('amp_mr'), []),
-    leaves: safeJsonParse(localStorage.getItem('amp_leaves'), []),
-    incidents: safeJsonParse(localStorage.getItem('amp_incidents'), []),
-    mcpSubmissions: safeJsonParse(localStorage.getItem('amp_mcp_submissions'), []),
-    mcp: safeJsonParse(localStorage.getItem('amp_mcp'), []),
-    dac: safeJsonParse(localStorage.getItem('amp_dac'), []),
-    k3: safeJsonParse(localStorage.getItem('amp_k3'), []),
-    team: loadInitialTeam(),
-    equipment: safeJsonParse(localStorage.getItem('amp_equipment'), []),
-    outstanding: safeJsonParse(localStorage.getItem('amp_outstanding'), []),
-    liveKorlapGPS: loadLiveKorlapGPS(),
-    sbConfig: safeJsonParse(localStorage.getItem('amp_sb_config'), { url: '', key: '', gmapsKey: '' }),
-    capturedPhoto: null,
-    currentGPS: null
-  };
-
-  let supabaseClient = null;
-  let radarMap = null;
-  let radarBaseGroup = null;
-  let radarMarkers = [];
-  let gmapInstance = null;
-  let gmapMarkers = [];
-  let gmapInfoWindow = null;
-  let gmapPlacesService = null;
-  let gmapScriptPromise = null;
-  let currentRadarMode = 'detail';
-  let radarLiveTimer = null;
-  let korlapWatchId = null;
-  let lastCloudPushMs = 0;
-  let lastSeenAttendanceId = APP_STATE.attendance[0]?.id || '';
-  let webcamStream = null;
-  let profileStream = null;
-  let activeMCPWorkingRows = [];
-  const geocodeCache = new Map();
-
-  function isAdminOrHeadOfOps(user) {
-    if (!user) return false;
-    const roleText = `${user.jabatan || ''} ${user.role || ''} ${user.id || ''}`.toLowerCase();
-    return /\b(admin|administrator|head\s*of\s*operation|head\s*of\s*ops|head|ops|direktur)\b/i.test(roleText);
-  }
-
-  function initSupabaseClient() {
-    const url = (APP_STATE.sbConfig?.url || '').trim();
-    const key = (APP_STATE.sbConfig?.key || '').trim();
-    const badge = document.getElementById('header-sync-badge');
-    const badgeText = document.getElementById('sync-badge-text');
-    const statusText = document.getElementById('sb-status-text');
-
-    if (url && key && window.supabase && typeof window.supabase.createClient === 'function') {
-      try {
-        supabaseClient = window.supabase.createClient(url, key);
-        if (badge) badge.classList.add('connected');
-        if (badgeText) badgeText.textContent = 'Cloud ON';
-        if (statusText) statusText.textContent = 'Status Cloud: Terhubung ke Supabase (' + url + ').';
-        return true;
-      } catch (_) {}
-    }
-    supabaseClient = null;
-    if (badge) badge.classList.remove('connected');
-    if (badgeText) badgeText.textContent = 'Lokal';
-    if (statusText) statusText.textContent = 'Status Cloud: Belum terhubung (menggunakan penyimpanan lokal perangkat).';
-    return false;
-  }
-
-  async function pushLiveGPSToSupabase(gpsEntry, force = false) {
-    if (!supabaseClient || !gpsEntry) return;
-    const nowMs = Date.now();
-    if (!force && nowMs - lastCloudPushMs < 12000) return;
-    lastCloudPushMs = nowMs;
-
-    try {
-      await supabaseClient.from('amp_live_gps').upsert(
-        {
-          user_id: gpsEntry.userId,
-          user_name: gpsEntry.userName,
-          jabatan: gpsEntry.jabatan || 'Korlap',
-          site: gpsEntry.site || '-',
-          lat: Number(gpsEntry.lat),
-          lng: Number(gpsEntry.lng),
-          accuracy: Number(gpsEntry.accuracy || 0),
-          place_name: gpsEntry.placeName || '',
-          last_activity: gpsEntry.lastActivity || 'GPS Live',
-          updated_at: gpsEntry.updatedAt || new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
-          timestamp_ms: gpsEntry.timestamp || nowMs
-        },
-        { onConflict: 'user_id' }
-      );
-    } catch (_) {}
-  }
-
-  async function pushAttendanceToSupabase(entry) {
-    if (!supabaseClient || !entry) return false;
-    try {
-      const { error } = await supabaseClient.from('amp_attendance').upsert(
-        {
-          id: entry.id || `${entry.userId}_${Date.now()}`,
-          user_id: entry.userId,
-          user_name: entry.userName,
-          jabatan: entry.jabatan || '-',
-          site: entry.site || '-',
-          place_name: entry.placeName || '',
-          att_type: entry.type,
-          att_time: entry.time,
-          lat: Number(entry.gps.lat),
-          lng: Number(entry.gps.lng),
-          accuracy: Number(entry.gps.accuracy || 0),
-          photo_data: entry.photo || ''
-        },
-        { onConflict: 'id' }
-      );
-      return !error;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  async function pullLiveGPSFromSupabase() {
-    if (!supabaseClient) return;
-    try {
-      const { data, error } = await supabaseClient
-        .from('amp_live_gps')
-        .select('*')
-        .order('timestamp_ms', { ascending: false })
-        .limit(100);
-
-      if (error || !Array.isArray(data)) return;
-
-      data.forEach((row) => {
-        if (!row || typeof row.lat !== 'number' || typeof row.lng !== 'number') return;
-        const uid = row.user_id;
-        APP_STATE.liveKorlapGPS[uid] = {
-          userId: uid,
-          userName: row.user_name || uid,
-          jabatan: row.jabatan || 'Korlap',
-          site: row.site || '-',
-          lat: Number(row.lat),
-          lng: Number(row.lng),
-          accuracy: Math.round(Number(row.accuracy || 0)),
-          placeName: row.place_name || '',
-          lastActivity: row.last_activity || 'GPS Live',
-          updatedAt: row.updated_at || '-',
-          timestamp: Number(row.timestamp_ms || 0)
-        };
-      });
-
-      safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
-    } catch (_) {}
-  }
-
-  function showAdminAttendanceBanner(entry) {
-    const banner = document.getElementById('admin-attendance-update-banner');
-    const textEl = document.getElementById('admin-attendance-update-text');
-    if (!banner || !textEl || !entry) return;
-    banner.style.display = 'flex';
-    textEl.innerHTML = `<i class="fas fa-bell"></i> <strong>${escapeHtml(entry.userName)}</strong> (${escapeHtml(entry.type)}) absen pada ${escapeHtml(entry.time)}${entry.placeName ? ` — ${escapeHtml(entry.placeName)}` : ''}`;
-  }
-
-  async function pullAttendanceFromSupabase() {
-    if (!supabaseClient) return;
-    try {
-      const { data, error } = await supabaseClient
-        .from('amp_attendance')
-        .select('*')
-        .order('att_time', { ascending: false })
-        .limit(50);
-
-      if (error || !Array.isArray(data) || !data.length) return;
-
-      const existingIds = new Set(APP_STATE.attendance.map(a => a.id).filter(Boolean));
-      let hasNewEntry = false;
-      let newestNewEntry = null;
-
-      const fetched = data.map((row) => {
-        const rid = row.id || `${row.user_id}_${row.att_time}`;
-        if (!existingIds.has(rid)) {
-          hasNewEntry = true;
-          if (!newestNewEntry) {
-            newestNewEntry = {
-              id: rid,
-              userId: row.user_id,
-              userName: row.user_name,
-              jabatan: row.jabatan || '-',
-              site: row.site || '-',
-              placeName: row.place_name || '',
-              type: row.att_type,
-              time: row.att_time,
-              gps: {
-                lat: Number(row.lat || 0),
-                lng: Number(row.lng || 0),
-                accuracy: Number(row.accuracy || 0),
-                placeName: row.place_name || ''
-              },
-              photo: row.photo_data || ''
-            };
-          }
-        }
-        return {
-          id: rid,
-          userId: row.user_id,
-          userName: row.user_name,
-          jabatan: row.jabatan || '-',
-          site: row.site || '-',
-          placeName: row.place_name || '',
-          type: row.att_type,
-          time: row.att_time,
-          gps: {
-            lat: Number(row.lat || 0),
-            lng: Number(row.lng || 0),
-            accuracy: Number(row.accuracy || 0),
-            placeName: row.place_name || ''
-          },
-          photo: row.photo_data || ''
-        };
-      });
-
-      const mergedMap = new Map();
-      [...fetched, ...APP_STATE.attendance].forEach(item => {
-        const key = item.id || `${item.userId}_${item.time}_${item.type}`;
-        if (!mergedMap.has(key)) mergedMap.set(key, item);
-      });
-
-      APP_STATE.attendance = Array.from(mergedMap.values()).slice(0, 50);
-      const slimForStorage = APP_STATE.attendance.map((item, idx) =>
-        idx < 6 ? item : { ...item, photo: '' }
-      );
-      if (!safeLocalStorageSet('amp_attendance', JSON.stringify(slimForStorage))) {
-        safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance.slice(0, 5).map(x => ({ ...x, photo: '' }))));
-      }
-      renderAttendanceList();
-
-      if (hasNewEntry && newestNewEntry && APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-        lastSeenAttendanceId = newestNewEntry.id;
-        showAdminAttendanceBanner(newestNewEntry);
-      }
-    } catch (_) {}
-  }
-
-  setInterval(() => {
-    const el = document.getElementById('live-clock');
-    if (el) {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour12: false });
-      el.textContent = `${timeStr} WIB`;
-    }
-  }, 1000);
-
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'amp_live_korlap_gps') {
-      APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
-      if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-        refreshKorlapLivePositions();
-      }
-    }
-    if (e.key === 'amp_attendance') {
-      const latest = safeJsonParse(e.newValue, []);
-      if (Array.isArray(latest) && latest.length) {
-        APP_STATE.attendance = latest;
-        renderAttendanceList();
-        const topItem = latest[0];
-        if (
-          topItem &&
-          topItem.id &&
-          topItem.id !== lastSeenAttendanceId &&
-          APP_STATE.currentUser &&
-          isAdminOrHeadOfOps(APP_STATE.currentUser)
-        ) {
-          lastSeenAttendanceId = topItem.id;
-          showAdminAttendanceBanner(topItem);
-        }
-      }
-    }
-    if (e.key === 'amp_mr') {
-      APP_STATE.mr = safeJsonParse(e.newValue, []);
-      renderMRList();
-    }
-    if (e.key === 'amp_leaves') {
-      APP_STATE.leaves = safeJsonParse(e.newValue, []);
-      renderLeaveList();
-    }
-    if (e.key === 'amp_incidents') {
-      APP_STATE.incidents = safeJsonParse(e.newValue, []);
-      renderIncidentList();
-    }
-    if (e.key === 'amp_mcp_submissions') {
-      APP_STATE.mcpSubmissions = safeJsonParse(e.newValue, []);
-      renderMCPAdminInbox();
-    }
-  });
-
-  function togglePinVisibility(inputId, btnEl) {
-    const inp = document.getElementById(inputId);
-    const icon = btnEl.querySelector('i');
-    if (!inp) return;
-    if (inp.type === 'password') {
-      inp.type = 'text';
-      if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
-    } else {
-      inp.type = 'password';
-      if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
-    }
-  }
-
-  function switchAuthSubView(view) {
-    document.getElementById('login-box-asli').style.display = view === 'login' ? 'block' : 'none';
-    document.getElementById('register-box-asli').style.display = view === 'register' ? 'block' : 'none';
-    document.getElementById('reset-box-asli').style.display = view === 'reset-pin' ? 'block' : 'none';
-  }
-
-  function processRegister() {
-    const name = document.getElementById('reg-name').value.trim();
-    const id = document.getElementById('reg-id').value.trim();
-    const jabatan = document.getElementById('reg-jabatan').value.trim() || 'Korlap';
-    const site = document.getElementById('reg-site').value.trim() || '-';
-    const phone = document.getElementById('reg-phone').value.trim() || '-';
-    const pin = document.getElementById('reg-pin').value.trim();
-
-    if (!name || !id || pin.length !== 6) {
-      showToast('Lengkapi Nama, ID/Username, dan PIN 6 digit.', 'warning');
-      return;
-    }
-
-    const idx = APP_STATE.users.findIndex(u => u.id.toLowerCase() === id.toLowerCase());
-    const userObj = { id, name, jabatan, site, phone, pin, avatar: '' };
-    if (idx >= 0) APP_STATE.users[idx] = { ...APP_STATE.users[idx], ...userObj };
-    else APP_STATE.users.push(userObj);
-
-    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
-    showToast('Akun berhasil disimpan. Silakan login.', 'success');
-    switchAuthSubView('login');
-  }
-
-  function processResetPIN() {
-    const id = document.getElementById('reset-id').value.trim();
-    const oldPin = document.getElementById('reset-old-pin').value.trim();
-    const newPin = document.getElementById('reset-new-pin').value.trim();
-
-    const user = APP_STATE.users.find(u => u.id.toLowerCase() === id.toLowerCase() && u.pin === oldPin);
-    if (!user) {
-      showToast('ID atau PIN lama tidak sesuai.', 'danger');
-      return;
-    }
-    if (newPin.length !== 6) {
-      showToast('PIN baru harus 6 digit.', 'warning');
-      return;
-    }
-    user.pin = newPin;
-    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
-    showToast('PIN berhasil diperbarui.', 'success');
-    switchAuthSubView('login');
-  }
-
-  function processLogin() {
-    const id = document.getElementById('login-id').value.trim();
-    const pin = document.getElementById('login-pin').value.trim();
-
-    if (!id || !pin) {
-      showToast('Masukkan ID / Username dan PIN.', 'warning');
-      return;
-    }
-
-    let user = APP_STATE.users.find(u => u.id.toLowerCase() === id.toLowerCase() && u.pin === pin);
-    if (!user && APP_STATE.users.length === 0) {
-      const inferredJabatan = /^(admin|headofops|head_of_ops|headofoperation)/i.test(id)
-        ? 'Head of Operation'
-        : 'Korlap / Operasional';
-      user = { id, name: id, jabatan: inferredJabatan, site: 'Area PLN', phone: '-', pin, avatar: '' };
-      APP_STATE.users.push(user);
-      safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
-    }
-
-    if (!user) {
-      showToast('ID atau PIN tidak valid. Silakan daftar atau periksa kembali.', 'danger');
-      return;
-    }
-
-    APP_STATE.currentUser = user;
-    document.getElementById('auth-modal-overlay').classList.remove('active');
-    document.getElementById('main-app').classList.add('authenticated');
-    document.getElementById('bottom-nav').classList.add('authenticated');
-
-    initSupabaseClient();
-    renderUserUI();
-    renderAttendanceList();
-    renderMRList();
-    renderLeaveList();
-    renderIncidentList();
-    renderTeamList();
-    initMCPModule();
-    setupRoleBasedTracking();
-    showModule(1);
-    showToast(`Selamat datang, ${user.name}!`, 'success');
-  }
-
-  function logout() {
-    stopCameras();
-    stopKorlapLiveWatch();
-    stopRadarAutoRefresh();
-    APP_STATE.currentUser = null;
-    document.getElementById('main-app').classList.remove('authenticated');
-    document.getElementById('bottom-nav').classList.remove('authenticated');
-    document.getElementById('auth-modal-overlay').classList.add('active');
-    switchAuthSubView('login');
-    showToast('Anda telah keluar dari sesi.', 'info');
-  }
-
-  function renderUserUI() {
-    const u = APP_STATE.currentUser;
-    if (!u) return;
-
-    document.getElementById('header-user-id').textContent = u.id;
-    document.getElementById('dash-user-name').textContent = u.name;
-    document.getElementById('dash-user-role').textContent = u.jabatan;
-    document.getElementById('dash-user-site').innerHTML = `<i class="fas fa-building"></i> Area Tugas PLN: ${escapeHtml(u.site)}`;
-
-    document.getElementById('prof-name').textContent = u.name;
-    document.getElementById('prof-id').textContent = `ID: ${u.id}`;
-    document.getElementById('prof-jabatan').textContent = `Peran: ${u.jabatan}`;
-    document.getElementById('prof-site').textContent = u.site;
-    document.getElementById('prof-phone').textContent = u.phone;
-
-    document.getElementById('edit-prof-name').value = u.name;
-    document.getElementById('edit-prof-jabatan').value = u.jabatan;
-    document.getElementById('edit-prof-site').value = u.site;
-    document.getElementById('edit-prof-phone').value = u.phone;
-
-    if (document.getElementById('sb-url')) document.getElementById('sb-url').value = APP_STATE.sbConfig?.url || '';
-    if (document.getElementById('sb-key')) document.getElementById('sb-key').value = APP_STATE.sbConfig?.key || '';
-    const radarKeyInput = document.getElementById('radar-gmaps-key');
-    if (radarKeyInput && APP_STATE.sbConfig?.gmapsKey) {
-      radarKeyInput.value = APP_STATE.sbConfig.gmapsKey;
-    }
-    const syncKeyInput = document.getElementById('sb-gmaps-key');
-    if (syncKeyInput && APP_STATE.sbConfig?.gmapsKey) {
-      syncKeyInput.value = APP_STATE.sbConfig.gmapsKey;
-    }
-
-    const privileged = isAdminOrHeadOfOps(u);
-    document.getElementById('admin-radar-card').style.display = privileged ? 'block' : 'none';
-    document.getElementById('admin-export-card').style.display = privileged ? 'block' : 'none';
-    document.getElementById('korlap-gps-consent-card').style.display = privileged ? 'none' : 'block';
-
-    if (!privileged) {
-      clearRadarMap();
-      const banner = document.getElementById('admin-attendance-update-banner');
-      if (banner) banner.style.display = 'none';
-    }
-
-    if (u.avatar) {
-      document.getElementById('dash-avatar-img').src = u.avatar;
-      document.getElementById('dash-avatar-img').style.display = 'block';
-      document.getElementById('dash-avatar-icon').style.display = 'none';
-
-      document.getElementById('prof-avatar-img').src = u.avatar;
-      document.getElementById('prof-avatar-img').style.display = 'block';
-      document.getElementById('prof-avatar-icon').style.display = 'none';
-    }
-  }
-
-  function setupRoleBasedTracking() {
-    const u = APP_STATE.currentUser;
-    if (!u) return;
-
-    if (isAdminOrHeadOfOps(u)) {
-      stopKorlapLiveWatch();
-      updateKorlapPermissionStatus('Mode Monitoring Admin / Head of Ops Aktif');
-      initRadarMapIfAdmin();
-      startRadarAutoRefresh();
-      refreshKorlapLivePositions();
-      pullAttendanceFromSupabase();
-    } else {
-      stopRadarAutoRefresh();
-      clearRadarMap();
-      requestKorlapLiveGPS(false);
-    }
-  }
-
-  function updateKorlapPermissionStatus(text, isError = false) {
-    const el = document.getElementById('korlap-gps-permission-status');
-    if (!el) return;
-    el.style.color = isError ? '#fca5a5' : '#7dd3fc';
-    el.innerHTML = `<i class="fas fa-location-crosshairs"></i> ${escapeHtml(text)}`;
-  }
-
-  function stopKorlapLiveWatch() {
-    if (korlapWatchId !== null && navigator.geolocation) {
-      navigator.geolocation.clearWatch(korlapWatchId);
-      korlapWatchId = null;
-    }
-  }
-
-  function loadGoogleMapsSDK(apiKey) {
-    if (!apiKey) return Promise.resolve(false);
-    if (window.google && window.google.maps) return Promise.resolve(true);
-    if (gmapScriptPromise) return gmapScriptPromise;
-
-    gmapScriptPromise = new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve(Boolean(window.google && window.google.maps));
-      script.onerror = () => {
-        gmapScriptPromise = null;
-        resolve(false);
-      };
-      document.head.appendChild(script);
-    });
-
-    return gmapScriptPromise;
-  }
-
-  function applyGoogleMapsKeyFromRadar() {
-    const inp = document.getElementById('radar-gmaps-key');
-    const key = inp ? inp.value.trim() : '';
-    APP_STATE.sbConfig = { ...(APP_STATE.sbConfig || {}), gmapsKey: key };
-    safeLocalStorageSet('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
-    const syncInp = document.getElementById('sb-gmaps-key');
-    if (syncInp) syncInp.value = key;
-    gmapScriptPromise = null;
-    clearRadarMap();
-    initRadarMapIfAdmin();
-    refreshKorlapLivePositions();
-    showToast('Pengaturan Google Maps API Key diperbarui.', 'info');
-  }
-
-  async function resolveDetailedPlaceName(lat, lng) {
-    const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
-    if (geocodeCache.has(key)) return geocodeCache.get(key);
-
-    const apiKey = (APP_STATE.sbConfig && APP_STATE.sbConfig.gmapsKey) || '';
-    if (apiKey && await loadGoogleMapsSDK(apiKey)) {
-      try {
-        const gResult = await new Promise((resolve) => {
-          const geocoder = new google.maps.Geocoder();
-          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-            if (status === 'OK' && results && results.length) {
-              resolve(results[0].formatted_address || '');
-            } else {
-              resolve('');
-            }
-          });
-        });
-
-        let nearbyCompany = '';
-        if (gmapInstance && google.maps.places && google.maps.places.PlacesService) {
-          nearbyCompany = await new Promise((resolve) => {
-            const svc = new google.maps.places.PlacesService(gmapInstance);
-            svc.nearbySearch(
-              { location: { lat, lng }, radius: 120 },
-              (places, status) => {
-                if (status === google.maps.places.PlacesServiceStatus.OK && places && places.length) {
-                  const candidate = places.find(pl => /\b(pt|gedung|graha|menara|pln|kantor|pabrik|tower|sentra)\b/i.test(pl.name || '')) || places[0];
-                  resolve(candidate && candidate.name ? candidate.name : '');
-                } else {
-                  resolve('');
-                }
-              }
-            );
-          });
-        }
-
-        const combined = [nearbyCompany, gResult].filter(Boolean).join(' — ');
-        if (combined) {
-          geocodeCache.set(key, combined);
-          return combined;
-        }
-      } catch (_) {}
-    }
-
-    try {
-      const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`;
-      const resp = await fetch(url, {
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!resp.ok) throw new Error('Geocoding unavailable');
-      const data = await resp.json();
-      const addr = data.address || {};
-
-      const placeEntity =
-        addr.office ||
-        addr.industrial ||
-        addr.building ||
-        addr.amenity ||
-        addr.shop ||
-        addr.company ||
-        (data.namedetails && (data.namedetails.name || data.namedetails['name:id'])) ||
-        '';
-
-      const road = addr.road || addr.pedestrian || addr.residential || addr.hamlet || '';
-      const subArea = addr.suburb || addr.village || addr.neighbourhood || addr.city_district || '';
-      const city = addr.city || addr.town || addr.county || '';
-
-      const parts = [];
-      if (placeEntity && !road.includes(placeEntity)) parts.push(placeEntity);
-      if (road) parts.push(road);
-      if (subArea) parts.push(subArea);
-      if (city) parts.push(city);
-
-      const summary = parts.length
-        ? parts.slice(0, 3).join(', ')
-        : (data.display_name ? data.display_name.split(',').slice(0, 3).join(',') : `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
-
-      geocodeCache.set(key, summary);
-      return summary;
-    } catch (_) {
-      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    }
-  }
-
-  function recordKorlapLiveCoordinate(pos) {
-    const u = APP_STATE.currentUser;
-    if (!u || isAdminOrHeadOfOps(u)) return;
-
-    const { latitude, longitude, accuracy } = pos.coords;
-    const nowStr = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-    const prev = APP_STATE.liveKorlapGPS[u.id] || {};
-    APP_STATE.currentGPS = { lat: latitude, lng: longitude, accuracy, placeName: prev.placeName || '' };
-
-    const liveObj = {
-      userId: u.id,
-      userName: u.name,
-      jabatan: u.jabatan,
-      site: u.site || '-',
-      lat: latitude,
-      lng: longitude,
-      accuracy: Math.round(accuracy || 0),
-      placeName: prev.placeName || '',
-      lastActivity: prev.lastActivity || 'GPS Live',
-      updatedAt: nowStr,
-      timestamp: Date.now()
+  <!-- Container Popup Toast -->
+  <div id="toastContainer"></div>
+
+  <!-- Leaflet JS & Supabase JS SDK -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // =========================================================================
+    // 1. KONFIGURASI SUPABASE & SESSION ROLE
+    // =========================================================================
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co'; // Ganti dengan URL Supabase Anda
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';         // Ganti dengan Anon Key Anda
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Ambil data user login dari localStorage aplikasi AMP Monitoring Anda
+    // Pastikan saat login, role disimpan sebagai: 'admin', 'headofops', atau 'korlap'
+    const currentUser = JSON.parse(localStorage.getItem('amp_user')) || {
+      user_id: 'AMP001',
+      nama: 'M. Soheh (Head of Operation)',
+      role: 'headofops' // Ubah ke 'korlap' untuk mengetes mode tracking pengirim
     };
 
-    APP_STATE.liveKorlapGPS[u.id] = liveObj;
-    safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
-    updateKorlapPermissionStatus(`GPS Live Aktif (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`);
-    pushLiveGPSToSupabase(liveObj, false);
-
-    const gpsInput = document.getElementById('gps-coords');
-    const badge = document.getElementById('status-gps-badge');
-    if (badge) {
-      badge.style.color = 'var(--success)';
-      badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Terkunci';
-    }
-
-    resolveDetailedPlaceName(latitude, longitude).then((placeLabel) => {
-      if (APP_STATE.liveKorlapGPS[u.id]) {
-        APP_STATE.liveKorlapGPS[u.id].placeName = placeLabel;
-        safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
-        pushLiveGPSToSupabase(APP_STATE.liveKorlapGPS[u.id], true);
-      }
-      if (APP_STATE.currentGPS) {
-        APP_STATE.currentGPS.placeName = placeLabel;
-      }
-      if (gpsInput) {
-        gpsInput.value = `${placeLabel} (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
-      }
-      updateKorlapPermissionStatus(`GPS Live: ${placeLabel}`);
-    });
-  }
-
-  function requestKorlapLiveGPS(showAlertOnDeny = true) {
-    const u = APP_STATE.currentUser;
-    if (!u || isAdminOrHeadOfOps(u)) return;
-
-    if (!navigator.geolocation) {
-      updateKorlapPermissionStatus('Perangkat tidak mendukung GPS', true);
-      if (showAlertOnDeny) showToast('Geolocation tidak didukung pada browser ini.', 'danger');
-      return;
-    }
-
-    stopKorlapLiveWatch();
-    updateKorlapPermissionStatus('Meminta izin lokasi GPS...');
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        recordKorlapLiveCoordinate(pos);
-        if (showAlertOnDeny) showToast('Lokasi GPS Live Korlap aktif.', 'success');
-      },
-      (err) => {
-        updateKorlapPermissionStatus('Izin lokasi GPS belum diizinkan', true);
-        if (showAlertOnDeny) {
-          showToast('Lokasi GPS belum diizinkan: ' + err.message, 'warning');
-        }
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-
-    korlapWatchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        recordKorlapLiveCoordinate(pos);
-      },
-      () => {
-        updateKorlapPermissionStatus('GPS terhenti / izin ditolak', true);
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 3000 }
-    );
-  }
-
-  function showModule(num) {
-    document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById(`mod-${num}`);
-    if (target) target.classList.add('active');
-
-    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-    const navEl = document.getElementById(`nav-${num}`);
-    if (navEl) navEl.classList.add('active');
-
-    if (num === 3) {
-      renderAttendanceList();
-      if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-        pullAttendanceFromSupabase();
-      } else if (APP_STATE.currentUser) {
-        requestKorlapLiveGPS(false);
-      }
-    }
-    if (num === 4) renderMRList();
-    if (num === 5) renderLeaveList();
-    if (num === 6) renderIncidentList();
-    if (num === 7) initMCPModule();
-    if (num === 10) renderTeamList();
-    if (num === 1 && APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      initRadarMapIfAdmin();
-      refreshKorlapLivePositions();
-      pullAttendanceFromSupabase();
-      if (radarMap) setTimeout(() => radarMap.invalidateSize(), 150);
-    }
-  }
-
-  function stopCameras() {
-    if (webcamStream) {
-      webcamStream.getTracks().forEach(t => t.stop());
-      webcamStream = null;
-    }
-    if (profileStream) {
-      profileStream.getTracks().forEach(t => t.stop());
-      profileStream = null;
-    }
-  }
-
-  async function startWebcam() {
-    try {
-      stopCameras();
-      webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-      const video = document.getElementById('webcam');
-      video.srcObject = webcamStream;
-      video.style.display = 'block';
-      document.getElementById('photo-preview').style.display = 'none';
-      document.getElementById('camera-placeholder').style.display = 'none';
-      showToast('Kamera live aktif.', 'success');
-    } catch (e) {
-      showToast('Gagal mengakses kamera: ' + e.message, 'danger');
-    }
-  }
-
-  function takeSnapshot() {
-    const video = document.getElementById('webcam');
-    if (!webcamStream || video.style.display === 'none') {
-      showToast('Nyalakan kamera live terlebih dahulu.', 'warning');
-      return;
-    }
-
-    const srcW = video.videoWidth || 640;
-    const srcH = video.videoHeight || 480;
-    const maxW = 480;
-    const scale = srcW > maxW ? maxW / srcW : 1;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(srcW * scale);
-    canvas.height = Math.round(srcH * scale);
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    APP_STATE.capturedPhoto = canvas.toDataURL('image/jpeg', 0.55);
-
-    const img = document.getElementById('photo-preview');
-    img.src = APP_STATE.capturedPhoto;
-    img.style.display = 'block';
-    video.style.display = 'none';
-
-    const badge = document.getElementById('status-foto-badge');
-    badge.style.color = 'var(--success)';
-    badge.innerHTML = '<i class="fas fa-check-circle"></i> Foto: Siap';
-    showToast('Foto live berhasil diambil.', 'success');
-  }
-
-  function getRealtimeGPS() {
-    if (!navigator.geolocation) {
-      showToast('Geolocation tidak didukung browser ini.', 'danger');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        const placeLabel = await resolveDetailedPlaceName(latitude, longitude);
-        APP_STATE.currentGPS = { lat: latitude, lng: longitude, accuracy, placeName: placeLabel };
-        document.getElementById('gps-coords').value = `${placeLabel} (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
-        document.getElementById('gmaps-link-box').innerHTML =
-          `<a href="https://maps.google.com/?q=${latitude},${longitude}" target="_blank" style="font-size:10px; color:var(--blue-accent);">Buka di Google Maps</a>`;
-        const badge = document.getElementById('status-gps-badge');
-        badge.style.color = 'var(--success)';
-        badge.innerHTML = '<i class="fas fa-check-circle"></i> GPS: Terkunci';
-
-        if (APP_STATE.currentUser && !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-          recordKorlapLiveCoordinate(pos);
-        }
-        showToast('Lokasi GPS berhasil dikunci.', 'success');
-      },
-      (err) => showToast('Gagal mengambil GPS: ' + err.message, 'danger'),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  }
-
-  async function saveAttendance(type) {
-    if (!APP_STATE.capturedPhoto || !APP_STATE.currentGPS) {
-      showToast('Foto live dan GPS wajib dilengkapi sebelum absen.', 'warning');
-      return;
-    }
-
-    try {
-      const u = APP_STATE.currentUser;
-      const nowMs = Date.now();
-      const nowStr = new Date(nowMs).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-      const gpsLat = Number(APP_STATE.currentGPS.lat);
-      const gpsLng = Number(APP_STATE.currentGPS.lng);
-
-      const entry = {
-        id: `${u?.id || 'user'}_${nowMs}`,
-        userId: u?.id || '-',
-        userName: u?.name || '-',
-        jabatan: u?.jabatan || '-',
-        site: u?.site || '-',
-        placeName: APP_STATE.currentGPS.placeName || '',
-        type,
-        time: nowStr,
-        gps: {
-          lat: gpsLat,
-          lng: gpsLng,
-          accuracy: APP_STATE.currentGPS.accuracy || 0,
-          placeName: APP_STATE.currentGPS.placeName || ''
-        },
-        photo: APP_STATE.capturedPhoto
-      };
-
-      APP_STATE.attendance.unshift(entry);
-      lastSeenAttendanceId = entry.id;
-
-      let saved = safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance));
-      if (!saved) {
-        while (APP_STATE.attendance.length > 1 && !saved) {
-          APP_STATE.attendance.pop();
-          saved = safeLocalStorageSet('amp_attendance', JSON.stringify(APP_STATE.attendance));
-        }
-      }
-      if (!saved) {
-        const fallbackList = APP_STATE.attendance.map(item => ({ ...item, photo: '' }));
-        safeLocalStorageSet('amp_attendance', JSON.stringify(fallbackList));
-      }
-
-      if (u && !isAdminOrHeadOfOps(u)) {
-        const liveObj = {
-          userId: u.id,
-          userName: u.name,
-          jabatan: u.jabatan,
-          site: u.site || '-',
-          lat: gpsLat,
-          lng: gpsLng,
-          accuracy: Math.round(APP_STATE.currentGPS.accuracy || 0),
-          placeName: APP_STATE.currentGPS.placeName || '',
-          lastActivity: `Absen ${type}`,
-          updatedAt: nowStr,
-          timestamp: nowMs
-        };
-        APP_STATE.liveKorlapGPS[u.id] = liveObj;
-        safeLocalStorageSet('amp_live_korlap_gps', JSON.stringify(APP_STATE.liveKorlapGPS));
-        await pushLiveGPSToSupabase(liveObj, true);
-      }
-
-      await pushAttendanceToSupabase(entry);
-
-      renderAttendanceList();
-
-      if (u && isAdminOrHeadOfOps(u)) {
-        showAdminAttendanceBanner(entry);
-        try {
-          refreshKorlapLivePositions();
-        } catch (_) {}
-      }
-
-      showToast(
-        saved
-          ? `Absensi ${type} berhasil dicatat.`
-          : `Absensi ${type} dicatat (penyimpanan lokal penuh, foto lama otomatis diringkas).`,
-        'success'
-      );
-    } catch (err) {
-      showToast('Terjadi kendala saat menyimpan absensi: ' + (err && err.message ? err.message : err), 'danger');
-    }
-  }
-
-  function renderAttendanceList() {
-    const list = document.getElementById('attendance-log-list');
-    const badge = document.getElementById('absen-count-badge');
-    if (badge) badge.textContent = `${APP_STATE.attendance.length} Data`;
-    if (!list) return;
-    if (!APP_STATE.attendance.length) {
-      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada catatan absensi tersimpan pada sesi ini.</li>';
-      return;
-    }
-    list.innerHTML = APP_STATE.attendance.map(a => `
-      <li class="log-item">
-        ${a.photo ? `<img src="${a.photo}" alt="Foto" class="log-thumb" />` : `<div class="log-thumb" style="display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#475569;"><i class="fas fa-user"></i></div>`}
-        <div>
-          <span class="badge ${a.type === 'IN' ? 'badge-in' : 'badge-out'}">${escapeHtml(a.type)}</span>
-          <strong>${escapeHtml(a.userName)}</strong> (${escapeHtml(a.userId)})<br/>
-          <span style="color:var(--text-muted);">${escapeHtml(a.time)}</span><br/>
-          ${a.placeName ? `<span><strong>Lokasi:</strong> ${escapeHtml(a.placeName)}</span><br/>` : ''}
-          <span>GPS: ${Number(a.gps?.lat || 0).toFixed(5)}, ${Number(a.gps?.lng || 0).toFixed(5)}</span>
-        </div>
-      </li>
-    `).join('');
-  }
-
-  function approveItem(collectionName, itemId) {
-    if (!isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      showToast('Hanya akun Admin atau Head of Ops yang dapat melakukan Approve.', 'warning');
-      return;
-    }
-    const arr = APP_STATE[collectionName];
-    if (!Array.isArray(arr)) return;
-    const target = arr.find(it => it.id === itemId);
-    if (!target) return;
-
-    target.status = 'Approved';
-    target.approvedBy = APP_STATE.currentUser.name || APP_STATE.currentUser.id;
-    target.approvedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-
-    const storageKey = collectionName === 'mr' ? 'amp_mr' : collectionName === 'leaves' ? 'amp_leaves' : 'amp_incidents';
-    safeLocalStorageSet(storageKey, JSON.stringify(arr));
-
-    if (collectionName === 'mr') renderMRList();
-    if (collectionName === 'leaves') renderLeaveList();
-    if (collectionName === 'incidents') renderIncidentList();
-    showToast('Data berhasil di-approve.', 'success');
-  }
-
-  function renderApprovalBadgeAndButton(collectionName, item) {
-    const isApproved = item.status === 'Approved';
-    const badgeHtml = isApproved
-      ? `<span class="badge badge-in">Approved${item.approvedBy ? ` (${escapeHtml(item.approvedBy)})` : ''}</span>`
-      : `<span class="badge badge-warning">Menunggu Approval</span>`;
-
-    const canApprove = isAdminOrHeadOfOps(APP_STATE.currentUser) && !isApproved;
-    const btnHtml = canApprove
-      ? `<br/><button type="button" class="btn btn-approve" onclick="approveItem('${collectionName}', '${escapeHtml(item.id)}')"><i class="fas fa-check"></i> Approve</button>`
-      : '';
-
-    return `${badgeHtml}${btnHtml}`;
-  }
-
-  function submitMR() {
-    const site = document.getElementById('mr-site').value.trim();
-    const item = document.getElementById('mr-item').value.trim();
-    const qty = document.getElementById('mr-qty').value.trim();
-    const priority = document.getElementById('mr-priority').value;
-    const notes = document.getElementById('mr-notes').value.trim();
-    if (!site || !item || !qty) {
-      showToast('Lengkapi Site, Nama Material, dan Jumlah.', 'warning');
-      return;
-    }
-    APP_STATE.mr.unshift({
-      id: `mr_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      time: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
-      user: APP_STATE.currentUser?.name || '-',
-      site,
-      item,
-      qty,
-      priority,
-      notes,
-      status: 'Menunggu Approval'
-    });
-    safeLocalStorageSet('amp_mr', JSON.stringify(APP_STATE.mr));
-    renderMRList();
-    showToast('Pengajuan MR dicatat (Menunggu Approval Admin / Head of Ops).', 'success');
-  }
-
-  function renderMRList() {
-    const badge = document.getElementById('mr-count-badge');
-    const list = document.getElementById('mr-log-list');
-    if (badge) badge.textContent = `${APP_STATE.mr.length} MR`;
-    if (!list) return;
-    if (!APP_STATE.mr.length) {
-      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan MR.</li>';
-      return;
-    }
-    list.innerHTML = APP_STATE.mr.map(m => `
-      <li class="log-item">
-        <div style="width:100%;">
-          <span class="badge badge-warning">${escapeHtml(m.priority)}</span> ${renderApprovalBadgeAndButton('mr', m)}<br/>
-          <strong>${escapeHtml(m.item)}</strong> (${escapeHtml(m.qty)})<br/>
-          Site: ${escapeHtml(m.site)} — ${escapeHtml(m.notes || '-')}<br/>
-          <span style="color:var(--text-muted);">${escapeHtml(m.time)} oleh ${escapeHtml(m.user)}</span>
-        </div>
-      </li>
-    `).join('');
-  }
-
-  function submitLeave() {
-    const type = document.getElementById('leave-type').value;
-    const start = document.getElementById('leave-start').value;
-    const end = document.getElementById('leave-end').value;
-    const notes = document.getElementById('leave-notes').value.trim();
-    if (!start || !end) {
-      showToast('Pilih tanggal mulai dan selesai.', 'warning');
-      return;
-    }
-    APP_STATE.leaves.unshift({
-      id: `lv_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      user: APP_STATE.currentUser?.name || '-',
-      type,
-      start,
-      end,
-      notes,
-      status: 'Menunggu Approval'
-    });
-    safeLocalStorageSet('amp_leaves', JSON.stringify(APP_STATE.leaves));
-    renderLeaveList();
-    showToast('Pengajuan izin/cuti dicatat (Menunggu Approval Admin / Head of Ops).', 'success');
-  }
-
-  function renderLeaveList() {
-    const badge = document.getElementById('leave-count-badge');
-    const list = document.getElementById('leave-log-list');
-    if (badge) badge.textContent = `${APP_STATE.leaves.length} Data`;
-    if (!list) return;
-    if (!APP_STATE.leaves.length) {
-      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada pengajuan izin atau cuti.</li>';
-      return;
-    }
-    list.innerHTML = APP_STATE.leaves.map(l => `
-      <li class="log-item">
-        <div style="width:100%;">
-          <strong>${escapeHtml(l.user)}</strong> — <span class="badge badge-in">${escapeHtml(l.type)}</span> ${renderApprovalBadgeAndButton('leaves', l)}<br/>
-          ${escapeHtml(l.start)} s/d ${escapeHtml(l.end)}<br/>
-          <span style="color:var(--text-muted);">${escapeHtml(l.notes || '-')}</span>
-        </div>
-      </li>
-    `).join('');
-  }
-
-  function submitIncident() {
-    const site = document.getElementById('inc-site').value.trim();
-    const type = document.getElementById('inc-type').value;
-    const desc = document.getElementById('inc-desc').value.trim();
-    if (!site || !desc) {
-      showToast('Lengkapi lokasi dan kronologi kejadian.', 'warning');
-      return;
-    }
-    APP_STATE.incidents.unshift({
-      id: `inc_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      time: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
-      user: APP_STATE.currentUser?.name || '-',
-      site,
-      type,
-      desc,
-      status: 'Menunggu Approval'
-    });
-    safeLocalStorageSet('amp_incidents', JSON.stringify(APP_STATE.incidents));
-    renderIncidentList();
-    showToast('Laporan kejadian dicatat (Menunggu Approval Admin / Head of Ops).', 'success');
-  }
-
-  function renderIncidentList() {
-    const badge = document.getElementById('inc-count-badge');
-    const list = document.getElementById('inc-log-list');
-    if (badge) badge.textContent = `${APP_STATE.incidents.length} Laporan`;
-    if (!list) return;
-    if (!APP_STATE.incidents.length) {
-      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada laporan kejadian.</li>';
-      return;
-    }
-    list.innerHTML = APP_STATE.incidents.map(i => `
-      <li class="log-item">
-        <div style="width:100%;">
-          <span class="badge badge-out">${escapeHtml(i.type)}</span> ${renderApprovalBadgeAndButton('incidents', i)}<br/>
-          <strong>${escapeHtml(i.site)}</strong><br/>
-          ${escapeHtml(i.desc)}<br/>
-          <span style="color:var(--text-muted);">${escapeHtml(i.time)} oleh ${escapeHtml(i.user)}</span>
-        </div>
-      </li>
-    `).join('');
-  }
-
-  function initMCPModule() {
-    const selectEl = document.getElementById('mcp-area-select');
-    if (!selectEl) return;
-
-    if (!selectEl.options.length) {
-      MCP_AREAS_TEMPLATE.forEach((sec, idx) => {
-        const opt = document.createElement('option');
-        opt.value = String(idx);
-        opt.textContent = sec.area;
-        selectEl.appendChild(opt);
-      });
-    }
-
-    if (APP_STATE.currentUser) {
-      document.getElementById('mcp-upt').value = document.getElementById('mcp-upt').value || APP_STATE.currentUser.site || '';
-    }
-
-    if (!activeMCPWorkingRows.length) {
-      renderMCPAreaTemplate();
-    } else {
-      renderMCPMatrixRows();
-    }
-
-    renderMCPAdminInbox();
-  }
-
-  function renderMCPAreaTemplate() {
-    const selectEl = document.getElementById('mcp-area-select');
-    const idx = Number(selectEl?.value || 0);
-    const sec = MCP_AREAS_TEMPLATE[idx] || MCP_AREAS_TEMPLATE[0];
-    activeMCPWorkingRows = (sec.rows || []).map(r => ({
-      item: r.item,
-      mat: r.mat,
-      job: r.job,
-      freq: r.freq,
-      days: r.days,
-      period: r.period,
-      val: '√'
-    }));
-    renderMCPMatrixRows();
-  }
-
-  function addCustomMCPItem() {
-    const item = document.getElementById('mcp-custom-item').value.trim();
-    const mat = document.getElementById('mcp-custom-mat').value.trim() || '-';
-    const job = document.getElementById('mcp-custom-job').value.trim() || 'Cleaning';
-    if (!item) {
-      showToast('Isi nama ITEM terlebih dahulu.', 'warning');
-      return;
-    }
-    activeMCPWorkingRows.push({
-      item,
-      mat,
-      job,
-      freq: 'D',
-      days: 'SEN-SAB',
-      period: 'JAN W1-W4',
-      val: '√'
-    });
-    document.getElementById('mcp-custom-item').value = '';
-    document.getElementById('mcp-custom-mat').value = '';
-    document.getElementById('mcp-custom-job').value = '';
-    renderMCPMatrixRows();
-    showToast('Baris item MCP ditambahkan.', 'success');
-  }
-
-  function renderMCPMatrixRows() {
-    const tbody = document.getElementById('mcp-matrix-tbody');
-    if (!tbody) return;
-
-    tbody.innerHTML = activeMCPWorkingRows.map((r, i) => `
-      <tr>
-        <td style="padding:4px; border:1px solid #cbd5e1;"><input type="text" class="form-control" style="padding:4px; font-size:9px;" value="${escapeHtml(r.item)}" onchange="activeMCPWorkingRows[${i}].item=this.value" /></td>
-        <td style="padding:4px; border:1px solid #cbd5e1;"><input type="text" class="form-control" style="padding:4px; font-size:9px;" value="${escapeHtml(r.mat)}" onchange="activeMCPWorkingRows[${i}].mat=this.value" /></td>
-        <td style="padding:4px; border:1px solid #cbd5e1;"><input type="text" class="form-control" style="padding:4px; font-size:9px;" value="${escapeHtml(r.job)}" onchange="activeMCPWorkingRows[${i}].job=this.value" /></td>
-        <td style="padding:4px; border:1px solid #cbd5e1;"><input type="text" class="form-control" style="padding:4px; font-size:9px;" value="${escapeHtml(r.freq)}" onchange="activeMCPWorkingRows[${i}].freq=this.value" /></td>
-        <td style="padding:4px; border:1px solid #cbd5e1;"><input type="text" class="form-control" style="padding:4px; font-size:9px;" value="${escapeHtml(r.days)}" onchange="activeMCPWorkingRows[${i}].days=this.value" /></td>
-        <td style="padding:4px; border:1px solid #cbd5e1;"><input type="text" class="form-control" style="padding:4px; font-size:9px;" value="${escapeHtml(r.period)}" onchange="activeMCPWorkingRows[${i}].period=this.value" /></td>
-        <td style="padding:4px; border:1px solid #cbd5e1;">
-          <select class="form-control" style="padding:4px; font-size:9px;" onchange="activeMCPWorkingRows[${i}].val=this.value">
-            <option value="√" ${r.val === '√' ? 'selected' : ''}>√ Selesai</option>
-            <option value="/" ${r.val === '/' ? 'selected' : ''}>/ Proses</option>
-            <option value="Pending" ${r.val === 'Pending' ? 'selected' : ''}>Pending</option>
-          </select>
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  function saveMCP() {
-    const selectEl = document.getElementById('mcp-area-select');
-    const sec = MCP_AREAS_TEMPLATE[Number(selectEl?.value || 0)] || MCP_AREAS_TEMPLATE[0];
-    const uit = document.getElementById('mcp-uit').value.trim() || '-';
-    const upt = document.getElementById('mcp-upt').value.trim() || APP_STATE.currentUser?.site || '-';
-    const periode = document.getElementById('mcp-periode').value.trim() || '2026';
-
-    if (!activeMCPWorkingRows.length) {
-      showToast('Tidak ada item MCP untuk disimpan.', 'warning');
-      return;
-    }
-
-    const entry = {
-      id: `mcp_${Date.now()}`,
-      time: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
-      userId: APP_STATE.currentUser?.id || '-',
-      userName: APP_STATE.currentUser?.name || '-',
-      uit,
-      upt,
-      periode,
-      area: sec.area,
-      rows: JSON.parse(JSON.stringify(activeMCPWorkingRows)),
-      status: 'Menunggu Approval'
-    };
-
-    APP_STATE.mcpSubmissions.unshift(entry);
-    safeLocalStorageSet('amp_mcp_submissions', JSON.stringify(APP_STATE.mcpSubmissions));
-    renderMCPAdminInbox();
-    showToast('MCP berhasil disimpan dan dikirim ke akses Admin / Head of Ops.', 'success');
-  }
-
-  function approveMCPSubmission(mcpId) {
-    if (!isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      showToast('Hanya akun Admin atau Head of Ops yang dapat menyetujui MCP.', 'warning');
-      return;
-    }
-    const target = APP_STATE.mcpSubmissions.find(m => m.id === mcpId);
-    if (!target) return;
-    target.status = 'Approved';
-    target.approvedBy = APP_STATE.currentUser.name || APP_STATE.currentUser.id;
-    target.approvedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-    safeLocalStorageSet('amp_mcp_submissions', JSON.stringify(APP_STATE.mcpSubmissions));
-    renderMCPAdminInbox();
-    showToast('MCP berhasil di-approve.', 'success');
-  }
-
-  function renderMCPAdminInbox() {
-    const card = document.getElementById('mcp-admin-inbox-card');
-    const list = document.getElementById('mcp-admin-inbox-list');
-    const badge = document.getElementById('mcp-inbox-count');
-    const canViewAdminInbox = isAdminOrHeadOfOps(APP_STATE.currentUser);
-
-    if (card) card.style.display = canViewAdminInbox ? 'block' : 'none';
-    if (!canViewAdminInbox || !list) return;
-
-    if (badge) badge.textContent = `${APP_STATE.mcpSubmissions.length} Data`;
-
-    if (!APP_STATE.mcpSubmissions.length) {
-      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data MCP yang masuk dari Korlap.</li>';
-      return;
-    }
-
-    list.innerHTML = APP_STATE.mcpSubmissions.map(m => {
-      const isApproved = m.status === 'Approved';
-      const doneCount = (m.rows || []).filter(r => r.val === '√').length;
-      return `
-        <li class="log-item">
-          <div style="width:100%;">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-              <strong>${escapeHtml(m.userName)} (${escapeHtml(m.userId)})</strong>
-              <span class="badge ${isApproved ? 'badge-in' : 'badge-warning'}">${isApproved ? `Approved (${escapeHtml(m.approvedBy || 'Admin')})` : 'Menunggu Approval'}</span>
-            </div>
-            <div style="margin-top:2px;"><strong>${escapeHtml(m.area)}</strong></div>
-            <div style="color:var(--text-muted);">UIT: ${escapeHtml(m.uit)} | UPT: ${escapeHtml(m.upt)} | Periode: ${escapeHtml(m.periode)}</div>
-            <div style="margin-top:2px;">Progress Selesai (√): <strong>${doneCount}/${(m.rows || []).length} item</strong> — <span style="color:var(--text-muted);">${escapeHtml(m.time)}</span></div>
-            ${!isApproved ? `<button type="button" class="btn btn-approve" onclick="approveMCPSubmission('${escapeHtml(m.id)}')"><i class="fas fa-check"></i> Approve MCP</button>` : ''}
-          </div>
-        </li>
-      `;
-    }).join('');
-  }
-
-  function addTeamMember() {
-    const name = document.getElementById('team-name').value.trim();
-    const roleSite = document.getElementById('team-role-site').value.trim();
-    if (!name || !roleSite) {
-      showToast('Lengkapi Nama Personel dan Posisi & Site Tugas.', 'warning');
-      return;
-    }
-    APP_STATE.team.unshift({
-      id: name.replace(/\s+/g, '_'),
-      name,
-      roleSite
-    });
-    safeLocalStorageSet('amp_team', JSON.stringify(APP_STATE.team));
-    document.getElementById('team-name').value = '';
-    document.getElementById('team-role-site').value = '';
-    renderTeamList();
-    showToast('Data tim berhasil ditambahkan.', 'success');
-  }
-
-  function renderTeamList() {
-    const list = document.getElementById('team-log-list');
-    const badge = document.getElementById('team-count-badge');
-    if (badge) badge.textContent = `${APP_STATE.team.length} Personel`;
-    if (!list) return;
-    if (!APP_STATE.team.length) {
-      list.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--text-muted);">Belum ada data tim tersimpan.</li>';
-      return;
-    }
-    list.innerHTML = APP_STATE.team.map(t => `
-      <li class="log-item">
-        <div style="width:28px; height:28px; border-radius:8px; background:#e0e7ff; color:var(--blue-accent); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <i class="fas fa-user-check"></i>
-        </div>
-        <div>
-          <strong>${escapeHtml(t.name)}</strong> ${t.id ? `<span class="badge badge-in">${escapeHtml(t.id)}</span>` : ''}<br/>
-          <span style="color:var(--text-muted);">${escapeHtml(t.roleSite)}</span>
-        </div>
-      </li>
-    `).join('');
-  }
-
-  function mapRadarModeToGoogleType(mode) {
-    if (mode === 'hybrid') return 'hybrid';
-    if (mode === 'satellite') return 'satellite';
-    return 'roadmap';
-  }
-
-  function buildRadarLayerGroup(mode) {
-    const group = L.layerGroup();
-
-    if (mode === 'detail') {
-      const gmapRoads = L.tileLayer(
-        'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-        { maxZoom: 20, attribution: 'Map Detail & OSM' }
-      );
-      const osmDetail = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        { maxZoom: 19, opacity: 0.72, attribution: '&copy; OpenStreetMap' }
-      );
-      gmapRoads.on('tileerror', () => {
-        if (!group.hasLayer(osmDetail)) group.addLayer(osmDetail);
-      });
-      group.addLayer(gmapRoads);
-      group.addLayer(osmDetail);
-    } else if (mode === 'hybrid') {
-      const satBase = L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 19, attribution: 'Esri Satellite' }
-      );
-      const gmapHybridLabels = L.tileLayer(
-        'https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}',
-        { maxZoom: 20, opacity: 0.92 }
-      );
-      const cartoLabels = L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
-        { maxZoom: 19, opacity: 0.85 }
-      );
-      gmapHybridLabels.on('tileerror', () => {
-        if (!group.hasLayer(cartoLabels)) group.addLayer(cartoLabels);
-      });
-      group.addLayer(satBase);
-      group.addLayer(gmapHybridLabels);
-    } else {
-      const satOnly = L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 19, attribution: 'Esri Satellite' }
-      );
-      group.addLayer(satOnly);
-    }
-
-    return group;
-  }
-
-  function switchRadarBaseLayer(mode, btnEl) {
-    currentRadarMode = mode;
-    document.querySelectorAll('.radar-layer-btn').forEach(b => b.classList.remove('active'));
-    if (btnEl) btnEl.classList.add('active');
-
-    if (gmapInstance && window.google && window.google.maps) {
-      gmapInstance.setMapTypeId(mapRadarModeToGoogleType(mode));
-      return;
-    }
-
-    if (radarMap) {
-      if (radarBaseGroup) radarMap.removeLayer(radarBaseGroup);
-      radarBaseGroup = buildRadarLayerGroup(mode);
-      radarBaseGroup.addTo(radarMap);
-    }
-  }
-
-  async function initRadarMapIfAdmin() {
-    if (!APP_STATE.currentUser || !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      clearRadarMap();
-      return;
-    }
-    const mapEl = document.getElementById('satellite-radar-map');
-    const engineLabel = document.getElementById('radar-engine-label');
-    if (!mapEl) return;
-
-    const apiKey = (APP_STATE.sbConfig && APP_STATE.sbConfig.gmapsKey) || '';
-    if (apiKey && await loadGoogleMapsSDK(apiKey)) {
-      if (engineLabel) engineLabel.innerHTML = '<i class="fas fa-map-pin" style="color:var(--danger);"></i> Google Maps Resmi (Jalan, Gedung & PT)';
-      if (!gmapInstance) {
-        gmapInstance = new google.maps.Map(mapEl, {
-          center: { lat: -6.2088, lng: 106.8456 },
-          zoom: 16,
-          mapTypeId: mapRadarModeToGoogleType(currentRadarMode),
-          mapTypeControl: true,
-          streetViewControl: true,
-          fullscreenControl: false
-        });
-        gmapInfoWindow = new google.maps.InfoWindow();
-        if (google.maps.places && google.maps.places.PlacesService) {
-          gmapPlacesService = new google.maps.places.PlacesService(gmapInstance);
-        }
-      }
-      return;
-    }
-
-    if (engineLabel) engineLabel.innerHTML = '<i class="fas fa-map"></i> Peta Detail Jalan, Gedung & PT';
-    if (typeof L === 'undefined') return;
-
-    if (!radarMap) {
-      radarMap = L.map('satellite-radar-map', { zoomControl: true }).setView([-6.2088, 106.8456], 16);
-      radarBaseGroup = buildRadarLayerGroup(currentRadarMode);
-      radarBaseGroup.addTo(radarMap);
-    }
-    setTimeout(() => {
-      if (radarMap) radarMap.invalidateSize();
-    }, 120);
-  }
-
-  function startRadarAutoRefresh() {
-    stopRadarAutoRefresh();
-    radarLiveTimer = setInterval(async () => {
-      if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-        await pullLiveGPSFromSupabase();
-        await pullAttendanceFromSupabase();
-        APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
-        refreshKorlapLivePositions();
+    const isPrivilegedRole = ['admin', 'headofops'].includes((currentUser.role || '').toLowerCase());
+
+    let map, googleStreetsLayer, googleHybridLayer;
+    const korlapMarkers = {};
+    let unreadNotifCount = 0;
+
+    // =========================================================================
+    // 2. INISIALISASI HAK AKSES (ADMIN/HEADOFOPS VS KORLAP)
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      if (isPrivilegedRole) {
+        document.getElementById('adminRadarDashboard').style.display = 'block';
+        document.getElementById('adminNotifBell').style.display = 'block';
+        initGoogleMap();
+        loadInitialKorlapLocations();
+        loadInitialNotifications();
+        subscribeRealtimeRadarAndNotifications();
       } else {
-        stopRadarAutoRefresh();
-        clearRadarMap();
-      }
-    }, 5000);
-  }
-
-  function stopRadarAutoRefresh() {
-    if (radarLiveTimer !== null) {
-      clearInterval(radarLiveTimer);
-      radarLiveTimer = null;
-    }
-  }
-
-  function clearRadarMap() {
-    radarMarkers.forEach(m => {
-      if (radarMap) radarMap.removeLayer(m);
-    });
-    radarMarkers = [];
-    if (radarBaseGroup && radarMap) {
-      radarMap.removeLayer(radarBaseGroup);
-      radarBaseGroup = null;
-    }
-    if (radarMap) {
-      radarMap.remove();
-      radarMap = null;
-    }
-    gmapMarkers.forEach(m => m.setMap(null));
-    gmapMarkers = [];
-    gmapInstance = null;
-    gmapInfoWindow = null;
-    gmapPlacesService = null;
-    const mapEl = document.getElementById('satellite-radar-map');
-    if (mapEl) mapEl.innerHTML = '';
-
-    const countEl = document.getElementById('radar-marker-count');
-    if (countEl) countEl.textContent = '0 Korlap Live';
-    const listEl = document.getElementById('korlap-live-radar-list');
-    if (listEl) listEl.innerHTML = '';
-  }
-
-  function getConsolidatedLiveKorlapPoints() {
-    APP_STATE.liveKorlapGPS = loadLiveKorlapGPS();
-    const mapByUser = new Map();
-
-    Object.values(APP_STATE.liveKorlapGPS).forEach((item) => {
-      if (!item || typeof item.lat !== 'number' || typeof item.lng !== 'number') return;
-      if (isAdminOrHeadOfOps({ jabatan: item.jabatan, id: item.userId })) return;
-      mapByUser.set(item.userId, { ...item });
-    });
-
-    APP_STATE.attendance.forEach((att) => {
-      if (!att || !att.gps || typeof att.gps.lat !== 'number' || typeof att.gps.lng !== 'number') return;
-      if (isAdminOrHeadOfOps({ jabatan: att.jabatan, id: att.userId })) return;
-      if (!mapByUser.has(att.userId)) {
-        mapByUser.set(att.userId, {
-          userId: att.userId,
-          userName: att.userName,
-          jabatan: att.jabatan || 'Korlap',
-          site: att.site || '-',
-          placeName: att.placeName || att.gps.placeName || '',
-          lat: att.gps.lat,
-          lng: att.gps.lng,
-          accuracy: Math.round(att.gps.accuracy || 0),
-          lastActivity: `Absen ${att.type}`,
-          updatedAt: att.time,
-          timestamp: 0
-        });
+        // Jika login sebagai Korlap: sembunyikan peta radar semua korlap,
+        // tapi aktifkan pengiriman GPS otomatis di latar belakang!
+        document.getElementById('accessDeniedView').style.display = 'block';
+        startKorlapLiveGpsSender();
       }
     });
 
-    return Array.from(mapByUser.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-  }
+    // =========================================================================
+    // 3. INISIALISASI PETA GOOGLE MAPS (STREETS & HYBRID SATELLITE)
+    // =========================================================================
+    function initGoogleMap() {
+      // Fokus awal mencakup area Jabodetabek & Jawa Barat (UIT JBB & UIT JBT)
+      map = L.map('googleMapRadar').setView([-6.55, 107.25], 9);
 
-  async function refreshKorlapLivePositions() {
-    if (!APP_STATE.currentUser || !isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      clearRadarMap();
-      return;
-    }
-    await pullLiveGPSFromSupabase();
-    await initRadarMapIfAdmin();
-
-    const points = getConsolidatedLiveKorlapPoints();
-    for (const p of points) {
-      if (!p.placeName) {
-        p.placeName = await resolveDetailedPlaceName(p.lat, p.lng);
-      }
-    }
-
-    const countEl = document.getElementById('radar-marker-count');
-    if (countEl) countEl.textContent = `${points.length} Korlap Live`;
-
-    const listEl = document.getElementById('korlap-live-radar-list');
-    if (!listEl) return;
-
-    if (!points.length) {
-      listEl.innerHTML = '<div style="font-size:10px; color:var(--text-muted);">Belum ada lokasi GPS live Korlap yang masuk. Pastikan Korlap sudah login dan mengizinkan lokasi GPS.</div>';
-      return;
-    }
-
-    listEl.innerHTML = '';
-
-    if (gmapInstance && window.google && window.google.maps) {
-      gmapMarkers.forEach(m => m.setMap(null));
-      gmapMarkers = [];
-      const gBounds = new google.maps.LatLngBounds();
-
-      points.forEach((p, idx) => {
-        const position = { lat: p.lat, lng: p.lng };
-        const gmapUrl = `https://maps.google.com/?q=${p.lat},${p.lng}`;
-        const marker = new google.maps.Marker({
-          position,
-          map: gmapInstance,
-          title: `${p.userName} (${p.userId})`
-        });
-
-        const openInfo = () => {
-          if (gmapInfoWindow) {
-            gmapInfoWindow.setContent(
-              `<div style="font-size:11px; line-height:1.4;"><b>${escapeHtml(p.userName)}</b> (${escapeHtml(p.userId)})<br/><b>Jalan/Gedung/PT:</b> ${escapeHtml(p.placeName || '-')}<br/>Area Tugas: ${escapeHtml(p.site)}<br/>GPS: ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}<br/>Update: ${escapeHtml(p.updatedAt || '-')}<br/><a href="${gmapUrl}" target="_blank">Buka di Google Maps</a></div>`
-            );
-            gmapInfoWindow.open(gmapInstance, marker);
-          }
-        };
-
-        marker.addListener('click', openInfo);
-        gmapMarkers.push(marker);
-        gBounds.extend(position);
-
-        const item = document.createElement('div');
-        item.className = 'log-item';
-        item.style.cursor = 'pointer';
-        item.innerHTML = `
-          <div style="width:100%;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span><span class="live-pulse-dot"></span><strong>${escapeHtml(p.userName)}</strong> (${escapeHtml(p.userId)})</span>
-              <span class="badge badge-in">LIVE</span>
-            </div>
-            <div style="color:var(--navy-primary); font-weight:600; margin-top:2px;"><i class="fas fa-location-dot" style="color:var(--danger);"></i> ${escapeHtml(p.placeName || '-')}</div>
-            <div style="color:var(--text-muted); margin-top:2px;">Area PLN: ${escapeHtml(p.site)}</div>
-            <div style="font-family:monospace; font-size:9.5px; margin-top:2px;">${p.lat.toFixed(6)}, ${p.lng.toFixed(6)} ${p.accuracy ? `(±${p.accuracy}m)` : ''}</div>
-            <div style="color:var(--text-muted); font-size:9px; margin-top:2px;">Update: ${escapeHtml(p.updatedAt || '-')}</div>
-          </div>
-        `;
-        item.onclick = () => {
-          gmapInstance.panTo(position);
-          gmapInstance.setZoom(17);
-          openInfo();
-        };
-        listEl.appendChild(item);
-
-        if (idx === 0 && points.length === 1) {
-          gmapInstance.setCenter(position);
-          gmapInstance.setZoom(17);
-        }
+      // Layer 1: Google Maps Standar (Jalan, Gedung, Kecamatan, Kelurahan)
+      googleStreetsLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        attribution: '© Google Maps | PT Ardina Mulya Perkasa'
       });
 
-      if (points.length > 1) {
-        gmapInstance.fitBounds(gBounds, 32);
-      }
-      return;
+      // Layer 2: Google Maps Hybrid (Citra Satelit + Label Jalan & Bangunan)
+      googleHybridLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        attribution: '© Google Satellite | PT Ardina Mulya Perkasa'
+      });
+
+      googleStreetsLayer.addTo(map);
     }
 
-    if (!radarMap) return;
-    radarMarkers.forEach(m => radarMap.removeLayer(m));
-    radarMarkers = [];
-    const bounds = [];
+    function switchGoogleLayer(type, btn) {
+      document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-    points.forEach((p, idx) => {
-      const gmapUrl = `https://maps.google.com/?q=${p.lat},${p.lng}`;
-      const marker = L.marker([p.lat, p.lng]).addTo(radarMap).bindPopup(
-        `<b>${escapeHtml(p.userName)}</b> (${escapeHtml(p.userId)})<br/><b>Jalan/Gedung/PT:</b> ${escapeHtml(p.placeName || '-')}<br/>Area Tugas: ${escapeHtml(p.site)}<br/>GPS: ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}<br/>Update: ${escapeHtml(p.updatedAt || '-')}<br/><a href="${gmapUrl}" target="_blank">Buka di Google Maps</a>`
-      );
-      radarMarkers.push(marker);
-      bounds.push([p.lat, p.lng]);
+      if (type === 'hybrid') {
+        map.removeLayer(googleStreetsLayer);
+        googleHybridLayer.addTo(map);
+      } else {
+        map.removeLayer(googleHybridLayer);
+        googleStreetsLayer.addTo(map);
+      }
+    }
 
-      const item = document.createElement('div');
-      item.className = 'log-item';
-      item.style.cursor = 'pointer';
-      item.innerHTML = `
-        <div style="width:100%;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span><span class="live-pulse-dot"></span><strong>${escapeHtml(p.userName)}</strong> (${escapeHtml(p.userId)})</span>
-            <span class="badge badge-in">LIVE</span>
-          </div>
-          <div style="color:var(--navy-primary); font-weight:600; margin-top:2px;"><i class="fas fa-location-dot" style="color:var(--danger);"></i> ${escapeHtml(p.placeName || '-')}</div>
-          <div style="color:var(--text-muted); margin-top:2px;">Area PLN: ${escapeHtml(p.site)}</div>
-          <div style="font-family:monospace; font-size:9.5px; margin-top:2px;">${p.lat.toFixed(6)}, ${p.lng.toFixed(6)} ${p.accuracy ? `(±${p.accuracy}m)` : ''}</div>
-          <div style="color:var(--text-muted); font-size:9px; margin-top:2px;">Update: ${escapeHtml(p.updatedAt || '-')}</div>
+    // =========================================================================
+    // 4. RENDER MARKER RADAR LIVE KORLAP DI GOOGLE MAPS
+    // =========================================================================
+    function upsertKorlapMarker(data) {
+      const { user_id, nama, area_kerja, latitude, longitude, last_activity, updated_at } = data;
+      const waktu = new Date(updated_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      const popupContent = `
+        <div style="color:#0f172a; font-size:13px; min-width:190px;">
+          <b style="font-size:14px; color:#0369a1;">${nama}</b> (${user_id})<br/>
+          <span style="color:#475569;">📍 ${area_kerja}</span><br/>
+          <hr style="margin:5px 0; border-color:#cbd5e1;"/>
+          <b>Aktivitas:</b> ${last_activity || 'Standby'}<br/>
+          <b>Koordinat:</b> ${latitude.toFixed(5)}, ${longitude.toFixed(5)}<br/>
+          <b>Update:</b> ${waktu} WIB<br/>
+          <a href="https://www.google.com/maps?q=${latitude},${longitude}" target="_blank" 
+             style="display:inline-block; margin-top:6px; color:#2563eb; font-weight:bold; text-decoration:none;">
+             Buka di Aplikasi Google Maps ↗
+          </a>
         </div>
       `;
-      item.onclick = () => {
-        radarMap.setView([p.lat, p.lng], 17);
-        marker.openPopup();
-      };
-      listEl.appendChild(item);
 
-      if (idx === 0 && bounds.length === 1) {
-        radarMap.setView([p.lat, p.lng], 17);
-      }
-    });
+      if (korlapMarkers[user_id]) {
+        korlapMarkers[user_id].setLatLng([latitude, longitude]).setPopupContent(popupContent);
+      } else {
+        const radarIcon = L.divIcon({
+          className: 'custom-radar-marker',
+          html: `<div class="radar-pin"></div>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11]
+        });
 
-    if (bounds.length > 1) {
-      radarMap.fitBounds(bounds, { padding: [24, 24], maxZoom: 17 });
-    }
-  }
-
-  function downloadCSV(filename, rows) {
-    const csvContent = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast(`Mengunduh ${filename}...`, 'success');
-  }
-
-  function exportToExcel() {
-    const rows = [['ID', 'Nama', 'Peran', 'Area PLN', 'Tipe', 'Waktu', 'Lokasi', 'Lat', 'Lng']];
-    APP_STATE.attendance.forEach(a => {
-      rows.push([a.userId, a.userName, a.jabatan, a.site, a.type, a.time, a.placeName || '', a.gps?.lat || '', a.gps?.lng || '']);
-    });
-    downloadCSV('rekap_absensi_amp.csv', rows);
-  }
-
-  function exportGPSLogToCSV() {
-    const rows = [['ID', 'Nama', 'Peran', 'Area PLN', 'Lokasi', 'Lat', 'Lng', 'Akurasi(m)', 'Update']];
-    getConsolidatedLiveKorlapPoints().forEach(p => {
-      rows.push([p.userId, p.userName, p.jabatan, p.site, p.placeName || '', p.lat, p.lng, p.accuracy || 0, p.updatedAt || '']);
-    });
-    downloadCSV('rekap_gps_korlap_amp.csv', rows);
-  }
-
-  function exportIncidentLogToCSV() {
-    const rows = [['Waktu', 'Pelapor', 'Site', 'Kategori', 'Kronologi', 'Status']];
-    APP_STATE.incidents.forEach(i => rows.push([i.time, i.user, i.site, i.type, i.desc, i.status || 'Menunggu Approval']));
-    downloadCSV('rekap_kejadian_amp.csv', rows);
-  }
-
-  function exportMRToCSV() {
-    const rows = [['Waktu', 'Pengaju', 'Site', 'Material', 'Jumlah', 'Prioritas', 'Catatan', 'Status']];
-    APP_STATE.mr.forEach(m => rows.push([m.time, m.user, m.site, m.item, m.qty, m.priority, m.notes, m.status || 'Menunggu Approval']));
-    downloadCSV('rekap_mr_amp.csv', rows);
-  }
-
-  function saveDAC() {
-    const area = document.getElementById('dac-area').value.trim();
-    const condition = document.getElementById('dac-condition').value;
-    if (!area) {
-      showToast('Isi nama area/toilet/gedung.', 'warning');
-      return;
-    }
-    APP_STATE.dac.unshift({ time: new Date().toLocaleString('id-ID'), area, condition });
-    safeLocalStorageSet('amp_dac', JSON.stringify(APP_STATE.dac));
-    document.getElementById('dac-log-list').innerHTML = APP_STATE.dac.map(d => `<li class="log-item"><div><strong>${escapeHtml(d.area)}</strong> — ${escapeHtml(d.condition)}<br/><span style="color:var(--text-muted);">${escapeHtml(d.time)}</span></div></li>`).join('');
-    showToast('Cheklis area disimpan.', 'success');
-  }
-
-  function saveK3() {
-    const job = document.getElementById('k3-job').value.trim();
-    const apd = document.getElementById('k3-apd').value.trim();
-    if (!job || !apd) {
-      showToast('Lengkapi jenis pekerjaan dan kesiapan APD/JSA.', 'warning');
-      return;
-    }
-    APP_STATE.k3.unshift({ time: new Date().toLocaleString('id-ID'), job, apd });
-    safeLocalStorageSet('amp_k3', JSON.stringify(APP_STATE.k3));
-    document.getElementById('k3-log-list').innerHTML = APP_STATE.k3.map(k => `<li class="log-item"><div><strong>${escapeHtml(k.job)}</strong><br/>APD/JSA: ${escapeHtml(k.apd)}<br/><span style="color:var(--text-muted);">${escapeHtml(k.time)}</span></div></li>`).join('');
-    showToast('Verifikasi K3 disimpan.', 'success');
-  }
-
-  function saveEquipment() {
-    const name = document.getElementById('eq-name').value.trim();
-    const status = document.getElementById('eq-status').value.trim();
-    if (!name || !status) {
-      showToast('Lengkapi nama alat dan kondisi.', 'warning');
-      return;
-    }
-    APP_STATE.equipment.unshift({ name, status });
-    safeLocalStorageSet('amp_equipment', JSON.stringify(APP_STATE.equipment));
-    document.getElementById('eq-log-list').innerHTML = APP_STATE.equipment.map(e => `<li class="log-item"><div><strong>${escapeHtml(e.name)}</strong> — ${escapeHtml(e.status)}</div></li>`).join('');
-    showToast('Data equipment disimpan.', 'success');
-  }
-
-  function saveOutstanding() {
-    const item = document.getElementById('out-item').value.trim();
-    if (!item) {
-      showToast('Isi item outstanding.', 'warning');
-      return;
-    }
-    APP_STATE.outstanding.unshift({ item, time: new Date().toLocaleString('id-ID') });
-    safeLocalStorageSet('amp_outstanding', JSON.stringify(APP_STATE.outstanding));
-    document.getElementById('out-log-list').innerHTML = APP_STATE.outstanding.map(o => `<li class="log-item"><div><strong>${escapeHtml(o.item)}</strong><br/><span style="color:var(--text-muted);">${escapeHtml(o.time)}</span></div></li>`).join('');
-    showToast('Item outstanding ditambahkan.', 'success');
-  }
-
-  function saveSupabaseConfig() {
-    const url = document.getElementById('sb-url').value.trim();
-    const key = document.getElementById('sb-key').value.trim();
-    const gmapsKey = document.getElementById('sb-gmaps-key')
-      ? document.getElementById('sb-gmaps-key').value.trim()
-      : (APP_STATE.sbConfig?.gmapsKey || '');
-    APP_STATE.sbConfig = { url, key, gmapsKey };
-    safeLocalStorageSet('amp_sb_config', JSON.stringify(APP_STATE.sbConfig));
-
-    const radarKeyInput = document.getElementById('radar-gmaps-key');
-    if (radarKeyInput) radarKeyInput.value = gmapsKey;
-    gmapScriptPromise = null;
-
-    const connected = initSupabaseClient();
-    if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      clearRadarMap();
-      initRadarMapIfAdmin();
-      refreshKorlapLivePositions();
-      pullAttendanceFromSupabase();
-    }
-    showToast(
-      connected
-        ? 'Konfigurasi Supabase & GMaps disimpan dan terhubung.'
-        : 'Konfigurasi disimpan (periksa URL & Anon Key jika ingin koneksi cloud aktif).',
-      connected ? 'success' : 'info'
-    );
-  }
-
-  async function syncAllData() {
-    initSupabaseClient();
-    if (supabaseClient) {
-      await pullLiveGPSFromSupabase();
-      await pullAttendanceFromSupabase();
-      if (APP_STATE.currentUser && !isAdminOrHeadOfOps(APP_STATE.currentUser) && APP_STATE.liveKorlapGPS[APP_STATE.currentUser.id]) {
-        await pushLiveGPSToSupabase(APP_STATE.liveKorlapGPS[APP_STATE.currentUser.id], true);
+        korlapMarkers[user_id] = L.marker([latitude, longitude], { icon: radarIcon })
+          .addTo(map)
+          .bindPopup(popupContent);
       }
     }
-    if (APP_STATE.currentUser && isAdminOrHeadOfOps(APP_STATE.currentUser)) {
-      await refreshKorlapLivePositions();
+
+    async function loadInitialKorlapLocations() {
+      const { data, error } = await supabaseClient
+        .from('korlap_live_locations')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      if (!error && data) {
+        renderKorlapList(data);
+        data.forEach(item => upsertKorlapMarker(item));
+      }
     }
-    showToast('Sinkronisasi data selesai dijalankan.', 'success');
-  }
 
-  async function startProfileWebcam() {
-    try {
-      stopCameras();
-      profileStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-      const video = document.getElementById('profile-webcam');
-      video.srcObject = profileStream;
-      video.style.display = 'block';
-      document.getElementById('profile-photo-preview').style.display = 'none';
-      document.getElementById('profile-cam-placeholder').style.display = 'none';
-      showToast('Kamera profil aktif.', 'success');
-    } catch (e) {
-      showToast('Gagal membuka kamera profil: ' + e.message, 'danger');
+    function renderKorlapList(list) {
+      const container = document.getElementById('korlapListContainer');
+      container.innerHTML = list.map(k => `
+        <div class="item-card" style="cursor:pointer;" onclick="focusKorlap(${k.latitude}, ${k.longitude}, '${k.user_id}')">
+          <div style="display:flex; justify-content:space-between;">
+            <strong>${k.nama} (${k.user_id})</strong>
+            <span style="color:#10b981; font-size:11px;">● LIVE</span>
+          </div>
+          <div style="color:#94a3b8; font-size:12px;">${k.area_kerja}</div>
+          <div style="margin-top:4px; color:#e2e8f0;">
+            Aktivitas: <b>${k.last_activity || '-'}</b> • 
+            <span style="color:#38bdf8;">${new Date(k.updated_at).toLocaleTimeString('id-ID')} WIB</span>
+          </div>
+        </div>
+      `).join('');
     }
-  }
 
-  function captureProfileSnapshot() {
-    const video = document.getElementById('profile-webcam');
-    if (!profileStream || video.style.display === 'none') {
-      showToast('Buka kamera profil terlebih dahulu.', 'warning');
-      return;
+    function focusKorlap(lat, lng, userId) {
+      map.flyTo([lat, lng], 16, { animate: true, duration: 1.2 });
+      if (korlapMarkers[userId]) korlapMarkers[userId].openPopup();
     }
-    const canvas = document.createElement('canvas');
-    canvas.width = 240;
-    canvas.height = 240;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
-    if (APP_STATE.currentUser) APP_STATE.currentUser.avatar = dataUrl;
-    const img = document.getElementById('profile-photo-preview');
-    img.src = dataUrl;
-    img.style.display = 'block';
-    video.style.display = 'none';
-    showToast('Foto profil diambil. Klik SIMPAN FOTO PROFIL.', 'success');
-  }
 
-  function loadProfileFromGallery(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (APP_STATE.currentUser) APP_STATE.currentUser.avatar = reader.result;
-      document.getElementById('profile-photo-preview').src = reader.result;
-      document.getElementById('profile-photo-preview').style.display = 'block';
-      document.getElementById('profile-cam-placeholder').style.display = 'none';
-      showToast('Foto galeri siap disimpan.', 'info');
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function saveProfileAvatar() {
-    if (!APP_STATE.currentUser) return;
-    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
-    if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
-    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
-    renderUserUI();
-    showToast('Foto profil disimpan.', 'success');
-  }
-
-  function updateOwnProfile() {
-    if (!APP_STATE.currentUser) return;
-    APP_STATE.currentUser.name = document.getElementById('edit-prof-name').value.trim() || APP_STATE.currentUser.name;
-    APP_STATE.currentUser.jabatan = document.getElementById('edit-prof-jabatan').value.trim() || APP_STATE.currentUser.jabatan;
-    APP_STATE.currentUser.site = document.getElementById('edit-prof-site').value.trim() || APP_STATE.currentUser.site;
-    APP_STATE.currentUser.phone = document.getElementById('edit-prof-phone').value.trim() || APP_STATE.currentUser.phone;
-    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
-    if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
-    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
-    renderUserUI();
-    showToast('Informasi profil diperbarui.', 'success');
-  }
-
-  function changeOwnPIN() {
-    const oldPin = document.getElementById('prof-old-pin').value.trim();
-    const newPin = document.getElementById('prof-new-pin').value.trim();
-    if (!APP_STATE.currentUser || APP_STATE.currentUser.pin !== oldPin || newPin.length !== 6) {
-      showToast('Periksa PIN lama dan pastikan PIN baru 6 digit.', 'warning');
-      return;
+    // =========================================================================
+    // 5. REALTIME SUBSCRIPTION: RADAR MOVEMENT & NOTIFIKASI AKTIVITAS KORLAP
+    // =========================================================================
+    function subscribeRealtimeRadarAndNotifications() {
+      supabaseClient
+        .channel('amp-admin-monitoring-live')
+        // A. Dengarkan perubahan koordinat GPS Korlap
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'korlap_live_locations' }, (payload) => {
+          const updatedKorlap = payload.new;
+          if (updatedKorlap) {
+            upsertKorlapMarker(updatedKorlap);
+            loadInitialKorlapLocations();
+          }
+        })
+        // B. Dengarkan setiap aktivitas baru (Absensi, Pergerakan Radar, Pengajuan Modul)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'admin_notifications' }, (payload) => {
+          const notif = payload.new;
+          if (notif) {
+            triggerAdminAlert(notif);
+            prependNotifFeed(notif);
+          }
+        })
+        .subscribe();
     }
-    APP_STATE.currentUser.pin = newPin;
-    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
-    if (idx >= 0) APP_STATE.users[idx] = APP_STATE.currentUser;
-    safeLocalStorageSet('amp_users', JSON.stringify(APP_STATE.users));
-    document.getElementById('prof-old-pin').value = '';
-    document.getElementById('prof-new-pin').value = '';
-    showToast('PIN berhasil diupdate.', 'success');
-  }
-</script>
+
+    async function loadInitialNotifications() {
+      const { data } = await supabaseClient
+        .from('admin_notifications')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(25);
+
+      if (data && data.length > 0) {
+        document.getElementById('notifFeedContainer').innerHTML = '';
+        data.forEach(n => prependNotifFeed(n, false));
+      }
+    }
+
+    function prependNotifFeed(notif, toTop = true) {
+      const container = document.getElementById('notifFeedContainer');
+      const waktu = new Date(notif.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const html = `
+        <div class="item-card notif-item">
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:#fbbf24;">
+            <span><b>[${notif.kategori}]</b> ${notif.actor_name}</span>
+            <span>${waktu} WIB</span>
+          </div>
+          <div style="margin-top:4px; color:#f8fafc;">${notif.pesan}</div>
+          <div style="font-size:11px; color:#94a3b8; margin-top:2px;">Area: ${notif.area_kerja || '-'}</div>
+        </div>
+      `;
+      if (toTop) {
+        container.insertAdjacentHTML('afterbegin', html);
+      } else {
+        container.insertAdjacentHTML('beforeend', html);
+      }
+    }
+
+    function triggerAdminAlert(notif) {
+      // 1. Tambah angka badge lonceng
+      unreadNotifCount++;
+      document.getElementById('notifCount').innerText = unreadNotifCount;
+
+      // 2. Bunyikan nada notifikasi halus (Web Audio API tanpa file MP3 eksternal)
+      playBeepNotification();
+
+      // 3. Tampilkan Popup Toast di layar Admin/HeadOfOps
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-alert';
+      toast.innerHTML = `
+        <div style="font-weight:bold; color:#38bdf8; margin-bottom:3px;">
+          🔔 Aktivitas Baru: ${notif.kategori}
+        </div>
+        <div><b>${notif.actor_name}</b> (${notif.area_kerja || 'Lapangan'})</div>
+        <div style="color:#cbd5e1; margin-top:2px;">${notif.pesan}</div>
+      `;
+      toastContainer.appendChild(toast);
+
+      // Hilangkan popup otomatis setelah 7 detik
+      setTimeout(() => toast.remove(), 7000);
+    }
+
+    function resetNotifBadge() {
+      unreadNotifCount = 0;
+      document.getElementById('notifCount').innerText = '0';
+    }
+
+    function playBeepNotification() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime); // Nada A5 jernih
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.18);
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // 6. FUNGSI PEMICU OTOMATIS DARI AKUN KORLAP (GPS + LOG AKTIVITAS MODUL)
+    // =========================================================================
+    let lastSentCoords = null;
+
+    function startKorlapLiveGpsSender() {
+      if (!navigator.geolocation) return;
+
+      navigator.geolocation.watchPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        // Cek apakah berpindah minimal ~25 meter agar tidak spam database
+        const moved = !lastSentCoords || 
+          Math.abs(lat - lastSentCoords.lat) > 0.00025 || 
+          Math.abs(lng - lastSentCoords.lng) > 0.00025;
+
+        if (moved) {
+          lastSentCoords = { lat, lng };
+
+          // Update titik radar live
+          await supabaseClient.from('korlap_live_locations').upsert({
+            user_id: currentUser.user_id,
+            nama: currentUser.nama,
+            area_kerja: currentUser.area_kerja || 'Area Operasional PLN',
+            latitude: lat,
+            longitude: lng,
+            status_online: true,
+            last_activity: 'Pergerakan Radar GPS',
+            updated_at: new Date().toISOString()
+          });
+
+          // Kirim notifikasi pergerakan radar ke Admin / HeadOfOps
+          await kirimNotifikasiKeAdmin(
+            'RADAR_GPS',
+            `Bergerak ke koordinat (${lat.toFixed(5)}, ${lng.toFixed(5)})`,
+            `${lat},${lng}`
+          );
+        }
+      }, (err) => console.warn('GPS Error:', err), {
+        enableHighAccuracy: true,
+        maximumAge: 10000,
+        timeout: 15000
+      });
+    }
+
+    /**
+     * PANGGIL FUNGSI INI DI SETIAP TOMBOL SUBMIT MODUL KORLAP!
+     * Contoh pemakaian:
+     * - Saat submit Absensi Selfie: kirimNotifikasiKeAdmin('ABSENSI', 'Melakukan Absensi Masuk dengan foto selfie watermark');
+     * - Saat submit Market Request: kirimNotifikasiKeAdmin('PENGAJUAN_MR', 'Mengajukan Market Request (MR) chemical & peralatan');
+     * - Saat submit Izin/Cuti: kirimNotifikasiKeAdmin('IZIN_CUTI', 'Mengajukan permohonan izin/cuti');
+     * - Saat submit Izin Kerja K3: kirimNotifikasiKeAdmin('IZIN_K3', 'Mengajukan Izin Kerja Berisiko Tinggi / K3');
+     */
+    async function kirimNotifikasiKeAdmin(kategori, pesan, koordinat = '-') {
+      await supabaseClient.from('admin_notifications').insert({
+        actor_id: currentUser.user_id,
+        actor_name: currentUser.nama,
+        area_kerja: currentUser.area_kerja || 'Area Operasional PLN',
+        kategori: kategori,
+        pesan: pesan,
+        koordinat: koordinat
+      });
+    }
+  </script>
 </body>
 </html>
