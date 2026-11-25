@@ -1488,19 +1488,19 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
 
     const DEFAULT_ACCOUNTS = [
       { id: "M.Soheh", username: "M.Soheh", name: "M.Soheh", role: "ADMIN", pin: "990099", area: "Seluruh Wilayah PLN UIT JBT & UIT JBB", lat: -6.2432, lng: 106.8689, streetHint: "Jl. Raya Cawang / Kantor Pusat" },
-      { id: "Dede_Rusmana", username: "Dede_Rusmana", name: "Dede Rusmana", role: "KORLAP", pin: "110101", area: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756, streetHint: "Jl. Industri / Bekasi - Cikarang" },
-      { id: "Dede_Purnama", username: "Dede_Purnama", name: "Dede Purnama", role: "KORLAP", pin: "110202", area: "ULTG Karet & ULTG Mampang", lat: -6.2165, lng: 106.8168, streetHint: "Jl. HR Rasuna Said / Karet - Mampang" },
-      { id: "Dadang_Darsono", username: "Dadang_Darsono", name: "Dadang Darsono", role: "KORLAP", pin: "110303", area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah", lat: -6.1835, lng: 106.9065, streetHint: "Jl. Bekasi Raya / Pulogadung" },
-      { id: "Rizky_Badrul Z", username: "Rizky_Badrul Z", name: "Rizky Badrul Zaman", role: "KORLAP", pin: "110404", area: "Kantor Induk Bandung & ULTG Bandung Barat", lat: -6.9147, lng: 107.6098, streetHint: "Jl. Asia Afrika / Kantor Induk Bandung" },
-      { id: "Irfan_AS", username: "Irfan_AS", name: "Irfan Ardiatma S", role: "KORLAP", pin: "110505", area: "UPT Cawang & ULTG Mampang", lat: -6.2432, lng: 106.8689, streetHint: "Jl. Mayjen Sutoyo / UPT Cawang" },
-      { id: "Yan_S", username: "Yan_S", name: "Yan Saputra", role: "KORLAP", pin: "110606", area: "UPT Pulogadung, ULTG Ancol & ULTG Harapan Indah", lat: -6.1525, lng: 106.8421, streetHint: "Jl. Lodan Raya / ULTG Ancol" },
-      { id: "Yadi_S", username: "Yadi_S", name: "Yadi Supriyadi", role: "KORLAP", pin: "110707", area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan", lat: -6.9326, lng: 107.6278, streetHint: "Jl. Soekarno Hatta / UPT Bandung" },
-      { id: "Tegar_D", username: "Tegar_D", name: "Tegar Dwitama", role: "KORLAP", pin: "110808", area: "ULTG Cikarang", lat: -6.2654, lng: 107.1512, streetHint: "Jl. Raya Cikarang - Cibarusah" },
-      { id: "Andi_I", username: "Andi_I", name: "Andi Ilmanto", role: "KORLAP", pin: "110909", area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", lat: -6.3189, lng: 106.7745, streetHint: "Jl. Cinere Raya / ULTG Gandul" },
-      { id: "Tamam_2", username: "Tamam_2", name: "Tamam", role: "KORLAP", pin: "111010", area: "UPT Bogor & ULTG Sukabumi", lat: -6.5971, lng: 106.8060, streetHint: "Jl. Pajajaran / UPT Bogor" },
-      { id: "Haerudin_3", username: "Haerudin_3", name: "Haerudin", role: "KORLAP", pin: "111111", area: "ULTG Purwakarta", lat: -6.5569, lng: 107.4463, streetHint: "Jl. Veteran / ULTG Purwakarta" },
-      { id: "Iswanto_R", username: "Iswanto_R", name: "Iswanto Riansyah", role: "KORLAP", pin: "111212", area: "UPT Bogor & ULTG Sukabumi", lat: -6.9277, lng: 106.9271, streetHint: "Jl. Pelabuhan II / ULTG Sukabumi" },
-      { id: "Rifky_Y", username: "Rifky_Y", name: "Rifkiyansyah", role: "KORLAP", pin: "111313", area: "UPT Karawang, UPT Bogor & ULTG Sukabumi", lat: -6.3036, lng: 107.3009, streetHint: "Jl. Tuparev / UPT Karawang" }
+      { id: "Dede_Rusmana", username: "Dede_Rusmana", name: "Dede Rusmana", role: "KORLAP", pin: "110101", area: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756, streetHint: "UPT Bekasi & ULTG Cikarang" },
+      { id: "Dede_Purnama", username: "Dede_Purnama", name: "Dede Purnama", role: "KORLAP", pin: "110202", area: "ULTG Karet & ULTG Mampang", lat: -6.2165, lng: 106.8168, streetHint: "ULTG Karet & ULTG Mampang" },
+      { id: "Dadang_Darsono", username: "Dadang_Darsono", name: "Dadang Darsono", role: "KORLAP", pin: "110303", area: "UPT Pulogadung", lat: -6.1835, lng: 106.9065, streetHint: "UPT Pulogadung" },
+      { id: "Rizky_Badrul Z", username: "Rizky_Badrul Z", name: "Rizky Badrul Zaman", role: "KORLAP", pin: "110404", area: "Kantor Induk Bandung & ULTG Bandung Barat", lat: -6.9147, lng: 107.6098, streetHint: "Kantor Induk Bandung & ULTG Bandung Barat" },
+      { id: "Irfan_AS", username: "Irfan_AS", name: "Irfan Ardiatma S", role: "KORLAP", pin: "110505", area: "UPT Cawang", lat: -6.2432, lng: 106.8689, streetHint: "UPT Cawang" },
+      { id: "Yan_S", username: "Yan_S", name: "Yan Saputra", role: "KORLAP", pin: "110606", area: "UPT Pulogadung", lat: -6.1525, lng: 106.8421, streetHint: "UPT Pulogadung" },
+      { id: "Yadi_S", username: "Yadi_S", name: "Yadi Supriyadi", role: "KORLAP", pin: "110707", area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan", lat: -6.9326, lng: 107.6278, streetHint: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan" },
+      { id: "Tegar_D", username: "Tegar_D", name: "Tegar Dwitama", role: "KORLAP", pin: "110808", area: "ULTG Cikarang", lat: -6.2654, lng: 107.1512, streetHint: "ULTG Cikarang" },
+      { id: "Andi_I", username: "Andi_I", name: "Andi Ilmanto", role: "KORLAP", pin: "110909", area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", lat: -6.3189, lng: 106.7745, streetHint: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel" },
+      { id: "Tamam_2", username: "Tamam_2", name: "Tamam", role: "KORLAP", pin: "111010", area: "UPT Bogor", lat: -6.5971, lng: 106.8060, streetHint: "UPT Bogor" },
+      { id: "Haerudin_3", username: "Haerudin_3", name: "Haerudin", role: "KORLAP", pin: "111111", area: "ULTG Purwakarta", lat: -6.5569, lng: 107.4463, streetHint: "ULTG Purwakarta" },
+      { id: "Iswanto_R", username: "Iswanto_R", name: "Iswanto Riansyah", role: "KORLAP", pin: "111212", area: "UPT Bogor", lat: -6.9277, lng: 106.9271, streetHint: "UPT Bogor" },
+      { id: "Rifky_Y", username: "Rifky_Y", name: "Rifkiyansyah", role: "KORLAP", pin: "111313", area: "UPT Karawang", lat: -6.3036, lng: 107.3009, streetHint: "UPT Karawang" }
     ];
 
     const MODULES_14 = [
