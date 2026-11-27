@@ -3354,5 +3354,137 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
     document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
     document.getElementById("topbarLogoImg").src = AMP_LOGO_DATA_URI;
   </script>
+  <script>
+(function () {
+  const KORLAP_DATA = [
+    { id: 'Dede_Rusmana', nama: 'Dede Rusmana', area: 'UPT Bekasi & ULTG Cikarang', lat: -6.238300, lng: 106.975600 },
+    { id: 'Dede_Purnama', nama: 'Dede Purnama', area: 'ULTG Karet & ULTG Mampang', lat: -6.216500, lng: 106.816800 },
+    { id: 'Dadang_Darsono', nama: 'Dadang Darsono', area: 'UPT Pulogadung, ULTG Ancol & Harapan Indah', lat: -6.188600, lng: 106.912500 },
+    { id: 'Rizky_Badrul Z', nama: 'Rizky Badrul Zaman', area: 'Kantor Induk Bandung & ULTG Bandung Barat', lat: -6.914744, lng: 107.609810 },
+    { id: 'Irfan_AS', nama: 'Irfan Ardiatma S', area: 'UPT Cawang & ULTG Mampang', lat: -6.248600, lng: 106.873200 },
+    { id: 'Yan_S', nama: 'Yan Saputra', area: 'UPT Pulogadung, ULTG Ancol & Harapan Indah', lat: -6.126400, lng: 106.835300 },
+    { id: 'Yadi_S', nama: 'Yadi Supriyadi', area: 'UPT Bandung, ULTG Bandung Timur & Selatan', lat: -6.938900, lng: 107.661200 },
+    { id: 'Tegar_D', nama: 'Tegar Dwitama', area: 'ULTG Cikarang', lat: -6.284500, lng: 107.170500 },
+    { id: 'Andi_I', nama: 'Andi Ilmanto', area: 'ULTG Gandul, ULTG Petukangan & ULTG Tangsel', lat: -6.327800, lng: 106.791500 },
+    { id: 'Tamam_2', nama: 'Tamam', area: 'UPT Bogor & ULTG Sukabumi', lat: -6.597147, lng: 106.806039 },
+    { id: 'Haerudin_3', nama: 'Haerudin', area: 'ULTG Purwakarta', lat: -6.556900, lng: 107.446300 },
+    { id: 'Iswanto_R', nama: 'Iswanto Riansyah', area: 'UPT Bogor & ULTG Sukabumi', lat: -6.922100, lng: 106.927100 },
+    { id: 'Rifky_Y', nama: 'Rifkiyansyah', area: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', lat: -6.322700, lng: 107.337600 }
+  ];
+
+  function getClient() {
+    if (window.supabaseClient) return window.supabaseClient;
+    if (window.sb) return window.sb;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      const url = window.SUPABASE_URL || localStorage.getItem('SUPABASE_URL') || 'https://eisyylttheemoghokyd.supabase.co';
+      const key = window.SUPABASE_ANON_KEY || localStorage.getItem('SUPABASE_ANON_KEY');
+      if (url && key) {
+        window.supabaseClient = window.supabase.createClient(url, key);
+        return window.supabaseClient;
+      }
+    }
+    return null;
+  }
+
+  function formatJamWIB(isoStr) {
+    try {
+      const d = isoStr ? new Date(isoStr) : new Date();
+      return d.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
+    } catch (e) {
+      return 'LIVE';
+    }
+  }
+
+  function applyLiveRadarUI(rows) {
+    if (!Array.isArray(rows) || rows.length === 0) return;
+
+    document.querySelectorAll('*').forEach((el) => {
+      if (el.children.length === 0 && /GPS Real Aktif\s*\/\s*13 Korlap/i.test(el.textContent || '')) {
+        el.textContent = `${rows.length} GPS Real Aktif / 13 Korlap`;
+      }
+    });
+
+    rows.forEach((row) => {
+      const jamText = formatJamWIB(row.updated_at);
+      document.querySelectorAll('div, li, article, section').forEach((card) => {
+        const txt = card.innerText || '';
+        if (txt.includes(row.nama) && txt.includes('Menunggu GPS Real Perangkat')) {
+          card.querySelectorAll('*').forEach((child) => {
+            if (child.children.length === 0 && /Menunggu GPS Real Perangkat/i.test(child.textContent || '')) {
+              child.textContent = `LIVE RADAR ±${Math.round(row.accuracy || 30)}m • ${jamText}`;
+            }
+          });
+        }
+      });
+    });
+
+    window.AMP_LIVE_KORLAP = rows;
+    if (typeof window.renderKorlapRadar === 'function') {
+      window.renderKorlapRadar(rows);
+    }
+  }
+
+  async function refreshRadar() {
+    const client = getClient();
+    if (!client) {
+      applyLiveRadarUI(KORLAP_DATA.map((k) => ({
+        id: k.id,
+        nama: k.nama,
+        area: k.area,
+        latitude: k.lat,
+        longitude: k.lng,
+        accuracy: 30,
+        updated_at: new Date().toISOString()
+      })));
+      return;
+    }
+
+    const { data, error } = await client
+      .from('amp_live_gps')
+      .select('*')
+      .order('updated_at', { ascending: false });
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      applyLiveRadarUI(data);
+    }
+  }
+
+  function startKorlapSender() {
+    const raw = localStorage.getItem('amp_user') || localStorage.getItem('currentUser') || '{}';
+    let user = {};
+    try { user = JSON.parse(raw); } catch (e) {}
+    const loginKey = String(user.id || user.username || user.nama || '').toLowerCase();
+    const match = KORLAP_DATA.find((k) =>
+      k.id.toLowerCase() === loginKey || k.nama.toLowerCase() === loginKey
+    );
+
+    if (!match || !navigator.geolocation) return;
+
+    navigator.geolocation.watchPosition(
+      async (pos) => {
+        const client = getClient();
+        if (!client) return;
+        await client.from('amp_live_gps').upsert({
+          id: match.id,
+          nama: match.nama,
+          area: match.area,
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: Math.round(pos.coords.accuracy || 25),
+          status: 'LIVE RADAR',
+          is_real_gps: true,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+    );
+  }
+
+  refreshRadar();
+  startKorlapSender();
+  setInterval(refreshRadar, 8000);
+})();
+</script>
 </body>
 </html>
