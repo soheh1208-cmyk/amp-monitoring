@@ -176,7 +176,7 @@
 
     .admin-notif-drawer { display: none; background: #ffffff; border-bottom: 2px solid #0284c7; padding: 10px 12px; max-height: 230px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12); }
     .admin-notif-drawer.open { display: block; }
-    .notif-drawer-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; font-weight: 900; color: #0b1f44; margin-bottom: 6px; }
+    .notif-drawer-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 11.5px; font-weight: 900; color: #0b1f44; margin-bottom: 6px; }
     .notif-feed-item { font-size: 11px; padding: 6px 8px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 5px; line-height: 1.35; }
 
     .admin-toast-stack { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 516px; z-index: 650; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
@@ -490,7 +490,10 @@
       <div class="admin-notif-drawer" id="adminNotifDrawer">
         <div class="notif-drawer-head">
           <span>🔔 Notifikasi Aktivitas Korlap (Real-Time)</span>
-          <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
+          <div style="display:flex; align-items:center; gap:5px;">
+            <button type="button" id="btnToggleNotifSound" class="btn-secondary" style="padding:3px 8px; font-size:10px; border-color:#0284c7; color:#0369a1;" onclick="toggleNotifSound()">🔊 Suara: ON</button>
+            <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
+          </div>
         </div>
         <div id="adminNotifFeedList"></div>
       </div>
@@ -929,7 +932,8 @@
     const STORAGE_KEY = "AMP_MONITORING_STATE_V4";
     const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
     const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
-    const DEFAULT_SUPABASE_URL = "https://eisyylttheemoghokyd.supabase.co";
+    const NOTIF_SOUND_PREF_KEY = "AMP_ADMIN_NOTIF_SOUND_ON";
+    const DEFAULT_SUPABASE_URL = "https://eisyyoitiheemoghokyd.supabase.co";
     const DEFAULT_SUPABASE_KEY = "";
 
     function getThisDeviceId() {
@@ -952,6 +956,8 @@
     let currentMcpSheet = "LANTAI 1";
     let unreadAdminNotifs = 0;
     let seenNotifKeys = new Set();
+    let isNotifSoundEnabled = localStorage.getItem(NOTIF_SOUND_PREF_KEY) !== "false";
+    let notifAudioCtx = null;
 
     let sbClient = null;
     let sbGpsChannel = null;
@@ -1410,7 +1416,60 @@
       }, 15000);
     }
 
-    /* ================= NOTIFIKASI & SINKRONISASI ================= */
+    /* ================= NOTIFIKASI, SUARA & SINKRONISASI ================= */
+    function updateNotifSoundButtonUI() {
+      const btn = document.getElementById("btnToggleNotifSound");
+      if (!btn) return;
+      if (isNotifSoundEnabled) {
+        btn.textContent = "🔊 Suara: ON";
+        btn.style.background = "#e0f2fe";
+        btn.style.borderColor = "#0284c7";
+        btn.style.color = "#0369a1";
+      } else {
+        btn.textContent = "🔇 Suara: OFF";
+        btn.style.background = "#f1f5f9";
+        btn.style.borderColor = "#cbd5e1";
+        btn.style.color = "#64748b";
+      }
+    }
+
+    function playNotifSound(forceTest = false) {
+      if (!isNotifSoundEnabled && !forceTest) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!notifAudioCtx) notifAudioCtx = new AudioCtx();
+        if (notifAudioCtx.state === "suspended") {
+          notifAudioCtx.resume().catch(() => {});
+        }
+
+        const now = notifAudioCtx.currentTime;
+        const notes = [880, 1174.66];
+        notes.forEach((freq, idx) => {
+          const osc = notifAudioCtx.createOscillator();
+          const gain = notifAudioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+
+          gain.gain.setValueAtTime(0.0001, now + idx * 0.14);
+          gain.gain.exponentialRampToValueAtTime(0.18, now + idx * 0.14 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.14 + 0.24);
+
+          osc.connect(gain);
+          gain.connect(notifAudioCtx.destination);
+          osc.start(now + idx * 0.14);
+          osc.stop(now + idx * 0.14 + 0.25);
+        });
+      } catch (e) {}
+    }
+
+    function toggleNotifSound() {
+      isNotifSoundEnabled = !isNotifSoundEnabled;
+      try { localStorage.setItem(NOTIF_SOUND_PREF_KEY, String(isNotifSoundEnabled)); } catch (e) {}
+      updateNotifSoundButtonUI();
+      if (isNotifSoundEnabled) playNotifSound(true);
+    }
+
     function toggleAdminNotifDrawer() {
       if (!activeUser || !isAdminUser(activeUser)) return;
       const drawer = document.getElementById("adminNotifDrawer");
@@ -1467,7 +1526,10 @@
         const badge = document.getElementById("adminNotifBadge");
         if (badge) { badge.textContent = String(unreadAdminNotifs); badge.style.display = "inline-block"; }
         renderAdminNotifFeed();
-        if (playAlert) showAdminToast(notif);
+        if (playAlert) {
+          playNotifSound();
+          showAdminToast(notif);
+        }
       }
     }
 
@@ -1608,6 +1670,7 @@
         const creds = getSupabaseCredentials();
         document.getElementById("sbUrlInput").value = creds.url;
         document.getElementById("sbKeyInput").value = creds.key;
+        updateNotifSoundButtonUI();
         renderAdminNotifFeed();
         initRadarMap();
       } else {
@@ -2298,7 +2361,9 @@
 
     function saveSupabaseConfig() {
       if (!isAdminUser(activeUser)) return;
-      state.supabase.url = document.getElementById("sbUrlInput").value.trim();
+      const cleanUrl = document.getElementById("sbUrlInput").value.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
+      document.getElementById("sbUrlInput").value = cleanUrl;
+      state.supabase.url = cleanUrl;
       state.supabase.key = document.getElementById("sbKeyInput").value.trim();
       saveStateLocalOnly();
       startSupabaseRealtimeAll();
@@ -2338,6 +2403,7 @@
 
     document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
     document.getElementById("topbarLogoImg").src = AMP_LOGO_DATA_URI;
+    updateNotifSoundButtonUI();
     startSupabaseRealtimeAll();
   </script>
 </body>
