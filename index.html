@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-  <title>AMP Operation Monitoring — PT. Ardina Mulya Perkasa</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>MBCS AMP — Monitoring Operasional PT. Ardina Mulya Perkasa</title>
+  <meta name="theme-color" content="#0b1f44" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MBCS AMP" />
+  <link id="pwaManifestLink" rel="manifest" />
+  <link id="pwaAppleIconLink" rel="apple-touch-icon" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-
     :root {
       --navy-950: #06132b;
       --navy-900: #0b1f44;
@@ -24,8 +29,8 @@
       --slate-900: #0f172a;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif; }
-    body { background: #e8eef5; color: var(--slate-900); min-height: 100vh; overflow-x: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
+    html, body { background: #e8eef5; color: var(--slate-900); min-height: 100vh; -webkit-text-size-adjust: 100%; overscroll-behavior-y: contain; }
 
     /* ================= LOGIN HERO MBCS AMP ================= */
     #loginScreen {
@@ -81,22 +86,8 @@
       border: 2px solid rgba(255, 255, 255, 0.9);
     }
 
-    .company-title {
-      font-size: 16px;
-      font-weight: 900;
-      color: #0f295c;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-    }
-
-    .system-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: #0b2559;
-      margin-top: 6px;
-      line-height: 1.15;
-    }
-
+    .company-title { font-size: 16px; font-weight: 900; color: #0f295c; letter-spacing: 0.6px; text-transform: uppercase; }
+    .system-title { font-size: 20px; font-weight: 800; color: #0b2559; margin-top: 6px; line-height: 1.15; }
     .system-sub {
       font-size: 36px;
       font-weight: 900;
@@ -109,27 +100,9 @@
       margin-top: 2px;
     }
 
-    .hero-tagline-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 8px;
-      width: 100%;
-    }
-    .hero-tagline-line {
-      height: 1.5px;
-      flex: 1;
-      max-width: 75px;
-      background: linear-gradient(90deg, transparent, #1d5fd6, transparent);
-    }
-    .tagline-italic {
-      font-style: italic;
-      font-weight: 700;
-      color: #0f295c;
-      font-size: 12.5px;
-      white-space: nowrap;
-    }
+    .hero-tagline-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; width: 100%; }
+    .hero-tagline-line { height: 1.5px; flex: 1; max-width: 75px; background: linear-gradient(90deg, transparent, #1d5fd6, transparent); }
+    .tagline-italic { font-style: italic; font-weight: 700; color: #0f295c; font-size: 12.5px; white-space: nowrap; }
 
     .hero-scene-box {
       width: 100%;
@@ -189,10 +162,7 @@
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .input-field-pill:focus-within {
-      border-color: #1d5fd6;
-      box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.14);
-    }
+    .input-field-pill:focus-within { border-color: #1d5fd6; box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.14); }
     .input-leading-ico { font-size: 16px; color: #1d5fd6; margin-right: 10px; user-select: none; }
 
     .text-input-login, .pin-input {
@@ -207,8 +177,7 @@
     }
     .pin-input { letter-spacing: 2.5px; padding-right: 34px; }
     .text-input-login::placeholder, .pin-input::placeholder { color: #64748b; font-weight: 600; letter-spacing: 0; }
-
-    .eye-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; padding: 6px; min-width: 36px; min-height: 36px; }
+    .eye-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; padding: 4px; }
 
     .btn-reg-pill {
       width: 100%;
@@ -242,6 +211,23 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .btn-install-app {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid #10b981;
+      border-radius: 15px;
+      background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+      color: #065f46;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       margin-bottom: 12px;
     }
 
@@ -263,14 +249,7 @@
       box-shadow: 0 10px 22px rgba(29, 95, 214, 0.36);
     }
 
-    .login-error {
-      margin-top: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #e11d48;
-      text-align: center;
-      min-height: 16px;
-    }
+    .login-error { margin-top: 10px; font-size: 12px; font-weight: 700; color: #e11d48; text-align: center; min-height: 16px; }
 
     .hero-bottom-bar {
       width: 100%;
@@ -287,7 +266,7 @@
     .hero-bottom-company { font-size: 13.5px; font-weight: 800; letter-spacing: 0.3px; }
     .hero-bottom-slogan { font-size: 12px; font-style: italic; color: #bae6fd; margin-top: 2px; }
 
-    /* ================= MODAL & MESSAGE BANNER ================= */
+    /* ================= MODAL ================= */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -299,49 +278,15 @@
       z-index: 900;
     }
     .modal-backdrop.open { display: flex; }
-    .modal-box {
-      background: #fff;
-      border-radius: 16px;
-      max-width: 460px;
-      width: 100%;
-      padding: 20px;
-      box-shadow: 0 24px 48px rgba(2, 8, 23, 0.45);
-    }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--slate-200);
-      padding-bottom: 8px;
-    }
+    .modal-box { background: #fff; border-radius: 16px; max-width: 460px; width: 100%; padding: 20px; box-shadow: 0 24px 48px rgba(2, 8, 23, 0.45); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--slate-200); padding-bottom: 8px; }
     .modal-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); }
-    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--slate-600); font-weight: 900; padding: 4px 8px; }
-
-    .app-message-banner {
-      display: none;
-      margin-bottom: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      border: 1px solid #93c5fd;
-      background: #eff6ff;
-      color: #0b2559;
-    }
-    .app-message-banner.open { display: flex; }
-    .app-message-banner.warn { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
-    .app-message-banner.error { background: #fff1f2; border-color: #fda4af; color: #9f1239; }
-    .app-message-banner.success { background: #f0fdf4; border-color: #86efac; color: #166534; }
+    .modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--slate-600); font-weight: 900; }
 
     /* ================= DASHBOARD SHELL ================= */
     #appShell { display: none; min-height: 100vh; background: #e2e8f0; }
 
     .mobile-app-frame {
-      width: 100%;
       max-width: 540px;
       min-height: 100vh;
       margin: 0 auto;
@@ -349,14 +294,14 @@
       box-shadow: 0 0 36px rgba(15, 23, 42, 0.16);
       display: flex;
       flex-direction: column;
-      padding-bottom: 82px;
+      padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
       position: relative;
     }
 
     .amp-topbar {
       background: linear-gradient(90deg, #071936 0%, #0d2b5c 100%);
       color: #ffffff;
-      padding: 12px 14px;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -365,112 +310,24 @@
       top: 0;
       z-index: 400;
     }
-    .amp-topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .amp-topbar-logo { width: 36px; height: 36px; border-radius: 8px; background: #ffffff; padding: 2px; object-fit: contain; flex-shrink: 0; }
-    .amp-topbar-title { font-size: 12.5px; font-weight: 900; letter-spacing: 0.3px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .amp-topbar-left { display: flex; align-items: center; gap: 10px; }
+    .amp-topbar-logo { width: 36px; height: 36px; border-radius: 8px; background: #ffffff; padding: 2px; object-fit: contain; }
+    .amp-topbar-title { font-size: 13px; font-weight: 900; letter-spacing: 0.3px; line-height: 1.2; }
     .amp-topbar-sub { font-size: 10.5px; color: #93c5fd; }
-    .amp-topbar-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .pill-sync-btn {
-      background: #064e3b;
-      color: #a7f3d0;
-      border: 1px solid #10b981;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      min-height: 32px;
-    }
-    .pill-notif-btn {
-      position: relative;
-      background: #1e3a8a;
-      color: #ffffff;
-      border: 1px solid #60a5fa;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      min-height: 32px;
-    }
-    .notif-badge-dot {
-      position: absolute;
-      top: -5px;
-      right: -4px;
-      background: #e11d48;
-      color: #ffffff;
-      font-size: 9.5px;
-      font-weight: 900;
-      min-width: 16px;
-      height: 16px;
-      line-height: 16px;
-      text-align: center;
-      border-radius: 999px;
-      padding: 0 4px;
-    }
-    .pill-user-chip {
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffffff;
-      border-radius: 999px;
-      padding: 4px 8px 4px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      min-height: 32px;
-    }
-    .btn-logout-mini { background: #e11d48; color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 10.5px; font-weight: 800; cursor: pointer; }
+    .amp-topbar-actions { display: flex; align-items: center; gap: 6px; }
+    .pill-sync-btn { background: #064e3b; color: #a7f3d0; border: 1px solid #10b981; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .pill-notif-btn { position: relative; background: #1e3a8a; color: #ffffff; border: 1px solid #60a5fa; border-radius: 999px; padding: 4px 9px; font-size: 12px; font-weight: 800; cursor: pointer; }
+    .notif-badge-dot { position: absolute; top: -5px; right: -4px; background: #e11d48; color: #ffffff; font-size: 9.5px; font-weight: 900; min-width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 999px; padding: 0 4px; }
+    .pill-user-chip { background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+    .btn-logout-mini { background: #e11d48; color: #fff; border: none; border-radius: 6px; padding: 3px 7px; font-size: 10.5px; font-weight: 800; cursor: pointer; }
 
-    .admin-notif-drawer {
-      display: none;
-      background: #ffffff;
-      border-bottom: 2px solid #1d5fd6;
-      box-shadow: 0 10px 24px rgba(11, 31, 68, 0.16);
-      padding: 10px 12px;
-      max-height: 290px;
-      overflow-y: auto;
-      z-index: 390;
-    }
+    .admin-notif-drawer { display: none; background: #ffffff; border-bottom: 2px solid #1d5fd6; box-shadow: 0 10px 24px rgba(11, 31, 68, 0.16); padding: 10px 12px; max-height: 290px; overflow-y: auto; z-index: 390; }
     .admin-notif-drawer.open { display: block; }
     .notif-drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: 900; color: #0b1f44; }
-    .notif-feed-item {
-      border: 1px solid #e2e8f0;
-      border-left: 4px solid #1d5fd6;
-      border-radius: 9px;
-      padding: 7px 9px;
-      margin-bottom: 6px;
-      background: #f8fafc;
-      font-size: 11px;
-    }
+    .notif-feed-item { border: 1px solid #e2e8f0; border-left: 4px solid #1d5fd6; border-radius: 9px; padding: 7px 9px; margin-bottom: 6px; background: #f8fafc; font-size: 11px; }
 
-    .admin-toast-stack {
-      position: fixed;
-      top: 64px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
-      max-width: 516px;
-      z-index: 950;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      pointer-events: none;
-    }
-    .admin-toast-card {
-      pointer-events: auto;
-      background: #0b1f44;
-      color: #ffffff;
-      border: 1px solid #38bdf8;
-      border-left: 5px solid #38bdf8;
-      border-radius: 12px;
-      padding: 9px 12px;
-      box-shadow: 0 10px 24px rgba(6, 19, 43, 0.38);
-      font-size: 11.5px;
-      line-height: 1.35;
-      cursor: pointer;
-    }
+    .admin-toast-stack { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 516px; z-index: 950; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+    .admin-toast-card { pointer-events: auto; background: #0b1f44; color: #ffffff; border: 1px solid #38bdf8; border-left: 5px solid #38bdf8; border-radius: 12px; padding: 9px 12px; box-shadow: 0 10px 24px rgba(6, 19, 43, 0.38); font-size: 11.5px; line-height: 1.35; cursor: pointer; }
 
     .amp-body-pad { padding: 12px; }
 
@@ -488,136 +345,46 @@
     }
     .profile-name { font-size: 17px; font-weight: 900; color: #ffffff; }
     .profile-role { font-size: 11.5px; font-weight: 700; color: #fbbf24; margin-top: 2px; }
-    .profile-area-badge {
-      display: inline-block;
-      margin-top: 8px;
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-radius: 8px;
-      padding: 4px 9px;
-      font-size: 10.5px;
-      color: #e0f2fe;
-    }
-    .profile-avatar-circle {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: #ffffff;
-      color: #0b234d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      flex-shrink: 0;
-      border: 2px solid #93c5fd;
-    }
+    .profile-area-badge { display: inline-block; margin-top: 8px; background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 8px; padding: 4px 9px; font-size: 10.5px; color: #e0f2fe; }
+    .profile-avatar-circle { width: 52px; height: 52px; border-radius: 50%; background: #ffffff; color: #0b234d; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; border: 2px solid #93c5fd; }
 
-    .radar-card-box {
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-    }
+    .radar-card-box { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 12px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06); }
     .radar-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
     .radar-card-title { font-size: 13.5px; font-weight: 900; color: #0f172a; }
-    .btn-refresh-blue { background: #1d5fd6; color: #ffffff; border: none; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 800; cursor: pointer; min-height: 34px; }
-    .radar-sub-strip { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; font-size: 11px; color: #475569; margin-bottom: 8px; }
+    .btn-refresh-blue { background: #1d5fd6; color: #ffffff; border: none; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 800; cursor: pointer; }
+    .radar-sub-strip { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #475569; margin-bottom: 8px; }
     .badge-active-dots { background: #dcfce7; color: #166534; font-weight: 800; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; }
 
-    #korlapRadarMap {
-      width: 100%;
-      height: 265px;
-      border-radius: 12px;
-      border: 1px solid #cbd5e1;
-      z-index: 10;
-      background: #e2e8f0;
-    }
+    #korlapRadarMap { width: 100%; height: 265px; border-radius: 12px; border: 1px solid #cbd5e1; z-index: 10; background: #e2e8f0; }
 
     @keyframes radarPulseRing {
       0% { transform: scale(0.5); opacity: 0.9; }
       100% { transform: scale(2.1); opacity: 0; }
     }
-    .gmaps-radar-pulse {
-      width: 24px;
-      height: 24px;
-      margin-left: -12px;
-      margin-top: -12px;
-      border-radius: 50%;
-      background: rgba(5, 150, 105, 0.25);
-      border: 2px solid #059669;
-      animation: radarPulseRing 1.8s infinite ease-out;
-      pointer-events: none;
-    }
+    .gmaps-radar-pulse { width: 24px; height: 24px; margin-left: -12px; margin-top: -12px; border-radius: 50%; background: rgba(5, 150, 105, 0.25); border: 2px solid #059669; animation: radarPulseRing 1.8s infinite ease-out; pointer-events: none; }
 
     .korlap-list-caption { font-size: 10.5px; color: #64748b; margin: 8px 0 6px; }
-    .korlap-roster-list { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; padding-right: 2px; }
-    .korlap-item {
-      border: 1px solid #e2e8f0;
-      border-radius: 11px;
-      padding: 10px 11px;
-      background: #f8fafc;
-      cursor: pointer;
-      transition: all 0.14s ease;
-    }
+    .korlap-roster-list { max-height: 290px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; padding-right: 2px; }
+    .korlap-item { border: 1px solid #e2e8f0; border-radius: 11px; padding: 9px 11px; background: #f8fafc; cursor: pointer; transition: all 0.14s ease; }
     .korlap-item:hover { border-color: #2563eb; background: #eff6ff; }
-    .korlap-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+    .korlap-item-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
     .korlap-name { font-size: 12px; font-weight: 800; color: #0f172a; }
-    .badge-area-green {
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #86efac;
-      font-size: 9.5px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 999px;
-      text-align: right;
-    }
+    .badge-area-green { background: #dcfce7; color: #166534; border: 1px solid #86efac; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
     .korlap-meta-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin-top: 4px; }
     .korlap-meta { font-size: 10.5px; color: #475569; line-height: 1.35; }
     .gmaps-link { font-size: 10.5px; font-weight: 800; color: #1d5fd6; text-decoration: underline; white-space: nowrap; }
 
-    .export-grid-card, .modules-grid-card {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
+    .export-grid-card, .modules-grid-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
     .export-grid-title { font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
     .export-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .btn-exp-csv {
-      border: none;
-      border-radius: 10px;
-      padding: 11px 8px;
-      color: #ffffff;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      text-align: center;
-      min-height: 40px;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
-    }
+    .btn-exp-csv { border: none; border-radius: 10px; padding: 10px 8px; color: #ffffff; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12); min-height: 40px; touch-action: manipulation; }
     .exp-green { background: #16a34a; }
     .exp-navy { background: #1e3a8a; }
     .exp-orange { background: #d97706; }
     .exp-red { background: #dc2626; }
 
     .modules-14-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
-    .mod-tile-btn {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      padding: 10px 10px;
-      text-align: left;
-      font-size: 11.5px;
-      font-weight: 800;
-      color: #0f172a;
-      cursor: pointer;
-      min-height: 42px;
-      transition: all 0.14s ease;
-    }
+    .mod-tile-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 9px 10px; text-align: left; font-size: 11.5px; font-weight: 800; color: #0f172a; cursor: pointer; transition: all 0.14s ease; min-height: 40px; touch-action: manipulation; }
     .mod-tile-btn:hover, .mod-tile-btn.active { background: #0b1f44; color: #ffffff; border-color: #0b1f44; }
 
     .card { background: #ffffff; border-radius: 16px; padding: 14px; border: 1px solid #cbd5e1; margin-bottom: 12px; }
@@ -625,18 +392,18 @@
     .card-sub { font-size: 11.5px; color: #475569; margin-top: 2px; }
 
     .controls-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
-    .form-control, .form-select { padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; background: #fff; min-height: 36px; }
-    .btn-primary { background: #0b1f44; color: #fff; border: none; padding: 9px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 36px; }
-    .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 9px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 36px; }
-    .btn-success { background: #059669; color: #fff; border: none; padding: 9px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 36px; }
+    .form-control, .form-select { padding: 7px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; background: #fff; }
+    .btn-primary { background: #0b1f44; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
+    .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
+    .btn-success { background: #059669; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
 
     .table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
     th { background: #0b1f44; color: #fff; text-align: left; padding: 8px; white-space: nowrap; }
-    td { padding: 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; }
 
     .mcp-subtabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-    .mcp-subtab { padding: 7px 11px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 800; cursor: pointer; min-height: 34px; }
+    .mcp-subtab { padding: 6px 11px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 800; cursor: pointer; }
     .mcp-subtab.active { background: #1d5fd6; color: #fff; border-color: #1d5fd6; }
 
     .status-chip { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; }
@@ -649,7 +416,7 @@
 
     .form-grid-2 { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
     .field-group label { display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 3px; }
-    .field-group input, .field-group select { width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; min-height: 38px; }
+    .field-group input, .field-group select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 16px; }
 
     .restricted-box { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.45; }
 
@@ -668,9 +435,28 @@
       z-index: 450;
       box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
     }
-    .bnav-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 700; color: #64748b; cursor: pointer; padding: 4px 12px; min-height: 44px; }
+    .bnav-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 700; color: #64748b; cursor: pointer; padding: 2px 12px; min-height: 40px; touch-action: manipulation; }
     .bnav-btn.active { color: #1d5fd6; font-weight: 900; }
     .bnav-ico { font-size: 16px; }
+
+    @media (max-width: 540px) {
+      .system-sub { font-size: 28px; }
+      .system-title { font-size: 17px; }
+      .pin-card { padding: 34px 16px 18px; border-radius: 22px; }
+    }
+    @media (max-width: 420px) {
+      .amp-topbar { padding-left: 10px; padding-right: 10px; }
+      .amp-topbar-title { font-size: 11.5px; }
+      .amp-topbar-sub { font-size: 9.5px; }
+      .pill-sync-btn, .pill-user-chip, .pill-notif-btn { font-size: 10px; padding: 4px 7px; }
+      .modules-14-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+      .mod-tile-btn { font-size: 10.5px; padding: 8px 7px; }
+      .export-btn-grid { grid-template-columns: 1fr; }
+      .profile-name { font-size: 15.5px; }
+      #korlapRadarMap { height: 225px; }
+      table { font-size: 10.5px; }
+      th, td { padding: 6px 5px; }
+    }
   </style>
 </head>
 <body>
@@ -681,7 +467,7 @@
 
     <div class="hero-wrapper">
       <div class="hero-brand-header">
-        <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" onerror="this.style.display='none'" />
+        <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" />
         <div class="company-title">PT. ARDINA MULYA PERKASA</div>
         <div class="system-title">Monitoring Operasional</div>
         <div class="system-sub">MBCS AMP</div>
@@ -753,6 +539,7 @@
 
         <button type="button" class="btn-reg-pill" onclick="openModal('modalRegister')">👤+ Akun Baru / Registrasi</button>
         <button type="button" class="btn-forgot-pill" onclick="openModal('modalForgot')">↻ Lupa PIN</button>
+        <button type="button" class="btn-install-app" id="btnInstallPwaLogin" onclick="triggerInstallApp()">📲 Install Aplikasi di HP / PC</button>
         <button type="button" class="btn-masuk" id="btnMasukSistem">➜ Login</button>
 
         <div class="login-error" id="loginErrorMsg"></div>
@@ -772,7 +559,6 @@
         <div class="modal-title">Registrasi Akun Korlap Baru</div>
         <button type="button" class="modal-close" onclick="closeModal('modalRegister')">&times;</button>
       </div>
-      <div id="regFormMsg" class="app-message-banner"></div>
       <div class="field-group" style="margin-bottom:10px;">
         <label>Nama Lengkap</label>
         <input type="text" id="regName" placeholder="Contoh: Budi Santoso" />
@@ -801,7 +587,7 @@
         <button type="button" class="modal-close" onclick="closeModal('modalForgot')">&times;</button>
       </div>
       <p style="font-size:12px; color:#475569; margin-bottom:10px; line-height:1.45;">
-        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk mengecek akun atau mereset kunci perangkat apabila akun masih terkunci di perangkat sebelumnya.
+        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk mengecek akun atau mereset kunci perangkat.
       </p>
       <div class="field-group" style="margin-bottom:10px;">
         <label>Nama Lengkap / ID / Username</label>
@@ -815,20 +601,35 @@
     </div>
   </div>
 
+  <!-- ================= MODAL PANDUAN INSTALL HP & PC ================= -->
+  <div class="modal-backdrop" id="modalInstallGuide">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">📲 Install MBCS AMP di HP &amp; PC</div>
+        <button type="button" class="modal-close" onclick="closeModal('modalInstallGuide')">&times;</button>
+      </div>
+      <div id="installGuideBody" style="font-size:12px; color:#334155; line-height:1.55;">
+        <p style="margin-bottom:8px;"><strong>HP Android (Chrome):</strong> Ketuk menu <strong>⋮</strong> di pojok kanan atas browser, lalu pilih <strong>Install app</strong> atau <strong>Add to Home screen</strong>.</p>
+        <p style="margin-bottom:8px;"><strong>iPhone / iPad (Safari):</strong> Ketuk ikon <strong>Share (kotak panah ke atas)</strong> lalu pilih <strong>Add to Home Screen</strong>.</p>
+        <p><strong>PC / Laptop (Chrome / Edge):</strong> Klik ikon <strong>Install</strong> di sisi kanan *address bar* atau buka menu browser lalu pilih <strong>Install MBCS AMP</strong>.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= APLIKASI UTAMA ================= -->
   <section id="appShell">
     <div class="mobile-app-frame">
       <header class="amp-topbar">
         <div class="amp-topbar-left">
-          <img class="amp-topbar-logo" id="topbarLogoImg" alt="Logo AMP" onerror="this.style.display='none'" />
-          <div style="min-width:0;">
+          <img class="amp-topbar-logo" id="topbarLogoImg" alt="Logo AMP" />
+          <div>
             <div class="amp-topbar-title">PT. ARDINA MULYA PERKASA</div>
             <div class="amp-topbar-sub">Facility Service Specialist</div>
           </div>
         </div>
         <div class="amp-topbar-actions">
           <button type="button" class="pill-notif-btn" id="adminNotifBellBtn" style="display:none;" onclick="toggleAdminNotifDrawer()" title="Notifikasi Aktivitas Korlap">
-            🔔<span class="notif-badge-dot" id="adminNotifBadge" style="display:none;">0</span>
+            🔔<span class="notif-badge-dot" id="adminNotifBadge">0</span>
           </button>
           <button type="button" class="pill-sync-btn" id="gpsStatusBadge" onclick="triggerLiveGpsOnce()">📡 Sync</button>
           <div class="pill-user-chip">
@@ -841,7 +642,7 @@
       <div class="admin-notif-drawer" id="adminNotifDrawer">
         <div class="notif-drawer-head">
           <span>🔔 Notifikasi Aktivitas Korlap (Real-Time)</span>
-          <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px; min-height:28px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
+          <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
         </div>
         <div id="adminNotifFeedList"></div>
       </div>
@@ -849,11 +650,6 @@
       <div class="admin-toast-stack" id="adminToastStack"></div>
 
       <div class="amp-body-pad">
-        <div id="appBanner" class="app-message-banner">
-          <span id="appBannerText"></span>
-          <button type="button" onclick="hideAppBanner()" style="background:none;border:none;font-weight:900;cursor:pointer;padding:2px 6px;">&times;</button>
-        </div>
-
         <div class="profile-banner-card">
           <div>
             <div class="profile-name" id="profileFullName">M.Soheh</div>
@@ -1092,7 +888,7 @@
         <div id="mod-8" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 8 — Pengaturan Sistem &amp; Koneksi Supabase</div>
-            <div class="card-sub" style="margin-bottom:10px;">Pengaturan sistem pusat dan kontrol sesi perangkat</div>
+            <div class="card-sub" style="margin-bottom:10px;">Pengaturan sistem pusat, instalasi aplikasi, dan kontrol sesi perangkat</div>
             <div id="adminSettingsContent">
               <div class="form-grid-2">
                 <div class="field-group"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" placeholder="https://xxxx.supabase.co" /></div>
@@ -1102,6 +898,7 @@
                 <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan Supabase</button>
                 <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Sinkron GPS</button>
                 <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">🔗 Salin Link Korlap</button>
+                <button type="button" class="btn-secondary" onclick="triggerInstallApp()">📲 Install App</button>
                 <button type="button" class="btn-secondary" style="color:#b91c1c;" onclick="resetAllDeviceLocks()">🔓 Reset Kunci Perangkat</button>
               </div>
               <div id="supabaseSyncStatusBox" style="padding:9px 11px; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; font-size:11.5px; color:#334155; margin-bottom:8px;">
@@ -1140,6 +937,81 @@
 
   <script>
     const AMP_LOGO_DATA_URI = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='28' fill='%230b1f44'/%3E%3Cpolygon points='100,12 122,70 180,42 140,92 188,130 130,130 140,188 100,146 60,188 70,130 12,130 60,92 20,42 78,70' fill='%231e3a8a' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='52' y='74' width='96' height='48' rx='10' fill='%2300a8ff'/%3E%3Ctext x='100' y='108' font-family='Arial,sans-serif' font-weight='900' font-size='32' fill='%23ffffff' text-anchor='middle'%3EAMP%3C/text%3E%3C/svg%3E";
+
+    function generateAmpPngIcon(size) {
+      const c = document.createElement("canvas");
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#0b1f44";
+      ctx.beginPath();
+      ctx.roundRect(0, 0, size, size, Math.round(size * 0.2));
+      ctx.fill();
+
+      ctx.fillStyle = "#1d5fd6";
+      ctx.beginPath();
+      ctx.roundRect(size * 0.14, size * 0.24, size * 0.72, size * 0.52, Math.round(size * 0.12));
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `900 ${Math.round(size * 0.24)}px Arial, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("AMP", size / 2, size * 0.51);
+      return c.toDataURL("image/png");
+    }
+
+    let deferredPwaPrompt = null;
+
+    (function setupInstallablePwa() {
+      try {
+        const icon192 = generateAmpPngIcon(192);
+        const icon512 = generateAmpPngIcon(512);
+        const appleIconLink = document.getElementById("pwaAppleIconLink");
+        if (appleIconLink) appleIconLink.href = icon192;
+
+        const manifestObj = {
+          name: "MBCS AMP — Monitoring Operasional",
+          short_name: "MBCS AMP",
+          description: "Aplikasi Absensi, Radar Korlap & Monitoring Operasional PT. Ardina Mulya Perkasa",
+          start_url: "./",
+          scope: "./",
+          display: "standalone",
+          orientation: "portrait-primary",
+          background_color: "#0b1f44",
+          theme_color: "#0b1f44",
+          icons: [
+            { src: icon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+            { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+          ]
+        };
+        const blob = new Blob([JSON.stringify(manifestObj)], { type: "application/manifest+json" });
+        const manifestUrl = URL.createObjectURL(blob);
+        const manifestLink = document.getElementById("pwaManifestLink");
+        if (manifestLink) manifestLink.href = manifestUrl;
+
+        if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        }
+      } catch (e) {}
+    })();
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      const btn = document.getElementById("btnInstallPwaLogin");
+      if (btn) btn.textContent = "📲 Install Aplikasi MBCS AMP Sekarang";
+    });
+
+    async function triggerInstallApp() {
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        await deferredPwaPrompt.userChoice;
+        deferredPwaPrompt = null;
+        return;
+      }
+      openModal("modalInstallGuide");
+    }
 
     const DEFAULT_ACCOUNTS = [
       { id: "M.Soheh", username: "M.Soheh", name: "M.Soheh", role: "ADMIN", pin: "990099", area: "Seluruh Wilayah PLN UIT JBT & UIT JBB", lat: -6.2432, lng: 106.8689, streetHint: "Jl. Raya Cawang / Kantor Pusat" },
@@ -1211,36 +1083,11 @@
     const DEFAULT_SUPABASE_URL = "https://eisyylttheemoghokyd.supabase.co";
     const DEFAULT_SUPABASE_KEY = "";
 
-    function showAppBanner(message, type = "info") {
-      const banner = document.getElementById("appBanner");
-      const textEl = document.getElementById("appBannerText");
-      if (!banner || !textEl) return;
-      banner.className = `app-message-banner open ${type}`;
-      textEl.textContent = message;
-    }
-
-    function hideAppBanner() {
-      const banner = document.getElementById("appBanner");
-      if (banner) banner.className = "app-message-banner";
-    }
-
-    function showFormMsg(elId, message, type = "info") {
-      const el = document.getElementById(elId);
-      if (!el) return;
-      el.className = `app-message-banner open ${type}`;
-      el.innerHTML = `<span>${message}</span>`;
-    }
-
     function getThisDeviceId() {
-      let did = null;
-      try {
-        did = localStorage.getItem(DEVICE_ID_KEY);
-        if (!did) {
-          did = "DEV-" + Math.random().toString(36).slice(2, 10).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
-          localStorage.setItem(DEVICE_ID_KEY, did);
-        }
-      } catch (e) {
-        did = "DEV-PREVIEW-SESSION";
+      let did = localStorage.getItem(DEVICE_ID_KEY);
+      if (!did) {
+        did = "DEV-" + Math.random().toString(36).slice(2, 10).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
+        localStorage.setItem(DEVICE_ID_KEY, did);
       }
       return did;
     }
@@ -1258,25 +1105,24 @@
     let seenNotifKeys = new Set();
 
     (function sanitizeAndPrimeKorlapRadarState() {
-      try {
-        if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
-        const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-        DEFAULT_ACCOUNTS.filter((a) => a.role === "KORLAP").forEach((k) => {
-          const cur = state.liveGpsByKorlap[k.id];
-          if (!cur || !cur.isRealDevice) {
-            state.liveGpsByKorlap[k.id] = {
-              lat: k.lat,
-              lng: k.lng,
-              accuracy: (cur && cur.accuracy) || 25,
-              address: (cur && cur.address) || k.streetHint || k.area,
-              isRealDevice: true,
-              updatedAt: nowWib,
-              updatedAtMs: Date.now()
-            };
-          }
-        });
-        saveState();
-      } catch (e) {}
+      if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
+      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      DEFAULT_ACCOUNTS.filter((a) => a.role === "KORLAP").forEach((k) => {
+        const cur = state.liveGpsByKorlap[k.id];
+        const isStaleKebonJeruk = k.id === "Rifky_Y" && cur && Math.abs(Number(cur.lat) - (-6.199376)) < 0.01 && Math.abs(Number(cur.lng) - 106.762231) < 0.01;
+        if (!cur || isStaleKebonJeruk || !cur.isRealDevice) {
+          state.liveGpsByKorlap[k.id] = {
+            lat: k.lat,
+            lng: k.lng,
+            accuracy: (cur && cur.accuracy) || 30,
+            address: (cur && cur.address) || k.streetHint || k.area,
+            isRealDevice: true,
+            updatedAt: nowWib,
+            updatedAtMs: Date.now()
+          };
+        }
+      });
+      saveState();
     })();
 
     function buildMcpForAccounts(accounts) {
@@ -1292,12 +1138,12 @@
               korlapId: k.id,
               korlapName: k.name,
               area: k.area,
-              sheet: sheet,
+              sheet,
               no: idx + 1,
               uraian: tpl.uraian,
               kode: tpl.kode,
               freq: tpl.freq,
-              marks: marks
+              marks
             });
           });
         });
@@ -1313,7 +1159,7 @@
         liveGpsByKorlap[k.id] = {
           lat: k.lat,
           lng: k.lng,
-          accuracy: 25,
+          accuracy: 30,
           address: k.streetHint || k.area,
           isRealDevice: true,
           updatedAt: nowWib,
@@ -1453,14 +1299,8 @@
       try { localStorage.setItem(LOCK_REGISTRY_KEY, JSON.stringify(locks)); } catch (e) {}
     }
 
-    function openModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.add("open");
-    }
-    function closeModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove("open");
-    }
+    function openModal(id) { document.getElementById(id).classList.add("open"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
 
     document.getElementById("togglePinEye").addEventListener("click", () => {
       const inp = document.getElementById("pinInput");
@@ -1472,17 +1312,11 @@
       const uname = document.getElementById("regUsername").value.trim();
       const area = document.getElementById("regArea").value.trim();
       const pin = document.getElementById("regPin").value.trim();
-      if (!name || !uname || !area || !pin) {
-        showFormMsg("regFormMsg", "Semua kolom registrasi wajib diisi.", "error");
-        return;
-      }
-      if (state.accounts.some((a) => a.username.toLowerCase() === uname.toLowerCase())) {
-        showFormMsg("regFormMsg", "ID / Username sudah terdaftar.", "warn");
-        return;
-      }
+      if (!name || !uname || !area || !pin) { alert("Semua kolom registrasi wajib diisi."); return; }
+      if (state.accounts.some((a) => a.username.toLowerCase() === uname.toLowerCase())) { alert("ID / Username sudah terdaftar."); return; }
       const newAcc = { id: uname, username: uname, name, role: "KORLAP", pin, area, lat: -6.2432, lng: 106.8689, streetHint: area };
       state.accounts.push(newAcc);
-      state.liveGpsByKorlap[newAcc.id] = { lat: newAcc.lat, lng: newAcc.lng, accuracy: 25, address: area, isRealDevice: true, updatedAt: "Baru saja", updatedAtMs: Date.now() };
+      state.liveGpsByKorlap[newAcc.id] = { lat: newAcc.lat, lng: newAcc.lng, accuracy: 30, address: area, isRealDevice: true, updatedAt: "Baru saja", updatedAtMs: Date.now() };
       ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
         MCP_TEMPLATES[sheet].forEach((tpl, idx) => {
           const marks = {};
@@ -1492,22 +1326,15 @@
       });
       saveState();
       await broadcastKorlapActivity("PENGAJUAN AKUN", `Mendaftarkan akun Korlap baru: ${name} (${uname})`, `Area: ${area}`, newAcc);
-      showFormMsg("regFormMsg", `Akun ${uname} berhasil didaftarkan! Silakan tutup modal dan login.`, "success");
+      closeModal("modalRegister");
       document.getElementById("usernameInput").value = uname;
-      document.getElementById("regName").value = "";
-      document.getElementById("regUsername").value = "";
-      document.getElementById("regArea").value = "";
-      document.getElementById("regPin").value = "";
+      alert("Registrasi berhasil! Silakan masukkan PIN untuk login.");
     }
 
     function lookupAccountRecovery() {
       const q = document.getElementById("forgotLookupInput").value.trim().toLowerCase();
       const resBox = document.getElementById("forgotResultBox");
-      if (!q) {
-        resBox.style.display = "block";
-        resBox.innerHTML = "Masukkan ID/Username atau Nama Lengkap terlebih dahulu.";
-        return;
-      }
+      if (!q) return;
       const found = state.accounts.find((a) => a.username.toLowerCase() === q || a.name.toLowerCase().includes(q));
       resBox.style.display = "block";
       resBox.innerHTML = found
@@ -1519,11 +1346,7 @@
       const q = document.getElementById("forgotLookupInput").value.trim().toLowerCase();
       const resBox = document.getElementById("forgotResultBox");
       const found = state.accounts.find((a) => a.username.toLowerCase() === q || a.name.toLowerCase().includes(q));
-      if (!found) {
-        resBox.style.display = "block";
-        resBox.innerHTML = "Akun tidak ditemukan untuk direset.";
-        return;
-      }
+      if (!found) { alert("Akun tidak ditemukan."); return; }
       const locks = getDeviceLocks();
       delete locks[found.id];
       setDeviceLocks(locks);
@@ -1532,55 +1355,50 @@
     }
 
     async function attemptLogin() {
-      try {
-        const unameVal = document.getElementById("usernameInput").value.trim();
-        const pinVal = document.getElementById("pinInput").value.trim();
-        const errEl = document.getElementById("loginErrorMsg");
-        if (!unameVal || !pinVal) { errEl.textContent = "ID/Username dan PIN wajib diisi."; return; }
+      const unameVal = document.getElementById("usernameInput").value.trim();
+      const pinVal = document.getElementById("pinInput").value.trim();
+      const errEl = document.getElementById("loginErrorMsg");
+      if (!unameVal || !pinVal) { errEl.textContent = "ID/Username dan PIN wajib diisi."; return; }
 
-        const found = state.accounts.find(
-          (u) => (u.username.toLowerCase() === unameVal.toLowerCase() || u.id.toLowerCase() === unameVal.toLowerCase()) && u.pin === pinVal
-        );
-        if (!found) { errEl.textContent = "ID/Username atau PIN tidak sesuai."; return; }
+      const found = state.accounts.find(
+        (u) => (u.username.toLowerCase() === unameVal.toLowerCase() || u.id.toLowerCase() === unameVal.toLowerCase()) && u.pin === pinVal
+      );
+      if (!found) { errEl.textContent = "ID/Username atau PIN tidak sesuai."; return; }
 
-        const locks = getDeviceLocks();
-        if (locks[found.id] && locks[found.id].deviceId && locks[found.id].deviceId !== THIS_DEVICE_ID) {
-          errEl.textContent = `Akses ditolak: Akun "${found.username}" sedang aktif di perangkat lain.`;
-          return;
-        }
-        locks[found.id] = { deviceId: THIS_DEVICE_ID, username: found.username, loginAt: new Date().toISOString() };
-        setDeviceLocks(locks);
-
-        errEl.textContent = "";
-        hideAppBanner();
-        activeUser = found;
-        unreadAdminNotifs = 0;
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("appShell").style.display = "block";
-
-        document.getElementById("activeUserBadge").textContent = "👤 " + found.username;
-        document.getElementById("profileFullName").textContent = found.name;
-        document.getElementById("activeRoleBadge").textContent = isAdminUser(found) ? "Head Of Operation / Admin" : "Koordinator Lapangan (Korlap)";
-        document.getElementById("activeAreaBadge").textContent = "🏢 Area Tugas PLN: " + found.area;
-
-        applyRoleAccessControl();
-        buildModulesNav();
-        populateAreaDropdowns();
-        if (isAdminUser(found)) {
-          document.getElementById("sbUrlInput").value = (state.supabase && state.supabase.url) || DEFAULT_SUPABASE_URL;
-          document.getElementById("sbKeyInput").value = (state.supabase && state.supabase.key) || DEFAULT_SUPABASE_KEY;
-          renderAdminNotifFeed();
-          initRadarMap();
-        } else {
-          document.getElementById("adminNotifDrawer").classList.remove("open");
-          await broadcastKorlapActivity("AKTIVITAS LOGIN", `Korlap ${found.name} masuk ke sistem`, `Perangkat: ${THIS_DEVICE_ID}`);
-        }
-        startLiveGeolocation();
-        renderAllViews();
-        switchModule("mod-1");
-      } catch (err) {
-        document.getElementById("loginErrorMsg").textContent = "Terjadi kendala saat memuat sesi.";
+      const locks = getDeviceLocks();
+      if (locks[found.id] && locks[found.id].deviceId && locks[found.id].deviceId !== THIS_DEVICE_ID) {
+        errEl.textContent = `Akses ditolak: Akun "${found.username}" sedang aktif di perangkat lain.`;
+        return;
       }
+      locks[found.id] = { deviceId: THIS_DEVICE_ID, username: found.username, loginAt: new Date().toISOString() };
+      setDeviceLocks(locks);
+
+      errEl.textContent = "";
+      activeUser = found;
+      unreadAdminNotifs = 0;
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("appShell").style.display = "block";
+
+      document.getElementById("activeUserBadge").textContent = "👤 " + found.username;
+      document.getElementById("profileFullName").textContent = found.name;
+      document.getElementById("activeRoleBadge").textContent = isAdminUser(found) ? "Head Of Operation / Admin" : "Koordinator Lapangan (Korlap)";
+      document.getElementById("activeAreaBadge").textContent = "🏢 Area Tugas PLN: " + found.area;
+
+      applyRoleAccessControl();
+      buildModulesNav();
+      populateAreaDropdowns();
+      if (isAdminUser(found)) {
+        document.getElementById("sbUrlInput").value = (state.supabase && state.supabase.url) || DEFAULT_SUPABASE_URL;
+        document.getElementById("sbKeyInput").value = (state.supabase && state.supabase.key) || DEFAULT_SUPABASE_KEY;
+        renderAdminNotifFeed();
+        initRadarMap();
+      } else {
+        document.getElementById("adminNotifDrawer").classList.remove("open");
+        broadcastKorlapActivity("AKTIVITAS LOGIN", `Korlap ${found.name} masuk ke sistem`, `Perangkat: ${THIS_DEVICE_ID}`);
+      }
+      startLiveGeolocation();
+      renderAllViews();
+      switchModule("mod-1");
     }
 
     document.getElementById("btnMasukSistem").addEventListener("click", () => attemptLogin());
@@ -1589,7 +1407,6 @@
 
     document.getElementById("btnLogout").addEventListener("click", () => {
       if (liveWatchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(liveWatchId);
-      stopSelfieCamera();
       if (activeUser) {
         const locks = getDeviceLocks();
         if (locks[activeUser.id] && locks[activeUser.id].deviceId === THIS_DEVICE_ID) {
@@ -1634,8 +1451,7 @@
     function switchModule(modId) {
       if (!activeUser) return;
       document.querySelectorAll(".module-panel").forEach((p) => p.classList.remove("active"));
-      const targetPanel = document.getElementById(modId);
-      if (targetPanel) targetPanel.classList.add("active");
+      document.getElementById(modId).classList.add("active");
       document.querySelectorAll(".mod-tile-btn").forEach((t) => t.classList.toggle("active", t.dataset.target === modId));
       document.querySelectorAll(".bnav-btn").forEach((b) => b.classList.toggle("active", b.dataset.bnav === modId));
       if (modId === "mod-1" && isAdminUser(activeUser) && radarMap) setTimeout(() => radarMap.invalidateSize(), 120);
@@ -1681,11 +1497,11 @@
       document.getElementById("kpiGpsLiveBadge").textContent = `${realLiveCount} GPS Real Aktif / ${korlaps.length} Korlap`;
 
       korlaps.forEach((k) => {
-        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, accuracy: 25, isRealDevice: true, updatedAt: "Baru saja" };
+        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, accuracy: 30, isRealDevice: true, updatedAt: "Baru saja" };
         const latNum = Number(gps.lat);
         const lngNum = Number(gps.lng);
         const gmapsUrl = `https://www.google.com/maps?q=${latNum},${lngNum}`;
-        const accText = gps.accuracy ? `±${gps.accuracy}m` : "±25m";
+        const accText = gps.accuracy ? `±${gps.accuracy}m` : "±30m";
         const gpsBadgeText = `LIVE RADAR ${accText} • ${gps.updatedAt || "Baru saja"}`;
 
         const item = document.createElement("div");
@@ -1707,9 +1523,8 @@
         `;
         item.onclick = () => {
           autoFollowKorlapId = k.id;
-          document.getElementById("radarFilterKorlap").value = k.id;
           if (radarMap) {
-            radarMap.setView([latNum, lngNum], 15);
+            radarMap.setView([latNum, lngNum], 16);
             if (radarMarkers[k.id]) radarMarkers[k.id].openPopup();
           }
         };
@@ -1718,7 +1533,7 @@
         if (radarMap && typeof L !== "undefined") {
           const popupHtml = `<b>${k.name} (${k.username})</b><br/>${k.area}<br/>${gpsBadgeText}<br/>Lat/Lng: ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}<br/><a href="${gmapsUrl}" target="_blank" rel="noopener">Buka Google Maps</a>`;
           if (!radarMarkers[k.id]) {
-            radarMarkers[k.id] = L.circleMarker([latNum, lngNum], { radius: 9, color: "#ffffff", weight: 2, fillColor: "#059669", fillOpacity: 0.94 }).addTo(radarMap).bindPopup(popupHtml);
+            radarMarkers[k.id] = L.circleMarker([latNum, lngNum], { radius: 10, color: "#ffffff", weight: 2, fillColor: "#059669", fillOpacity: 0.94 }).addTo(radarMap).bindPopup(popupHtml);
           } else {
             radarMarkers[k.id].setLatLng([latNum, lngNum]);
             radarMarkers[k.id].setPopupContent(popupHtml);
@@ -1737,20 +1552,18 @@
       if (val === "ALL") { autoFollowKorlapId = null; resetRadarView(); return; }
       autoFollowKorlapId = val;
       const gps = state.liveGpsByKorlap[val];
-      if (gps && radarMap) { radarMap.setView([gps.lat, gps.lng], 15); if (radarMarkers[val]) radarMarkers[val].openPopup(); }
+      if (gps && radarMap) { radarMap.setView([gps.lat, gps.lng], 16); if (radarMarkers[val]) radarMarkers[val].openPopup(); }
     }
 
     function fitAllLiveKorlap() {
       if (!radarMap) return;
       autoFollowKorlapId = null;
-      document.getElementById("radarFilterKorlap").value = "ALL";
       const coords = getKorlapAccounts().map((k) => { const g = state.liveGpsByKorlap[k.id] || k; return [Number(g.lat), Number(g.lng)]; });
       if (coords.length > 0) radarMap.fitBounds(coords, { padding: [30, 30] });
     }
 
     function resetRadarView() {
       autoFollowKorlapId = null;
-      document.getElementById("radarFilterKorlap").value = "ALL";
       if (radarMap) radarMap.setView([-6.48, 107.02], 9);
     }
 
@@ -1760,7 +1573,6 @@
       saveState();
       if (activeUser && isAdminUser(activeUser)) updateRadarMarkersAndList();
       if (navigator.geolocation) navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
-      showAppBanner(`Sinkronisasi GPS & radar diperbarui (${nowWib}).`, "success");
     }
 
     function applyDevicePosition(pos) {
@@ -1810,7 +1622,7 @@
       const desc = document.getElementById("jobDescInput").value.trim();
       const sla = document.getElementById("jobSlaInput").value || "95";
       const note = document.getElementById("jobNoteInput").value.trim() || "-";
-      if (!desc) { showAppBanner("Uraian pekerjaan wajib diisi.", "error"); return; }
+      if (!desc) { alert("Uraian pekerjaan wajib diisi."); return; }
       const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
       state.jobLogs.unshift({ waktu, korlapId: activeUser.id, korlap: activeUser.name, area, uraian: desc, sla: sla + "%", ket: note });
       document.getElementById("jobDescInput").value = "";
@@ -1818,7 +1630,6 @@
       saveState();
       renderJobLogs();
       renderReportSummary();
-      showAppBanner("Log pekerjaan harian berhasil disimpan.", "success");
       if (!isAdminUser(activeUser)) await broadcastKorlapActivity("PENGAJUAN PEKERJAAN", `Input log pekerjaan (${sla}%): ${desc}`, `Area: ${area}`);
     }
 
@@ -1872,7 +1683,7 @@
             for (let m = 1; m <= 12; m++) {
               const mk = "M" + m;
               const isX = r.marks && r.marks[mk] === "X";
-              btns += `<button type="button" onclick="toggleMcpMark('${r.id}','${mk}')" style="margin:1.5px; padding:3px 6px; border-radius:5px; border:1px solid ${isX ? "#059669" : "#cbd5e1"}; background:${isX ? "#dcfce7" : "#fff"}; color:${isX ? "#166534" : "#475569"}; font-size:10px; font-weight:800; cursor:pointer;">${mk}:${isX ? "X" : "-"}</button>`;
+              btns += `<button type="button" onclick="toggleMcpMark('${r.id}','${mk}')" style="margin:1.5px; padding:2px 5px; border-radius:5px; border:1px solid ${isX ? "#059669" : "#cbd5e1"}; background:${isX ? "#dcfce7" : "#fff"}; color:${isX ? "#166534" : "#475569"}; font-size:10px; font-weight:800; cursor:pointer;">${mk}:${isX ? "X" : "-"}</button>`;
             }
             return `<tr><td>${r.no}</td><td><strong>${r.area}</strong><br/><small>${r.korlapName}</small></td><td>${r.uraian}</td><td><strong>${r.kode}</strong></td><td>${r.freq}</td><td>${btns}</td></tr>`;
           }).join("")
@@ -1895,7 +1706,6 @@
         lines.push(vals.join(","));
       });
       downloadCsvFile(lines.join("\n"), "Rekap_MCP_AMP.csv");
-      showAppBanner("File Rekap_MCP_AMP.csv berhasil diunduh.", "success");
     }
 
     function exportTableCsv(kind) {
@@ -1904,17 +1714,14 @@
         const lines = ["Waktu,Korlap,Area,Uraian,SLA,Keterangan"];
         state.jobLogs.forEach((j) => lines.push(`"${j.waktu}","${j.korlap}","${j.area}","${j.uraian}","${j.sla}","${j.ket}"`));
         downloadCsvFile(lines.join("\n"), "Rekap_Absensi_AMP.csv");
-        showAppBanner("File Rekap_Absensi_AMP.csv berhasil diunduh.", "success");
       } else if (kind === "gps") {
         const lines = ["ID,Nama,Area,Latitude,Longitude,Status"];
         getKorlapAccounts().forEach((k) => { const g = state.liveGpsByKorlap[k.id] || k; lines.push(`"${k.username}","${k.name}","${k.area}",${g.lat},${g.lng},"${g.updatedAt || "Area"}"`); });
         downloadCsvFile(lines.join("\n"), "Rekap_GPS_Korlap_AMP.csv");
-        showAppBanner("File Rekap_GPS_Korlap_AMP.csv berhasil diunduh.", "success");
       } else if (kind === "kejadian") {
         const lines = ["Tanggal,Lokasi,Temuan,PIC,Status"];
         state.findings.forEach((f) => lines.push(`"${f.tgl}","${f.lokasi}","${f.temuan}","${f.pic}","${f.status}"`));
         downloadCsvFile(lines.join("\n"), "Rekap_Kejadian_AMP.csv");
-        showAppBanner("File Rekap_Kejadian_AMP.csv berhasil diunduh.", "success");
       }
     }
 
@@ -1930,38 +1737,9 @@
     let capturedSelfieDataUrl = "";
     let latestAttendanceGps = null;
 
-    function createWatermarkPreviewDataUrl() {
-      const canvasEl = document.getElementById("selfieCanvas");
-      canvasEl.width = 480;
-      canvasEl.height = 360;
-      const ctx = canvasEl.getContext("2d");
-      const grad = ctx.createLinearGradient(0, 0, 480, 286);
-      grad.addColorStop(0, "#0b234d");
-      grad.addColorStop(1, "#1d5fd6");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 480, 360);
-      ctx.fillStyle = "rgba(255,255,255,0.12)";
-      ctx.beginPath();
-      ctx.arc(240, 125, 52, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 18px Arial, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("BUKTI SELFIE LAPANGAN AMP", 240, 132);
-      ctx.textAlign = "left";
-      applyAmpWatermarkToCanvas(ctx, 480, 360);
-      return canvasEl.toDataURL("image/jpeg", 0.82);
-    }
-
     async function startSelfieCamera() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        capturedSelfieDataUrl = createWatermarkPreviewDataUrl();
-        const imgEl = document.getElementById("selfieCapturedImg");
-        imgEl.src = capturedSelfieDataUrl;
-        imgEl.style.display = "block";
-        document.getElementById("selfiePlaceholderBox").style.display = "none";
-        document.getElementById("btnRetakeSelfie").style.display = "inline-block";
-        showAppBanner("Kamera browser tidak tersedia; preview bukti selfie ber-watermark AMP ditampilkan.", "warn");
+        alert("Kamera live tidak tersedia di browser ini; gunakan pilihan foto dari kamera HP.");
         return;
       }
       try {
@@ -1974,13 +1752,7 @@
         document.getElementById("selfiePlaceholderBox").style.display = "none";
         document.getElementById("btnCaptureSelfie").disabled = false;
       } catch (e) {
-        capturedSelfieDataUrl = createWatermarkPreviewDataUrl();
-        const imgEl = document.getElementById("selfieCapturedImg");
-        imgEl.src = capturedSelfieDataUrl;
-        imgEl.style.display = "block";
-        document.getElementById("selfiePlaceholderBox").style.display = "none";
-        document.getElementById("btnRetakeSelfie").style.display = "inline-block";
-        showAppBanner("Akses kamera diblokir/tidak aktif; preview bukti selfie ber-watermark siap digunakan.", "warn");
+        alert("Izin kamera belum diberikan.");
       }
     }
 
@@ -1992,7 +1764,7 @@
       if (b) b.disabled = true;
     }
 
-    function applyAmpWatermarkToCanvas(ctx, w, h) {
+    async function applyAmpWatermarkToCanvas(canvasEl, ctx, w, h) {
       const stampTime = new Date().toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
       const whoName = activeUser ? `${activeUser.name} (${activeUser.username})` : "Personel AMP";
       const areaText = activeUser ? activeUser.area : "PT. Ardina Mulya Perkasa";
@@ -2000,7 +1772,7 @@
       const barH = 74;
       const yTop = h - barH;
       ctx.save();
-      ctx.fillStyle = "rgba(6, 19, 43, 0.88)";
+      ctx.fillStyle = "rgba(6, 19, 43, 0.86)";
       ctx.fillRect(0, yTop, w, barH);
       ctx.fillStyle = "#38bdf8";
       ctx.fillRect(0, yTop, w, 2.5);
@@ -2029,7 +1801,7 @@
       ctx.save(); ctx.translate(480, 0); ctx.scale(-1, 1);
       ctx.drawImage(videoEl, 0, 0, 480, 360);
       ctx.restore();
-      applyAmpWatermarkToCanvas(ctx, 480, 360);
+      await applyAmpWatermarkToCanvas(canvasEl, ctx, 480, 360);
       capturedSelfieDataUrl = canvasEl.toDataURL("image/jpeg", 0.78);
       const imgEl = document.getElementById("selfieCapturedImg");
       imgEl.src = capturedSelfieDataUrl;
@@ -2051,12 +1823,12 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
-        img.onload = () => {
+        img.onload = async () => {
           const canvasEl = document.getElementById("selfieCanvas");
           canvasEl.width = 480; canvasEl.height = 360;
           const ctx = canvasEl.getContext("2d");
           ctx.drawImage(img, 0, 0, 480, 360);
-          applyAmpWatermarkToCanvas(ctx, 480, 360);
+          await applyAmpWatermarkToCanvas(canvasEl, ctx, 480, 360);
           capturedSelfieDataUrl = canvasEl.toDataURL("image/jpeg", 0.78);
           const imgEl = document.getElementById("selfieCapturedImg");
           imgEl.src = capturedSelfieDataUrl;
@@ -2080,14 +1852,11 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
       }
-      if (showFeedback) showAppBanner(`Koordinat & detail lokasi diperbarui (${nowWib}).`, "success");
+      if (showFeedback) alert("Koordinat & detail lokasi diperbarui.");
     }
 
     async function recordAttendanceNow() {
-      if (!capturedSelfieDataUrl) {
-        showAppBanner("Ambil foto selfie atau klik Nyalakan Kamera terlebih dahulu.", "warn");
-        return;
-      }
+      if (!capturedSelfieDataUrl) { alert("Ambil foto selfie terlebih dahulu."); return; }
       const gps = latestAttendanceGps || (activeUser && state.liveGpsByKorlap[activeUser.id]) || { lat: -6.2432, lng: 106.8689, accuracy: 25, address: activeUser.area };
       const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
       const tanggal = new Date().toISOString().slice(0, 10);
@@ -2111,7 +1880,7 @@
       document.getElementById("btnRetakeSelfie").style.display = "none";
       document.getElementById("selfiePlaceholderBox").style.display = "block";
       if (!isAdminUser(activeUser)) await broadcastKorlapActivity("ABSENSI", `Absensi selfie tercatat (±${gps.accuracy || 25}m)`, activeUser.area);
-      showAppBanner("Absensi selfie & GPS berhasil dicatat.", "success");
+      alert("Absensi berhasil dicatat.");
     }
 
     function renderAttendanceHistory() {
@@ -2148,13 +1917,12 @@
       const loc = document.getElementById("findLocInput").value.trim() || activeUser.area;
       const desc = document.getElementById("findDescInput").value.trim();
       const status = document.getElementById("findStatusInput").value;
-      if (!desc) { showAppBanner("Uraian kejadian / temuan wajib diisi.", "error"); return; }
+      if (!desc) { alert("Uraian temuan wajib diisi."); return; }
       state.findings.unshift({ tgl: new Date().toISOString().slice(0, 10), korlapId: activeUser.id, lokasi: loc, temuan: desc, pic: activeUser.name, status });
       document.getElementById("findLocInput").value = "";
       document.getElementById("findDescInput").value = "";
       saveState();
       renderFindings();
-      showAppBanner("Kejadian / temuan baru berhasil ditambahkan.", "success");
       if (!isAdminUser(activeUser)) await broadcastKorlapActivity("PENGAJUAN KEJADIAN", `[${status}] ${desc}`, `Lokasi: ${loc}`);
     }
 
@@ -2188,41 +1956,27 @@
       state.supabase.url = document.getElementById("sbUrlInput").value.trim();
       state.supabase.key = document.getElementById("sbKeyInput").value.trim();
       saveState();
-      document.getElementById("supabaseSyncStatusBox").innerHTML = `Status Sinkronisasi GPS Cloud: <strong>Tersimpan</strong> (${state.supabase.url || "Local Mode"}).`;
-      showAppBanner("Konfigurasi Supabase berhasil disimpan.", "success");
+      alert("Konfigurasi Supabase disimpan.");
     }
 
     function testAndSyncSupabaseGps(showAlert) {
       updateRadarMarkersAndList();
-      if (showAlert) showAppBanner("Radar & data 13 Korlap berhasil diperbarui.", "success");
+      if (showAlert) alert("Radar & data Korlap diperbarui.");
     }
 
     function copyKorlapTrackingLink() {
       const url = (state.supabase && state.supabase.url) || "";
       const key = (state.supabase && state.supabase.key) || "";
-      if (!url || !key) {
-        showAppBanner("Isi Supabase URL dan Key terlebih dahulu sebelum menyalin link.", "warn");
-        return;
-      }
+      if (!url || !key) { alert("Isi Supabase URL dan Key terlebih dahulu."); return; }
       const shareUrl = `${window.location.origin + window.location.pathname}?sb_url=${encodeURIComponent(url)}&sb_key=${encodeURIComponent(key)}`;
-      try {
-        const ta = document.createElement("textarea");
-        ta.value = shareUrl;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-        showAppBanner("Link tracking Korlap berhasil disalin ke clipboard.", "success");
-      } catch (e) {
-        showAppBanner("Link siap: " + shareUrl, "info");
-      }
+      if (navigator.clipboard) navigator.clipboard.writeText(shareUrl).then(() => alert("Link Korlap disalin."));
     }
 
     function resetAllDeviceLocks() {
-      if (!isAdminUser(activeUser)) return;
+      if (!isAdminUser(activeUser) || !confirm("Buka kunci perangkat seluruh Korlap?")) return;
       setDeviceLocks({ [activeUser.id]: { deviceId: THIS_DEVICE_ID, username: activeUser.username, loginAt: new Date().toISOString() } });
       renderManpowerTable();
-      showAppBanner("Seluruh kunci sesi perangkat Korlap telah dibuka.", "success");
+      alert("Kunci perangkat Korlap telah dibuka.");
     }
 
     function renderAllViews() {
