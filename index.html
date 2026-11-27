@@ -243,6 +243,34 @@
     .btn-primary { background: #0b1f44; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
     .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
     .btn-success { background: #059669; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
+    .btn-checkout { background: #dc2626; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
+
+    .absen-mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .absen-mode-btn {
+      padding: 10px 10px;
+      border-radius: 11px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      min-height: 42px;
+      touch-action: manipulation;
+      transition: all 0.14s ease;
+    }
+    .absen-mode-btn.active-in {
+      background: #dcfce7;
+      border-color: #059669;
+      color: #065f46;
+      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.15);
+    }
+    .absen-mode-btn.active-out {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #991b1b;
+      box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
+    }
 
     .table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
@@ -588,8 +616,19 @@
         <!-- MODUL 3 -->
         <div id="mod-3" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 3 — Manpower, Absensi Selfie Live &amp; GPS Akurat</div>
-            <div class="card-sub" style="margin-bottom:10px;">Foto selfie kamera live ber-watermark AMP, akurasi GPS, dan detail lokasi</div>
+            <div class="card-title">Modul 3 — Manpower, Absensi Check In / Check Out &amp; GPS</div>
+            <div class="card-sub" style="margin-bottom:10px;">Pilih Check In / Check Out, ambil foto selfie live ber-watermark AMP, dan kunci GPS</div>
+
+            <div style="border:1.5px solid #cbd5e1; border-radius:14px; padding:10px 12px; background:#f0f9ff; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+                <span style="font-size:12px; font-weight:900; color:#0b1f44;">🕒 0. Pilih Jenis Absensi</span>
+                <span id="absenTodaySummary" style="font-size:10.5px; font-weight:800; color:#0369a1;">Status hari ini: Belum Check In</span>
+              </div>
+              <div class="absen-mode-toggle">
+                <button type="button" id="btnModeCheckIn" class="absen-mode-btn active-in" onclick="setAttendanceType('CHECK_IN')">🟢 CHECK IN (Masuk)</button>
+                <button type="button" id="btnModeCheckOut" class="absen-mode-btn" onclick="setAttendanceType('CHECK_OUT')">🔴 CHECK OUT (Pulang)</button>
+              </div>
+            </div>
 
             <div style="border:1.5px solid #cbd5e1; border-radius:14px; padding:12px; background:#f8fafc; margin-bottom:12px;">
               <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:8px;">📸 1. Kamera Selfie Live &amp; Foto Bukti</div>
@@ -629,12 +668,12 @@
               </div>
             </div>
 
-            <button type="button" class="btn-success" style="width:100%; padding:11px 14px; font-size:12.5px; margin-bottom:14px;" onclick="recordAttendanceNow()">✅ Kirim &amp; Catat Absensi Hadir (Selfie + GPS)</button>
+            <button type="button" id="btnSubmitAttendance" class="btn-success" style="width:100%; padding:11px 14px; font-size:12.5px; margin-bottom:14px;" onclick="recordAttendanceNow()">🟢 Kirim CHECK IN (Selfie + GPS)</button>
 
-            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">🕒 Riwayat Absensi Selfie &amp; Lokasi</div>
+            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">🕒 Riwayat Check In / Check Out &amp; Lokasi</div>
             <div class="table-wrap" style="margin-bottom:14px;">
               <table>
-                <thead><tr><th>Foto</th><th>Waktu</th><th>Personel</th><th>Detail Lokasi &amp; Koordinat</th><th>Akurasi</th></tr></thead>
+                <thead><tr><th>Foto</th><th>Jenis &amp; Waktu</th><th>Personel</th><th>Detail Lokasi &amp; Koordinat</th><th>Durasi / GPS</th></tr></thead>
                 <tbody id="attendanceHistoryBody"></tbody>
               </table>
             </div>
@@ -933,7 +972,7 @@
     const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
     const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
     const NOTIF_SOUND_PREF_KEY = "AMP_ADMIN_NOTIF_SOUND_ON";
-    const DEFAULT_SUPABASE_URL = "https://eisyyoitiheemoghokyd.supabase.co";
+    const DEFAULT_SUPABASE_URL = "https://eisyyoltiheemoghokyd.supabase.co";
     const DEFAULT_SUPABASE_KEY = "";
 
     function getThisDeviceId() {
@@ -970,6 +1009,7 @@
     let selfieStream = null;
     let capturedSelfieDataUrl = "";
     let latestAttendanceGps = null;
+    let currentAttendanceType = "CHECK_IN";
 
     (function sanitizeAndMergeDefaultAccounts() {
       if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
@@ -1666,6 +1706,7 @@
       applyRoleAccessControl();
       buildModulesNav();
       populateAreaDropdowns();
+      setAttendanceType("CHECK_IN");
       if (isAdminUser(found)) {
         const creds = getSupabaseCredentials();
         document.getElementById("sbUrlInput").value = creds.url;
@@ -2009,7 +2050,7 @@
       liveWatchId = navigator.geolocation.watchPosition(applyDevicePosition, handleDeviceGeoError, opts);
     }
 
-    /* ================= MODUL 2, 3, 4, 5, 6, 7, 8 & 14 ================= */
+    /* ================= MODUL 2, 3 (CHECK IN / CHECK OUT), 4, 5, 6, 7, 8 & 14 ================= */
     function populateAreaDropdowns() {
       const admin = isAdminUser(activeUser);
       const jobAreaSel = document.getElementById("jobAreaInput");
@@ -2023,6 +2064,53 @@
       mcpFilter.innerHTML = `<option value="ALL">Semua Area / Semua Korlap (${getKorlapAccounts().length} Personel)</option>`;
       getKorlapAccounts().forEach((k) => { const opt = document.createElement("option"); opt.value = k.id; opt.textContent = `${k.name} (${k.username}) — ${k.area}`; mcpFilter.appendChild(opt); });
       document.getElementById("findPicInput").value = activeUser ? activeUser.name : "";
+    }
+
+    function setAttendanceType(type) {
+      currentAttendanceType = type === "CHECK_OUT" ? "CHECK_OUT" : "CHECK_IN";
+      const btnIn = document.getElementById("btnModeCheckIn");
+      const btnOut = document.getElementById("btnModeCheckOut");
+      const btnSubmit = document.getElementById("btnSubmitAttendance");
+      if (btnIn && btnOut) {
+        btnIn.className = "absen-mode-btn" + (currentAttendanceType === "CHECK_IN" ? " active-in" : "");
+        btnOut.className = "absen-mode-btn" + (currentAttendanceType === "CHECK_OUT" ? " active-out" : "");
+      }
+      if (btnSubmit) {
+        if (currentAttendanceType === "CHECK_OUT") {
+          btnSubmit.className = "btn-checkout";
+          btnSubmit.textContent = "🔴 Kirim CHECK OUT / Pulang (Selfie + GPS)";
+        } else {
+          btnSubmit.className = "btn-success";
+          btnSubmit.textContent = "🟢 Kirim CHECK IN / Masuk (Selfie + GPS)";
+        }
+      }
+      updateTodayAttendanceSummary();
+    }
+
+    function updateTodayAttendanceSummary() {
+      const el = document.getElementById("absenTodaySummary");
+      if (!el || !activeUser) return;
+      const today = new Date().toISOString().slice(0, 10);
+      const mineToday = (state.attendanceLogs || []).filter((x) => x.korlapId === activeUser.id && x.tanggal === today);
+      const lastIn = mineToday.find((x) => (x.absenType || "CHECK_IN") === "CHECK_IN");
+      const lastOut = mineToday.find((x) => x.absenType === "CHECK_OUT");
+      if (lastOut && lastIn) {
+        el.textContent = `Masuk ${lastIn.waktu} • Pulang ${lastOut.waktu}`;
+      } else if (lastIn) {
+        el.textContent = `Sudah Check In (${lastIn.waktu}) — Belum Check Out`;
+      } else {
+        el.textContent = "Status hari ini: Belum Check In";
+      }
+    }
+
+    function computeWorkDurationLabel(checkInItem, checkOutItem) {
+      if (!checkInItem || !checkOutItem || !checkInItem.timestampMs || !checkOutItem.timestampMs) return "-";
+      const diffMs = checkOutItem.timestampMs - checkInItem.timestampMs;
+      if (diffMs <= 0) return "-";
+      const totalMins = Math.floor(diffMs / 60000);
+      const hrs = Math.floor(totalMins / 60);
+      const mins = totalMins % 60;
+      return `${hrs}j ${mins}m`;
     }
 
     async function addJobLog() {
@@ -2119,8 +2207,8 @@
     function exportTableCsv(kind) {
       if (!isAdminUser(activeUser)) return;
       if (kind === "absensi") {
-        const lines = ["Waktu,Korlap,Area,Uraian,SLA,Keterangan"];
-        state.jobLogs.forEach((j) => lines.push(`"${j.waktu}","${j.korlap}","${j.area}","${j.uraian}","${j.sla}","${j.ket}"`));
+        const lines = ["Tanggal,Waktu,Jenis,Korlap,Area,Alamat,Latitude,Longitude,Akurasi,Durasi"];
+        (state.attendanceLogs || []).forEach((a) => lines.push(`"${a.tanggal}","${a.waktu}","${a.absenType || "CHECK_IN"}","${a.korlapName}","${a.area}","${a.addressDetail || ""}",${a.lat},${a.lng},"${a.accLabel || ""}","${a.durationLabel || "-"}"`));
         downloadCsvFile(lines.join("\n"), "Rekap_Absensi_AMP.csv");
       } else if (kind === "gps") {
         const lines = ["ID,Nama,Area,Latitude,Longitude,Status"];
@@ -2170,28 +2258,29 @@
 
     async function applyAmpWatermarkToCanvas(canvasEl, ctx, w, h) {
       const stampTime = new Date().toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const modeLabel = currentAttendanceType === "CHECK_OUT" ? "CHECK OUT (PULANG)" : "CHECK IN (MASUK)";
       const whoName = activeUser ? `${activeUser.name} (${activeUser.username})` : "Personel AMP";
       const areaText = activeUser ? activeUser.area : "PT. Ardina Mulya Perkasa";
       const gpsObj = latestAttendanceGps || (activeUser && state.liveGpsByKorlap[activeUser.id]) || { lat: 0, lng: 0, accuracy: 0 };
-      const barH = 74;
+      const barH = 82;
       const yTop = h - barH;
       ctx.save();
-      ctx.fillStyle = "rgba(6, 19, 43, 0.86)";
+      ctx.fillStyle = "rgba(6, 19, 43, 0.88)";
       ctx.fillRect(0, yTop, w, barH);
-      ctx.fillStyle = "#38bdf8";
-      ctx.fillRect(0, yTop, w, 2.5);
+      ctx.fillStyle = currentAttendanceType === "CHECK_OUT" ? "#f87171" : "#34d399";
+      ctx.fillRect(0, yTop, w, 3);
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 11px Arial, sans-serif";
-      ctx.fillText(`AMP • ${whoName}`, 12, yTop + 17, w - 24);
+      ctx.font = "bold 10.5px Arial, sans-serif";
+      ctx.fillText(`AMP [${modeLabel}] • ${whoName}`, 12, yTop + 16, w - 24);
       ctx.fillStyle = "#fde68a";
       ctx.font = "bold 10px Arial, sans-serif";
       ctx.fillText(`WAKTU: ${stampTime} WIB`, 12, yTop + 32, w - 24);
       ctx.fillStyle = "#86efac";
       ctx.font = "bold 10px Arial, sans-serif";
-      ctx.fillText(`GPS: ${Number(gpsObj.lat).toFixed(5)}, ${Number(gpsObj.lng).toFixed(5)} (±${gpsObj.accuracy || 0}m)`, 12, yTop + 47, w - 24);
+      ctx.fillText(`GPS: ${Number(gpsObj.lat).toFixed(5)}, ${Number(gpsObj.lng).toFixed(5)} (±${gpsObj.accuracy || 0}m)`, 12, yTop + 48, w - 24);
       ctx.fillStyle = "#bae6fd";
       ctx.font = "9.5px Arial, sans-serif";
-      ctx.fillText(`AREA: ${areaText}`, 12, yTop + 62, w - 24);
+      ctx.fillText(`AREA: ${areaText}`, 12, yTop + 65, w - 24);
       ctx.restore();
     }
 
@@ -2252,12 +2341,29 @@
         alert("GPS perangkat belum terkunci. Klik 'Lock GPS Akurat' terlebih dahulu.");
         return;
       }
-      const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
-      const tanggal = new Date().toISOString().slice(0, 10);
+      const nowMs = Date.now();
+      const waktu = new Date(nowMs).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
+      const tanggal = new Date(nowMs).toISOString().slice(0, 10);
+      const absenType = currentAttendanceType === "CHECK_OUT" ? "CHECK_OUT" : "CHECK_IN";
+      const typeLabel = absenType === "CHECK_OUT" ? "CHECK OUT" : "CHECK IN";
+
+      let durationLabel = "-";
+      if (absenType === "CHECK_OUT") {
+        const prevCheckIn = (state.attendanceLogs || []).find(
+          (x) => x.korlapId === activeUser.id && x.tanggal === tanggal && (x.absenType || "CHECK_IN") === "CHECK_IN"
+        );
+        if (prevCheckIn) {
+          durationLabel = computeWorkDurationLabel(prevCheckIn, { timestampMs: nowMs });
+        }
+      }
+
       state.attendanceLogs.unshift({
-        id: "ABS-" + Date.now(),
+        id: "ABS-" + nowMs,
         tanggal,
         waktu,
+        timestampMs: nowMs,
+        absenType,
+        durationLabel,
         korlapId: activeUser.id,
         korlapName: activeUser.name,
         area: activeUser.area,
@@ -2267,6 +2373,7 @@
         addressDetail: gps.address || activeUser.area,
         selfieDataUrl: capturedSelfieDataUrl
       });
+
       if (!isAdminUser(activeUser)) {
         state.liveGpsByKorlap[activeUser.id] = {
           lat: Number(gps.lat),
@@ -2275,37 +2382,47 @@
           address: gps.address || activeUser.area,
           isRealDevice: true,
           updatedAt: waktu + ":00",
-          updatedAtMs: Date.now()
+          updatedAtMs: nowMs
         };
       }
       saveState();
+      updateTodayAttendanceSummary();
       if (!isAdminUser(activeUser)) {
         await pushKorlapGpsToSupabase(state.liveGpsByKorlap[activeUser.id], true);
-        await broadcastKorlapActivity("ABSENSI", `Absensi selfie tercatat (±${gps.accuracy || 15}m)`, activeUser.area);
+        const durText = absenType === "CHECK_OUT" && durationLabel !== "-" ? ` • Durasi: ${durationLabel}` : "";
+        await broadcastKorlapActivity("ABSENSI", `${typeLabel} tercatat (${waktu}, ±${gps.accuracy || 15}m)${durText}`, activeUser.area);
       }
       renderAttendanceHistory();
       capturedSelfieDataUrl = "";
       document.getElementById("selfieCapturedImg").style.display = "none";
       document.getElementById("btnRetakeSelfie").style.display = "none";
       document.getElementById("selfiePlaceholderBox").style.display = "block";
-      alert("Absensi berhasil dicatat & tersinkron ke semua perangkat.");
+      alert(`${typeLabel} berhasil dicatat (${waktu}) & tersinkron ke semua perangkat.`);
     }
 
     function renderAttendanceHistory() {
+      updateTodayAttendanceSummary();
       const body = document.getElementById("attendanceHistoryBody");
       const list = isAdminUser(activeUser) ? state.attendanceLogs : state.attendanceLogs.filter((x) => x.korlapId === activeUser.id);
       body.innerHTML = list.length
         ? list.slice(0, 15).map((item) => {
             const gmaps = `https://www.google.com/maps?q=${Number(item.lat)},${Number(item.lng)}`;
+            const isOut = item.absenType === "CHECK_OUT";
+            const badgeHtml = isOut
+              ? `<span class="status-chip st-kendala">CHECK OUT</span>`
+              : `<span class="status-chip st-selesai">CHECK IN</span>`;
+            const durInfo = isOut && item.durationLabel && item.durationLabel !== "-"
+              ? `<br/><small style="color:#0b1f44; font-weight:700;">Durasi: ${item.durationLabel}</small>`
+              : "";
             return `<tr>
               <td><img src="${item.selfieDataUrl}" alt="Selfie" style="width:46px; height:36px; object-fit:cover; border-radius:6px;" /></td>
-              <td><strong>${item.waktu}</strong><br/><small>${item.tanggal}</small></td>
+              <td>${badgeHtml}<br/><strong>${item.waktu}</strong><br/><small>${item.tanggal}</small></td>
               <td><strong>${item.korlapName}</strong><br/><small>${item.area}</small></td>
               <td>${item.addressDetail}<br/><small>${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</small> • <a class="gmaps-link" href="${gmaps}" target="_blank" rel="noopener">Maps</a></td>
-              <td><span class="status-chip st-selesai">${item.accLabel}</span></td>
+              <td><span class="status-chip st-selesai">${item.accLabel}</span>${durInfo}</td>
             </tr>`;
           }).join("")
-        : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada riwayat absensi selfie.</td></tr>`;
+        : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada riwayat Check In / Check Out.</td></tr>`;
     }
 
     function renderManpowerTable() {
