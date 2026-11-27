@@ -2,379 +2,226 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-  <title>MBCS AMP — Monitoring Operasional PT. Ardina Mulya Perkasa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1f44" />
-  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MBCS AMP" />
-  <link id="pwaManifestLink" rel="manifest" />
   <link id="pwaAppleIconLink" rel="apple-touch-icon" />
+  <link id="pwaManifestLink" rel="manifest" />
+  <title>Monitoring Operasional MBCS AMP — PT. Ardina Mulya Perkasa</title>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    :root {
-      --navy-950: #06132b;
-      --navy-900: #0b1f44;
-      --navy-800: #102e63;
-      --blue-600: #1d5fd6;
-      --blue-500: #2575fc;
-      --slate-100: #f1f5f9;
-      --slate-200: #e2e8f0;
-      --slate-300: #cbd5e1;
-      --slate-600: #475569;
-      --slate-700: #334155;
-      --slate-900: #0f172a;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Arial, sans-serif; }
+    html, body { width: 100%; overflow-x: hidden; background: #eef3f9; color: #0f172a; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-    html, body { background: #e8eef5; color: var(--slate-900); min-height: 100vh; -webkit-text-size-adjust: 100%; overscroll-behavior-y: contain; }
-
-    /* ================= LOGIN HERO MBCS AMP ================= */
     #loginScreen {
       min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      background: linear-gradient(180deg, #b8dcff 0%, #dbeeff 36%, #eef6ff 66%, #e2f1ff 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      background:
-        radial-gradient(circle at 85% 8%, rgba(37, 117, 252, 0.24) 0%, transparent 45%),
-        radial-gradient(circle at 12% 35%, rgba(56, 189, 248, 0.20) 0%, transparent 45%),
-        linear-gradient(180deg, #eef6ff 0%, #dbeafe 42%, #e8f1fc 78%, #cfe0f5 100%);
+      justify-content: flex-start;
       position: relative;
       overflow-x: hidden;
-      padding: 20px 16px 0;
     }
 
     .hero-top-wave {
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 280px;
-      height: 150px;
-      background: linear-gradient(135deg, #1d5fd6 0%, #0b2c66 100%);
-      border-bottom-left-radius: 140px;
-      opacity: 0.92;
-      pointer-events: none;
+      top: -90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150%;
+      height: 290px;
+      background: radial-gradient(ellipse at center, #7cc0ff 0%, #a5d5ff 68%, rgba(165, 213, 255, 0) 100%);
+      border-bottom-left-radius: 50% 45%;
+      border-bottom-right-radius: 50% 45%;
       z-index: 0;
+      pointer-events: none;
     }
 
     .hero-wrapper {
-      position: relative;
-      z-index: 2;
       width: 100%;
       max-width: 540px;
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 18px 14px 20px;
     }
 
-    .hero-brand-header { text-align: center; margin-bottom: 10px; }
+    .hero-brand-header { text-align: center; width: 100%; margin-bottom: 6px; }
+    .amp-logo-img { width: 72px; height: 72px; object-fit: contain; border-radius: 16px; display: block; margin: 0 auto 8px; box-shadow: 0 8px 20px rgba(11, 31, 68, 0.22); background: #0b1f44; }
+    .company-title { font-size: 13.5px; font-weight: 800; letter-spacing: 0.7px; color: #0f295c; text-transform: uppercase; margin-bottom: 2px; }
+    .system-title { font-size: 20px; font-weight: 800; color: #0b1f44; line-height: 1.15; }
+    .system-sub { font-size: 32px; font-weight: 900; letter-spacing: 0.5px; color: #091a3a; line-height: 1.08; margin-top: 2px; }
+    .hero-tagline-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
+    .hero-tagline-line { height: 1px; width: 32px; background: rgba(15, 41, 92, 0.28); }
+    .tagline-italic { font-size: 11px; font-style: italic; font-weight: 600; color: #1e3a6e; }
 
-    .amp-logo-img {
-      width: 92px;
-      height: 92px;
-      object-fit: contain;
-      margin: 0 auto 6px;
-      display: block;
-      border-radius: 20px;
-      background: #ffffff;
-      padding: 6px;
-      box-shadow: 0 12px 26px rgba(11, 31, 68, 0.18);
-      border: 2px solid rgba(255, 255, 255, 0.9);
-    }
-
-    .company-title { font-size: 16px; font-weight: 900; color: #0f295c; letter-spacing: 0.6px; text-transform: uppercase; }
-    .system-title { font-size: 20px; font-weight: 800; color: #0b2559; margin-top: 6px; line-height: 1.15; }
-    .system-sub {
-      font-size: 36px;
-      font-weight: 900;
-      font-style: italic;
-      background: linear-gradient(90deg, #0b2559 0%, #1652c2 52%, #0a1f44 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 0.5px;
-      line-height: 1.08;
-      margin-top: 2px;
-    }
-
-    .hero-tagline-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; width: 100%; }
-    .hero-tagline-line { height: 1.5px; flex: 1; max-width: 75px; background: linear-gradient(90deg, transparent, #1d5fd6, transparent); }
-    .tagline-italic { font-style: italic; font-weight: 700; color: #0f295c; font-size: 12.5px; white-space: nowrap; }
-
-    .hero-scene-box {
-      width: 100%;
-      margin-top: 10px;
-      margin-bottom: -34px;
-      position: relative;
-      z-index: 2;
-      border-radius: 22px 22px 0 0;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(219, 234, 254, 0.35) 0%, rgba(147, 197, 253, 0.55) 75%, #1d5fd6 100%);
-      padding-top: 8px;
-    }
-    .hero-scene-svg { width: 100%; height: 175px; display: block; }
+    .hero-scene-box { width: 100%; max-width: 490px; height: 148px; position: relative; margin: 2px auto -26px; z-index: 2; pointer-events: none; }
+    .hero-scene-svg { width: 100%; height: 100%; display: block; }
 
     .pin-card {
+      width: 100%;
+      max-width: 410px;
+      background: #ffffff;
+      border-radius: 26px;
+      padding: 38px 22px 22px;
+      box-shadow: 0 18px 42px rgba(15, 41, 92, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       position: relative;
       z-index: 3;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      border-radius: 26px;
-      padding: 36px 24px 22px;
-      box-shadow: 0 20px 44px rgba(11, 31, 68, 0.18);
     }
 
     .welcome-avatar-badge {
-      position: absolute;
-      top: -26px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #2575fc 0%, #1652c2 100%);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 8px 18px rgba(22, 82, 194, 0.35);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+      color: #ffffff; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin: -58px auto 8px; box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
       border: 3px solid #ffffff;
     }
 
-    .welcome-heading { text-align: center; font-size: 22px; font-weight: 900; color: #0b2559; margin-top: 2px; }
-    .welcome-sub { text-align: center; font-size: 12.5px; color: #475569; margin-top: 4px; margin-bottom: 16px; line-height: 1.4; }
+    .welcome-heading { text-align: center; font-size: 20px; font-weight: 800; color: #0b1f44; margin-bottom: 4px; }
+    .welcome-sub { text-align: center; font-size: 12px; color: #475569; line-height: 1.45; margin-bottom: 16px; }
 
     .input-field-pill {
-      position: relative;
-      display: flex;
-      align-items: center;
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 14px;
-      padding: 2px 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      display: flex; align-items: center; background: #f8fafc;
+      border: 1.5px solid #cbd5e1; border-radius: 12px;
+      padding: 0 12px; height: 46px; margin-bottom: 12px; transition: all 0.15s ease;
     }
-    .input-field-pill:focus-within { border-color: #1d5fd6; box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.14); }
-    .input-leading-ico { font-size: 16px; color: #1d5fd6; margin-right: 10px; user-select: none; }
+    .input-field-pill:focus-within { border-color: #1d5fd6; background: #ffffff; box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.14); }
+    .input-leading-ico { font-size: 15px; margin-right: 10px; color: #64748b; user-select: none; }
+    .text-input-login { flex: 1; border: none; background: transparent; font-size: 16px; font-weight: 600; color: #0f172a; outline: none; width: 100%; }
+    .pin-input { flex: 1; border: none; background: transparent; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #0f172a; outline: none; width: 100%; }
+    .pin-input::placeholder, .text-input-login::placeholder { letter-spacing: 0; font-weight: 500; color: #94a3b8; font-size: 13px; }
 
-    .text-input-login, .pin-input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      padding: 11px 6px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #0f172a;
-      outline: none;
-    }
-    .pin-input { letter-spacing: 2.5px; padding-right: 34px; }
-    .text-input-login::placeholder, .pin-input::placeholder { color: #64748b; font-weight: 600; letter-spacing: 0; }
-    .eye-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; padding: 4px; }
+    .eye-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; padding: 4px; min-height: 36px; min-width: 36px; touch-action: manipulation; }
 
     .btn-reg-pill {
-      width: 100%;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 15px;
-      background: linear-gradient(180deg, #1f6feb 0%, #0d47a1 100%);
-      color: #ffffff;
-      font-size: 14.5px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 8px 18px rgba(13, 71, 161, 0.28);
-      margin-bottom: 10px;
+      width: 100%; height: 42px; border-radius: 11px;
+      border: 1.5px solid #93c5fd; background: #eff6ff; color: #1d4ed8;
+      font-size: 12.5px; font-weight: 800; cursor: pointer; margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      min-height: 40px; touch-action: manipulation;
     }
+    .btn-reg-pill:hover { background: #dbeafe; }
 
     .btn-forgot-pill {
-      width: 100%;
-      padding: 11px 16px;
-      border: 1.5px solid #93c5fd;
-      border-radius: 15px;
-      background: linear-gradient(180deg, #f8fbff 0%, #e0efff 100%);
-      color: #0b2559;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 10px;
+      width: 100%; height: 38px; border-radius: 10px;
+      border: 1px solid #cbd5e1; background: #f8fafc; color: #334155;
+      font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      min-height: 40px; touch-action: manipulation;
     }
+    .btn-forgot-pill:hover { background: #f1f5f9; }
 
     .btn-install-app {
-      width: 100%;
-      padding: 11px 16px;
-      border: 1.5px solid #10b981;
-      border-radius: 15px;
-      background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
-      color: #065f46;
-      font-size: 13.5px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      width: 100%; height: 40px; border-radius: 10px;
+      border: 1.5px solid #0284c7; background: #e0f2fe; color: #0369a1;
+      font-size: 12px; font-weight: 800; cursor: pointer; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      min-height: 40px; touch-action: manipulation;
     }
+    .btn-install-app:hover { background: #bae6fd; }
 
     .btn-masuk {
-      width: 100%;
-      padding: 13px 18px;
-      border: none;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #38bdf8 0%, #1d5fd6 48%, #0b2c66 100%);
-      color: #ffffff;
-      font-size: 15.5px;
-      font-weight: 900;
-      letter-spacing: 0.4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 10px 22px rgba(29, 95, 214, 0.36);
+      width: 100%; height: 46px; border: none; border-radius: 12px;
+      background: linear-gradient(90deg, #1677ff 0%, #00a8ff 100%);
+      color: #ffffff; font-size: 14.5px; font-weight: 800; letter-spacing: 0.4px;
+      cursor: pointer; box-shadow: 0 8px 20px rgba(22, 119, 255, 0.35);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 44px; touch-action: manipulation;
     }
+    .btn-masuk:hover { filter: brightness(1.04); }
 
-    .login-error { margin-top: 10px; font-size: 12px; font-weight: 700; color: #e11d48; text-align: center; min-height: 16px; }
+    .login-error { margin-top: 10px; text-align: center; font-size: 12px; font-weight: 700; color: #dc2626; min-height: 16px; }
+    .cloud-login-pill { margin-top: 8px; text-align: center; font-size: 11px; font-weight: 700; color: #0369a1; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 6px 8px; }
 
-    .hero-bottom-bar {
-      width: 100%;
-      margin-top: 22px;
-      background: linear-gradient(90deg, #071b3d 0%, #0f3b82 50%, #071b3d 100%);
-      color: #ffffff;
-      text-align: center;
-      padding: 13px 16px;
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      position: relative;
-      z-index: 2;
-    }
-    .hero-bottom-company { font-size: 13.5px; font-weight: 800; letter-spacing: 0.3px; }
-    .hero-bottom-slogan { font-size: 12px; font-style: italic; color: #bae6fd; margin-top: 2px; }
+    .hero-bottom-bar { margin-top: auto; width: 100%; background: #071b3a; color: #ffffff; text-align: center; padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 2; }
+    .hero-bottom-company { font-size: 12px; font-weight: 800; letter-spacing: 0.4px; }
+    .hero-bottom-slogan { font-size: 10.5px; color: #93c5fd; margin-top: 2px; }
 
-    /* ================= MODAL ================= */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(6, 19, 43, 0.72);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 900;
-    }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: none; align-items: center; justify-content: center; z-index: 999; padding: 14px; }
     .modal-backdrop.open { display: flex; }
-    .modal-box { background: #fff; border-radius: 16px; max-width: 460px; width: 100%; padding: 20px; box-shadow: 0 24px 48px rgba(2, 8, 23, 0.45); }
-    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--slate-200); padding-bottom: 8px; }
-    .modal-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); }
-    .modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--slate-600); font-weight: 900; }
+    .modal-box { width: 100%; max-width: 420px; background: #ffffff; border-radius: 16px; padding: 18px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25); max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .modal-title { font-size: 15px; font-weight: 800; color: #0b1f44; }
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b; min-height: 36px; min-width: 36px; }
 
-    /* ================= DASHBOARD SHELL ================= */
-    #appShell { display: none; min-height: 100vh; background: #e2e8f0; }
+    #appShell { display: none; min-height: 100vh; min-height: 100dvh; background: #e9eff6; padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)); }
+    .mobile-app-frame { width: 100%; max-width: 540px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; background: #f1f5f9; position: relative; box-shadow: 0 0 35px rgba(15, 23, 42, 0.12); overflow-x: clip; }
 
-    .mobile-app-frame {
-      max-width: 540px;
-      min-height: 100vh;
-      margin: 0 auto;
-      background: #f4f7fb;
-      box-shadow: 0 0 36px rgba(15, 23, 42, 0.16);
-      display: flex;
-      flex-direction: column;
-      padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-      position: relative;
-    }
+    .amp-topbar { background: linear-gradient(90deg, #06132b 0%, #0b2554 55%, #0d3b75 100%); color: #ffffff; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; position: sticky; top: 0; z-index: 400; }
+    .amp-topbar-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+    .amp-topbar-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #0b1f44; padding: 2px; flex-shrink: 0; }
+    .amp-topbar-title { font-size: 12.5px; font-weight: 900; letter-spacing: 0.3px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .amp-topbar-sub { font-size: 10px; color: #93c5fd; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .amp-topbar-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
 
-    .amp-topbar {
-      background: linear-gradient(90deg, #071936 0%, #0d2b5c 100%);
-      color: #ffffff;
-      padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      position: sticky;
-      top: 0;
-      z-index: 400;
-    }
-    .amp-topbar-left { display: flex; align-items: center; gap: 10px; }
-    .amp-topbar-logo { width: 36px; height: 36px; border-radius: 8px; background: #ffffff; padding: 2px; object-fit: contain; }
-    .amp-topbar-title { font-size: 13px; font-weight: 900; letter-spacing: 0.3px; line-height: 1.2; }
-    .amp-topbar-sub { font-size: 10.5px; color: #93c5fd; }
-    .amp-topbar-actions { display: flex; align-items: center; gap: 6px; }
-    .pill-sync-btn { background: #064e3b; color: #a7f3d0; border: 1px solid #10b981; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 800; cursor: pointer; }
-    .pill-notif-btn { position: relative; background: #1e3a8a; color: #ffffff; border: 1px solid #60a5fa; border-radius: 999px; padding: 4px 9px; font-size: 12px; font-weight: 800; cursor: pointer; }
-    .notif-badge-dot { position: absolute; top: -5px; right: -4px; background: #e11d48; color: #ffffff; font-size: 9.5px; font-weight: 900; min-width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 999px; padding: 0 4px; }
-    .pill-user-chip { background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
-    .btn-logout-mini { background: #e11d48; color: #fff; border: none; border-radius: 6px; padding: 3px 7px; font-size: 10.5px; font-weight: 800; cursor: pointer; }
+    .pill-sync-btn { background: rgba(16, 185, 129, 0.22); border: 1px solid rgba(52, 211, 153, 0.65); color: #ecfdf5; border-radius: 999px; padding: 4px 8px; font-size: 10.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; min-height: 34px; touch-action: manipulation; }
+    .pill-user-chip { background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.24); color: #ffffff; border-radius: 999px; padding: 3px 6px 3px 8px; font-size: 10.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; max-width: 132px; }
+    .pill-user-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .btn-logout-mini { background: rgba(239, 68, 68, 0.88); border: none; color: #ffffff; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; touch-action: manipulation; }
 
-    .admin-notif-drawer { display: none; background: #ffffff; border-bottom: 2px solid #1d5fd6; box-shadow: 0 10px 24px rgba(11, 31, 68, 0.16); padding: 10px 12px; max-height: 290px; overflow-y: auto; z-index: 390; }
+    .pill-notif-btn { position: relative; background: rgba(56, 189, 248, 0.22); border: 1px solid rgba(125, 211, 252, 0.65); color: #f0f9ff; border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; min-height: 34px; touch-action: manipulation; }
+    .notif-badge-dot { background: #ef4444; color: #ffffff; border-radius: 999px; font-size: 9.5px; font-weight: 900; padding: 1px 5px; min-width: 16px; text-align: center; display: none; }
+
+    .admin-notif-drawer { display: none; background: #ffffff; border-bottom: 2px solid #0284c7; padding: 10px 12px; max-height: 230px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12); }
     .admin-notif-drawer.open { display: block; }
-    .notif-drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: 900; color: #0b1f44; }
-    .notif-feed-item { border: 1px solid #e2e8f0; border-left: 4px solid #1d5fd6; border-radius: 9px; padding: 7px 9px; margin-bottom: 6px; background: #f8fafc; font-size: 11px; }
+    .notif-drawer-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; font-weight: 900; color: #0b1f44; margin-bottom: 6px; }
+    .notif-feed-item { font-size: 11px; padding: 6px 8px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 5px; line-height: 1.35; }
 
-    .admin-toast-stack { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 516px; z-index: 950; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
-    .admin-toast-card { pointer-events: auto; background: #0b1f44; color: #ffffff; border: 1px solid #38bdf8; border-left: 5px solid #38bdf8; border-radius: 12px; padding: 9px 12px; box-shadow: 0 10px 24px rgba(6, 19, 43, 0.38); font-size: 11.5px; line-height: 1.35; cursor: pointer; }
+    .admin-toast-stack { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 516px; z-index: 650; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+    .admin-toast-card { background: #0b1f44; color: #ffffff; border-left: 4px solid #38bdf8; border-radius: 10px; padding: 8px 11px; font-size: 11px; line-height: 1.35; box-shadow: 0 10px 24px rgba(11, 31, 68, 0.35); pointer-events: auto; cursor: pointer; }
 
     .amp-body-pad { padding: 12px; }
 
     .profile-banner-card {
-      background: linear-gradient(135deg, #0b234d 0%, #163e82 100%);
-      color: #ffffff;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 10px 24px rgba(11, 31, 68, 0.22);
+      background: linear-gradient(135deg, #071936 0%, #0e2f63 65%, #123e7d 100%);
+      color: #ffffff; border-radius: 16px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      box-shadow: 0 8px 20px rgba(7, 25, 54, 0.22); margin-bottom: 12px;
     }
-    .profile-name { font-size: 17px; font-weight: 900; color: #ffffff; }
-    .profile-role { font-size: 11.5px; font-weight: 700; color: #fbbf24; margin-top: 2px; }
-    .profile-area-badge { display: inline-block; margin-top: 8px; background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 8px; padding: 4px 9px; font-size: 10.5px; color: #e0f2fe; }
-    .profile-avatar-circle { width: 52px; height: 52px; border-radius: 50%; background: #ffffff; color: #0b234d; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; border: 2px solid #93c5fd; }
+    .profile-name { font-size: 17px; font-weight: 900; line-height: 1.2; }
+    .profile-role { font-size: 11.5px; color: #bae6fd; margin-top: 2px; font-weight: 600; }
+    .profile-area-badge { display: inline-block; margin-top: 7px; background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px; padding: 3px 10px; font-size: 10.5px; font-weight: 700; color: #e0f2fe; }
+    .profile-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); border: 1.5px solid rgba(255, 255, 255, 0.28); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
 
-    .radar-card-box { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 12px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06); }
+    .radar-card-box, .export-grid-card, .modules-grid-card {
+      background: #ffffff; border-radius: 16px; padding: 12px;
+      border: 1px solid #cbd5e1; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05); margin-bottom: 12px;
+    }
     .radar-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-    .radar-card-title { font-size: 13.5px; font-weight: 900; color: #0f172a; }
-    .btn-refresh-blue { background: #1d5fd6; color: #ffffff; border: none; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 800; cursor: pointer; }
-    .radar-sub-strip { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #475569; margin-bottom: 8px; }
-    .badge-active-dots { background: #dcfce7; color: #166534; font-weight: 800; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; }
+    .radar-card-title { font-size: 13px; font-weight: 900; color: #0f172a; }
+    .btn-refresh-blue { background: #1d5fd6; color: #ffffff; border: none; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 800; cursor: pointer; min-height: 36px; touch-action: manipulation; }
 
-    #korlapRadarMap { width: 100%; height: 265px; border-radius: 12px; border: 1px solid #cbd5e1; z-index: 10; background: #e2e8f0; }
+    .radar-sub-strip { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; font-size: 10.5px; color: #475569; margin-bottom: 8px; }
+    .badge-active-dots { background: #dcfce7; color: #15803d; font-weight: 800; padding: 2px 8px; border-radius: 999px; font-size: 10px; }
 
-    @keyframes radarPulseRing {
-      0% { transform: scale(0.5); opacity: 0.9; }
-      100% { transform: scale(2.1); opacity: 0; }
-    }
-    .gmaps-radar-pulse { width: 24px; height: 24px; margin-left: -12px; margin-top: -12px; border-radius: 50%; background: rgba(5, 150, 105, 0.25); border: 2px solid #059669; animation: radarPulseRing 1.8s infinite ease-out; pointer-events: none; }
+    #korlapRadarMap { width: 100%; height: 250px; border-radius: 12px; border: 1px solid #cbd5e1; overflow: hidden; z-index: 1; margin-bottom: 8px; }
+    .gmaps-radar-pulse { width: 18px; height: 18px; border-radius: 50%; background: rgba(16, 185, 129, 0.35); border: 2px solid #059669; animation: gmapsPulse 1.8s infinite; transform: translate(-9px, -9px); }
+    @keyframes gmapsPulse { 0% { transform: translate(-9px, -9px) scale(0.75); opacity: 0.9; } 70% { transform: translate(-9px, -9px) scale(1.85); opacity: 0.15; } 100% { transform: translate(-9px, -9px) scale(2.1); opacity: 0; } }
 
-    .korlap-list-caption { font-size: 10.5px; color: #64748b; margin: 8px 0 6px; }
-    .korlap-roster-list { max-height: 290px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; padding-right: 2px; }
-    .korlap-item { border: 1px solid #e2e8f0; border-radius: 11px; padding: 9px 11px; background: #f8fafc; cursor: pointer; transition: all 0.14s ease; }
+    .korlap-list-caption { font-size: 10.5px; color: #64748b; margin-bottom: 6px; }
+    .korlap-roster-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; padding-right: 2px; }
+    .korlap-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 11px; padding: 8px 10px; cursor: pointer; transition: all 0.14s ease; }
     .korlap-item:hover { border-color: #2563eb; background: #eff6ff; }
-    .korlap-item-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .korlap-item-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
     .korlap-name { font-size: 12px; font-weight: 800; color: #0f172a; }
-    .badge-area-green { background: #dcfce7; color: #166534; border: 1px solid #86efac; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
-    .korlap-meta-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin-top: 4px; }
+    .badge-area-green { background: #dcfce7; color: #15803d; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+    .korlap-meta-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .korlap-meta { font-size: 10.5px; color: #475569; line-height: 1.35; }
-    .gmaps-link { font-size: 10.5px; font-weight: 800; color: #1d5fd6; text-decoration: underline; white-space: nowrap; }
+    .gmaps-link { font-size: 10.5px; font-weight: 800; color: #1d5fd6; text-decoration: none; white-space: nowrap; }
+    .gmaps-link:hover { text-decoration: underline; }
 
-    .export-grid-card, .modules-grid-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
     .export-grid-title { font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
     .export-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .btn-exp-csv { border: none; border-radius: 10px; padding: 10px 8px; color: #ffffff; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12); min-height: 40px; touch-action: manipulation; }
@@ -543,6 +390,7 @@
         <button type="button" class="btn-masuk" id="btnMasukSistem">➜ Login</button>
 
         <div class="login-error" id="loginErrorMsg"></div>
+        <div class="cloud-login-pill" id="cloudLoginStatus">☁️ Sinkronisasi Cloud: Siap</div>
       </div>
     </div>
 
@@ -659,7 +507,7 @@
           <div class="profile-avatar-circle">👤</div>
         </div>
 
-        <!-- MODUL 1: DASHBOARD & RADAR 13 KORLAP -->
+        <!-- MODUL 1: DASHBOARD & RADAR 14 KORLAP -->
         <div id="mod-1" class="module-panel active">
           <div class="radar-card-box" id="adminRadarCard" style="display:none;">
             <div class="radar-card-top">
@@ -668,12 +516,12 @@
             </div>
             <div class="radar-sub-strip">
               <span>🔒 Akses Terbatas: Admin &amp; Head of Ops</span>
-              <span class="badge-active-dots" id="kpiGpsLiveBadge">13 GPS Real Aktif / 13 Korlap</span>
+              <span class="badge-active-dots" id="kpiGpsLiveBadge">14 GPS Real Aktif / 14 Korlap</span>
             </div>
 
             <div class="controls-bar" style="margin-bottom:8px;">
               <select id="radarFilterKorlap" class="form-select" onchange="focusSelectedKorlap()" style="flex:1;">
-                <option value="ALL">Semua Korlap (13 Personel)</option>
+                <option value="ALL">Semua Korlap (14 Personel)</option>
               </select>
               <button type="button" class="btn-secondary" onclick="fitAllLiveKorlap()">🎯 Fokus Live</button>
               <button type="button" class="btn-secondary" onclick="resetRadarView()">🗺️ Reset</button>
@@ -681,7 +529,7 @@
 
             <div id="korlapRadarMap"></div>
 
-            <div class="korlap-list-caption">Daftar titik koordinat terkini 13 Korlap (klik item untuk fokus di peta):</div>
+            <div class="korlap-list-caption" id="korlapListCaption">Daftar titik koordinat terkini 14 Korlap (klik item untuk fokus di peta):</div>
             <div class="korlap-roster-list" id="korlapRosterList"></div>
           </div>
 
@@ -896,13 +744,13 @@
               </div>
               <div class="controls-bar">
                 <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan Supabase</button>
-                <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Sinkron GPS</button>
+                <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Sinkron Cloud &amp; GPS</button>
                 <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">🔗 Salin Link Korlap</button>
                 <button type="button" class="btn-secondary" onclick="triggerInstallApp()">📲 Install App</button>
                 <button type="button" class="btn-secondary" style="color:#b91c1c;" onclick="resetAllDeviceLocks()">🔓 Reset Kunci Perangkat</button>
               </div>
               <div id="supabaseSyncStatusBox" style="padding:9px 11px; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; font-size:11.5px; color:#334155; margin-bottom:8px;">
-                Status Sinkronisasi GPS Cloud: <strong>Siap dihubungkan</strong>.
+                Status Sinkronisasi Cloud &amp; GPS: <strong>Siap dihubungkan</strong>.
               </div>
             </div>
             <div id="korlapSettingsRestricted" class="restricted-box" style="display:none;">
@@ -1078,7 +926,7 @@
       ]
     };
 
-    const STORAGE_KEY = "AMP_MONITORING_STATE_V3";
+    const STORAGE_KEY = "AMP_MONITORING_STATE_V4";
     const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
     const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
     const DEFAULT_SUPABASE_URL = "https://eisyylttheemoghokyd.supabase.co";
@@ -1107,18 +955,48 @@
 
     let sbClient = null;
     let sbGpsChannel = null;
+    let sbSharedChannel = null;
     let sbPollTimer = null;
     let lastCloudPushMs = 0;
+    let isApplyingCloudSync = false;
     let lastGeocodedKey = "";
     let lastGeocodedAddress = "";
     let selfieStream = null;
     let capturedSelfieDataUrl = "";
     let latestAttendanceGps = null;
 
-    (function sanitizeAndPrimeKorlapRadarState() {
+    (function sanitizeAndMergeDefaultAccounts() {
       if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
       const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-      DEFAULT_ACCOUNTS.filter((a) => a.role === "KORLAP").forEach((k) => {
+
+      DEFAULT_ACCOUNTS.forEach((defAcc) => {
+        const idx = state.accounts.findIndex((a) => a.id === defAcc.id);
+        if (idx === -1) {
+          state.accounts.push(JSON.parse(JSON.stringify(defAcc)));
+          if (defAcc.role === "KORLAP") {
+            ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
+              MCP_TEMPLATES[sheet].forEach((tpl, i) => {
+                const marks = {};
+                for (let m = 1; m <= 12; m++) marks["M" + m] = "";
+                state.mcpRows.push({
+                  id: `MCP-${defAcc.id}-${sheet}-${i + 1}`,
+                  korlapId: defAcc.id,
+                  korlapName: defAcc.name,
+                  area: defAcc.area,
+                  sheet,
+                  no: i + 1,
+                  uraian: tpl.uraian,
+                  kode: tpl.kode,
+                  freq: tpl.freq,
+                  marks
+                });
+              });
+            });
+          }
+        }
+      });
+
+      state.accounts.filter((a) => a.role === "KORLAP").forEach((k) => {
         const cur = state.liveGpsByKorlap[k.id];
         if (!cur || !cur.isRealDevice) {
           state.liveGpsByKorlap[k.id] = {
@@ -1132,7 +1010,7 @@
           };
         }
       });
-      saveState();
+      saveStateLocalOnly();
     })();
 
     function buildMcpForAccounts(accounts) {
@@ -1200,7 +1078,7 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("AMP_MONITORING_STATE_V3");
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.accounts) && Array.isArray(parsed.mcpRows)) {
@@ -1213,8 +1091,15 @@
       return createInitialState();
     }
 
-    function saveState() {
+    function saveStateLocalOnly() {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function saveState() {
+      saveStateLocalOnly();
+      if (!isApplyingCloudSync) {
+        pushSharedStateToSupabase();
+      }
     }
 
     function isAdminUser(user) {
@@ -1227,14 +1112,14 @@
       return state.accounts.filter((a) => a.role === "KORLAP");
     }
 
-    /* ================= SUPABASE LIVE GPS INTEGRATION ================= */
+    /* ================= SUPABASE FULL CLOUD SYNC (AKUN + STATE + GPS) ================= */
     function getSupabaseCredentials() {
       const params = new URLSearchParams(window.location.search || "");
       const qUrl = params.get("sb_url");
       const qKey = params.get("sb_key");
       if (qUrl && qKey) {
         state.supabase = { url: decodeURIComponent(qUrl).trim(), key: decodeURIComponent(qKey).trim() };
-        saveState();
+        saveStateLocalOnly();
       }
       const url = ((state.supabase && state.supabase.url) || DEFAULT_SUPABASE_URL || "").trim();
       const key = ((state.supabase && state.supabase.key) || DEFAULT_SUPABASE_KEY || "").trim();
@@ -1261,6 +1146,141 @@
       if (box) box.innerHTML = msg;
     }
 
+    async function syncAccountsFromSupabase() {
+      const client = ensureSupabaseClient();
+      const loginPill = document.getElementById("cloudLoginStatus");
+      if (!client) {
+        if (loginPill) loginPill.textContent = "☁️ Mode Lokal (Isi Anon Key di Modul 8 untuk sinkron lintas HP)";
+        return;
+      }
+      try {
+        const { data, error } = await client.from("amp_accounts").select("*");
+        if (error) {
+          if (loginPill) loginPill.textContent = "⚠️ Cloud Akun: " + error.message;
+          return;
+        }
+        if (Array.isArray(data) && data.length > 0) {
+          let changed = false;
+          data.forEach((row) => {
+            const existingIdx = state.accounts.findIndex((a) => a.id === row.id);
+            const mapped = {
+              id: row.id,
+              username: row.username,
+              name: row.name,
+              role: row.role || "KORLAP",
+              pin: row.pin,
+              area: row.area,
+              lat: Number(row.lat || -6.2432),
+              lng: Number(row.lng || 106.8689),
+              streetHint: row.street_hint || row.area
+            };
+            if (existingIdx === -1) {
+              state.accounts.push(mapped);
+              if (mapped.role === "KORLAP") {
+                state.liveGpsByKorlap[mapped.id] = {
+                  lat: mapped.lat,
+                  lng: mapped.lng,
+                  accuracy: 30,
+                  address: mapped.streetHint || mapped.area,
+                  isRealDevice: true,
+                  updatedAt: "Terdaftar",
+                  updatedAtMs: Date.now()
+                };
+                ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
+                  MCP_TEMPLATES[sheet].forEach((tpl, idx) => {
+                    const marks = {};
+                    for (let m = 1; m <= 12; m++) marks["M" + m] = "";
+                    state.mcpRows.push({
+                      id: `MCP-${mapped.id}-${sheet}-${idx + 1}`,
+                      korlapId: mapped.id,
+                      korlapName: mapped.name,
+                      area: mapped.area,
+                      sheet,
+                      no: idx + 1,
+                      uraian: tpl.uraian,
+                      kode: tpl.kode,
+                      freq: tpl.freq,
+                      marks
+                    });
+                  });
+                });
+              }
+              changed = true;
+            } else if (
+              state.accounts[existingIdx].name !== mapped.name ||
+              state.accounts[existingIdx].area !== mapped.area ||
+              state.accounts[existingIdx].pin !== mapped.pin
+            ) {
+              state.accounts[existingIdx] = mapped;
+              changed = true;
+            }
+          });
+
+          if (changed) {
+            saveStateLocalOnly();
+            if (activeUser) {
+              populateAreaDropdowns();
+              if (isAdminUser(activeUser)) initRadarMap();
+              renderAllViews();
+            }
+          }
+          if (loginPill) loginPill.textContent = `☁️ Cloud Tersambung (${getKorlapAccounts().length} Korlap aktif)`;
+        }
+      } catch (e) {}
+    }
+
+    async function pushSharedStateToSupabase() {
+      if (isApplyingCloudSync) return;
+      const client = ensureSupabaseClient();
+      if (!client) return;
+      try {
+        const snapshot = {
+          mcpRows: state.mcpRows,
+          jobLogs: state.jobLogs,
+          findings: state.findings,
+          materials: state.materials,
+          attendanceLogs: (state.attendanceLogs || []).slice(0, 35),
+          notifications: (state.notifications || []).slice(0, 60)
+        };
+        await client.from("amp_shared_state").upsert({
+          id: "MAIN_OPERATIONAL_STATE",
+          payload: snapshot,
+          updated_by: activeUser ? activeUser.username : "SYSTEM",
+          updated_at: new Date().toISOString()
+        }, { onConflict: "id" });
+      } catch (e) {}
+    }
+
+    async function pullSharedStateFromSupabase() {
+      const client = ensureSupabaseClient();
+      if (!client) return;
+      try {
+        const { data, error } = await client
+          .from("amp_shared_state")
+          .select("payload")
+          .eq("id", "MAIN_OPERATIONAL_STATE")
+          .maybeSingle();
+        if (error || !data || !data.payload) return;
+
+        isApplyingCloudSync = true;
+        const p = data.payload;
+        if (Array.isArray(p.mcpRows)) state.mcpRows = p.mcpRows;
+        if (Array.isArray(p.jobLogs)) state.jobLogs = p.jobLogs;
+        if (Array.isArray(p.findings)) state.findings = p.findings;
+        if (Array.isArray(p.materials)) state.materials = p.materials;
+        if (Array.isArray(p.attendanceLogs)) state.attendanceLogs = p.attendanceLogs;
+        if (Array.isArray(p.notifications)) {
+          p.notifications.forEach((n) => receiveAdminNotification(n, false));
+        }
+        saveStateLocalOnly();
+        isApplyingCloudSync = false;
+
+        if (activeUser) renderAllViews();
+      } catch (e) {
+        isApplyingCloudSync = false;
+      }
+    }
+
     async function pushKorlapGpsToSupabase(gpsObj, forcePush = false) {
       if (!activeUser || isAdminUser(activeUser) || !gpsObj) return;
       const nowMs = Date.now();
@@ -1268,7 +1288,7 @@
 
       const client = ensureSupabaseClient();
       if (!client) {
-        setSupabaseStatusText("Status Sinkronisasi GPS Cloud: <strong>Lokal saja</strong> (Supabase URL/Key belum diisi di Modul 8).");
+        setSupabaseStatusText("Status Sinkronisasi Cloud & GPS: <strong>Lokal saja</strong> (Supabase URL/Key belum diisi di Modul 8).");
         return;
       }
 
@@ -1290,9 +1310,9 @@
           .from("amp_live_gps")
           .upsert(payload, { onConflict: "korlap_id" });
         if (error) throw error;
-        setSupabaseStatusText(`Status Sinkronisasi GPS Cloud: <strong style="color:#047857;">Terkirim ke Radar Admin</strong> (${payload.updated_label}, ±${payload.accuracy}m).`);
+        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#047857;">Terkirim ke Radar Admin</strong> (${payload.updated_label}, ±${payload.accuracy}m).`);
       } catch (err) {
-        setSupabaseStatusText(`Status Sinkronisasi GPS Cloud: <strong style="color:#b91c1c;">Gagal kirim</strong> (${err.message || err}).`);
+        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#b91c1c;">Gagal kirim</strong> (${err.message || err}).`);
       }
     }
 
@@ -1321,64 +1341,73 @@
         return;
       }
       try {
+        await syncAccountsFromSupabase();
+        await pullSharedStateFromSupabase();
         const { data, error } = await client.from("amp_live_gps").select("*");
         if (error) throw error;
         if (Array.isArray(data)) {
           data.forEach(applyCloudGpsRow);
-          saveState();
+          saveStateLocalOnly();
         }
         if (activeUser && isAdminUser(activeUser)) {
           updateRadarMarkersAndList();
           renderManpowerTable();
         }
         const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-        setSupabaseStatusText(`Status Sinkronisasi GPS Cloud: <strong style="color:#047857;">Live Aktif</strong> • Terakhir tarik data: ${nowWib} (${(data || []).length} data Korlap).`);
-        if (showAlert) alert(`Sinkronisasi berhasil: ${(data || []).length} titik GPS Korlap dimuat dari Supabase.`);
+        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#047857;">Live Semua Perangkat Aktif</strong> • Terakhir tarik data: ${nowWib} (${(data || []).length} GPS Korlap).`);
+        if (showAlert) alert(`Sinkronisasi Cloud berhasil: ${getKorlapAccounts().length} akun Korlap & ${(data || []).length} titik GPS dimuat.`);
       } catch (err) {
-        setSupabaseStatusText(`Status Sinkronisasi GPS Cloud: <strong style="color:#b91c1c;">Error tarik data</strong> (${err.message || err}).`);
-        if (showAlert) alert("Gagal menarik data GPS dari Supabase: " + (err.message || err));
+        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#b91c1c;">Error tarik data</strong> (${err.message || err}).`);
+        if (showAlert) alert("Gagal menarik data dari Supabase: " + (err.message || err));
       }
     }
 
-    function startSupabaseRealtimeRadar() {
+    function startSupabaseRealtimeAll() {
       const client = ensureSupabaseClient();
       if (!client) return;
 
-      if (sbGpsChannel) {
-        client.removeChannel(sbGpsChannel);
-        sbGpsChannel = null;
-      }
-      if (sbPollTimer) {
-        clearInterval(sbPollTimer);
-        sbPollTimer = null;
-      }
-
+      syncAccountsFromSupabase();
+      pullSharedStateFromSupabase();
       fetchAllKorlapGpsFromSupabase(false);
 
-      if (activeUser && isAdminUser(activeUser)) {
-        sbGpsChannel = client
-          .channel("amp-live-gps-radar")
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "amp_live_gps" },
-            (payload) => {
-              const nextRow = payload.new || payload.record;
-              if (!nextRow) return;
-              applyCloudGpsRow(nextRow);
-              saveState();
-              updateRadarMarkersAndList();
-              renderManpowerTable();
-              if (autoFollowKorlapId === nextRow.korlap_id && radarMap) {
-                radarMap.setView([Number(nextRow.lat), Number(nextRow.lng)], 16);
-              }
-            }
-          )
-          .subscribe();
+      if (sbGpsChannel) { client.removeChannel(sbGpsChannel); sbGpsChannel = null; }
+      if (sbSharedChannel) { client.removeChannel(sbSharedChannel); sbSharedChannel = null; }
+      if (sbPollTimer) { clearInterval(sbPollTimer); sbPollTimer = null; }
 
-        sbPollTimer = setInterval(() => {
-          if (activeUser && isAdminUser(activeUser)) fetchAllKorlapGpsFromSupabase(false);
-        }, 15000);
-      }
+      sbGpsChannel = client
+        .channel("amp-live-gps-radar")
+        .on("postgres_changes", { event: "*", schema: "public", table: "amp_live_gps" }, (payload) => {
+          const nextRow = payload.new || payload.record;
+          if (!nextRow) return;
+          applyCloudGpsRow(nextRow);
+          saveStateLocalOnly();
+          if (activeUser && isAdminUser(activeUser)) {
+            updateRadarMarkersAndList();
+            renderManpowerTable();
+            if (autoFollowKorlapId === nextRow.korlap_id && radarMap) {
+              radarMap.setView([Number(nextRow.lat), Number(nextRow.lng)], 16);
+            }
+          }
+        })
+        .subscribe();
+
+      sbSharedChannel = client
+        .channel("amp-full-cloud-sync")
+        .on("postgres_changes", { event: "*", schema: "public", table: "amp_accounts" }, () => {
+          syncAccountsFromSupabase();
+        })
+        .on("postgres_changes", { event: "*", schema: "public", table: "amp_shared_state" }, () => {
+          pullSharedStateFromSupabase();
+        })
+        .subscribe();
+
+      sbPollTimer = setInterval(() => {
+        if (activeUser) {
+          syncAccountsFromSupabase();
+          pullSharedStateFromSupabase();
+          if (isAdminUser(activeUser)) fetchAllKorlapGpsFromSupabase(false);
+        }
+      }, 15000);
     }
 
     /* ================= NOTIFIKASI & SINKRONISASI ================= */
@@ -1432,7 +1461,7 @@
       seenNotifKeys.add(key);
       state.notifications.unshift(notif);
       if (state.notifications.length > 120) state.notifications.length = 120;
-      saveState();
+      saveStateLocalOnly();
       if (activeUser && isAdminUser(activeUser)) {
         unreadAdminNotifs++;
         const badge = document.getElementById("adminNotifBadge");
@@ -1455,6 +1484,7 @@
         detail,
         waktuLabel
       }, actor.id !== (activeUser && activeUser.id));
+      await pushSharedStateToSupabase();
     }
 
     /* ================= KUNCI SESI PERANGKAT & LOGIN ================= */
@@ -1490,11 +1520,30 @@
           state.mcpRows.push({ id: "MCP-" + (state.mcpRows.length + 1), korlapId: newAcc.id, korlapName: newAcc.name, area: newAcc.area, sheet, no: idx + 1, uraian: tpl.uraian, kode: tpl.kode, freq: tpl.freq, marks });
         });
       });
+
+      const client = ensureSupabaseClient();
+      if (client) {
+        try {
+          await client.from("amp_accounts").upsert({
+            id: newAcc.id,
+            username: newAcc.username,
+            name: newAcc.name,
+            role: "KORLAP",
+            pin: newAcc.pin,
+            area: newAcc.area,
+            lat: newAcc.lat,
+            lng: newAcc.lng,
+            street_hint: newAcc.streetHint,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "id" });
+        } catch (e) {}
+      }
+
       saveState();
       await broadcastKorlapActivity("PENGAJUAN AKUN", `Mendaftarkan akun Korlap baru: ${name} (${uname})`, `Area: ${area}`, newAcc);
       closeModal("modalRegister");
       document.getElementById("usernameInput").value = uname;
-      alert("Registrasi berhasil! Silakan masukkan PIN untuk login.");
+      alert("Registrasi berhasil & tersinkron ke cloud! Silakan masukkan PIN untuk login.");
     }
 
     function lookupAccountRecovery() {
@@ -1525,6 +1574,8 @@
       const pinVal = document.getElementById("pinInput").value.trim();
       const errEl = document.getElementById("loginErrorMsg");
       if (!unameVal || !pinVal) { errEl.textContent = "ID/Username dan PIN wajib diisi."; return; }
+
+      await syncAccountsFromSupabase();
 
       const found = state.accounts.find(
         (u) => (u.username.toLowerCase() === unameVal.toLowerCase() || u.id.toLowerCase() === unameVal.toLowerCase()) && u.pin === pinVal
@@ -1563,7 +1614,7 @@
         document.getElementById("adminNotifDrawer").classList.remove("open");
         broadcastKorlapActivity("AKTIVITAS LOGIN", `Korlap ${found.name} masuk ke sistem`, `Perangkat: ${THIS_DEVICE_ID}`);
       }
-      startSupabaseRealtimeRadar();
+      startSupabaseRealtimeAll();
       startLiveGeolocation();
       renderAllViews();
       switchModule("mod-1");
@@ -1629,12 +1680,13 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    /* ================= RADAR PETA 13 KORLAP ================= */
+    /* ================= RADAR PETA KORLAP ================= */
     function initRadarMap() {
       if (!isAdminUser(activeUser)) return;
+      const korlaps = getKorlapAccounts();
       const filterSel = document.getElementById("radarFilterKorlap");
-      filterSel.innerHTML = `<option value="ALL">Semua Korlap (${getKorlapAccounts().length} Personel)</option>`;
-      getKorlapAccounts().forEach((k) => {
+      filterSel.innerHTML = `<option value="ALL">Semua Korlap (${korlaps.length} Personel)</option>`;
+      korlaps.forEach((k) => {
         const opt = document.createElement("option");
         opt.value = k.id;
         opt.textContent = `${k.name} (${k.username}) — ${k.area}`;
@@ -1665,6 +1717,8 @@
       const korlaps = getKorlapAccounts();
       const realLiveCount = korlaps.filter((k) => state.liveGpsByKorlap[k.id] && state.liveGpsByKorlap[k.id].isRealDevice).length;
       document.getElementById("kpiGpsLiveBadge").textContent = `${realLiveCount} GPS Real Aktif / ${korlaps.length} Korlap`;
+      const capEl = document.getElementById("korlapListCaption");
+      if (capEl) capEl.textContent = `Daftar titik koordinat terkini ${korlaps.length} Korlap (klik item untuk fokus di peta):`;
 
       korlaps.forEach((k) => {
         const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, accuracy: 30, isRealDevice: true, updatedAt: "Baru saja" };
@@ -1740,7 +1794,7 @@
     function triggerLiveGpsOnce() {
       const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
       getKorlapAccounts().forEach((k) => { if (state.liveGpsByKorlap[k.id]) state.liveGpsByKorlap[k.id].updatedAt = nowWib; });
-      saveState();
+      saveStateLocalOnly();
       if (activeUser && isAdminUser(activeUser)) {
         updateRadarMarkersAndList();
         fetchAllKorlapGpsFromSupabase(false);
@@ -1827,7 +1881,7 @@
           updatedAt: nowWib,
           updatedAtMs: Date.now()
         };
-        saveState();
+        saveStateLocalOnly();
         const ownEl = document.getElementById("korlapOwnGpsStatus");
         if (ownEl) ownEl.textContent = `GPS Real (${activeUser.username}): ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${acc}m) • ${nowWib}`;
         await pushKorlapGpsToSupabase(state.liveGpsByKorlap[activeUser.id], false);
@@ -2171,7 +2225,7 @@
       document.getElementById("selfieCapturedImg").style.display = "none";
       document.getElementById("btnRetakeSelfie").style.display = "none";
       document.getElementById("selfiePlaceholderBox").style.display = "block";
-      alert("Absensi berhasil dicatat.");
+      alert("Absensi berhasil dicatat & tersinkron ke semua perangkat.");
     }
 
     function renderAttendanceHistory() {
@@ -2246,9 +2300,9 @@
       if (!isAdminUser(activeUser)) return;
       state.supabase.url = document.getElementById("sbUrlInput").value.trim();
       state.supabase.key = document.getElementById("sbKeyInput").value.trim();
-      saveState();
-      startSupabaseRealtimeRadar();
-      alert("Konfigurasi Supabase disimpan & radar live diaktifkan.");
+      saveStateLocalOnly();
+      startSupabaseRealtimeAll();
+      alert("Konfigurasi Supabase disimpan & sinkronisasi semua perangkat diaktifkan.");
     }
 
     function testAndSyncSupabaseGps(showAlert) {
@@ -2284,6 +2338,7 @@
 
     document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
     document.getElementById("topbarLogoImg").src = AMP_LOGO_DATA_URI;
+    startSupabaseRealtimeAll();
   </script>
 </body>
 </html>
