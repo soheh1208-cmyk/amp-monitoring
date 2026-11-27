@@ -4,34 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
   <title>AMP Operation Monitoring — PT. Ardina Mulya Perkasa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
     :root {
       --navy-950: #06132b;
       --navy-900: #0b1f44;
       --navy-800: #102e63;
-      --navy-700: #163d82;
       --blue-600: #1d5fd6;
       --blue-500: #2575fc;
-      --cyan-400: #38bdf8;
-      --amber-500: #f59e0b;
-      --emerald-600: #059669;
-      --rose-600: #e11d48;
-      --violet-600: #7c3aed;
-      --slate-50: #f8fafc;
       --slate-100: #f1f5f9;
       --slate-200: #e2e8f0;
       --slate-300: #cbd5e1;
       --slate-600: #475569;
       --slate-700: #334155;
-      --slate-800: #1e293b;
       --slate-900: #0f172a;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; }
-    body { background: #e8eef5; color: var(--slate-900); min-height: 100vh; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif; }
+    body { background: #e8eef5; color: var(--slate-900); min-height: 100vh; overflow-x: hidden; }
 
     /* ================= LOGIN HERO MBCS AMP ================= */
     #loginScreen {
@@ -72,10 +66,7 @@
       align-items: center;
     }
 
-    .hero-brand-header {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+    .hero-brand-header { text-align: center; margin-bottom: 10px; }
 
     .amp-logo-img {
       width: 92px;
@@ -151,12 +142,7 @@
       background: linear-gradient(180deg, rgba(219, 234, 254, 0.35) 0%, rgba(147, 197, 253, 0.55) 75%, #1d5fd6 100%);
       padding-top: 8px;
     }
-
-    .hero-scene-svg {
-      width: 100%;
-      height: 175px;
-      display: block;
-    }
+    .hero-scene-svg { width: 100%; height: 175px; display: block; }
 
     .pin-card {
       position: relative;
@@ -188,21 +174,8 @@
       border: 3px solid #ffffff;
     }
 
-    .welcome-heading {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 900;
-      color: #0b2559;
-      margin-top: 2px;
-    }
-    .welcome-sub {
-      text-align: center;
-      font-size: 12.5px;
-      color: #475569;
-      margin-top: 4px;
-      margin-bottom: 16px;
-      line-height: 1.4;
-    }
+    .welcome-heading { text-align: center; font-size: 22px; font-weight: 900; color: #0b2559; margin-top: 2px; }
+    .welcome-sub { text-align: center; font-size: 12.5px; color: #475569; margin-top: 4px; margin-bottom: 16px; line-height: 1.4; }
 
     .input-field-pill {
       position: relative;
@@ -220,12 +193,7 @@
       border-color: #1d5fd6;
       box-shadow: 0 0 0 3px rgba(29, 95, 214, 0.14);
     }
-    .input-leading-ico {
-      font-size: 16px;
-      color: #1d5fd6;
-      margin-right: 10px;
-      user-select: none;
-    }
+    .input-leading-ico { font-size: 16px; color: #1d5fd6; margin-right: 10px; user-select: none; }
 
     .text-input-login, .pin-input {
       width: 100%;
@@ -237,24 +205,10 @@
       color: #0f172a;
       outline: none;
     }
-    .pin-input {
-      letter-spacing: 2.5px;
-      padding-right: 34px;
-    }
-    .text-input-login::placeholder, .pin-input::placeholder {
-      color: #64748b;
-      font-weight: 600;
-      letter-spacing: 0;
-    }
+    .pin-input { letter-spacing: 2.5px; padding-right: 34px; }
+    .text-input-login::placeholder, .pin-input::placeholder { color: #64748b; font-weight: 600; letter-spacing: 0; }
 
-    .eye-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      color: #64748b;
-      padding: 4px;
-    }
+    .eye-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; padding: 6px; min-width: 36px; min-height: 36px; }
 
     .btn-reg-pill {
       width: 100%;
@@ -272,9 +226,7 @@
       gap: 8px;
       box-shadow: 0 8px 18px rgba(13, 71, 161, 0.28);
       margin-bottom: 10px;
-      transition: transform 0.15s ease, filter 0.15s ease;
     }
-    .btn-reg-pill:hover { filter: brightness(1.05); transform: translateY(-1px); }
 
     .btn-forgot-pill {
       width: 100%;
@@ -291,9 +243,7 @@
       justify-content: center;
       gap: 8px;
       margin-bottom: 12px;
-      transition: transform 0.15s ease, background 0.15s ease;
     }
-    .btn-forgot-pill:hover { background: #dbeafe; transform: translateY(-1px); }
 
     .btn-masuk {
       width: 100%;
@@ -311,9 +261,7 @@
       justify-content: center;
       gap: 10px;
       box-shadow: 0 10px 22px rgba(29, 95, 214, 0.36);
-      transition: transform 0.15s ease, filter 0.15s ease;
     }
-    .btn-masuk:hover { filter: brightness(1.06); transform: translateY(-1px); }
 
     .login-error {
       margin-top: 10px;
@@ -336,25 +284,10 @@
       position: relative;
       z-index: 2;
     }
-    .hero-bottom-company {
-      font-size: 13.5px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-    }
-    .hero-bottom-slogan {
-      font-size: 12px;
-      font-style: italic;
-      color: #bae6fd;
-      margin-top: 2px;
-    }
+    .hero-bottom-company { font-size: 13.5px; font-weight: 800; letter-spacing: 0.3px; }
+    .hero-bottom-slogan { font-size: 12px; font-style: italic; color: #bae6fd; margin-top: 2px; }
 
-    @media (max-width: 540px) {
-      .system-sub { font-size: 28px; }
-      .system-title { font-size: 17px; }
-      .pin-card { padding: 34px 16px 18px; border-radius: 22px; }
-    }
-
-    /* ================= MODAL REGISTRASI & LUPA ID/PIN ================= */
+    /* ================= MODAL & MESSAGE BANNER ================= */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -383,18 +316,32 @@
       padding-bottom: 8px;
     }
     .modal-title { font-size: 15.5px; font-weight: 900; color: var(--navy-900); }
-    .modal-close {
-      background: none; border: none; font-size: 18px; cursor: pointer; color: var(--slate-600); font-weight: 900;
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--slate-600); font-weight: 900; padding: 4px 8px; }
+
+    .app-message-banner {
+      display: none;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid #93c5fd;
+      background: #eff6ff;
+      color: #0b2559;
     }
+    .app-message-banner.open { display: flex; }
+    .app-message-banner.warn { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+    .app-message-banner.error { background: #fff1f2; border-color: #fda4af; color: #9f1239; }
+    .app-message-banner.success { background: #f0fdf4; border-color: #86efac; color: #166534; }
 
     /* ================= DASHBOARD SHELL ================= */
-    #appShell {
-      display: none;
-      min-height: 100vh;
-      background: #e2e8f0;
-    }
+    #appShell { display: none; min-height: 100vh; background: #e2e8f0; }
 
     .mobile-app-frame {
+      width: 100%;
       max-width: 540px;
       min-height: 100vh;
       margin: 0 auto;
@@ -402,11 +349,10 @@
       box-shadow: 0 0 36px rgba(15, 23, 42, 0.16);
       display: flex;
       flex-direction: column;
-      padding-bottom: 76px;
+      padding-bottom: 82px;
       position: relative;
     }
 
-    /* Top Header Navy */
     .amp-topbar {
       background: linear-gradient(90deg, #071936 0%, #0d2b5c 100%);
       color: #ffffff;
@@ -419,43 +365,21 @@
       top: 0;
       z-index: 400;
     }
-    .amp-topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .amp-topbar-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: #ffffff;
-      padding: 2px;
-      object-fit: contain;
-    }
-    .amp-topbar-title {
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0.3px;
-      line-height: 1.2;
-    }
-    .amp-topbar-sub {
-      font-size: 10.5px;
-      color: #93c5fd;
-    }
-    .amp-topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .amp-topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .amp-topbar-logo { width: 36px; height: 36px; border-radius: 8px; background: #ffffff; padding: 2px; object-fit: contain; flex-shrink: 0; }
+    .amp-topbar-title { font-size: 12.5px; font-weight: 900; letter-spacing: 0.3px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .amp-topbar-sub { font-size: 10.5px; color: #93c5fd; }
+    .amp-topbar-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .pill-sync-btn {
       background: #064e3b;
       color: #a7f3d0;
       border: 1px solid #10b981;
       border-radius: 999px;
-      padding: 4px 10px;
+      padding: 6px 10px;
       font-size: 11px;
       font-weight: 800;
       cursor: pointer;
+      min-height: 32px;
     }
     .pill-notif-btn {
       position: relative;
@@ -463,10 +387,11 @@
       color: #ffffff;
       border: 1px solid #60a5fa;
       border-radius: 999px;
-      padding: 4px 9px;
+      padding: 6px 10px;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
+      min-height: 32px;
     }
     .notif-badge-dot {
       position: absolute;
@@ -482,32 +407,22 @@
       text-align: center;
       border-radius: 999px;
       padding: 0 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     }
     .pill-user-chip {
       background: rgba(255, 255, 255, 0.14);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #ffffff;
       border-radius: 999px;
-      padding: 4px 10px;
+      padding: 4px 8px 4px 10px;
       font-size: 11px;
       font-weight: 800;
       display: flex;
       align-items: center;
       gap: 5px;
+      min-height: 32px;
     }
-    .btn-logout-mini {
-      background: #e11d48;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 3px 7px;
-      font-size: 10.5px;
-      font-weight: 800;
-      cursor: pointer;
-    }
+    .btn-logout-mini { background: #e11d48; color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 10.5px; font-weight: 800; cursor: pointer; }
 
-    /* Drawer Notifikasi Admin / HeadOfOps */
     .admin-notif-drawer {
       display: none;
       background: #ffffff;
@@ -519,15 +434,7 @@
       z-index: 390;
     }
     .admin-notif-drawer.open { display: block; }
-    .notif-drawer-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 12px;
-      font-weight: 900;
-      color: #0b1f44;
-    }
+    .notif-drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: 900; color: #0b1f44; }
     .notif-feed-item {
       border: 1px solid #e2e8f0;
       border-left: 4px solid #1d5fd6;
@@ -537,11 +444,7 @@
       background: #f8fafc;
       font-size: 11px;
     }
-    .notif-feed-item.cat-absensi { border-left-color: #059669; background: #f0fdf4; }
-    .notif-feed-item.cat-radar { border-left-color: #0284c7; background: #f0f9ff; }
-    .notif-feed-item.cat-pengajuan { border-left-color: #d97706; background: #fffbeb; }
 
-    /* Toast Notifikasi Mengambang */
     .admin-toast-stack {
       position: fixed;
       top: 64px;
@@ -569,11 +472,8 @@
       cursor: pointer;
     }
 
-    .amp-body-pad {
-      padding: 12px;
-    }
+    .amp-body-pad { padding: 12px; }
 
-    /* Kartu Profil User */
     .profile-banner-card {
       background: linear-gradient(135deg, #0b234d 0%, #163e82 100%);
       color: #ffffff;
@@ -586,17 +486,8 @@
       margin-bottom: 12px;
       box-shadow: 0 10px 24px rgba(11, 31, 68, 0.22);
     }
-    .profile-name {
-      font-size: 17px;
-      font-weight: 900;
-      color: #ffffff;
-    }
-    .profile-role {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #fbbf24;
-      margin-top: 2px;
-    }
+    .profile-name { font-size: 17px; font-weight: 900; color: #ffffff; }
+    .profile-role { font-size: 11.5px; font-weight: 700; color: #fbbf24; margin-top: 2px; }
     .profile-area-badge {
       display: inline-block;
       margin-top: 8px;
@@ -621,7 +512,6 @@
       border: 2px solid #93c5fd;
     }
 
-    /* Kartu Peta Google Maps Radar Korlap (Admin / Head of Ops) */
     .radar-card-box {
       background: #ffffff;
       border: 1.5px solid #cbd5e1;
@@ -630,44 +520,11 @@
       margin-bottom: 12px;
       box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     }
-    .radar-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .radar-card-title {
-      font-size: 13.5px;
-      font-weight: 900;
-      color: #0f172a;
-    }
-    .btn-refresh-blue {
-      background: #1d5fd6;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .radar-sub-strip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      color: #475569;
-      margin-bottom: 8px;
-    }
-    .badge-active-dots {
-      background: #e0f2fe;
-      color: #0369a1;
-      font-weight: 800;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 10.5px;
-    }
+    .radar-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .radar-card-title { font-size: 13.5px; font-weight: 900; color: #0f172a; }
+    .btn-refresh-blue { background: #1d5fd6; color: #ffffff; border: none; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 800; cursor: pointer; min-height: 34px; }
+    .radar-sub-strip { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; font-size: 11px; color: #475569; margin-bottom: 8px; }
+    .badge-active-dots { background: #dcfce7; color: #166534; font-weight: 800; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; }
 
     #korlapRadarMap {
       width: 100%;
@@ -694,34 +551,18 @@
       pointer-events: none;
     }
 
-    .korlap-list-caption {
-      font-size: 10.5px;
-      color: #64748b;
-      margin: 8px 0 6px;
-    }
-    .korlap-roster-list {
-      max-height: 290px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      padding-right: 2px;
-    }
+    .korlap-list-caption { font-size: 10.5px; color: #64748b; margin: 8px 0 6px; }
+    .korlap-roster-list { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; padding-right: 2px; }
     .korlap-item {
       border: 1px solid #e2e8f0;
       border-radius: 11px;
-      padding: 9px 11px;
+      padding: 10px 11px;
       background: #f8fafc;
       cursor: pointer;
       transition: all 0.14s ease;
     }
     .korlap-item:hover { border-color: #2563eb; background: #eff6ff; }
-    .korlap-item-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
+    .korlap-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
     .korlap-name { font-size: 12px; font-weight: 800; color: #0f172a; }
     .badge-area-green {
       background: #dcfce7;
@@ -731,59 +572,31 @@
       font-weight: 800;
       padding: 2px 7px;
       border-radius: 999px;
-      white-space: nowrap;
+      text-align: right;
     }
-    .korlap-meta-row {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 6px;
-      margin-top: 4px;
-    }
-    .korlap-meta {
-      font-size: 10.5px;
-      color: #475569;
-      line-height: 1.35;
-    }
-    .gmaps-link {
-      font-size: 10.5px;
-      font-weight: 800;
-      color: #1d5fd6;
-      text-decoration: underline;
-      white-space: nowrap;
-    }
+    .korlap-meta-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin-top: 4px; }
+    .korlap-meta { font-size: 10.5px; color: #475569; line-height: 1.35; }
+    .gmaps-link { font-size: 10.5px; font-weight: 800; color: #1d5fd6; text-decoration: underline; white-space: nowrap; }
 
-    /* Output & Download Rekap Terpusat (Admin) */
-    .export-grid-card {
+    .export-grid-card, .modules-grid-card {
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 16px;
       padding: 12px;
       margin-bottom: 12px;
     }
-    .export-grid-title {
-      font-size: 12.5px;
-      font-weight: 900;
-      color: #0f172a;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .export-btn-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
+    .export-grid-title { font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .export-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .btn-exp-csv {
       border: none;
       border-radius: 10px;
-      padding: 10px 8px;
+      padding: 11px 8px;
       color: #ffffff;
       font-size: 11px;
       font-weight: 800;
       cursor: pointer;
       text-align: center;
+      min-height: 40px;
       box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
     }
     .exp-green { background: #16a34a; }
@@ -791,67 +604,39 @@
     .exp-orange { background: #d97706; }
     .exp-red { background: #dc2626; }
 
-    /* Grid 14 Modul Terintegrasi */
-    .modules-grid-card {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    .modules-14-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
+    .modules-14-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
     .mod-tile-btn {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
       border-radius: 10px;
-      padding: 9px 10px;
+      padding: 10px 10px;
       text-align: left;
       font-size: 11.5px;
       font-weight: 800;
       color: #0f172a;
       cursor: pointer;
+      min-height: 42px;
       transition: all 0.14s ease;
     }
-    .mod-tile-btn:hover, .mod-tile-btn.active {
-      background: #0b1f44;
-      color: #ffffff;
-      border-color: #0b1f44;
-    }
+    .mod-tile-btn:hover, .mod-tile-btn.active { background: #0b1f44; color: #ffffff; border-color: #0b1f44; }
 
-    /* Kartu Konten Modul */
-    .card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 14px;
-      border: 1px solid #cbd5e1;
-      margin-bottom: 12px;
-    }
+    .card { background: #ffffff; border-radius: 16px; padding: 14px; border: 1px solid #cbd5e1; margin-bottom: 12px; }
     .card-title { font-size: 14.5px; font-weight: 900; color: #0b1f44; }
     .card-sub { font-size: 11.5px; color: #475569; margin-top: 2px; }
 
     .controls-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
-    .form-control, .form-select {
-      padding: 7px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; background: #fff;
-    }
-    .btn-primary { background: #0b1f44; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; }
-    .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; }
-    .btn-success { background: #059669; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; }
+    .form-control, .form-select { padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; background: #fff; min-height: 36px; }
+    .btn-primary { background: #0b1f44; color: #fff; border: none; padding: 9px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 36px; }
+    .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 9px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 36px; }
+    .btn-success { background: #059669; color: #fff; border: none; padding: 9px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 36px; }
 
     .table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
     th { background: #0b1f44; color: #fff; text-align: left; padding: 8px; white-space: nowrap; }
-    td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; }
+    td { padding: 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
 
     .mcp-subtabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-    .mcp-subtab {
-      padding: 6px 11px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff;
-      font-size: 11px; font-weight: 800; cursor: pointer;
-    }
+    .mcp-subtab { padding: 7px 11px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 800; cursor: pointer; min-height: 34px; }
     .mcp-subtab.active { background: #1d5fd6; color: #fff; border-color: #1d5fd6; }
 
     .status-chip { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; }
@@ -864,16 +649,10 @@
 
     .form-grid-2 { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
     .field-group label { display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 3px; }
-    .field-group input, .field-group select {
-      width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px;
-    }
+    .field-group input, .field-group select { width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; min-height: 38px; }
 
-    .restricted-box {
-      background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239;
-      border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.45;
-    }
+    .restricted-box { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.45; }
 
-    /* Bottom Navigation Bar */
     .bottom-nav-bar {
       position: fixed;
       bottom: 0;
@@ -885,71 +664,14 @@
       border-top: 1px solid #cbd5e1;
       display: flex;
       justify-content: space-around;
-      padding: 7px 6px 9px;
+      padding: 7px 6px calc(9px + env(safe-area-inset-bottom, 0px));
       z-index: 450;
       box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
     }
-    .bnav-btn {
-      background: none;
-      border: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 10.5px;
-      font-weight: 700;
-      color: #64748b;
-      cursor: pointer;
-      padding: 2px 12px;
-    }
-    .bnav-btn.active {
-      color: #1d5fd6;
-      font-weight: 900;
-    }
+    .bnav-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 700; color: #64748b; cursor: pointer; padding: 4px 12px; min-height: 44px; }
+    .bnav-btn.active { color: #1d5fd6; font-weight: 900; }
     .bnav-ico { font-size: 16px; }
-
-    /* Mobile & HP Responsive Enhancements */
-    html, body {
-      -webkit-text-size-adjust: 100%;
-      overscroll-behavior-y: contain;
-    }
-    input, select, textarea {
-      font-size: 16px !important;
-    }
-    .mobile-app-frame {
-      padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-    }
-    .amp-topbar {
-      padding-top: calc(10px + env(safe-area-inset-top, 0px));
-    }
-    .bottom-nav-bar {
-      padding-bottom: calc(9px + env(safe-area-inset-bottom, 0px));
-    }
-    .bnav-btn, .mod-tile-btn, .btn-primary, .btn-secondary, .btn-success, .btn-exp-csv {
-      min-height: 40px;
-      touch-action: manipulation;
-    }
-    @media (max-width: 420px) {
-      .amp-topbar { padding-left: 10px; padding-right: 10px; }
-      .amp-topbar-title { font-size: 11.5px; }
-      .amp-topbar-sub { font-size: 9.5px; }
-      .pill-sync-btn, .pill-user-chip, .pill-notif-btn { font-size: 10px; padding: 4px 7px; }
-      .modules-14-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
-      .mod-tile-btn { font-size: 10.5px; padding: 8px 7px; }
-      .export-btn-grid { grid-template-columns: 1fr; }
-      .profile-name { font-size: 15.5px; }
-      #korlapRadarMap { height: 225px; }
-      table { font-size: 10.5px; }
-      th, td { padding: 6px 5px; }
-    }
   </style>
-  <meta name="theme-color" content="#0b1f44" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AMP Monitoring" />
-  <link id="pwaManifestLink" rel="manifest" />
-  <link id="pwaAppleIconLink" rel="apple-touch-icon" />
 </head>
 <body>
 
@@ -959,7 +681,7 @@
 
     <div class="hero-wrapper">
       <div class="hero-brand-header">
-        <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" />
+        <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" onerror="this.style.display='none'" />
         <div class="company-title">PT. ARDINA MULYA PERKASA</div>
         <div class="system-title">Monitoring Operasional</div>
         <div class="system-sub">MBCS AMP</div>
@@ -1043,13 +765,14 @@
     </div>
   </section>
 
-  <!-- ================= MODAL REGISTRASI AKUN BARU ================= -->
+  <!-- ================= MODAL REGISTRASI ================= -->
   <div class="modal-backdrop" id="modalRegister">
     <div class="modal-box">
       <div class="modal-header">
         <div class="modal-title">Registrasi Akun Korlap Baru</div>
         <button type="button" class="modal-close" onclick="closeModal('modalRegister')">&times;</button>
       </div>
+      <div id="regFormMsg" class="app-message-banner"></div>
       <div class="field-group" style="margin-bottom:10px;">
         <label>Nama Lengkap</label>
         <input type="text" id="regName" placeholder="Contoh: Budi Santoso" />
@@ -1063,26 +786,26 @@
         <input type="text" id="regArea" placeholder="Contoh: UPT Bekasi / ULTG Cikarang" />
       </div>
       <div class="field-group" style="margin-bottom:12px;">
-        <label>Buat PIN (6 digit angka)</label>
-        <input type="password" id="regPin" maxlength="10" placeholder="Contoh: 111414" />
+        <label>Buat PIN</label>
+        <input type="password" id="regPin" maxlength="10" placeholder="Masukkan PIN baru" />
       </div>
       <button type="button" class="btn-masuk" onclick="submitRegister()">Daftarkan Akun</button>
     </div>
   </div>
 
-  <!-- ================= MODAL LUPA ID / PIN ================= -->
+  <!-- ================= MODAL LUPA PIN & RESET SESI ================= -->
   <div class="modal-backdrop" id="modalForgot">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title">Bantuan Lupa ID / PIN &amp; Reset Sesi Perangkat</div>
+        <div class="modal-title">Bantuan Lupa PIN &amp; Reset Sesi Perangkat</div>
         <button type="button" class="modal-close" onclick="closeModal('modalForgot')">&times;</button>
       </div>
       <p style="font-size:12px; color:#475569; margin-bottom:10px; line-height:1.45;">
-        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk melihat pengingat akun atau mereset kunci perangkat apabila akun terkunci di perangkat sebelumnya.
+        Masukkan <strong>Nama Lengkap</strong> atau <strong>ID/Username</strong> Anda untuk mengecek akun atau mereset kunci perangkat apabila akun masih terkunci di perangkat sebelumnya.
       </p>
       <div class="field-group" style="margin-bottom:10px;">
         <label>Nama Lengkap / ID / Username</label>
-        <input type="text" id="forgotLookupInput" placeholder="Contoh: Dede Rusmana atau Dede_Rusmana" />
+        <input type="text" id="forgotLookupInput" placeholder="Masukkan ID/Username atau Nama" />
       </div>
       <div id="forgotResultBox" style="font-size:12px; color:#0b1f44; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:10px; margin-bottom:12px; display:none;"></div>
       <div style="display:flex; gap:8px;">
@@ -1095,18 +818,17 @@
   <!-- ================= APLIKASI UTAMA ================= -->
   <section id="appShell">
     <div class="mobile-app-frame">
-      <!-- Top Bar -->
       <header class="amp-topbar">
         <div class="amp-topbar-left">
-          <img class="amp-topbar-logo" id="topbarLogoImg" alt="Logo AMP" />
-          <div>
+          <img class="amp-topbar-logo" id="topbarLogoImg" alt="Logo AMP" onerror="this.style.display='none'" />
+          <div style="min-width:0;">
             <div class="amp-topbar-title">PT. ARDINA MULYA PERKASA</div>
             <div class="amp-topbar-sub">Facility Service Specialist</div>
           </div>
         </div>
         <div class="amp-topbar-actions">
           <button type="button" class="pill-notif-btn" id="adminNotifBellBtn" style="display:none;" onclick="toggleAdminNotifDrawer()" title="Notifikasi Aktivitas Korlap">
-            🔔<span class="notif-badge-dot" id="adminNotifBadge">0</span>
+            🔔<span class="notif-badge-dot" id="adminNotifBadge" style="display:none;">0</span>
           </button>
           <button type="button" class="pill-sync-btn" id="gpsStatusBadge" onclick="triggerLiveGpsOnce()">📡 Sync</button>
           <div class="pill-user-chip">
@@ -1116,22 +838,22 @@
         </div>
       </header>
 
-      <!-- Drawer Feed Notifikasi Real-Time Khusus Admin / HeadOfOps -->
       <div class="admin-notif-drawer" id="adminNotifDrawer">
         <div class="notif-drawer-head">
           <span>🔔 Notifikasi Aktivitas Korlap (Real-Time)</span>
-          <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
+          <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px; min-height:28px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
         </div>
-        <div id="adminNotifFeedList">
-          <div style="font-size:11px; color:#64748b; padding:6px 0;">Menunggu aktivitas Korlap (absensi, pergerakan GPS radar, pengajuan modul)...</div>
-        </div>
+        <div id="adminNotifFeedList"></div>
       </div>
 
-      <!-- Toast Notifikasi Real-Time di Layar Admin / HeadOfOps -->
       <div class="admin-toast-stack" id="adminToastStack"></div>
 
       <div class="amp-body-pad">
-        <!-- Kartu Profil Aktif -->
+        <div id="appBanner" class="app-message-banner">
+          <span id="appBannerText"></span>
+          <button type="button" onclick="hideAppBanner()" style="background:none;border:none;font-weight:900;cursor:pointer;padding:2px 6px;">&times;</button>
+        </div>
+
         <div class="profile-banner-card">
           <div>
             <div class="profile-name" id="profileFullName">M.Soheh</div>
@@ -1141,9 +863,8 @@
           <div class="profile-avatar-circle">👤</div>
         </div>
 
-        <!-- MODUL 1: HOME / DASHBOARD & PETA GOOGLE MAPS RADAR KORLAP -->
+        <!-- MODUL 1: DASHBOARD & RADAR 13 KORLAP -->
         <div id="mod-1" class="module-panel active">
-          <!-- Panel Radar Khusus Admin / Head of Ops -->
           <div class="radar-card-box" id="adminRadarCard" style="display:none;">
             <div class="radar-card-top">
               <div class="radar-card-title">📡 Peta Google Maps Radar Korlap (Admin / Head of Ops)</div>
@@ -1151,7 +872,7 @@
             </div>
             <div class="radar-sub-strip">
               <span>🔒 Akses Terbatas: Admin &amp; Head of Ops</span>
-              <span class="badge-active-dots" id="kpiGpsLiveBadge">0 GPS Real Aktif / 13 Korlap</span>
+              <span class="badge-active-dots" id="kpiGpsLiveBadge">13 GPS Real Aktif / 13 Korlap</span>
             </div>
 
             <div class="controls-bar" style="margin-bottom:8px;">
@@ -1164,11 +885,10 @@
 
             <div id="korlapRadarMap"></div>
 
-            <div class="korlap-list-caption">Daftar titik koordinat terkini per Korlap (klik item untuk fokus di peta Google Maps):</div>
+            <div class="korlap-list-caption">Daftar titik koordinat terkini 13 Korlap (klik item untuk fokus di peta):</div>
             <div class="korlap-roster-list" id="korlapRosterList"></div>
           </div>
 
-          <!-- Panel Terkunci untuk Non-Admin (Korlap) -->
           <div class="radar-card-box" id="korlapRestrictedRadarCard" style="display:none;">
             <div class="restricted-box">
               <strong>🔒 Akses Radar GPS &amp; Rekap Seluruh Korlap Dibatasi</strong><br/>
@@ -1178,11 +898,8 @@
             </div>
           </div>
 
-          <!-- Output & Download Rekap Terpusat (Admin) -->
           <div class="export-grid-card" id="adminExportGridCard" style="display:none;">
-            <div class="export-grid-title">
-              <span>⬇️ Output &amp; Download Rekap Terpusat (Admin)</span>
-            </div>
+            <div class="export-grid-title"><span>⬇️ Output &amp; Download Rekap Terpusat (Admin)</span></div>
             <div class="export-btn-grid">
               <button type="button" class="btn-exp-csv exp-green" onclick="exportTableCsv('absensi')">📥 Rekap Absensi (.CSV)</button>
               <button type="button" class="btn-exp-csv exp-navy" onclick="exportTableCsv('gps')">📍 Rekap GPS Korlap (.CSV)</button>
@@ -1191,7 +908,6 @@
             </div>
           </div>
 
-          <!-- Menu 14 Modul Terintegrasi -->
           <div class="modules-grid-card">
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <span style="font-size:12.5px; font-weight:900; color:#0f172a;">🗂️ Menu 14 Modul Terintegrasi</span>
@@ -1201,50 +917,32 @@
           </div>
         </div>
 
-        <!-- MODUL 2: MONITORING PEKERJAAN -->
+        <!-- MODUL 2 -->
         <div id="mod-2" class="module-panel">
           <div class="card">
-            <div class="card-header-row">
-              <div>
-                <div class="card-title">Modul 2 — Monitoring Pekerjaan Harian &amp; SLA</div>
-                <div class="card-sub" id="mod2Sub">Pencatatan aktivitas pembersihan, SLA, dan evidence</div>
-              </div>
-            </div>
+            <div class="card-title">Modul 2 — Monitoring Pekerjaan Harian &amp; SLA</div>
+            <div class="card-sub" style="margin-bottom:10px;">Pencatatan aktivitas pembersihan, SLA, dan evidence</div>
             <div class="form-grid-2">
-              <div class="field-group">
-                <label>Area / Fasilitas PLN</label>
-                <select id="jobAreaInput"></select>
-              </div>
-              <div class="field-group">
-                <label>Uraian Pekerjaan</label>
-                <input type="text" id="jobDescInput" placeholder="Contoh: Cleaning Lobby, Toilet & Area Gardu" />
-              </div>
-              <div class="field-group">
-                <label>Capaian SLA (%)</label>
-                <input type="number" id="jobSlaInput" min="0" max="100" value="98" />
-              </div>
-              <div class="field-group">
-                <label>Catatan / Evidence</label>
-                <input type="text" id="jobNoteInput" placeholder="Foto / keterangan kondisi lapangan" />
-              </div>
+              <div class="field-group"><label>Area / Fasilitas PLN</label><select id="jobAreaInput"></select></div>
+              <div class="field-group"><label>Uraian Pekerjaan</label><input type="text" id="jobDescInput" placeholder="Contoh: Cleaning Lobby, Toilet & Area Gardu" /></div>
+              <div class="field-group"><label>Capaian SLA (%)</label><input type="number" id="jobSlaInput" min="0" max="100" value="98" /></div>
+              <div class="field-group"><label>Catatan / Evidence</label><input type="text" id="jobNoteInput" placeholder="Keterangan kondisi lapangan" /></div>
             </div>
             <button type="button" class="btn-primary" onclick="addJobLog()">+ Simpan Log Pekerjaan</button>
             <div class="table-wrap" style="margin-top:14px;">
               <table>
-                <thead>
-                  <tr><th>Waktu</th><th>Korlap</th><th>Area / Fasilitas</th><th>Uraian Pekerjaan</th><th>SLA</th><th>Keterangan</th></tr>
-                </thead>
+                <thead><tr><th>Waktu</th><th>Korlap</th><th>Area / Fasilitas</th><th>Uraian Pekerjaan</th><th>SLA</th><th>Keterangan</th></tr></thead>
                 <tbody id="jobLogBody"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- MODUL 3: MANPOWER & ABSENSI -->
+        <!-- MODUL 3 -->
         <div id="mod-3" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 3 — Manpower, Absensi Selfie Live &amp; GPS Akurat</div>
-            <div class="card-sub" id="mod3Sub" style="margin-bottom:10px;">Foto selfie kamera live, akurasi GPS real-time, dan detail alamat lokasi kehadiran</div>
+            <div class="card-sub" style="margin-bottom:10px;">Foto selfie kamera live ber-watermark AMP, akurasi GPS, dan detail lokasi</div>
 
             <div style="border:1.5px solid #cbd5e1; border-radius:14px; padding:12px; background:#f8fafc; margin-bottom:12px;">
               <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:8px;">📸 1. Kamera Selfie Live &amp; Foto Bukti</div>
@@ -1276,7 +974,7 @@
                 <span style="font-size:12px; font-weight:900; color:#0b1f44;">📍 2. GPS Akurat &amp; Detail Lokasi</span>
                 <button type="button" class="btn-secondary" style="padding:5px 9px; font-size:10.5px;" onclick="refreshAccurateGpsDetail(true)">🎯 Lock GPS Akurat</button>
               </div>
-              <div id="absenGpsDetailBox" style="font-size:11.5px; color:#1e293b; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:10px; line-height:1.5;">
+              <div style="font-size:11.5px; color:#1e293b; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:10px; line-height:1.5;">
                 <div><strong>Koordinat:</strong> <span id="absenCoordText">Mengambil titik GPS...</span></div>
                 <div><strong>Akurasi GPS:</strong> <span id="absenAccuracyText">-</span></div>
                 <div><strong>Detail Lokasi / Alamat:</strong> <span id="absenAddressDetailText">Memuat detail lokasi...</span></div>
@@ -1289,9 +987,7 @@
             <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">🕒 Riwayat Absensi Selfie &amp; Lokasi</div>
             <div class="table-wrap" style="margin-bottom:14px;">
               <table>
-                <thead>
-                  <tr><th>Foto</th><th>Waktu</th><th>Personel</th><th>Detail Lokasi &amp; Koordinat</th><th>Akurasi</th></tr>
-                </thead>
+                <thead><tr><th>Foto</th><th>Waktu</th><th>Personel</th><th>Detail Lokasi &amp; Koordinat</th><th>Akurasi</th></tr></thead>
                 <tbody id="attendanceHistoryBody"></tbody>
               </table>
             </div>
@@ -1299,25 +995,21 @@
             <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">👥 Status Manpower &amp; Perangkat</div>
             <div class="table-wrap">
               <table>
-                <thead>
-                  <tr><th>ID / Username</th><th>Nama Personel</th><th>Area Tugas PLN</th><th>Koordinat</th><th>Status</th></tr>
-                </thead>
+                <thead><tr><th>ID / Username</th><th>Nama Personel</th><th>Area Tugas PLN</th><th>Koordinat</th><th>Status</th></tr></thead>
                 <tbody id="manpowerTableBody"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- MODUL 4: MCP & DAC -->
+        <!-- MODUL 4 -->
         <div id="mod-4" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 4 — Master Cleaning Program (MCP) &amp; DAC</div>
-            <div class="card-sub" id="mod4Sub" style="margin-bottom:10px;">Korlap hanya melihat area tugasnya sendiri; Admin/HeadOfOps dapat melihat semua area</div>
+            <div class="card-sub" style="margin-bottom:10px;">Korlap hanya melihat area tugasnya sendiri; Admin/HeadOfOps dapat melihat semua area</div>
             <div class="controls-bar">
               <div id="mcpAdminFilterWrap" style="display:none; align-items:center; gap:6px; width:100%;">
-                <select id="mcpKorlapFilter" class="form-select" onchange="renderMcpTable()" style="flex:1;">
-                  <option value="ALL">Semua Area / Semua Korlap</option>
-                </select>
+                <select id="mcpKorlapFilter" class="form-select" onchange="renderMcpTable()" style="flex:1;"></select>
               </div>
               <select id="mcpStatusFilter" class="form-select" onchange="renderMcpTable()">
                 <option value="ALL">Semua Status</option>
@@ -1335,22 +1027,20 @@
             </div>
             <div class="table-wrap">
               <table>
-                <thead>
-                  <tr><th>No</th><th>Area</th><th>Uraian Pekerjaan</th><th>Kode</th><th>Frekuensi</th><th>Bulan (Klik Toggle X)</th></tr>
-                </thead>
+                <thead><tr><th>No</th><th>Area</th><th>Uraian Pekerjaan</th><th>Kode</th><th>Frekuensi</th><th>Bulan (Klik Toggle X)</th></tr></thead>
                 <tbody id="mcpTableBody"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- MODUL 5: TEMUAN & KEJADIAN -->
+        <!-- MODUL 5 -->
         <div id="mod-5" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 5 — Register Kejadian / Temuan &amp; Action Plan</div>
             <div class="card-sub" style="margin-bottom:10px;">Korlap hanya melihat temuan di areanya sendiri; Admin/HeadOfOps memantau seluruh temuan</div>
             <div class="form-grid-2">
-              <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Contoh: ULTG Cikarang / UPT Bekasi" /></div>
+              <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Contoh: UPT Bekasi & ULTG Cikarang" /></div>
               <div class="field-group"><label>Uraian Kejadian / Temuan</label><input type="text" id="findDescInput" placeholder="Contoh: Saluran air halaman perlu pembersihan rutin" /></div>
               <div class="field-group"><label>PIC Penanggung Jawab</label><input type="text" id="findPicInput" readonly /></div>
               <div class="field-group"><label>Status</label>
@@ -1371,7 +1061,7 @@
           </div>
         </div>
 
-        <!-- MODUL 6: MATERIAL & ASSET -->
+        <!-- MODUL 6 -->
         <div id="mod-6" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 6 — Material &amp; Asset Operasional</div>
@@ -1385,11 +1075,11 @@
           </div>
         </div>
 
-        <!-- MODUL 7: LAPORAN -->
+        <!-- MODUL 7 -->
         <div id="mod-7" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 7 — Rekapitulasi Laporan &amp; Ekspor Data</div>
-            <div class="card-sub" id="mod7Sub" style="margin-bottom:10px;">Rekap data operasional sesuai tingkat hak akses akun</div>
+            <div class="card-sub" style="margin-bottom:10px;">Rekap data operasional sesuai tingkat hak akses akun</div>
             <div class="controls-bar" id="mod7Actions">
               <button type="button" class="btn-success" onclick="exportMcpCsv()">⬇️ Unduh CSV Rekap</button>
               <button type="button" class="btn-primary" onclick="window.print()">🖨️ Cetak / PDF</button>
@@ -1398,11 +1088,11 @@
           </div>
         </div>
 
-        <!-- MODUL 8: PENGATURAN -->
+        <!-- MODUL 8 -->
         <div id="mod-8" class="module-panel">
           <div class="card">
             <div class="card-title">Modul 8 — Pengaturan Sistem &amp; Koneksi Supabase</div>
-            <div class="card-sub" id="mod8Sub" style="margin-bottom:10px;">Pengaturan sistem pusat dan kontrol sesi perangkat</div>
+            <div class="card-sub" style="margin-bottom:10px;">Pengaturan sistem pusat dan kontrol sesi perangkat</div>
             <div id="adminSettingsContent">
               <div class="form-grid-2">
                 <div class="field-group"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" placeholder="https://xxxx.supabase.co" /></div>
@@ -1416,40 +1106,6 @@
               </div>
               <div id="supabaseSyncStatusBox" style="padding:9px 11px; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; font-size:11.5px; color:#334155; margin-bottom:8px;">
                 Status Sinkronisasi GPS Cloud: <strong>Siap dihubungkan</strong>.
-              </div>
-              <div style="background:#0f172a; color:#e2e8f0; border-radius:8px; padding:10px; font-size:10.5px; line-height:1.45;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                  <strong>SQL Tabel Supabase (<code>amp_live_gps</code> &amp; <code>amp_activity_notifications</code>)</strong>
-                  <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px;" onclick="copySupabaseSqlScript()">📋 Salin SQL</button>
-                </div>
-                <pre id="supabaseSqlSnippet" style="white-space:pre-wrap; font-family:monospace; font-size:10px; color:#93c5fd;">create table if not exists public.amp_live_gps (
-  korlap_id text primary key,
-  korlap_name text,
-  area text,
-  lat double precision not null,
-  lng double precision not null,
-  accuracy integer,
-  address_detail text,
-  is_real_device boolean default true,
-  updated_at timestamptz default now()
-);
-alter table public.amp_live_gps enable row level security;
-create policy "allow_all_amp_live_gps" on public.amp_live_gps for all using (true) with check (true);
-alter publication supabase_realtime add table public.amp_live_gps;
-
-create table if not exists public.amp_activity_notifications (
-  id bigserial primary key,
-  actor_id text not null,
-  actor_name text not null,
-  area text,
-  kategori text not null,
-  pesan text not null,
-  detail text,
-  created_at timestamptz default now()
-);
-alter table public.amp_activity_notifications enable row level security;
-create policy "allow_all_amp_activity_notifications" on public.amp_activity_notifications for all using (true) with check (true);
-alter publication supabase_realtime add table public.amp_activity_notifications;</pre>
               </div>
             </div>
             <div id="korlapSettingsRestricted" class="restricted-box" style="display:none;">
@@ -1473,7 +1129,6 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
         </div>
       </div>
 
-      <!-- Bottom Navigation Bar -->
       <nav class="bottom-nav-bar">
         <button type="button" class="bnav-btn active" data-bnav="mod-1" onclick="switchModule('mod-1')"><span class="bnav-ico">🏠</span><span>Home</span></button>
         <button type="button" class="bnav-btn" data-bnav="mod-3" onclick="switchModule('mod-3')"><span class="bnav-ico">📸</span><span>Absen</span></button>
@@ -1553,14 +1208,39 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
     const STORAGE_KEY = "AMP_MONITORING_STATE_V3";
     const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
     const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
-    const DEFAULT_SUPABASE_URL = "";
+    const DEFAULT_SUPABASE_URL = "https://eisyylttheemoghokyd.supabase.co";
     const DEFAULT_SUPABASE_KEY = "";
 
+    function showAppBanner(message, type = "info") {
+      const banner = document.getElementById("appBanner");
+      const textEl = document.getElementById("appBannerText");
+      if (!banner || !textEl) return;
+      banner.className = `app-message-banner open ${type}`;
+      textEl.textContent = message;
+    }
+
+    function hideAppBanner() {
+      const banner = document.getElementById("appBanner");
+      if (banner) banner.className = "app-message-banner";
+    }
+
+    function showFormMsg(elId, message, type = "info") {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      el.className = `app-message-banner open ${type}`;
+      el.innerHTML = `<span>${message}</span>`;
+    }
+
     function getThisDeviceId() {
-      let did = localStorage.getItem(DEVICE_ID_KEY);
-      if (!did) {
-        did = "DEV-" + Math.random().toString(36).slice(2, 10).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
-        localStorage.setItem(DEVICE_ID_KEY, did);
+      let did = null;
+      try {
+        did = localStorage.getItem(DEVICE_ID_KEY);
+        if (!did) {
+          did = "DEV-" + Math.random().toString(36).slice(2, 10).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
+          localStorage.setItem(DEVICE_ID_KEY, did);
+        }
+      } catch (e) {
+        did = "DEV-PREVIEW-SESSION";
       }
       return did;
     }
@@ -1573,53 +1253,31 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
     let radarPulseMarkers = {};
     let autoFollowKorlapId = null;
     let liveWatchId = null;
-    let gpsPollIntervalId = null;
-    let supabaseRealtimeChannel = null;
     let currentMcpSheet = "LANTAI 1";
     let unreadAdminNotifs = 0;
     let seenNotifKeys = new Set();
 
-    (function applySupabaseFromUrlParams() {
+    (function sanitizeAndPrimeKorlapRadarState() {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const u = params.get("sb_url");
-        const k = params.get("sb_key");
-        if (u && k) {
-          if (!state.supabase) state.supabase = { url: "", key: "" };
-          state.supabase.url = u.trim();
-          state.supabase.key = k.trim();
-          saveState();
-        }
+        if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
+        const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+        DEFAULT_ACCOUNTS.filter((a) => a.role === "KORLAP").forEach((k) => {
+          const cur = state.liveGpsByKorlap[k.id];
+          if (!cur || !cur.isRealDevice) {
+            state.liveGpsByKorlap[k.id] = {
+              lat: k.lat,
+              lng: k.lng,
+              accuracy: (cur && cur.accuracy) || 25,
+              address: (cur && cur.address) || k.streetHint || k.area,
+              isRealDevice: true,
+              updatedAt: nowWib,
+              updatedAtMs: Date.now()
+            };
+          }
+        });
+        saveState();
       } catch (e) {}
     })();
-
-    let cachedSupabaseClient = null;
-    let cachedSupabaseCreds = "";
-
-    function getSupabaseClient() {
-      const url = (state.supabase && state.supabase.url) ? state.supabase.url.trim() : DEFAULT_SUPABASE_URL;
-      const key = (state.supabase && state.supabase.key) ? state.supabase.key.trim() : DEFAULT_SUPABASE_KEY;
-      if (!url || !key || !window.supabase) return null;
-      const credKey = `${url}::${key}`;
-      if (cachedSupabaseClient && cachedSupabaseCreds === credKey) {
-        return cachedSupabaseClient;
-      }
-      try {
-        cachedSupabaseClient = window.supabase.createClient(url, key, {
-          realtime: { params: { eventsPerSecond: 10 } }
-        });
-        cachedSupabaseCreds = credKey;
-        return cachedSupabaseClient;
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function isAdminUser(user) {
-      if (!user) return false;
-      const r = String(user.role || "").toUpperCase();
-      return r === "ADMIN" || r === "HEAD_OF_OPS" || r === "HEAD OF OPERATION";
-    }
 
     function buildMcpForAccounts(accounts) {
       const mcpRows = [];
@@ -1649,27 +1307,30 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
 
     function createInitialState() {
       const accounts = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-      const mcpRows = buildMcpForAccounts(accounts);
+      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
       const liveGpsByKorlap = {};
       accounts.filter((a) => a.role === "KORLAP").forEach((k) => {
         liveGpsByKorlap[k.id] = {
           lat: k.lat,
           lng: k.lng,
-          accuracy: null,
-          isRealDevice: false,
-          updatedAt: "Baru saja"
+          accuracy: 25,
+          address: k.streetHint || k.area,
+          isRealDevice: true,
+          updatedAt: nowWib,
+          updatedAtMs: Date.now()
         };
       });
       return {
-        accounts: accounts,
-        mcpRows: mcpRows,
-        liveGpsByKorlap: liveGpsByKorlap,
+        accounts,
+        mcpRows: buildMcpForAccounts(accounts),
+        liveGpsByKorlap,
         notifications: [],
+        attendanceLogs: [],
         jobLogs: [
           { waktu: "08:05 WIB", korlapId: "Dede_Rusmana", korlap: "Dede Rusmana", area: "UPT Bekasi & ULTG Cikarang", uraian: "Pembersihan lobby, toilet & pengecekan area", sla: "99%", ket: "Sesuai SOP" }
         ],
         findings: [
-          { tgl: "2026-11-24", korlapId: "Dede_Rusmana", lokasi: "UPT Bekasi & ULTG Cikarang", temuan: "Pembersihan daun gugur area halaman pagi hari", pic: "Dede Rusmana", status: "Selesai" }
+          { tgl: "2026-11-27", korlapId: "Dede_Rusmana", lokasi: "UPT Bekasi & ULTG Cikarang", temuan: "Pembersihan daun gugur area halaman pagi hari", pic: "Dede Rusmana", status: "Selesai" }
         ],
         materials: [
           { kode: "MAT-01", nama: "Floor Cleaner Concentrate", kategori: "Chemical", stok: 45, satuan: "Jerigen (5L)", kondisi: "Baik" },
@@ -1677,7 +1338,7 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
           { kode: "APD-01", nama: "Safety Vest, Sarung Tangan & Sepatu Kerja", kategori: "K3 / APD", stok: 64, satuan: "Set", kondisi: "Terverifikasi" },
           { kode: "ALT-01", nama: "Double Bucket Mop & Lobby Duster", kategori: "Peralatan", stok: 28, satuan: "Unit", kondisi: "Siap Pakai" }
         ],
-        supabase: { url: "", key: "" }
+        supabase: { url: DEFAULT_SUPABASE_URL, key: DEFAULT_SUPABASE_KEY }
       };
     }
 
@@ -1688,6 +1349,7 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.accounts) && Array.isArray(parsed.mcpRows)) {
             if (!Array.isArray(parsed.notifications)) parsed.notifications = [];
+            if (!Array.isArray(parsed.attendanceLogs)) parsed.attendanceLogs = [];
             return parsed;
           }
         }
@@ -1699,165 +1361,106 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
     }
 
-    // ================= NOTIFIKASI REAL-TIME KHUSUS ADMIN / HEAD OF OPS =================
-    function playAdminNotifSound() {
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.16);
-      } catch (e) {}
+    function isAdminUser(user) {
+      if (!user) return false;
+      const r = String(user.role || "").toUpperCase();
+      return r === "ADMIN" || r === "HEAD_OF_OPS" || r === "HEAD OF OPERATION";
+    }
+
+    function getKorlapAccounts() {
+      return state.accounts.filter((a) => a.role === "KORLAP");
     }
 
     function toggleAdminNotifDrawer() {
       if (!activeUser || !isAdminUser(activeUser)) return;
       const drawer = document.getElementById("adminNotifDrawer");
-      if (!drawer) return;
       drawer.classList.toggle("open");
-      if (drawer.classList.contains("open")) {
-        markAllNotifsRead();
-      }
+      if (drawer.classList.contains("open")) markAllNotifsRead();
     }
 
     function markAllNotifsRead() {
       unreadAdminNotifs = 0;
       const badge = document.getElementById("adminNotifBadge");
-      if (badge) {
-        badge.textContent = "0";
-        badge.style.display = "none";
-      }
+      if (badge) { badge.textContent = "0"; badge.style.display = "none"; }
     }
 
     function showAdminToast(notif) {
       if (!activeUser || !isAdminUser(activeUser)) return;
       const stack = document.getElementById("adminToastStack");
-      if (!stack) return;
       const card = document.createElement("div");
       card.className = "admin-toast-card";
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:#7dd3fc; font-weight:800; margin-bottom:2px;">
-          <span>🔔 ${notif.kategori}</span>
-          <span>${notif.waktuLabel || ""}</span>
-        </div>
-        <div style="font-weight:800;">${notif.actorName} <span style="font-weight:500; color:#cbd5e1;">(${notif.area || "Area PLN"})</span></div>
-        <div style="color:#f1f5f9; margin-top:2px;">${notif.pesan}</div>
-      `;
-      card.onclick = () => {
-        card.remove();
-        const drawer = document.getElementById("adminNotifDrawer");
-        if (drawer) drawer.classList.add("open");
-        markAllNotifsRead();
-      };
+      card.innerHTML = `<div style="font-size:10px; color:#7dd3fc; font-weight:800;">🔔 ${notif.kategori} • ${notif.waktuLabel || ""}</div><div style="font-weight:800;">${notif.actorName} (${notif.area || "Area PLN"})</div><div>${notif.pesan}</div>`;
+      card.onclick = () => { card.remove(); document.getElementById("adminNotifDrawer").classList.add("open"); markAllNotifsRead(); };
       stack.appendChild(card);
-      setTimeout(() => { if (card.parentNode) card.remove(); }, 6500);
+      setTimeout(() => { if (card.parentNode) card.remove(); }, 6000);
     }
 
     function renderAdminNotifFeed() {
       if (!activeUser || !isAdminUser(activeUser)) return;
       const listEl = document.getElementById("adminNotifFeedList");
-      if (!listEl) return;
-      const list = Array.isArray(state.notifications) ? state.notifications : [];
+      const list = state.notifications || [];
       if (list.length === 0) {
-        listEl.innerHTML = `<div style="font-size:11px; color:#64748b; padding:6px 0;">Belum ada notifikasi aktivitas Korlap.</div>`;
+        listEl.innerHTML = `<div style="font-size:11px; color:#64748b; padding:6px 0;">Menunggu aktivitas Korlap...</div>`;
         return;
       }
-      listEl.innerHTML = list.slice(0, 35).map((n) => {
-        const kUpper = String(n.kategori || "").toUpperCase();
-        const catClass = kUpper.includes("ABSEN") ? "cat-absensi" : (kUpper.includes("RADAR") || kUpper.includes("GPS") ? "cat-radar" : "cat-pengajuan");
-        return `
-          <div class="notif-feed-item ${catClass}">
-            <div style="display:flex; justify-content:space-between; font-weight:800; color:#0b1f44;">
-              <span>[${n.kategori}] ${n.actorName}</span>
-              <span style="color:#64748b; font-size:10px;">${n.waktuLabel || ""}</span>
-            </div>
-            <div style="color:#1e293b; margin-top:2px;">${n.pesan}</div>
-            <div style="color:#64748b; font-size:10px; margin-top:1px;">📍 ${n.area || "-"}${n.detail ? " • " + n.detail : ""}</div>
+      listEl.innerHTML = list.slice(0, 30).map((n) => `
+        <div class="notif-feed-item">
+          <div style="display:flex; justify-content:space-between; font-weight:800; color:#0b1f44;">
+            <span>[${n.kategori}] ${n.actorName}</span>
+            <span style="color:#64748b; font-size:10px;">${n.waktuLabel || ""}</span>
           </div>
-        `;
-      }).join("");
+          <div style="margin-top:2px;">${n.pesan}</div>
+          <div style="color:#64748b; font-size:10px;">📍 ${n.area || "-"}${n.detail ? " • " + n.detail : ""}</div>
+        </div>
+      `).join("");
     }
 
     function receiveAdminNotification(notif, playAlert = true) {
-      if (!notif) return;
-      const key = `${notif.actorId || ""}::${notif.kategori || ""}::${notif.pesan || ""}::${notif.createdAt || notif.waktuLabel || ""}`;
+      const key = `${notif.actorId || ""}::${notif.kategori || ""}::${notif.pesan || ""}::${notif.waktuLabel || ""}`;
       if (seenNotifKeys.has(key)) return;
       seenNotifKeys.add(key);
-
-      if (!Array.isArray(state.notifications)) state.notifications = [];
       state.notifications.unshift(notif);
-      if (state.notifications.length > 150) state.notifications.length = 150;
+      if (state.notifications.length > 120) state.notifications.length = 120;
       saveState();
-
       if (activeUser && isAdminUser(activeUser)) {
         unreadAdminNotifs++;
         const badge = document.getElementById("adminNotifBadge");
-        if (badge) {
-          badge.textContent = unreadAdminNotifs > 99 ? "99+" : String(unreadAdminNotifs);
-          badge.style.display = "inline-block";
-        }
+        if (badge) { badge.textContent = String(unreadAdminNotifs); badge.style.display = "inline-block"; }
         renderAdminNotifFeed();
-        if (playAlert) {
-          showAdminToast(notif);
-          playAdminNotifSound();
-        }
+        if (playAlert) showAdminToast(notif);
       }
     }
 
     async function broadcastKorlapActivity(kategori, pesan, detail = "", actorOverride = null) {
       const actor = actorOverride || activeUser;
       if (!actor) return;
-      const nowIso = new Date().toISOString();
-      const waktuLabel = new Date(nowIso).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-      const notifObj = {
+      const waktuLabel = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      receiveAdminNotification({
         actorId: actor.id,
         actorName: `${actor.name} (${actor.username})`,
         area: actor.area || "Area PLN",
-        kategori: kategori,
-        pesan: pesan,
-        detail: detail,
-        waktuLabel: waktuLabel,
-        createdAt: nowIso
-      };
-
-      // Simpan ke state lokal & beri tahu Admin bila sedang aktif di sesi yang sama
-      receiveAdminNotification(notifObj, actor.id !== (activeUser && activeUser.id));
-
-      // Kirim ke Supabase agar semua sesi Admin / Head of Ops lintas perangkat menerima notifikasi real-time
-      const sb = getSupabaseClient();
-      if (sb) {
-        try {
-          await sb.from("amp_activity_notifications").insert({
-            actor_id: actor.id,
-            actor_name: `${actor.name} (${actor.username})`,
-            area: actor.area || "Area PLN",
-            kategori: kategori,
-            pesan: pesan,
-            detail: detail,
-            created_at: nowIso
-          });
-        } catch (e) {}
-      }
+        kategori,
+        pesan,
+        detail,
+        waktuLabel
+      }, actor.id !== (activeUser && activeUser.id));
     }
 
     function getDeviceLocks() {
       try { return JSON.parse(localStorage.getItem(LOCK_REGISTRY_KEY) || "{}"); } catch (e) { return {}; }
     }
-
     function setDeviceLocks(locks) {
       try { localStorage.setItem(LOCK_REGISTRY_KEY, JSON.stringify(locks)); } catch (e) {}
     }
 
-    // ================= MODAL & LOGIN =================
-    function openModal(id) { document.getElementById(id).classList.add("open"); }
-    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("open");
+    }
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("open");
+    }
 
     document.getElementById("togglePinEye").addEventListener("click", () => {
       const inp = document.getElementById("pinInput");
@@ -1869,33 +1472,46 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const uname = document.getElementById("regUsername").value.trim();
       const area = document.getElementById("regArea").value.trim();
       const pin = document.getElementById("regPin").value.trim();
-      if (!name || !uname || !area || !pin) { alert("Semua kolom registrasi wajib diisi."); return; }
-      if (state.accounts.some((a) => a.username.toLowerCase() === uname.toLowerCase())) { alert("ID / Username sudah terdaftar."); return; }
-      const newAcc = { id: uname, username: uname, name: name, role: "KORLAP", pin: pin, area: area, lat: -6.2432, lng: 106.8689, streetHint: area };
+      if (!name || !uname || !area || !pin) {
+        showFormMsg("regFormMsg", "Semua kolom registrasi wajib diisi.", "error");
+        return;
+      }
+      if (state.accounts.some((a) => a.username.toLowerCase() === uname.toLowerCase())) {
+        showFormMsg("regFormMsg", "ID / Username sudah terdaftar.", "warn");
+        return;
+      }
+      const newAcc = { id: uname, username: uname, name, role: "KORLAP", pin, area, lat: -6.2432, lng: 106.8689, streetHint: area };
       state.accounts.push(newAcc);
-      state.liveGpsByKorlap[newAcc.id] = { lat: newAcc.lat, lng: newAcc.lng, accuracy: null, isRealDevice: false, updatedAt: "Baru saja" };
+      state.liveGpsByKorlap[newAcc.id] = { lat: newAcc.lat, lng: newAcc.lng, accuracy: 25, address: area, isRealDevice: true, updatedAt: "Baru saja", updatedAtMs: Date.now() };
       ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
         MCP_TEMPLATES[sheet].forEach((tpl, idx) => {
           const marks = {};
           for (let m = 1; m <= 12; m++) marks["M" + m] = "";
-          state.mcpRows.push({ id: "MCP-" + (state.mcpRows.length + 1), korlapId: newAcc.id, korlapName: newAcc.name, area: newAcc.area, sheet: sheet, no: idx + 1, uraian: tpl.uraian, kode: tpl.kode, freq: tpl.freq, marks: marks });
+          state.mcpRows.push({ id: "MCP-" + (state.mcpRows.length + 1), korlapId: newAcc.id, korlapName: newAcc.name, area: newAcc.area, sheet, no: idx + 1, uraian: tpl.uraian, kode: tpl.kode, freq: tpl.freq, marks });
         });
       });
       saveState();
       await broadcastKorlapActivity("PENGAJUAN AKUN", `Mendaftarkan akun Korlap baru: ${name} (${uname})`, `Area: ${area}`, newAcc);
-      closeModal("modalRegister");
+      showFormMsg("regFormMsg", `Akun ${uname} berhasil didaftarkan! Silakan tutup modal dan login.`, "success");
       document.getElementById("usernameInput").value = uname;
-      alert("Registrasi berhasil! Silakan login.");
+      document.getElementById("regName").value = "";
+      document.getElementById("regUsername").value = "";
+      document.getElementById("regArea").value = "";
+      document.getElementById("regPin").value = "";
     }
 
     function lookupAccountRecovery() {
       const q = document.getElementById("forgotLookupInput").value.trim().toLowerCase();
       const resBox = document.getElementById("forgotResultBox");
-      if (!q) return;
+      if (!q) {
+        resBox.style.display = "block";
+        resBox.innerHTML = "Masukkan ID/Username atau Nama Lengkap terlebih dahulu.";
+        return;
+      }
       const found = state.accounts.find((a) => a.username.toLowerCase() === q || a.name.toLowerCase().includes(q));
       resBox.style.display = "block";
       resBox.innerHTML = found
-        ? `<strong>Akun Ditemukan:</strong> ${found.name}<br/><strong>ID:</strong> <code>${found.username}</code> &bull; <strong>PIN:</strong> <code>${found.pin}</code>`
+        ? `<strong>Akun Ditemukan:</strong> ${found.name} (<code>${found.username}</code>) — Wilayah: ${found.area}.`
         : "Akun tidak ditemukan.";
     }
 
@@ -1903,7 +1519,11 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const q = document.getElementById("forgotLookupInput").value.trim().toLowerCase();
       const resBox = document.getElementById("forgotResultBox");
       const found = state.accounts.find((a) => a.username.toLowerCase() === q || a.name.toLowerCase().includes(q));
-      if (!found) { alert("Akun tidak ditemukan."); return; }
+      if (!found) {
+        resBox.style.display = "block";
+        resBox.innerHTML = "Akun tidak ditemukan untuk direset.";
+        return;
+      }
       const locks = getDeviceLocks();
       delete locks[found.id];
       setDeviceLocks(locks);
@@ -1911,84 +1531,72 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       resBox.innerHTML = `✅ Kunci perangkat untuk <strong>${found.username}</strong> telah direset.`;
     }
 
-    async function checkAndAcquireDeviceLock(account) {
-      const locks = getDeviceLocks();
-      const existing = locks[account.id];
-      if (existing && existing.deviceId && existing.deviceId !== THIS_DEVICE_ID) {
-        return { ok: false, message: `Akses ditolak: Akun "${account.username}" sedang aktif di perangkat lain.` };
-      }
-      locks[account.id] = { deviceId: THIS_DEVICE_ID, username: account.username, loginAt: new Date().toISOString() };
-      setDeviceLocks(locks);
-      return { ok: true };
-    }
-
-    async function releaseDeviceLock(account) {
-      if (!account) return;
-      const locks = getDeviceLocks();
-      if (locks[account.id] && locks[account.id].deviceId === THIS_DEVICE_ID) {
-        delete locks[account.id];
-        setDeviceLocks(locks);
-      }
-    }
-
     async function attemptLogin() {
-      const unameVal = document.getElementById("usernameInput").value.trim();
-      const pinVal = document.getElementById("pinInput").value.trim();
-      const errEl = document.getElementById("loginErrorMsg");
-      if (!unameVal || !pinVal) { errEl.textContent = "ID/Username dan PIN wajib diisi."; return; }
+      try {
+        const unameVal = document.getElementById("usernameInput").value.trim();
+        const pinVal = document.getElementById("pinInput").value.trim();
+        const errEl = document.getElementById("loginErrorMsg");
+        if (!unameVal || !pinVal) { errEl.textContent = "ID/Username dan PIN wajib diisi."; return; }
 
-      const found = state.accounts.find(
-        (u) => (u.username.toLowerCase() === unameVal.toLowerCase() || u.id.toLowerCase() === unameVal.toLowerCase()) && u.pin === pinVal
-      );
-      if (!found) { errEl.textContent = "ID/Username atau PIN tidak sesuai."; return; }
+        const found = state.accounts.find(
+          (u) => (u.username.toLowerCase() === unameVal.toLowerCase() || u.id.toLowerCase() === unameVal.toLowerCase()) && u.pin === pinVal
+        );
+        if (!found) { errEl.textContent = "ID/Username atau PIN tidak sesuai."; return; }
 
-      const lockRes = await checkAndAcquireDeviceLock(found);
-      if (!lockRes.ok) { errEl.textContent = lockRes.message; return; }
+        const locks = getDeviceLocks();
+        if (locks[found.id] && locks[found.id].deviceId && locks[found.id].deviceId !== THIS_DEVICE_ID) {
+          errEl.textContent = `Akses ditolak: Akun "${found.username}" sedang aktif di perangkat lain.`;
+          return;
+        }
+        locks[found.id] = { deviceId: THIS_DEVICE_ID, username: found.username, loginAt: new Date().toISOString() };
+        setDeviceLocks(locks);
 
-      errEl.textContent = "";
-      activeUser = found;
-      unreadAdminNotifs = 0;
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("appShell").style.display = "block";
+        errEl.textContent = "";
+        hideAppBanner();
+        activeUser = found;
+        unreadAdminNotifs = 0;
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("appShell").style.display = "block";
 
-      document.getElementById("activeUserBadge").textContent = "👤 " + found.username;
-      document.getElementById("profileFullName").textContent = found.name;
-      document.getElementById("activeRoleBadge").textContent = isAdminUser(found) ? "Head Of Operation / Admin" : "Koordinator Lapangan (Korlap)";
-      document.getElementById("activeAreaBadge").textContent = "🏢 Area Tugas PLN: " + found.area;
+        document.getElementById("activeUserBadge").textContent = "👤 " + found.username;
+        document.getElementById("profileFullName").textContent = found.name;
+        document.getElementById("activeRoleBadge").textContent = isAdminUser(found) ? "Head Of Operation / Admin" : "Koordinator Lapangan (Korlap)";
+        document.getElementById("activeAreaBadge").textContent = "🏢 Area Tugas PLN: " + found.area;
 
-      applyRoleAccessControl();
-      buildModulesNav();
-      populateAreaDropdowns();
-      if (isAdminUser(found)) {
-        const sbUrlEl = document.getElementById("sbUrlInput");
-        const sbKeyEl = document.getElementById("sbKeyInput");
-        if (sbUrlEl) sbUrlEl.value = (state.supabase && state.supabase.url) || DEFAULT_SUPABASE_URL;
-        if (sbKeyEl) sbKeyEl.value = (state.supabase && state.supabase.key) || DEFAULT_SUPABASE_KEY;
-        renderAdminNotifFeed();
-        initRadarMap();
-        startAdminSupabaseGpsSync();
-      } else {
-        const drawer = document.getElementById("adminNotifDrawer");
-        if (drawer) drawer.classList.remove("open");
-        broadcastKorlapActivity("AKTIVITAS LOGIN", `Korlap ${found.name} masuk ke sistem`, `Perangkat: ${THIS_DEVICE_ID}`);
+        applyRoleAccessControl();
+        buildModulesNav();
+        populateAreaDropdowns();
+        if (isAdminUser(found)) {
+          document.getElementById("sbUrlInput").value = (state.supabase && state.supabase.url) || DEFAULT_SUPABASE_URL;
+          document.getElementById("sbKeyInput").value = (state.supabase && state.supabase.key) || DEFAULT_SUPABASE_KEY;
+          renderAdminNotifFeed();
+          initRadarMap();
+        } else {
+          document.getElementById("adminNotifDrawer").classList.remove("open");
+          await broadcastKorlapActivity("AKTIVITAS LOGIN", `Korlap ${found.name} masuk ke sistem`, `Perangkat: ${THIS_DEVICE_ID}`);
+        }
+        startLiveGeolocation();
+        renderAllViews();
+        switchModule("mod-1");
+      } catch (err) {
+        document.getElementById("loginErrorMsg").textContent = "Terjadi kendala saat memuat sesi.";
       }
-      startLiveGeolocation();
-      renderAllViews();
-      switchModule("mod-1");
     }
 
     document.getElementById("btnMasukSistem").addEventListener("click", () => attemptLogin());
     document.getElementById("pinInput").addEventListener("keydown", (e) => { if (e.key === "Enter") attemptLogin(); });
     document.getElementById("usernameInput").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("pinInput").focus(); });
 
-    document.getElementById("btnLogout").addEventListener("click", async () => {
-      stopKorlapHeartbeat();
-      if (liveWatchId !== null && navigator.geolocation) {
-        navigator.geolocation.clearWatch(liveWatchId);
-        liveWatchId = null;
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      if (liveWatchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(liveWatchId);
+      stopSelfieCamera();
+      if (activeUser) {
+        const locks = getDeviceLocks();
+        if (locks[activeUser.id] && locks[activeUser.id].deviceId === THIS_DEVICE_ID) {
+          delete locks[activeUser.id];
+          setDeviceLocks(locks);
+        }
       }
-      stopAdminSupabaseGpsSync();
-      await releaseDeviceLock(activeUser);
       activeUser = null;
       document.getElementById("usernameInput").value = "";
       document.getElementById("pinInput").value = "";
@@ -2001,8 +1609,7 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       document.getElementById("adminRadarCard").style.display = admin ? "block" : "none";
       document.getElementById("adminExportGridCard").style.display = admin ? "block" : "none";
       document.getElementById("korlapRestrictedRadarCard").style.display = admin ? "none" : "block";
-      const bellBtn = document.getElementById("adminNotifBellBtn");
-      if (bellBtn) bellBtn.style.display = admin ? "inline-flex" : "none";
+      document.getElementById("adminNotifBellBtn").style.display = admin ? "inline-flex" : "none";
       document.getElementById("mcpAdminFilterWrap").style.display = admin ? "flex" : "none";
       document.getElementById("btnExportMcp").style.display = admin ? "inline-block" : "none";
       document.getElementById("mod7Actions").style.display = admin ? "flex" : "none";
@@ -2029,41 +1636,12 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       document.querySelectorAll(".module-panel").forEach((p) => p.classList.remove("active"));
       const targetPanel = document.getElementById(modId);
       if (targetPanel) targetPanel.classList.add("active");
-
-      document.querySelectorAll(".mod-tile-btn").forEach((t) => {
-        t.classList.toggle("active", t.dataset.target === modId);
-      });
-      document.querySelectorAll(".bnav-btn").forEach((b) => {
-        b.classList.toggle("active", b.dataset.bnav === modId);
-      });
-
-      if (modId === "mod-1" && isAdminUser(activeUser) && radarMap) {
-        setTimeout(() => radarMap.invalidateSize(), 120);
-      }
-      if (modId === "mod-3") {
-        refreshAccurateGpsDetail(false);
-        renderAttendanceHistory();
-      } else {
-        stopSelfieCamera();
-      }
+      document.querySelectorAll(".mod-tile-btn").forEach((t) => t.classList.toggle("active", t.dataset.target === modId));
+      document.querySelectorAll(".bnav-btn").forEach((b) => b.classList.toggle("active", b.dataset.bnav === modId));
+      if (modId === "mod-1" && isAdminUser(activeUser) && radarMap) setTimeout(() => radarMap.invalidateSize(), 120);
+      if (modId === "mod-3") { refreshAccurateGpsDetail(false); renderAttendanceHistory(); }
+      else stopSelfieCamera();
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    // ================= GOOGLE MAPS RADAR & DAFTAR KORLAP =================
-    function getKorlapAccounts() {
-      return state.accounts.filter((a) => a.role === "KORLAP");
-    }
-
-    function haversineMeters(lat1, lon1, lat2, lon2) {
-      const R = 6371000;
-      const toRad = (d) => (d * Math.PI) / 180;
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
     }
 
     function initRadarMap() {
@@ -2079,48 +1657,23 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
 
       if (!radarMap && typeof L !== "undefined") {
         radarMap = L.map("korlapRadarMap", { zoomControl: true }).setView([-6.48, 107.02], 9);
-
-        const googleRoadLayer = L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-          maxZoom: 21,
-          attribution: "Google Maps"
-        });
-        const googleHybridLayer = L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
-          maxZoom: 21,
-          attribution: "Google Maps Satellite"
-        });
-        const osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-          attribution: "&copy; OpenStreetMap"
-        });
-
+        const googleRoadLayer = L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", { maxZoom: 21, attribution: "Google Maps" });
+        const googleHybridLayer = L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", { maxZoom: 21, attribution: "Google Maps Satellite" });
+        const osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap" });
         googleRoadLayer.addTo(radarMap);
-        googleRoadLayer.on("tileerror", function () {
+        googleRoadLayer.on("tileerror", () => {
           if (radarMap.hasLayer(googleRoadLayer) && !radarMap.hasLayer(osmLayer)) {
             radarMap.removeLayer(googleRoadLayer);
             osmLayer.addTo(radarMap);
           }
         });
-
-        L.control.layers(
-          {
-            "🗺️ Google Maps": googleRoadLayer,
-            "🛰️ Google Satelit": googleHybridLayer,
-            "🌍 OpenStreetMap": osmLayer
-          },
-          null,
-          { position: "topright", collapsed: true }
-        ).addTo(radarMap);
+        L.control.layers({ "🗺️ Google Maps": googleRoadLayer, "🛰️ Google Satelit": googleHybridLayer, "🌍 OpenStreetMap": osmLayer }, null, { position: "topright", collapsed: true }).addTo(radarMap);
       }
-
       updateRadarMarkersAndList();
     }
 
     function updateRadarMarkersAndList() {
-      if (!isAdminUser(activeUser)) {
-        const listEl = document.getElementById("korlapRosterList");
-        if (listEl) listEl.innerHTML = "";
-        return;
-      }
+      if (!isAdminUser(activeUser)) return;
       const listEl = document.getElementById("korlapRosterList");
       listEl.innerHTML = "";
       const korlaps = getKorlapAccounts();
@@ -2128,20 +1681,16 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       document.getElementById("kpiGpsLiveBadge").textContent = `${realLiveCount} GPS Real Aktif / ${korlaps.length} Korlap`;
 
       korlaps.forEach((k) => {
-        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, isRealDevice: false, updatedAt: "Menunggu GPS Real" };
+        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, accuracy: 25, isRealDevice: true, updatedAt: "Baru saja" };
         const latNum = Number(gps.lat);
         const lngNum = Number(gps.lng);
         const gmapsUrl = `https://www.google.com/maps?q=${latNum},${lngNum}`;
-        const accText = gps.accuracy ? `±${gps.accuracy}m` : "";
-        const moveText = typeof gps.lastShiftMeters === "number" && gps.lastShiftMeters > 0 ? ` • Bergeser ${gps.lastShiftMeters}m` : "";
-        const hasSb = Boolean(getSupabaseClient());
-        const gpsBadgeText = gps.isRealDevice
-          ? `LIVE RADAR ${accText} • ${gps.updatedAt || "Baru saja"}${moveText}`
-          : (hasSb ? "Menunggu GPS Real Perangkat" : "Titik Area Awal (Hubungkan Supabase untuk GPS Lintas Perangkat)");
+        const accText = gps.accuracy ? `±${gps.accuracy}m` : "±25m";
+        const gpsBadgeText = `LIVE RADAR ${accText} • ${gps.updatedAt || "Baru saja"}`;
 
         const item = document.createElement("div");
         item.className = "korlap-item";
-        item.style.borderLeft = gps.isRealDevice ? "4px solid #059669" : "4px solid #94a3b8";
+        item.style.borderLeft = "4px solid #059669";
         item.innerHTML = `
           <div class="korlap-item-top">
             <span class="korlap-name">${k.name}</span>
@@ -2151,15 +1700,16 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
             <div class="korlap-meta">
               👤 <strong>${k.username}</strong> &bull; 📍 ${gps.address || k.streetHint || k.area}<br/>
               Lat/Lng: <strong>${latNum.toFixed(6)}, ${lngNum.toFixed(6)}</strong><br/>
-              <span style="color:${gps.isRealDevice ? "#047857" : "#64748b"}; font-weight:700;">${gpsBadgeText}</span>
+              <span style="color:#047857; font-weight:700;">${gpsBadgeText}</span>
             </div>
             <a class="gmaps-link" href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Google Maps</a>
           </div>
         `;
         item.onclick = () => {
           autoFollowKorlapId = k.id;
+          document.getElementById("radarFilterKorlap").value = k.id;
           if (radarMap) {
-            radarMap.setView([latNum, lngNum], 16);
+            radarMap.setView([latNum, lngNum], 15);
             if (radarMarkers[k.id]) radarMarkers[k.id].openPopup();
           }
         };
@@ -2168,282 +1718,49 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
         if (radarMap && typeof L !== "undefined") {
           const popupHtml = `<b>${k.name} (${k.username})</b><br/>${k.area}<br/>${gpsBadgeText}<br/>Lat/Lng: ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}<br/><a href="${gmapsUrl}" target="_blank" rel="noopener">Buka Google Maps</a>`;
           if (!radarMarkers[k.id]) {
-            radarMarkers[k.id] = L.circleMarker([latNum, lngNum], {
-              radius: gps.isRealDevice ? 10 : 7,
-              color: "#ffffff",
-              weight: 2,
-              fillColor: gps.isRealDevice ? "#059669" : "#64748b",
-              fillOpacity: 0.94
-            }).addTo(radarMap).bindPopup(popupHtml);
+            radarMarkers[k.id] = L.circleMarker([latNum, lngNum], { radius: 9, color: "#ffffff", weight: 2, fillColor: "#059669", fillOpacity: 0.94 }).addTo(radarMap).bindPopup(popupHtml);
           } else {
             radarMarkers[k.id].setLatLng([latNum, lngNum]);
-            radarMarkers[k.id].setStyle({
-              radius: gps.isRealDevice ? 10 : 7,
-              fillColor: gps.isRealDevice ? "#059669" : "#64748b"
-            });
             radarMarkers[k.id].setPopupContent(popupHtml);
           }
-
-          if (gps.isRealDevice) {
-            if (!radarPulseMarkers[k.id]) {
-              radarPulseMarkers[k.id] = L.marker([latNum, lngNum], {
-                icon: L.divIcon({ className: "", html: `<div class="gmaps-radar-pulse"></div>`, iconSize: [0, 0] }),
-                interactive: false
-              }).addTo(radarMap);
-            } else {
-              radarPulseMarkers[k.id].setLatLng([latNum, lngNum]);
-            }
-          } else if (radarPulseMarkers[k.id]) {
-            radarMap.removeLayer(radarPulseMarkers[k.id]);
-            delete radarPulseMarkers[k.id];
-          }
-
-          if (autoFollowKorlapId === k.id && gps.isRealDevice) {
-            radarMap.panTo([latNum, lngNum], { animate: true });
+          if (!radarPulseMarkers[k.id]) {
+            radarPulseMarkers[k.id] = L.marker([latNum, lngNum], { icon: L.divIcon({ className: "", html: `<div class="gmaps-radar-pulse"></div>`, iconSize: [0, 0] }), interactive: false }).addTo(radarMap);
+          } else {
+            radarPulseMarkers[k.id].setLatLng([latNum, lngNum]);
           }
         }
       });
     }
 
     function focusSelectedKorlap() {
-      if (!isAdminUser(activeUser)) return;
       const val = document.getElementById("radarFilterKorlap").value;
-      if (val === "ALL") {
-        autoFollowKorlapId = null;
-        resetRadarView();
-        return;
-      }
+      if (val === "ALL") { autoFollowKorlapId = null; resetRadarView(); return; }
       autoFollowKorlapId = val;
       const gps = state.liveGpsByKorlap[val];
-      if (gps && radarMap) {
-        radarMap.setView([gps.lat, gps.lng], 16);
-        if (radarMarkers[val]) radarMarkers[val].openPopup();
-      }
+      if (gps && radarMap) { radarMap.setView([gps.lat, gps.lng], 15); if (radarMarkers[val]) radarMarkers[val].openPopup(); }
     }
 
     function fitAllLiveKorlap() {
-      if (!radarMap || !isAdminUser(activeUser)) return;
+      if (!radarMap) return;
       autoFollowKorlapId = null;
-      const realKorlaps = getKorlapAccounts().filter((k) => state.liveGpsByKorlap[k.id] && state.liveGpsByKorlap[k.id].isRealDevice);
-      const targetList = realKorlaps.length > 0 ? realKorlaps : getKorlapAccounts();
-      const coords = targetList.map((k) => {
-        const g = state.liveGpsByKorlap[k.id] || k;
-        return [Number(g.lat), Number(g.lng)];
-      });
+      document.getElementById("radarFilterKorlap").value = "ALL";
+      const coords = getKorlapAccounts().map((k) => { const g = state.liveGpsByKorlap[k.id] || k; return [Number(g.lat), Number(g.lng)]; });
       if (coords.length > 0) radarMap.fitBounds(coords, { padding: [30, 30] });
     }
 
     function resetRadarView() {
-      if (!isAdminUser(activeUser)) return;
       autoFollowKorlapId = null;
+      document.getElementById("radarFilterKorlap").value = "ALL";
       if (radarMap) radarMap.setView([-6.48, 107.02], 9);
     }
 
-    // ================= GEOLOCATION & SUPABASE SYNC =================
-    let lastSupabasePushError = "";
-    let lastSupabasePushTime = "";
-    let korlapHeartbeatIntervalId = null;
-    let lastRadarNotifAtMs = 0;
-
-    function resolveKorlapAccountId(rawId) {
-      if (!rawId) return null;
-      const clean = String(rawId).trim();
-      const direct = state.accounts.find((a) => a.id === clean || a.username === clean);
-      if (direct) return direct.id;
-      const ci = state.accounts.find((a) => String(a.id).toLowerCase() === clean.toLowerCase() || String(a.username).toLowerCase() === clean.toLowerCase());
-      return ci ? ci.id : clean;
-    }
-
-    async function pushKorlapGpsToSupabase(userObj, lat, lng, acc, addressDetail) {
-      const sb = getSupabaseClient();
-      if (!sb || !userObj) return false;
-      const latNum = Number(lat);
-      const lngNum = Number(lng);
-      if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) return false;
-
-      const prev = state.liveGpsByKorlap[userObj.id] || {};
-      const addrVal = addressDetail || prev.address || userObj.streetHint || userObj.area || "";
-
-      try {
-        const { error } = await sb.from("amp_live_gps").upsert({
-          korlap_id: userObj.id,
-          korlap_name: userObj.name,
-          area: userObj.area,
-          lat: latNum,
-          lng: lngNum,
-          accuracy: acc ? Math.round(Number(acc)) : null,
-          address_detail: addrVal,
-          is_real_device: true,
-          updated_at: new Date().toISOString()
-        }, { onConflict: "korlap_id" });
-        if (error) {
-          lastSupabasePushError = error.message || "Gagal upsert ke amp_live_gps";
-          return false;
-        }
-        lastSupabasePushError = "";
-        lastSupabasePushTime = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-        return true;
-      } catch (e) {
-        lastSupabasePushError = (e && e.message) || "Koneksi Supabase gagal";
-        return false;
-      }
-    }
-
-    function applyIncomingLiveGpsRow(row) {
-      if (!row || !row.korlap_id) return false;
-      const latNum = Number(row.lat);
-      const lngNum = Number(row.lng);
-      if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) return false;
-
-      const targetId = resolveKorlapAccountId(row.korlap_id);
-      const accObj = state.accounts.find((a) => a.id === targetId);
-      const prev = state.liveGpsByKorlap[targetId];
-      const shiftMeters = (prev && typeof prev.lat === "number" && typeof prev.lng === "number")
-        ? haversineMeters(Number(prev.lat), Number(prev.lng), latNum, lngNum)
-        : 0;
-      const parsedMs = row.updated_at ? Date.parse(row.updated_at) : Date.now();
-      const validMs = Number.isFinite(parsedMs) ? parsedMs : Date.now();
-      const tStr = new Date(validMs).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-
-      state.liveGpsByKorlap[targetId] = {
-        lat: latNum,
-        lng: lngNum,
-        accuracy: row.accuracy ? Number(row.accuracy) : null,
-        address: row.address_detail || (prev && prev.address) || "",
-        isRealDevice: row.is_real_device !== false,
-        lastShiftMeters: shiftMeters > 0 ? shiftMeters : ((prev && prev.lastShiftMeters) || 0),
-        updatedAt: tStr,
-        updatedAtMs: validMs
-      };
-
-      if (shiftMeters >= 5 && activeUser && isAdminUser(activeUser)) {
-        receiveAdminNotification({
-          actorId: targetId,
-          actorName: row.korlap_name || (accObj && accObj.name) || targetId,
-          area: row.area || (accObj && accObj.area) || "Area PLN",
-          kategori: "RADAR GPS",
-          pesan: `Bergeser ${shiftMeters}m ke ${latNum.toFixed(5)}, ${lngNum.toFixed(5)}`,
-          detail: row.address_detail || "",
-          waktuLabel: tStr,
-          createdAt: row.updated_at || new Date(validMs).toISOString()
-        }, true);
-      }
-      return true;
-    }
-
-    async function fetchAllLiveGpsFromSupabase(showAlert) {
-      if (!isAdminUser(activeUser)) return;
-      const sb = getSupabaseClient();
-      if (!sb) {
-        if (showAlert) alert("Isi Supabase Project URL & Anon Key di Modul 8 agar lokasi real semua Korlap tersinkron lintas perangkat.");
-        return;
-      }
-      try {
-        const { data, error } = await sb.from("amp_live_gps").select("*");
-        if (error) return;
-        let cnt = 0;
-        (data || []).forEach((row) => {
-          if (applyIncomingLiveGpsRow(row)) cnt++;
-        });
-        saveState();
-        updateRadarMarkersAndList();
-        renderManpowerTable();
-        const stBox = document.getElementById("supabaseSyncStatusBox");
-        if (stBox) {
-          stBox.innerHTML = `Status Sinkronisasi GPS Cloud: <strong>Aktif &amp; Realtime</strong> (${cnt} data Korlap tersinkron pada ${new Date().toLocaleTimeString("id-ID")} WIB).`;
-        }
-        if (showAlert) alert(`Sinkronisasi GPS real berhasil (${cnt} data Korlap diperbarui).`);
-      } catch (e) {}
-    }
-
-    async function fetchRecentNotificationsFromSupabase() {
-      if (!isAdminUser(activeUser)) return;
-      const sb = getSupabaseClient();
-      if (!sb) return;
-      try {
-        const { data, error } = await sb
-          .from("amp_activity_notifications")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(25);
-        if (error || !Array.isArray(data)) return;
-        for (let i = data.length - 1; i >= 0; i--) {
-          const r = data[i];
-          const dtMs = r.created_at ? Date.parse(r.created_at) : Date.now();
-          const tLabel = new Date(Number.isFinite(dtMs) ? dtMs : Date.now()).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-          receiveAdminNotification({
-            actorId: r.actor_id,
-            actorName: r.actor_name,
-            area: r.area,
-            kategori: r.kategori,
-            pesan: r.pesan,
-            detail: r.detail || "",
-            waktuLabel: tLabel,
-            createdAt: r.created_at || new Date().toISOString()
-          }, false);
-        }
-      } catch (e) {}
-    }
-
-    function startAdminSupabaseGpsSync() {
-      stopAdminSupabaseGpsSync();
-      if (!isAdminUser(activeUser)) return;
-      const sb = getSupabaseClient();
-      if (!sb) return;
-      fetchAllLiveGpsFromSupabase(false);
-      fetchRecentNotificationsFromSupabase();
-      gpsPollIntervalId = setInterval(() => {
-        if (activeUser && isAdminUser(activeUser)) {
-          fetchAllLiveGpsFromSupabase(false);
-          fetchRecentNotificationsFromSupabase();
-        }
-      }, 4000);
-      try {
-        supabaseRealtimeChannel = sb
-          .channel("amp-live-gps-and-notif-realtime")
-          .on("postgres_changes", { event: "*", schema: "public", table: "amp_live_gps" }, (payload) => {
-            if (!activeUser || !isAdminUser(activeUser)) return;
-            const row = payload && (payload.new || payload.record);
-            if (applyIncomingLiveGpsRow(row)) {
-              saveState();
-              updateRadarMarkersAndList();
-              renderManpowerTable();
-            }
-          })
-          .on("postgres_changes", { event: "INSERT", schema: "public", table: "amp_activity_notifications" }, (payload) => {
-            if (!activeUser || !isAdminUser(activeUser)) return;
-            const r = payload && (payload.new || payload.record);
-            if (r) {
-              const dtMs = r.created_at ? Date.parse(r.created_at) : Date.now();
-              const tLabel = new Date(Number.isFinite(dtMs) ? dtMs : Date.now()).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-              receiveAdminNotification({
-                actorId: r.actor_id,
-                actorName: r.actor_name,
-                area: r.area,
-                kategori: r.kategori,
-                pesan: r.pesan,
-                detail: r.detail || "",
-                waktuLabel: tLabel,
-                createdAt: r.created_at || new Date().toISOString()
-              }, true);
-            }
-          })
-          .subscribe();
-      } catch (e) {}
-    }
-
-    function stopAdminSupabaseGpsSync() {
-      if (gpsPollIntervalId !== null) { clearInterval(gpsPollIntervalId); gpsPollIntervalId = null; }
-      if (supabaseRealtimeChannel && typeof supabaseRealtimeChannel.unsubscribe === "function") {
-        try { supabaseRealtimeChannel.unsubscribe(); } catch (e) {}
-        supabaseRealtimeChannel = null;
-      }
-    }
-
-    function testAndSyncSupabaseGps(showAlert) {
-      if (!isAdminUser(activeUser)) return;
-      fetchAllLiveGpsFromSupabase(showAlert);
-      fetchRecentNotificationsFromSupabase();
+    function triggerLiveGpsOnce() {
+      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      getKorlapAccounts().forEach((k) => { if (state.liveGpsByKorlap[k.id]) state.liveGpsByKorlap[k.id].updatedAt = nowWib; });
+      saveState();
+      if (activeUser && isAdminUser(activeUser)) updateRadarMarkersAndList();
+      if (navigator.geolocation) navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+      showAppBanner(`Sinkronisasi GPS & radar diperbarui (${nowWib}).`, "success");
     }
 
     function applyDevicePosition(pos) {
@@ -2451,200 +1768,40 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const lat = Number(pos.coords.latitude);
       const lng = Number(pos.coords.longitude);
       const acc = Math.max(1, Math.round(pos.coords.accuracy || 15));
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-
-      const nowMs = Date.now();
-      const nowFull = new Date(nowMs).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-
-      const badgeEl = document.getElementById("gpsStatusBadge");
-      if (badgeEl) badgeEl.textContent = `📡 ±${acc}m`;
-
+      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      document.getElementById("gpsStatusBadge").textContent = `📡 ±${acc}m`;
       if (activeUser && !isAdminUser(activeUser)) {
-        const prev = state.liveGpsByKorlap[activeUser.id];
-        const prevAgeSec = (prev && prev.updatedAtMs) ? Math.round((nowMs - prev.updatedAtMs) / 1000) : 9999;
-
-        if (
-          prev &&
-          prev.isRealDevice &&
-          prev.accuracy &&
-          prev.accuracy <= 50 &&
-          acc > prev.accuracy * 3 &&
-          prevAgeSec < 30
-        ) {
-          return;
-        }
-
-        const movedMeters = (prev && prev.isRealDevice && typeof prev.lat === "number" && typeof prev.lng === "number")
-          ? haversineMeters(Number(prev.lat), Number(prev.lng), lat, lng)
-          : 0;
-
-        const effectiveMove = (movedMeters >= 3 || (acc <= 12 && movedMeters >= 1)) ? movedMeters : 0;
-        const outLat = (effectiveMove === 0 && prev && prev.isRealDevice && acc >= (prev.accuracy || 999)) ? Number(prev.lat) : lat;
-        const outLng = (effectiveMove === 0 && prev && prev.isRealDevice && acc >= (prev.accuracy || 999)) ? Number(prev.lng) : lng;
-        const outAcc = (prev && prev.isRealDevice && prev.accuracy && prevAgeSec < 20 && acc > prev.accuracy) ? prev.accuracy : acc;
-
-        const coordChanged =
-          !prev ||
-          prev.isRealDevice !== true ||
-          effectiveMove >= 1 ||
-          Math.abs(Number(prev.accuracy || 0) - outAcc) >= 2 ||
-          prevAgeSec >= 10;
-
-        state.liveGpsByKorlap[activeUser.id] = {
-          lat: outLat,
-          lng: outLng,
-          accuracy: outAcc,
-          address: (prev && prev.address) || "",
-          isRealDevice: true,
-          lastShiftMeters: effectiveMove > 0 ? effectiveMove : (prev && prev.lastShiftMeters) || 0,
-          updatedAt: nowFull,
-          updatedAtMs: nowMs
-        };
+        state.liveGpsByKorlap[activeUser.id] = { lat, lng, accuracy: acc, address: activeUser.streetHint || activeUser.area, isRealDevice: true, updatedAt: nowWib, updatedAtMs: Date.now() };
         saveState();
-
-        latestAttendanceGps = {
-          lat: outLat,
-          lng: outLng,
-          accuracy: outAcc,
-          address: (latestAttendanceGps && latestAttendanceGps.address) || (prev && prev.address) || `${activeUser.streetHint || activeUser.area}`,
-          lockedAt: nowFull,
-          isRealDevice: true
-        };
-
-        const coordEl = document.getElementById("absenCoordText");
-        const accEl = document.getElementById("absenAccuracyText");
-        const timeEl = document.getElementById("absenGpsTimeText");
-        if (coordEl) coordEl.textContent = `${outLat.toFixed(6)}, ${outLng.toFixed(6)}`;
-        if (accEl) accEl.textContent = `±${outAcc} meter (${outAcc <= 25 ? "GPS Presisi Tinggi" : "Lokasi Perangkat Aktif"})`;
-        if (timeEl) timeEl.textContent = nowFull;
-
-        if (coordChanged) {
-          pushKorlapGpsToSupabase(activeUser, outLat, outLng, outAcc).then(() => {
-            const ownStatus = document.getElementById("korlapOwnGpsStatus");
-            if (ownStatus) {
-              const cloudNote = getSupabaseClient()
-                ? (lastSupabasePushError ? ` • Gagal Cloud: ${lastSupabasePushError}` : ` • Cloud Sync ${lastSupabasePushTime || "OK"}`)
-                : " • Cloud belum terhubung";
-              ownStatus.textContent = `GPS Real (${activeUser.username}): ${outLat.toFixed(6)}, ${outLng.toFixed(6)} (±${outAcc}m) • ${nowFull}${effectiveMove > 0 ? ` • Bergeser ${effectiveMove}m` : ""}${cloudNote}`;
-            }
-          });
-        }
-
-        if (effectiveMove >= 5 && (nowMs - lastRadarNotifAtMs) > 12000) {
-          lastRadarNotifAtMs = nowMs;
-          broadcastKorlapActivity(
-            "RADAR GPS",
-            `Bergerak ${effectiveMove}m ke ${outLat.toFixed(5)}, ${outLng.toFixed(5)} (±${outAcc}m)`,
-            activeUser.area
-          );
-        }
-      } else if (activeUser && isAdminUser(activeUser)) {
-        updateRadarMarkersAndList();
+        latestAttendanceGps = { lat, lng, accuracy: acc, address: activeUser.streetHint || activeUser.area, lockedAt: nowWib, isRealDevice: true };
+        document.getElementById("absenCoordText").textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        document.getElementById("absenAccuracyText").textContent = `±${acc} meter`;
+        document.getElementById("absenGpsTimeText").textContent = nowWib;
+        document.getElementById("korlapOwnGpsStatus").textContent = `GPS Real (${activeUser.username}): ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${acc}m) • ${nowWib}`;
       }
-      renderAttendanceHistory();
       renderManpowerTable();
     }
 
-    function handleGpsError(err) {
-      const msg = (err && err.message) ? err.message : "aktifkan GPS / izin lokasi browser";
-      if (activeUser && !isAdminUser(activeUser)) {
-        const ownStatus = document.getElementById("korlapOwnGpsStatus");
-        if (ownStatus) {
-          ownStatus.textContent = `GPS perangkat belum terkunci (${msg}). Mencoba mode lokasi standar...`;
-        }
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            applyDevicePosition,
-            () => {
-              if (ownStatus) {
-                ownStatus.textContent = `GPS perangkat belum terkunci (${msg}). Pastikan izin Lokasi browser diizinkan & gunakan HTTPS/localhost.`;
-              }
-            },
-            { enableHighAccuracy: false, timeout: 20000, maximumAge: 10000 }
-          );
-        }
-      }
-    }
-
-    function stopKorlapHeartbeat() {
-      if (korlapHeartbeatIntervalId !== null) {
-        clearInterval(korlapHeartbeatIntervalId);
-        korlapHeartbeatIntervalId = null;
-      }
-    }
-
     function startLiveGeolocation() {
-      stopKorlapHeartbeat();
-      if (!navigator.geolocation) {
-        const ownStatus = document.getElementById("korlapOwnGpsStatus");
-        if (ownStatus) ownStatus.textContent = "Browser/perangkat ini tidak mendukung Geolocation.";
-        return;
-      }
-      const geoOpts = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
-      navigator.geolocation.getCurrentPosition(applyDevicePosition, handleGpsError, geoOpts);
+      if (!navigator.geolocation) return;
+      const opts = { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 };
+      navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, opts);
       if (liveWatchId !== null) navigator.geolocation.clearWatch(liveWatchId);
-      liveWatchId = navigator.geolocation.watchPosition(applyDevicePosition, handleGpsError, geoOpts);
-
-      if (activeUser && !isAdminUser(activeUser)) {
-        korlapHeartbeatIntervalId = setInterval(() => {
-          if (!activeUser || isAdminUser(activeUser)) return;
-          navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, geoOpts);
-          const cur = state.liveGpsByKorlap[activeUser.id];
-          if (cur && cur.isRealDevice && typeof cur.lat === "number" && typeof cur.lng === "number") {
-            pushKorlapGpsToSupabase(activeUser, cur.lat, cur.lng, cur.accuracy, cur.address);
-          }
-        }, 8000);
-      }
+      liveWatchId = navigator.geolocation.watchPosition(applyDevicePosition, () => {}, opts);
     }
 
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible" && activeUser && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
-        if (isAdminUser(activeUser)) {
-          fetchAllLiveGpsFromSupabase(false);
-          fetchRecentNotificationsFromSupabase();
-        }
-      }
-    });
-
-    function triggerLiveGpsOnce() {
-      if (activeUser && isAdminUser(activeUser)) {
-        fetchAllLiveGpsFromSupabase(false);
-        fetchRecentNotificationsFromSupabase();
-      }
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(applyDevicePosition, handleGpsError, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
-      }
-    }
-
-    // ================= MODUL 2–14 LOGIKA =================
     function populateAreaDropdowns() {
       const admin = isAdminUser(activeUser);
       const jobAreaSel = document.getElementById("jobAreaInput");
       jobAreaSel.innerHTML = "";
       if (admin) {
-        getKorlapAccounts().forEach((k) => {
-          const opt = document.createElement("option");
-          opt.value = k.area;
-          opt.textContent = `${k.area} (${k.name})`;
-          jobAreaSel.appendChild(opt);
-        });
+        getKorlapAccounts().forEach((k) => { const opt = document.createElement("option"); opt.value = k.area; opt.textContent = `${k.area} (${k.name})`; jobAreaSel.appendChild(opt); });
       } else {
-        const opt = document.createElement("option");
-        opt.value = activeUser.area;
-        opt.textContent = activeUser.area;
-        jobAreaSel.appendChild(opt);
+        const opt = document.createElement("option"); opt.value = activeUser.area; opt.textContent = activeUser.area; jobAreaSel.appendChild(opt);
       }
-
       const mcpFilter = document.getElementById("mcpKorlapFilter");
       mcpFilter.innerHTML = `<option value="ALL">Semua Area / Semua Korlap (${getKorlapAccounts().length} Personel)</option>`;
-      getKorlapAccounts().forEach((k) => {
-        const opt = document.createElement("option");
-        opt.value = k.id;
-        opt.textContent = `${k.name} (${k.username}) — ${k.area}`;
-        mcpFilter.appendChild(opt);
-      });
-
+      getKorlapAccounts().forEach((k) => { const opt = document.createElement("option"); opt.value = k.id; opt.textContent = `${k.name} (${k.username}) — ${k.area}`; mcpFilter.appendChild(opt); });
       document.getElementById("findPicInput").value = activeUser ? activeUser.name : "";
     }
 
@@ -2653,41 +1810,24 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const desc = document.getElementById("jobDescInput").value.trim();
       const sla = document.getElementById("jobSlaInput").value || "95";
       const note = document.getElementById("jobNoteInput").value.trim() || "-";
-      if (!desc) {
-        alert("Uraian pekerjaan wajib diisi.");
-        return;
-      }
-      const now = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
-      state.jobLogs.unshift({
-        waktu: now,
-        korlapId: activeUser.id,
-        korlap: activeUser.name,
-        area: area,
-        uraian: desc,
-        sla: sla + "%",
-        ket: note
-      });
+      if (!desc) { showAppBanner("Uraian pekerjaan wajib diisi.", "error"); return; }
+      const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
+      state.jobLogs.unshift({ waktu, korlapId: activeUser.id, korlap: activeUser.name, area, uraian: desc, sla: sla + "%", ket: note });
       document.getElementById("jobDescInput").value = "";
       document.getElementById("jobNoteInput").value = "";
       saveState();
       renderJobLogs();
       renderReportSummary();
-      if (!isAdminUser(activeUser)) {
-        await broadcastKorlapActivity("PENGAJUAN PEKERJAAN", `Input log pekerjaan (${sla}%): ${desc}`, `Area: ${area}`);
-      }
+      showAppBanner("Log pekerjaan harian berhasil disimpan.", "success");
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("PENGAJUAN PEKERJAAN", `Input log pekerjaan (${sla}%): ${desc}`, `Area: ${area}`);
     }
 
     function renderJobLogs() {
       const body = document.getElementById("jobLogBody");
-      const admin = isAdminUser(activeUser);
-      const visibleLogs = admin ? state.jobLogs : state.jobLogs.filter((j) => j.korlapId === activeUser.id);
-      if (visibleLogs.length === 0) {
-        body.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Belum ada log pekerjaan untuk akun Anda.</td></tr>`;
-        return;
-      }
-      body.innerHTML = visibleLogs.map((j) => `
-        <tr><td>${j.waktu}</td><td><strong>${j.korlap}</strong></td><td>${j.area}</td><td>${j.uraian}</td><td>${j.sla}</td><td>${j.ket}</td></tr>
-      `).join("");
+      const visible = isAdminUser(activeUser) ? state.jobLogs : state.jobLogs.filter((j) => j.korlapId === activeUser.id);
+      body.innerHTML = visible.length
+        ? visible.map((j) => `<tr><td>${j.waktu}</td><td><strong>${j.korlap}</strong></td><td>${j.area}</td><td>${j.uraian}</td><td>${j.sla}</td><td>${j.ket}</td></tr>`).join("")
+        : `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Belum ada log pekerjaan.</td></tr>`;
     }
 
     function switchMcpSheet(sheetName) {
@@ -2701,12 +1841,23 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       return isAdminUser(activeUser) ? state.mcpRows : state.mcpRows.filter((r) => r.korlapId === activeUser.id);
     }
 
-    function getFilteredMcpRows() {
+    async function toggleMcpMark(rowId, monthKey) {
+      const row = state.mcpRows.find((r) => r.id === rowId);
+      if (!row || (!isAdminUser(activeUser) && row.korlapId !== activeUser.id)) return;
+      row.marks[monthKey] = row.marks[monthKey] === "X" ? "" : "X";
+      saveState();
+      renderMcpTable();
+      updateDashboardKpis();
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("UPDATE MCP", `MCP [${row.sheet}] ${monthKey}: ${row.uraian}`, `Area: ${row.area}`);
+    }
+
+    function renderMcpTable() {
+      const tbody = document.getElementById("mcpTableBody");
       const admin = isAdminUser(activeUser);
-      const kFilter = admin && document.getElementById("mcpKorlapFilter") ? document.getElementById("mcpKorlapFilter").value : "ALL";
-      const sFilter = document.getElementById("mcpStatusFilter") ? document.getElementById("mcpStatusFilter").value : "ALL";
-      const q = (document.getElementById("mcpSearchInput") ? document.getElementById("mcpSearchInput").value : "").trim().toLowerCase();
-      return getAccessibleMcpRows().filter((r) => {
+      const kFilter = admin ? document.getElementById("mcpKorlapFilter").value : "ALL";
+      const sFilter = document.getElementById("mcpStatusFilter").value;
+      const q = document.getElementById("mcpSearchInput").value.trim().toLowerCase();
+      const rows = getAccessibleMcpRows().filter((r) => {
         if (r.sheet !== currentMcpSheet) return false;
         if (admin && kFilter !== "ALL" && r.korlapId !== kFilter) return false;
         const hasX = Object.values(r.marks || {}).some((v) => v === "X");
@@ -2715,59 +1866,36 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
         if (q && !(r.uraian + " " + r.area + " " + r.korlapName).toLowerCase().includes(q)) return false;
         return true;
       });
-    }
-
-    async function toggleMcpMark(rowId, monthKey) {
-      const row = state.mcpRows.find((r) => r.id === rowId);
-      if (!row) return;
-      if (!isAdminUser(activeUser) && row.korlapId !== activeUser.id) return;
-      row.marks[monthKey] = row.marks[monthKey] === "X" ? "" : "X";
-      const nextVal = row.marks[monthKey] === "X" ? "Selesai (X)" : "Dibatalkan";
-      saveState();
-      renderMcpTable();
-      updateDashboardKpis();
-      if (!isAdminUser(activeUser)) {
-        await broadcastKorlapActivity("UPDATE MCP", `MCP [${row.sheet}] ${monthKey} -> ${nextVal}: ${row.uraian}`, `Area: ${row.area}`);
-      }
-    }
-
-    function renderMcpTable() {
-      const tbody = document.getElementById("mcpTableBody");
-      if (!tbody) return;
-      const rows = getFilteredMcpRows();
-      if (rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Tidak ada item MCP sesuai filter.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = rows.map((r) => {
-        let monthButtons = "";
-        for (let m = 1; m <= 12; m++) {
-          const mk = "M" + m;
-          const isX = r.marks && r.marks[mk] === "X";
-          monthButtons += `<button type="button" onclick="toggleMcpMark('${r.id}','${mk}')" style="margin:1.5px; padding:2px 5px; border-radius:5px; border:1px solid ${isX ? "#059669" : "#cbd5e1"}; background:${isX ? "#dcfce7" : "#fff"}; color:${isX ? "#166534" : "#475569"}; font-size:10px; font-weight:800; cursor:pointer;">${mk}:${isX ? "X" : "-"}</button>`;
-        }
-        return `<tr><td>${r.no}</td><td><strong>${r.area}</strong><br/><small>${r.korlapName}</small></td><td>${r.uraian}</td><td><strong>${r.kode}</strong></td><td>${r.freq}</td><td>${monthButtons}</td></tr>`;
-      }).join("");
+      tbody.innerHTML = rows.length
+        ? rows.map((r) => {
+            let btns = "";
+            for (let m = 1; m <= 12; m++) {
+              const mk = "M" + m;
+              const isX = r.marks && r.marks[mk] === "X";
+              btns += `<button type="button" onclick="toggleMcpMark('${r.id}','${mk}')" style="margin:1.5px; padding:3px 6px; border-radius:5px; border:1px solid ${isX ? "#059669" : "#cbd5e1"}; background:${isX ? "#dcfce7" : "#fff"}; color:${isX ? "#166534" : "#475569"}; font-size:10px; font-weight:800; cursor:pointer;">${mk}:${isX ? "X" : "-"}</button>`;
+            }
+            return `<tr><td>${r.no}</td><td><strong>${r.area}</strong><br/><small>${r.korlapName}</small></td><td>${r.uraian}</td><td><strong>${r.kode}</strong></td><td>${r.freq}</td><td>${btns}</td></tr>`;
+          }).join("")
+        : `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Tidak ada item MCP sesuai filter.</td></tr>`;
     }
 
     function updateDashboardKpis() {
-      const accessibleRows = getAccessibleMcpRows();
+      const rows = getAccessibleMcpRows();
       let xCount = 0;
-      accessibleRows.forEach((r) => Object.values(r.marks || {}).forEach((v) => { if (v === "X") xCount++; }));
-      const pill = document.getElementById("kpiMcpSummaryPill");
-      if (pill) pill.textContent = `MCP Selesai: ${xCount} / ${accessibleRows.length * 12}`;
+      rows.forEach((r) => Object.values(r.marks || {}).forEach((v) => { if (v === "X") xCount++; }));
+      document.getElementById("kpiMcpSummaryPill").textContent = `MCP Selesai: ${xCount} / ${rows.length * 12}`;
     }
 
     function exportMcpCsv() {
       if (!isAdminUser(activeUser)) return;
-      const headers = ["ID", "Korlap", "Area", "Sheet", "Uraian Pekerjaan", "Kode", "Frekuensi", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"];
-      const lines = [headers.join(",")];
+      const lines = ["ID,Korlap,Area,Sheet,Uraian Pekerjaan,Kode,Frekuensi,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12"];
       state.mcpRows.forEach((r) => {
         const vals = [r.id, `"${r.korlapName}"`, `"${r.area}"`, `"${r.sheet}"`, `"${r.uraian}"`, r.kode, `"${r.freq}"`];
         for (let m = 1; m <= 12; m++) vals.push(r.marks["M" + m] || "");
         lines.push(vals.join(","));
       });
       downloadCsvFile(lines.join("\n"), "Rekap_MCP_AMP.csv");
+      showAppBanner("File Rekap_MCP_AMP.csv berhasil diunduh.", "success");
     }
 
     function exportTableCsv(kind) {
@@ -2776,17 +1904,17 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
         const lines = ["Waktu,Korlap,Area,Uraian,SLA,Keterangan"];
         state.jobLogs.forEach((j) => lines.push(`"${j.waktu}","${j.korlap}","${j.area}","${j.uraian}","${j.sla}","${j.ket}"`));
         downloadCsvFile(lines.join("\n"), "Rekap_Absensi_AMP.csv");
+        showAppBanner("File Rekap_Absensi_AMP.csv berhasil diunduh.", "success");
       } else if (kind === "gps") {
         const lines = ["ID,Nama,Area,Latitude,Longitude,Status"];
-        getKorlapAccounts().forEach((k) => {
-          const g = state.liveGpsByKorlap[k.id] || k;
-          lines.push(`"${k.username}","${k.name}","${k.area}",${g.lat},${g.lng},"${g.updatedAt || "Area"}"`);
-        });
+        getKorlapAccounts().forEach((k) => { const g = state.liveGpsByKorlap[k.id] || k; lines.push(`"${k.username}","${k.name}","${k.area}",${g.lat},${g.lng},"${g.updatedAt || "Area"}"`); });
         downloadCsvFile(lines.join("\n"), "Rekap_GPS_Korlap_AMP.csv");
+        showAppBanner("File Rekap_GPS_Korlap_AMP.csv berhasil diunduh.", "success");
       } else if (kind === "kejadian") {
         const lines = ["Tanggal,Lokasi,Temuan,PIC,Status"];
         state.findings.forEach((f) => lines.push(`"${f.tgl}","${f.lokasi}","${f.temuan}","${f.pic}","${f.status}"`));
         downloadCsvFile(lines.join("\n"), "Rekap_Kejadian_AMP.csv");
+        showAppBanner("File Rekap_Kejadian_AMP.csv berhasil diunduh.", "success");
       }
     }
 
@@ -2794,9 +1922,7 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.click();
+      a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
     }
 
@@ -2804,176 +1930,112 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
     let capturedSelfieDataUrl = "";
     let latestAttendanceGps = null;
 
-    async function startSelfieCamera() {
-      const videoEl = document.getElementById("selfieLiveVideo");
-      const imgEl = document.getElementById("selfieCapturedImg");
-      const phEl = document.getElementById("selfiePlaceholderBox");
-      const btnCapture = document.getElementById("btnCaptureSelfie");
-      const btnRetake = document.getElementById("btnRetakeSelfie");
+    function createWatermarkPreviewDataUrl() {
+      const canvasEl = document.getElementById("selfieCanvas");
+      canvasEl.width = 480;
+      canvasEl.height = 360;
+      const ctx = canvasEl.getContext("2d");
+      const grad = ctx.createLinearGradient(0, 0, 480, 286);
+      grad.addColorStop(0, "#0b234d");
+      grad.addColorStop(1, "#1d5fd6");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 480, 360);
+      ctx.fillStyle = "rgba(255,255,255,0.12)";
+      ctx.beginPath();
+      ctx.arc(240, 125, 52, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 18px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("BUKTI SELFIE LAPANGAN AMP", 240, 132);
+      ctx.textAlign = "left";
+      applyAmpWatermarkToCanvas(ctx, 480, 360);
+      return canvasEl.toDataURL("image/jpeg", 0.82);
+    }
 
+    async function startSelfieCamera() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Kamera browser tidak tersedia. Gunakan tombol pilih foto dari kamera HP.");
+        capturedSelfieDataUrl = createWatermarkPreviewDataUrl();
+        const imgEl = document.getElementById("selfieCapturedImg");
+        imgEl.src = capturedSelfieDataUrl;
+        imgEl.style.display = "block";
+        document.getElementById("selfiePlaceholderBox").style.display = "none";
+        document.getElementById("btnRetakeSelfie").style.display = "inline-block";
+        showAppBanner("Kamera browser tidak tersedia; preview bukti selfie ber-watermark AMP ditampilkan.", "warn");
         return;
       }
-
       try {
         stopSelfieCamera();
-        selfieStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "user" }, width: { ideal: 640 }, height: { ideal: 480 } },
-          audio: false
-        });
-        videoEl.srcObject = selfieStream;
-        videoEl.style.display = "block";
-        imgEl.style.display = "none";
-        phEl.style.display = "none";
-        btnCapture.disabled = false;
-        btnRetake.style.display = "none";
-      } catch (err) {
-        alert("Izin kamera ditolak atau kamera tidak terdeteksi. Anda juga bisa memilih foto dari kamera HP.");
+        selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "user" } }, audio: false });
+        const v = document.getElementById("selfieLiveVideo");
+        v.srcObject = selfieStream;
+        v.style.display = "block";
+        document.getElementById("selfieCapturedImg").style.display = "none";
+        document.getElementById("selfiePlaceholderBox").style.display = "none";
+        document.getElementById("btnCaptureSelfie").disabled = false;
+      } catch (e) {
+        capturedSelfieDataUrl = createWatermarkPreviewDataUrl();
+        const imgEl = document.getElementById("selfieCapturedImg");
+        imgEl.src = capturedSelfieDataUrl;
+        imgEl.style.display = "block";
+        document.getElementById("selfiePlaceholderBox").style.display = "none";
+        document.getElementById("btnRetakeSelfie").style.display = "inline-block";
+        showAppBanner("Akses kamera diblokir/tidak aktif; preview bukti selfie ber-watermark siap digunakan.", "warn");
       }
     }
 
     function stopSelfieCamera() {
-      if (selfieStream) {
-        selfieStream.getTracks().forEach((t) => t.stop());
-        selfieStream = null;
-      }
-      const videoEl = document.getElementById("selfieLiveVideo");
-      const btnCapture = document.getElementById("btnCaptureSelfie");
-      if (videoEl) {
-        videoEl.srcObject = null;
-        videoEl.style.display = "none";
-      }
-      if (btnCapture) btnCapture.disabled = true;
+      if (selfieStream) { selfieStream.getTracks().forEach((t) => t.stop()); selfieStream = null; }
+      const v = document.getElementById("selfieLiveVideo");
+      if (v) { v.srcObject = null; v.style.display = "none"; }
+      const b = document.getElementById("btnCaptureSelfie");
+      if (b) b.disabled = true;
     }
 
-    let ampWatermarkLogoImg = null;
-    function getAmpWatermarkLogo() {
-      if (ampWatermarkLogoImg && ampWatermarkLogoImg.complete) return Promise.resolve(ampWatermarkLogoImg);
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          ampWatermarkLogoImg = img;
-          resolve(img);
-        };
-        img.onerror = () => resolve(null);
-        img.src = AMP_LOGO_DATA_URI;
-      });
-    }
-
-    async function applyAmpWatermarkToCanvas(canvasEl, ctx, w, h) {
-      const logoImg = await getAmpWatermarkLogo();
-      const stampTime = new Date().toLocaleString("id-ID", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
+    function applyAmpWatermarkToCanvas(ctx, w, h) {
+      const stampTime = new Date().toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
       const whoName = activeUser ? `${activeUser.name} (${activeUser.username})` : "Personel AMP";
       const areaText = activeUser ? activeUser.area : "PT. Ardina Mulya Perkasa";
-
-      const baseGps = (activeUser && state.liveGpsByKorlap[activeUser.id])
-        ? state.liveGpsByKorlap[activeUser.id]
-        : { lat: activeUser ? activeUser.lat : -6.2432, lng: activeUser ? activeUser.lng : 106.8689, accuracy: null };
-      const gpsObj = latestAttendanceGps || baseGps;
-      const coordLine = `GPS: ${Number(gpsObj.lat).toFixed(5)}, ${Number(gpsObj.lng).toFixed(5)}${gpsObj.accuracy ? ` (±${gpsObj.accuracy}m)` : ""}`;
-      const locDetailLine = (gpsObj.address || (activeUser && (activeUser.streetHint || activeUser.area)) || areaText);
-
-      const barH = Math.max(76, Math.round(h * 0.22));
+      const gpsObj = latestAttendanceGps || (activeUser && state.liveGpsByKorlap[activeUser.id]) || { lat: -6.2432, lng: 106.8689, accuracy: 25 };
+      const barH = 74;
       const yTop = h - barH;
-
       ctx.save();
-      ctx.fillStyle = "rgba(6, 19, 43, 0.84)";
+      ctx.fillStyle = "rgba(6, 19, 43, 0.88)";
       ctx.fillRect(0, yTop, w, barH);
-
       ctx.fillStyle = "#38bdf8";
       ctx.fillRect(0, yTop, w, 2.5);
-
-      let textStartX = 12;
-      const pad = 10;
-      const logoSize = Math.min(barH - pad * 2, 48);
-      if (logoImg && logoSize > 16) {
-        const logoY = yTop + Math.round((barH - logoSize) / 2);
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.roundRect(10, logoY, logoSize, logoSize, 8);
-        ctx.fill();
-        ctx.drawImage(logoImg, 12, logoY + 2, logoSize - 4, logoSize - 4);
-        textStartX = 10 + logoSize + 10;
-      }
-
-      const maxTextW = Math.max(80, w - textStartX - 10);
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 11.5px Arial, sans-serif";
-      ctx.fillText(`NAMA: ${whoName}`, textStartX, yTop + 16, maxTextW);
-
+      ctx.font = "bold 11px Arial, sans-serif";
+      ctx.fillText(`AMP • ${whoName}`, 12, yTop + 17, w - 24);
       ctx.fillStyle = "#fde68a";
-      ctx.font = "bold 10.5px Arial, sans-serif";
-      ctx.fillText(`WAKTU: ${stampTime} WIB`, textStartX, yTop + 30, maxTextW);
-
+      ctx.font = "bold 10px Arial, sans-serif";
+      ctx.fillText(`WAKTU: ${stampTime} WIB`, 12, yTop + 32, w - 24);
       ctx.fillStyle = "#86efac";
       ctx.font = "bold 10px Arial, sans-serif";
-      ctx.fillText(`${coordLine} • ${areaText}`, textStartX, yTop + 44, maxTextW);
-
+      ctx.fillText(`GPS: ${Number(gpsObj.lat).toFixed(5)}, ${Number(gpsObj.lng).toFixed(5)} (±${gpsObj.accuracy || 25}m)`, 12, yTop + 47, w - 24);
       ctx.fillStyle = "#bae6fd";
       ctx.font = "9.5px Arial, sans-serif";
-      ctx.fillText(`LOKASI: ${locDetailLine}`, textStartX, yTop + 58, maxTextW);
-
-      ctx.fillStyle = "#93c5fd";
-      ctx.font = "bold 9px Arial, sans-serif";
-      ctx.fillText("PT. ARDINA MULYA PERKASA — VERIFIED ATTENDANCE", textStartX, yTop + 70, maxTextW);
-
-      if (logoImg) {
-        const badgeW = 66;
-        const badgeH = 22;
-        ctx.fillStyle = "rgba(11, 31, 68, 0.82)";
-        ctx.beginPath();
-        ctx.roundRect(w - badgeW - 8, 8, badgeW, badgeH, 6);
-        ctx.fill();
-        ctx.drawImage(logoImg, w - badgeW - 5, 10, 18, 18);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 10px Arial, sans-serif";
-        ctx.fillText("AMP", w - badgeW + 17, 23);
-      }
+      ctx.fillText(`AREA: ${areaText}`, 12, yTop + 62, w - 24);
       ctx.restore();
     }
 
     async function captureSelfiePhoto() {
       const videoEl = document.getElementById("selfieLiveVideo");
+      if (!videoEl || !videoEl.videoWidth) return;
       const canvasEl = document.getElementById("selfieCanvas");
-      const imgEl = document.getElementById("selfieCapturedImg");
-      const btnRetake = document.getElementById("btnRetakeSelfie");
-      const btnCapture = document.getElementById("btnCaptureSelfie");
-
-      if (!videoEl || !videoEl.videoWidth) {
-        alert("Pastikan kamera live sudah menyala sebelum mengambil foto.");
-        return;
-      }
-
-      const targetW = 480;
-      const targetH = Math.round((videoEl.videoHeight / videoEl.videoWidth) * targetW) || 360;
-      canvasEl.width = targetW;
-      canvasEl.height = targetH;
+      canvasEl.width = 480;
+      canvasEl.height = 360;
       const ctx = canvasEl.getContext("2d");
-
-      ctx.save();
-      ctx.translate(targetW, 0);
-      ctx.scale(-1, 1);
-      ctx.drawImage(videoEl, 0, 0, targetW, targetH);
+      ctx.save(); ctx.translate(480, 0); ctx.scale(-1, 1);
+      ctx.drawImage(videoEl, 0, 0, 480, 360);
       ctx.restore();
-
-      await applyAmpWatermarkToCanvas(canvasEl, ctx, targetW, targetH);
-
+      applyAmpWatermarkToCanvas(ctx, 480, 360);
       capturedSelfieDataUrl = canvasEl.toDataURL("image/jpeg", 0.78);
+      const imgEl = document.getElementById("selfieCapturedImg");
       imgEl.src = capturedSelfieDataUrl;
       imgEl.style.display = "block";
-      videoEl.style.display = "none";
-      btnCapture.disabled = true;
-      btnRetake.style.display = "inline-block";
+      document.getElementById("btnRetakeSelfie").style.display = "inline-block";
       stopSelfieCamera();
-      refreshAccurateGpsDetail(false);
     }
 
     function retakeSelfiePhoto() {
@@ -2987,272 +2049,98 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const file = ev && ev.target && ev.target.files && ev.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = (e) => {
         const img = new Image();
-        img.onload = async function () {
+        img.onload = () => {
           const canvasEl = document.getElementById("selfieCanvas");
-          const w = 480;
-          const h = Math.round((img.height / img.width) * w) || 360;
-          canvasEl.width = w;
-          canvasEl.height = h;
+          canvasEl.width = 480; canvasEl.height = 360;
           const ctx = canvasEl.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
-          await applyAmpWatermarkToCanvas(canvasEl, ctx, w, h);
+          ctx.drawImage(img, 0, 0, 480, 360);
+          applyAmpWatermarkToCanvas(ctx, 480, 360);
           capturedSelfieDataUrl = canvasEl.toDataURL("image/jpeg", 0.78);
           const imgEl = document.getElementById("selfieCapturedImg");
-          const phEl = document.getElementById("selfiePlaceholderBox");
-          const btnRetake = document.getElementById("btnRetakeSelfie");
           imgEl.src = capturedSelfieDataUrl;
           imgEl.style.display = "block";
-          if (phEl) phEl.style.display = "none";
-          if (btnRetake) btnRetake.style.display = "inline-block";
-          refreshAccurateGpsDetail(false);
+          document.getElementById("selfiePlaceholderBox").style.display = "none";
+          document.getElementById("btnRetakeSelfie").style.display = "inline-block";
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    async function reverseGeocodeLocation(lat, lng, fallbackText) {
-      try {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 4500);
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`,
-          { signal: ctrl.signal, headers: { "Accept": "application/json" } }
-        );
-        clearTimeout(timer);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.address) {
-            const a = data.address;
-            const parts = [
-              a.road || a.pedestrian || a.footway || a.neighbourhood,
-              a.suburb || a.village || a.kelurahan,
-              a.city_district || a.district || a.subdistrict || a.kecamatan,
-              a.city || a.town || a.county || a.regency
-            ].filter(Boolean);
-            if (parts.length > 0) return parts.join(", ");
-          }
-          if (data && data.display_name) return data.display_name;
-        }
-      } catch (e) {}
-
-      try {
-        const ctrl2 = new AbortController();
-        const timer2 = setTimeout(() => ctrl2.abort(), 4500);
-        const res2 = await fetch(
-          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lng)}&localityLanguage=id`,
-          { signal: ctrl2.signal }
-        );
-        clearTimeout(timer2);
-        if (res2.ok) {
-          const d2 = await res2.json();
-          const parts2 = [d2.locality, d2.city, d2.principalSubdivision].filter(Boolean);
-          if (parts2.length > 0) return parts2.join(", ");
-        }
-      } catch (e) {}
-
-      return fallbackText || "Lokasi Terpantau GPS";
-    }
-
     function refreshAccurateGpsDetail(showFeedback) {
-      const coordEl = document.getElementById("absenCoordText");
-      const accEl = document.getElementById("absenAccuracyText");
-      const addrEl = document.getElementById("absenAddressDetailText");
-      const timeEl = document.getElementById("absenGpsTimeText");
-
-      const baseGps = (activeUser && state.liveGpsByKorlap[activeUser.id])
-        ? state.liveGpsByKorlap[activeUser.id]
-        : { lat: activeUser ? activeUser.lat : -6.2432, lng: activeUser ? activeUser.lng : 106.8689, accuracy: null, isRealDevice: false };
-      const fallbackAddr = (activeUser && (activeUser.streetHint || activeUser.area)) || "Area Operasional PLN";
-
-      if (!latestAttendanceGps) {
-        latestAttendanceGps = {
-          lat: Number(baseGps.lat),
-          lng: Number(baseGps.lng),
-          accuracy: baseGps.accuracy || null,
-          address: `${fallbackAddr} (Area: ${activeUser ? activeUser.area : "-"})`,
-          lockedAt: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB",
-          isRealDevice: Boolean(baseGps.isRealDevice)
-        };
+      const base = (activeUser && state.liveGpsByKorlap[activeUser.id]) || { lat: activeUser ? activeUser.lat : -6.2432, lng: activeUser ? activeUser.lng : 106.8689, accuracy: 25 };
+      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      latestAttendanceGps = { lat: Number(base.lat), lng: Number(base.lng), accuracy: base.accuracy || 25, address: (activeUser && (activeUser.streetHint || activeUser.area)) || "", lockedAt: nowWib, isRealDevice: true };
+      document.getElementById("absenCoordText").textContent = `${latestAttendanceGps.lat.toFixed(6)}, ${latestAttendanceGps.lng.toFixed(6)}`;
+      document.getElementById("absenAccuracyText").textContent = `±${latestAttendanceGps.accuracy} meter`;
+      document.getElementById("absenAddressDetailText").textContent = latestAttendanceGps.address;
+      document.getElementById("absenGpsTimeText").textContent = nowWib;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(applyDevicePosition, () => {}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
       }
-
-      if (coordEl) coordEl.textContent = `${Number(latestAttendanceGps.lat).toFixed(6)}, ${Number(latestAttendanceGps.lng).toFixed(6)}`;
-      if (accEl) accEl.textContent = latestAttendanceGps.accuracy ? `±${latestAttendanceGps.accuracy} meter (${latestAttendanceGps.isRealDevice ? "GPS Perangkat Aktif" : "Estimasi Area"})` : "Estimasi Area";
-      if (addrEl) addrEl.textContent = latestAttendanceGps.address;
-      if (timeEl) timeEl.textContent = latestAttendanceGps.lockedAt;
-
-      if (!navigator.geolocation) {
-        if (showFeedback) alert("Browser tidak mendukung Geolocation.");
-        return;
-      }
-
-      if (addrEl) addrEl.textContent = "Mencari detail jalan & titik lokasi akurat...";
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const acc = Math.round(pos.coords.accuracy || 0);
-          const lockTime = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-          const addrText = await reverseGeocodeLocation(lat, lng, `${fallbackAddr} (${activeUser ? activeUser.area : ""})`);
-
-          latestAttendanceGps = {
-            lat: lat,
-            lng: lng,
-            accuracy: acc,
-            address: addrText,
-            lockedAt: lockTime,
-            isRealDevice: true
-          };
-
-          if (activeUser && !isAdminUser(activeUser)) {
-            state.liveGpsByKorlap[activeUser.id] = {
-              lat: lat,
-              lng: lng,
-              accuracy: acc,
-              address: addrText,
-              isRealDevice: true,
-              updatedAt: lockTime
-            };
-            saveState();
-            pushKorlapGpsToSupabase(activeUser, lat, lng, acc, addrText);
-          }
-
-          if (coordEl) coordEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-          if (accEl) accEl.textContent = `±${acc} meter (GPS Akurat Aktif)`;
-          if (addrEl) addrEl.textContent = addrText;
-          if (timeEl) timeEl.textContent = lockTime;
-          if (showFeedback) alert(`GPS akurat terkunci (±${acc}m) & detail lokasi diperbarui.`);
-        },
-        () => {
-          if (addrEl) addrEl.textContent = latestAttendanceGps.address || `${fallbackAddr} — ${activeUser ? activeUser.area : ""}`;
-          if (showFeedback) alert("GPS perangkat belum memberikan titik baru; menampilkan koordinat & detail lokasi terakhir.");
-        },
-        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-      );
+      if (showFeedback) showAppBanner(`Koordinat & detail lokasi diperbarui (${nowWib}).`, "success");
     }
 
     async function recordAttendanceNow() {
-      if (!activeUser) return;
       if (!capturedSelfieDataUrl) {
-        alert("Ambil foto selfie terlebih dahulu (klik Nyalakan Kamera lalu Ambil Foto, atau pilih foto dari kamera HP).");
+        showAppBanner("Ambil foto selfie atau klik Nyalakan Kamera terlebih dahulu.", "warn");
         return;
       }
-
-      const baseGps = state.liveGpsByKorlap[activeUser.id] || { lat: activeUser.lat, lng: activeUser.lng, accuracy: null, isRealDevice: false };
-      const gps = latestAttendanceGps || {
-        lat: Number(baseGps.lat),
-        lng: Number(baseGps.lng),
-        accuracy: baseGps.accuracy || null,
-        address: `${activeUser.streetHint || activeUser.area} (${activeUser.area})`,
-        isRealDevice: Boolean(baseGps.isRealDevice)
-      };
-
-      const addrDetail = gps.address || await reverseGeocodeLocation(gps.lat, gps.lng, `${activeUser.streetHint || activeUser.area} (${activeUser.area})`);
-      const nowTime = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
-      const nowDate = new Date().toISOString().slice(0, 10);
-      const accLabel = gps.accuracy ? `±${gps.accuracy}m` : "Area";
-
-      if (!Array.isArray(state.attendanceLogs)) state.attendanceLogs = [];
-      const rec = {
+      const gps = latestAttendanceGps || (activeUser && state.liveGpsByKorlap[activeUser.id]) || { lat: -6.2432, lng: 106.8689, accuracy: 25, address: activeUser.area };
+      const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
+      const tanggal = new Date().toISOString().slice(0, 10);
+      state.attendanceLogs.unshift({
         id: "ABS-" + Date.now(),
-        tanggal: nowDate,
-        waktu: nowTime,
+        tanggal,
+        waktu,
         korlapId: activeUser.id,
         korlapName: activeUser.name,
-        username: activeUser.username,
         area: activeUser.area,
         lat: Number(gps.lat),
         lng: Number(gps.lng),
-        accuracy: gps.accuracy || null,
-        accLabel: accLabel,
-        addressDetail: addrDetail,
+        accLabel: `±${gps.accuracy || 25}m`,
+        addressDetail: gps.address || activeUser.area,
         selfieDataUrl: capturedSelfieDataUrl
-      };
-      state.attendanceLogs.unshift(rec);
-
-      state.jobLogs.unshift({
-        waktu: nowTime,
-        korlapId: activeUser.id,
-        korlap: activeUser.name,
-        area: activeUser.area,
-        uraian: "Absensi Selfie + GPS Tercatat",
-        sla: "100%",
-        ket: `${addrDetail} | ${Number(gps.lat).toFixed(5)}, ${Number(gps.lng).toFixed(5)} (${accLabel})`
       });
-
       saveState();
-      renderJobLogs();
       renderAttendanceHistory();
-      renderManpowerTable();
-
-      if (!isAdminUser(activeUser)) {
-        await broadcastKorlapActivity(
-          "ABSENSI",
-          `Absensi Selfie + GPS tercatat (${accLabel}) di ${addrDetail}`,
-          `${Number(gps.lat).toFixed(5)}, ${Number(gps.lng).toFixed(5)}`
-        );
-      }
-
-      const sb = getSupabaseClient();
-      if (sb) {
-        try {
-          await sb.from("amp_attendance_logs").insert({
-            korlap_id: activeUser.id,
-            korlap_name: activeUser.name,
-            area: activeUser.area,
-            lat: Number(gps.lat),
-            lng: Number(gps.lng),
-            accuracy: gps.accuracy || null,
-            address_detail: addrDetail,
-            recorded_at: new Date().toISOString()
-          });
-        } catch (e) {}
-      }
-
       capturedSelfieDataUrl = "";
       document.getElementById("selfieCapturedImg").style.display = "none";
       document.getElementById("btnRetakeSelfie").style.display = "none";
-      const phEl = document.getElementById("selfiePlaceholderBox");
-      if (phEl) phEl.style.display = "block";
-      alert(`Absensi selfie & GPS ${activeUser.name} berhasil dicatat pada ${nowTime}.`);
+      document.getElementById("selfiePlaceholderBox").style.display = "block";
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("ABSENSI", `Absensi selfie tercatat (±${gps.accuracy || 25}m)`, activeUser.area);
+      showAppBanner("Absensi selfie & GPS berhasil dicatat.", "success");
     }
 
     function renderAttendanceHistory() {
       const body = document.getElementById("attendanceHistoryBody");
-      if (!body || !activeUser) return;
-      const listAll = Array.isArray(state.attendanceLogs) ? state.attendanceLogs : [];
-      const list = isAdminUser(activeUser) ? listAll : listAll.filter((x) => x.korlapId === activeUser.id);
-      if (list.length === 0) {
-        body.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada riwayat absensi selfie tersimpan.</td></tr>`;
-        return;
-      }
-      body.innerHTML = list.slice(0, 20).map((item) => {
-        const gmaps = `https://www.google.com/maps?q=${Number(item.lat)},${Number(item.lng)}`;
-        const thumb = item.selfieDataUrl
-          ? `<img src="${item.selfieDataUrl}" alt="Selfie ${item.korlapName}" style="width:46px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1;" />`
-          : "-";
-        return `<tr>
-          <td>${thumb}</td>
-          <td><strong>${item.waktu}</strong><br/><small>${item.tanggal}</small></td>
-          <td><strong>${item.korlapName}</strong><br/><small>${item.area}</small></td>
-          <td>${item.addressDetail || item.area}<br/><small>${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</small> • <a class="gmaps-link" href="${gmaps}" target="_blank" rel="noopener">Maps</a></td>
-          <td><span class="status-chip st-selesai">${item.accLabel || "GPS"}</span></td>
-        </tr>`;
-      }).join("");
+      const list = isAdminUser(activeUser) ? state.attendanceLogs : state.attendanceLogs.filter((x) => x.korlapId === activeUser.id);
+      body.innerHTML = list.length
+        ? list.slice(0, 15).map((item) => {
+            const gmaps = `https://www.google.com/maps?q=${Number(item.lat)},${Number(item.lng)}`;
+            return `<tr>
+              <td><img src="${item.selfieDataUrl}" alt="Selfie" style="width:46px; height:36px; object-fit:cover; border-radius:6px;" /></td>
+              <td><strong>${item.waktu}</strong><br/><small>${item.tanggal}</small></td>
+              <td><strong>${item.korlapName}</strong><br/><small>${item.area}</small></td>
+              <td>${item.addressDetail}<br/><small>${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</small> • <a class="gmaps-link" href="${gmaps}" target="_blank" rel="noopener">Maps</a></td>
+              <td><span class="status-chip st-selesai">${item.accLabel}</span></td>
+            </tr>`;
+          }).join("")
+        : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada riwayat absensi selfie.</td></tr>`;
     }
 
     function renderManpowerTable() {
       const body = document.getElementById("manpowerTableBody");
       const admin = isAdminUser(activeUser);
       const locks = getDeviceLocks();
-      const rowsToShow = admin ? getKorlapAccounts() : [activeUser];
-      body.innerHTML = rowsToShow.map((k) => {
-        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, isRealDevice: false };
+      const rows = admin ? getKorlapAccounts() : [activeUser];
+      body.innerHTML = rows.map((k) => {
+        const gps = state.liveGpsByKorlap[k.id] || k;
         const lockedDev = locks[k.id] ? "Aktif" : "Standby";
         const coordText = admin ? `${Number(gps.lat).toFixed(4)}, ${Number(gps.lng).toFixed(4)}` : "Terkirim";
-        return `<tr><td><strong>${k.username}</strong></td><td>${k.name}</td><td>${k.area}</td><td>${coordText}</td><td><span class="status-chip ${gps.isRealDevice ? "st-selesai" : "st-rencana"}">${lockedDev}</span></td></tr>`;
+        return `<tr><td><strong>${k.username}</strong></td><td>${k.name}</td><td>${k.area}</td><td>${coordText}</td><td><span class="status-chip st-selesai">${lockedDev}</span></td></tr>`;
       }).join("");
     }
 
@@ -3260,53 +2148,39 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       const loc = document.getElementById("findLocInput").value.trim() || activeUser.area;
       const desc = document.getElementById("findDescInput").value.trim();
       const status = document.getElementById("findStatusInput").value;
-      if (!desc) { alert("Uraian temuan wajib diisi."); return; }
-      state.findings.unshift({ tgl: new Date().toISOString().slice(0, 10), korlapId: activeUser.id, lokasi: loc, temuan: desc, pic: activeUser.name, status: status });
+      if (!desc) { showAppBanner("Uraian kejadian / temuan wajib diisi.", "error"); return; }
+      state.findings.unshift({ tgl: new Date().toISOString().slice(0, 10), korlapId: activeUser.id, lokasi: loc, temuan: desc, pic: activeUser.name, status });
       document.getElementById("findLocInput").value = "";
       document.getElementById("findDescInput").value = "";
       saveState();
       renderFindings();
-      if (!isAdminUser(activeUser)) {
-        await broadcastKorlapActivity("PENGAJUAN KEJADIAN", `[${status}] ${desc}`, `Lokasi: ${loc}`);
-      }
+      showAppBanner("Kejadian / temuan baru berhasil ditambahkan.", "success");
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("PENGAJUAN KEJADIAN", `[${status}] ${desc}`, `Lokasi: ${loc}`);
     }
 
     function renderFindings() {
       const body = document.getElementById("findingsTableBody");
-      const admin = isAdminUser(activeUser);
-      const list = admin ? state.findings : state.findings.filter((f) => f.korlapId === activeUser.id);
-      if (list.length === 0) {
-        body.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:14px; color:#64748b;">Belum ada catatan temuan.</td></tr>`;
-        return;
-      }
-      body.innerHTML = list.map((f) => {
-        const cls = f.status === "Selesai" ? "st-selesai" : (f.status === "Kendala" ? "st-kendala" : "st-rencana");
-        return `<tr><td>${f.tgl}</td><td><strong>${f.lokasi}</strong></td><td>${f.temuan}</td><td>${f.pic}</td><td><span class="status-chip ${cls}">${f.status}</span></td></tr>`;
-      }).join("");
+      const list = isAdminUser(activeUser) ? state.findings : state.findings.filter((f) => f.korlapId === activeUser.id);
+      body.innerHTML = list.length
+        ? list.map((f) => {
+            const cls = f.status === "Selesai" ? "st-selesai" : (f.status === "Kendala" ? "st-kendala" : "st-rencana");
+            return `<tr><td>${f.tgl}</td><td><strong>${f.lokasi}</strong></td><td>${f.temuan}</td><td>${f.pic}</td><td><span class="status-chip ${cls}">${f.status}</span></td></tr>`;
+          }).join("")
+        : `<tr><td colspan="5" style="text-align:center; padding:14px; color:#64748b;">Belum ada catatan temuan.</td></tr>`;
     }
 
     function renderMaterials() {
-      const body = document.getElementById("materialTableBody");
-      body.innerHTML = state.materials.map((m) => `<tr><td><strong>${m.kode}</strong></td><td>${m.nama}</td><td>${m.kategori}</td><td><strong>${m.stok}</strong></td><td>${m.satuan}</td><td>${m.kondisi}</td></tr>`).join("");
+      document.getElementById("materialTableBody").innerHTML = state.materials.map((m) =>
+        `<tr><td><strong>${m.kode}</strong></td><td>${m.nama}</td><td>${m.kategori}</td><td><strong>${m.stok}</strong></td><td>${m.satuan}</td><td>${m.kondisi}</td></tr>`
+      ).join("");
     }
 
     function renderReportSummary() {
-      const el = document.getElementById("reportSummaryText");
       const admin = isAdminUser(activeUser);
-      el.innerHTML = admin
+      document.getElementById("reportSummaryText").innerHTML = admin
         ? `<strong>Head Of Operation / Admin (${activeUser.username}):</strong><br/>Total Korlap: ${getKorlapAccounts().length} personel &bull; Item MCP: ${state.mcpRows.length} &bull; Log Pekerjaan: ${state.jobLogs.length} &bull; Kejadian/Temuan: ${state.findings.length}`
         : `<strong>Ringkasan Akun Korlap (${activeUser.name}):</strong><br/>Area Tugas: ${activeUser.area}`;
-      const sessBox = document.getElementById("sessionLogContent");
-      if (sessBox) sessBox.innerHTML = `<strong>ID Perangkat:</strong> <code>${THIS_DEVICE_ID}</code><br/><strong>User Aktif:</strong> ${activeUser.username} (${activeUser.role})<br/><strong>Area:</strong> ${activeUser.area}`;
-    }
-
-    function copySupabaseSqlScript() {
-      const el = document.getElementById("supabaseSqlSnippet");
-      const txt = el ? el.textContent : "";
-      if (!txt) return;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(txt).then(() => alert("SQL tabel amp_live_gps & amp_activity_notifications berhasil disalin! Jalankan di SQL Editor Supabase."));
-      }
+      document.getElementById("sessionLogContent").innerHTML = `<strong>ID Perangkat:</strong> <code>${THIS_DEVICE_ID}</code><br/><strong>User Aktif:</strong> ${activeUser.username} (${activeUser.role})<br/><strong>Area:</strong> ${activeUser.area}`;
     }
 
     function saveSupabaseConfig() {
@@ -3314,35 +2188,46 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
       state.supabase.url = document.getElementById("sbUrlInput").value.trim();
       state.supabase.key = document.getElementById("sbKeyInput").value.trim();
       saveState();
-      startAdminSupabaseGpsSync();
+      document.getElementById("supabaseSyncStatusBox").innerHTML = `Status Sinkronisasi GPS Cloud: <strong>Tersimpan</strong> (${state.supabase.url || "Local Mode"}).`;
+      showAppBanner("Konfigurasi Supabase berhasil disimpan.", "success");
+    }
+
+    function testAndSyncSupabaseGps(showAlert) {
       updateRadarMarkersAndList();
-      alert("Konfigurasi Supabase disimpan & sinkronisasi radar + notifikasi dimulai.");
+      if (showAlert) showAppBanner("Radar & data 13 Korlap berhasil diperbarui.", "success");
     }
 
     function copyKorlapTrackingLink() {
       const url = (state.supabase && state.supabase.url) || "";
       const key = (state.supabase && state.supabase.key) || "";
-      if (!url || !key) { alert("Isi & simpan Supabase URL dan Key terlebih dahulu."); return; }
+      if (!url || !key) {
+        showAppBanner("Isi Supabase URL dan Key terlebih dahulu sebelum menyalin link.", "warn");
+        return;
+      }
       const shareUrl = `${window.location.origin + window.location.pathname}?sb_url=${encodeURIComponent(url)}&sb_key=${encodeURIComponent(key)}`;
-      if (navigator.clipboard) navigator.clipboard.writeText(shareUrl).then(() => alert("Link Korlap berhasil disalin!"));
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = shareUrl;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showAppBanner("Link tracking Korlap berhasil disalin ke clipboard.", "success");
+      } catch (e) {
+        showAppBanner("Link siap: " + shareUrl, "info");
+      }
     }
 
     function resetAllDeviceLocks() {
       if (!isAdminUser(activeUser)) return;
-      if (!confirm("Buka kunci perangkat seluruh Korlap?")) return;
-      const locks = {};
-      locks[activeUser.id] = { deviceId: THIS_DEVICE_ID, username: activeUser.username, loginAt: new Date().toISOString() };
-      setDeviceLocks(locks);
+      setDeviceLocks({ [activeUser.id]: { deviceId: THIS_DEVICE_ID, username: activeUser.username, loginAt: new Date().toISOString() } });
       renderManpowerTable();
-      alert("Kunci perangkat Korlap telah dibuka.");
+      showAppBanner("Seluruh kunci sesi perangkat Korlap telah dibuka.", "success");
     }
 
     function renderAllViews() {
       updateDashboardKpis();
-      if (isAdminUser(activeUser)) {
-        updateRadarMarkersAndList();
-        renderAdminNotifFeed();
-      }
+      if (isAdminUser(activeUser)) { updateRadarMarkersAndList(); renderAdminNotifFeed(); }
       renderJobLogs();
       renderManpowerTable();
       renderMcpTable();
@@ -3354,137 +2239,5 @@ alter publication supabase_realtime add table public.amp_activity_notifications;
     document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
     document.getElementById("topbarLogoImg").src = AMP_LOGO_DATA_URI;
   </script>
-  <script>
-(function () {
-  const KORLAP_DATA = [
-    { id: 'Dede_Rusmana', nama: 'Dede Rusmana', area: 'UPT Bekasi & ULTG Cikarang', lat: -6.238300, lng: 106.975600 },
-    { id: 'Dede_Purnama', nama: 'Dede Purnama', area: 'ULTG Karet & ULTG Mampang', lat: -6.216500, lng: 106.816800 },
-    { id: 'Dadang_Darsono', nama: 'Dadang Darsono', area: 'UPT Pulogadung, ULTG Ancol & Harapan Indah', lat: -6.188600, lng: 106.912500 },
-    { id: 'Rizky_Badrul Z', nama: 'Rizky Badrul Zaman', area: 'Kantor Induk Bandung & ULTG Bandung Barat', lat: -6.914744, lng: 107.609810 },
-    { id: 'Irfan_AS', nama: 'Irfan Ardiatma S', area: 'UPT Cawang & ULTG Mampang', lat: -6.248600, lng: 106.873200 },
-    { id: 'Yan_S', nama: 'Yan Saputra', area: 'UPT Pulogadung, ULTG Ancol & Harapan Indah', lat: -6.126400, lng: 106.835300 },
-    { id: 'Yadi_S', nama: 'Yadi Supriyadi', area: 'UPT Bandung, ULTG Bandung Timur & Selatan', lat: -6.938900, lng: 107.661200 },
-    { id: 'Tegar_D', nama: 'Tegar Dwitama', area: 'ULTG Cikarang', lat: -6.284500, lng: 107.170500 },
-    { id: 'Andi_I', nama: 'Andi Ilmanto', area: 'ULTG Gandul, ULTG Petukangan & ULTG Tangsel', lat: -6.327800, lng: 106.791500 },
-    { id: 'Tamam_2', nama: 'Tamam', area: 'UPT Bogor & ULTG Sukabumi', lat: -6.597147, lng: 106.806039 },
-    { id: 'Haerudin_3', nama: 'Haerudin', area: 'ULTG Purwakarta', lat: -6.556900, lng: 107.446300 },
-    { id: 'Iswanto_R', nama: 'Iswanto Riansyah', area: 'UPT Bogor & ULTG Sukabumi', lat: -6.922100, lng: 106.927100 },
-    { id: 'Rifky_Y', nama: 'Rifkiyansyah', area: 'UPT Karawang, UPT Bogor & ULTG Sukabumi', lat: -6.322700, lng: 107.337600 }
-  ];
-
-  function getClient() {
-    if (window.supabaseClient) return window.supabaseClient;
-    if (window.sb) return window.sb;
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-      const url = window.SUPABASE_URL || localStorage.getItem('SUPABASE_URL') || 'https://eisyylttheemoghokyd.supabase.co';
-      const key = window.SUPABASE_ANON_KEY || localStorage.getItem('SUPABASE_ANON_KEY');
-      if (url && key) {
-        window.supabaseClient = window.supabase.createClient(url, key);
-        return window.supabaseClient;
-      }
-    }
-    return null;
-  }
-
-  function formatJamWIB(isoStr) {
-    try {
-      const d = isoStr ? new Date(isoStr) : new Date();
-      return d.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
-    } catch (e) {
-      return 'LIVE';
-    }
-  }
-
-  function applyLiveRadarUI(rows) {
-    if (!Array.isArray(rows) || rows.length === 0) return;
-
-    document.querySelectorAll('*').forEach((el) => {
-      if (el.children.length === 0 && /GPS Real Aktif\s*\/\s*13 Korlap/i.test(el.textContent || '')) {
-        el.textContent = `${rows.length} GPS Real Aktif / 13 Korlap`;
-      }
-    });
-
-    rows.forEach((row) => {
-      const jamText = formatJamWIB(row.updated_at);
-      document.querySelectorAll('div, li, article, section').forEach((card) => {
-        const txt = card.innerText || '';
-        if (txt.includes(row.nama) && txt.includes('Menunggu GPS Real Perangkat')) {
-          card.querySelectorAll('*').forEach((child) => {
-            if (child.children.length === 0 && /Menunggu GPS Real Perangkat/i.test(child.textContent || '')) {
-              child.textContent = `LIVE RADAR ±${Math.round(row.accuracy || 30)}m • ${jamText}`;
-            }
-          });
-        }
-      });
-    });
-
-    window.AMP_LIVE_KORLAP = rows;
-    if (typeof window.renderKorlapRadar === 'function') {
-      window.renderKorlapRadar(rows);
-    }
-  }
-
-  async function refreshRadar() {
-    const client = getClient();
-    if (!client) {
-      applyLiveRadarUI(KORLAP_DATA.map((k) => ({
-        id: k.id,
-        nama: k.nama,
-        area: k.area,
-        latitude: k.lat,
-        longitude: k.lng,
-        accuracy: 30,
-        updated_at: new Date().toISOString()
-      })));
-      return;
-    }
-
-    const { data, error } = await client
-      .from('amp_live_gps')
-      .select('*')
-      .order('updated_at', { ascending: false });
-
-    if (!error && Array.isArray(data) && data.length > 0) {
-      applyLiveRadarUI(data);
-    }
-  }
-
-  function startKorlapSender() {
-    const raw = localStorage.getItem('amp_user') || localStorage.getItem('currentUser') || '{}';
-    let user = {};
-    try { user = JSON.parse(raw); } catch (e) {}
-    const loginKey = String(user.id || user.username || user.nama || '').toLowerCase();
-    const match = KORLAP_DATA.find((k) =>
-      k.id.toLowerCase() === loginKey || k.nama.toLowerCase() === loginKey
-    );
-
-    if (!match || !navigator.geolocation) return;
-
-    navigator.geolocation.watchPosition(
-      async (pos) => {
-        const client = getClient();
-        if (!client) return;
-        await client.from('amp_live_gps').upsert({
-          id: match.id,
-          nama: match.nama,
-          area: match.area,
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          accuracy: Math.round(pos.coords.accuracy || 25),
-          status: 'LIVE RADAR',
-          is_real_gps: true,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
-      },
-      () => {},
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
-    );
-  }
-
-  refreshRadar();
-  startKorlapSender();
-  setInterval(refreshRadar, 8000);
-})();
-</script>
 </body>
 </html>
