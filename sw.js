@@ -1,6 +1,14 @@
-const CACHE_NAME = "mbcs-amp-v1";
+const CACHE_NAME = "mbcs-amp-v7";
+const ASSETS_TO_CACHE = [
+  "/amp-monitoring/",
+  "/amp-monitoring/index.html",
+  "/amp-monitoring/manifest.json"
+];
 
 self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)).catch(() => {})
+  );
   self.skipWaiting();
 });
 
