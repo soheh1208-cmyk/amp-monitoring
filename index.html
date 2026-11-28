@@ -14,6 +14,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const AMP_LOGO_DATA_URI = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='28' fill='%230b1f44'/%3E%3Cpolygon points='100,12 122,70 180,42 140,92 188,130 130,130 140,188 100,146 60,188 70,130 12,130 60,92 20,42 78,70' fill='%231e3a8a' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='52' y='74' width='96' height='48' rx='10' fill='%2300a8ff'/%3E%3Ctext x='100' y='108' font-family='Arial,sans-serif' font-weight='900' font-size='32' fill='%23ffffff' text-anchor='middle'%3EAMP%3C/text%3E%3C/svg%3E";
+  </script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Arial, sans-serif; }
@@ -23,7 +26,7 @@
       min-height: 100vh;
       min-height: 100dvh;
       width: 100%;
-      background: linear-gradient(180deg, #b8dcff 0%, #dbeeff 36%, #eef6ff 66%, #e2f1ff 100%);
+      background: linear-gradient(180deg, #071736 0%, #0b2454 34%, #153e85 60%, #e6effa 85%, #eef4fc 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -38,8 +41,8 @@
       left: 50%;
       transform: translateX(-50%);
       width: 150%;
-      height: 290px;
-      background: radial-gradient(ellipse at center, #7cc0ff 0%, #a5d5ff 68%, rgba(165, 213, 255, 0) 100%);
+      height: 340px;
+      background: radial-gradient(ellipse at center, #1d4ed8 0%, #0b1f44 68%, rgba(11, 31, 68, 0) 100%);
       border-bottom-left-radius: 50% 45%;
       border-bottom-right-radius: 50% 45%;
       z-index: 0;
@@ -57,17 +60,24 @@
       padding: 18px 14px 20px;
     }
 
-    .hero-brand-header { text-align: center; width: 100%; margin-bottom: 6px; }
-    .amp-logo-img { width: 72px; height: 72px; object-fit: contain; border-radius: 16px; display: block; margin: 0 auto 8px; box-shadow: 0 8px 20px rgba(11, 31, 68, 0.22); background: #0b1f44; }
-    .company-title { font-size: 13.5px; font-weight: 800; letter-spacing: 0.7px; color: #0f295c; text-transform: uppercase; margin-bottom: 2px; }
-    .system-title { font-size: 20px; font-weight: 800; color: #0b1f44; line-height: 1.15; }
-    .system-sub { font-size: 32px; font-weight: 900; letter-spacing: 0.5px; color: #091a3a; line-height: 1.08; margin-top: 2px; }
+    .hero-brand-header { text-align: center; width: 100%; margin-bottom: 10px; }
+    .amp-logo-img { width: 72px; height: 72px; object-fit: contain; border-radius: 16px; display: block; margin: 0 auto 8px; box-shadow: 0 8px 20px rgba(4, 14, 34, 0.45); background: #ffffff; padding: 4px; border: 2px solid rgba(56, 189, 248, 0.45); }
+    .company-title { font-size: 13.5px; font-weight: 800; letter-spacing: 0.7px; color: #7dd3fc; text-transform: uppercase; margin-bottom: 2px; }
+    .system-title { font-size: 20px; font-weight: 800; color: #e0f2fe; line-height: 1.15; }
+    .system-sub { font-size: 32px; font-weight: 900; letter-spacing: 0.5px; color: #ffffff; line-height: 1.08; margin-top: 2px; text-shadow: 0 2px 12px rgba(7, 23, 54, 0.45); }
     .hero-tagline-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
-    .hero-tagline-line { height: 1px; width: 32px; background: rgba(15, 41, 92, 0.28); }
-    .tagline-italic { font-size: 11px; font-style: italic; font-weight: 600; color: #1e3a6e; }
+    .hero-tagline-line { height: 1px; width: 32px; background: rgba(186, 230, 253, 0.45); }
+    .tagline-italic { font-size: 11px; font-style: italic; font-weight: 600; color: #bae6fd; }
 
-    .hero-scene-box { width: 100%; max-width: 490px; height: 148px; position: relative; margin: 2px auto -26px; z-index: 2; pointer-events: none; }
-    .hero-scene-svg { width: 100%; height: 100%; display: block; }
+    .hero-scene-box {
+      width: 100%;
+      max-width: 410px;
+      height: 175px;
+      position: relative;
+      margin: 4px auto -20px;
+      z-index: 2;
+      pointer-events: none;
+    }
 
     .pin-card {
       width: 100%;
@@ -158,49 +168,6 @@
 
     #appShell { display: none; min-height: 100vh; min-height: 100dvh; background: #e9eff6; padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)); }
     .mobile-app-frame { width: 100%; max-width: 540px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; background: #f1f5f9; position: relative; box-shadow: 0 0 35px rgba(15, 23, 42, 0.12); overflow-x: clip; }
-
-    .preview-sandbox-bar {
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 6px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-      font-size: 10.5px;
-      border-bottom: 1px solid #1e293b;
-    }
-    .preview-sandbox-bar select {
-      background: #1e293b;
-      color: #ffffff;
-      border: 1px solid #475569;
-      border-radius: 6px;
-      padding: 3px 6px;
-      font-size: 10.5px;
-      max-width: 210px;
-    }
-    .preview-quick-pills {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .preview-quick-btn {
-      background: #1e293b;
-      color: #e2e8f0;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 3px 7px;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .preview-quick-btn:hover {
-      background: #2563eb;
-      border-color: #60a5fa;
-      color: #ffffff;
-    }
 
     .amp-topbar {
       background: #0b1f44;
@@ -471,7 +438,7 @@
 
     <div class="hero-wrapper">
       <div class="hero-brand-header">
-        <img class="amp-logo-img" id="loginLogoImg" alt="Logo PT. Ardina Mulya Perkasa" />
+        <img class="amp-logo-img" id="loginLogoImg" src="LOGO1.jpg" onerror="this.onerror=null;this.src=AMP_LOGO_DATA_URI;" alt="Logo PT. Ardina Mulya Perkasa" />
         <div class="company-title">PT. ARDINA MULYA PERKASA</div>
         <div class="system-title">Monitoring Operasional</div>
         <div class="system-sub">MBCS AMP</div>
@@ -483,44 +450,70 @@
       </div>
 
       <div class="hero-scene-box" aria-hidden="true">
-        <svg class="hero-scene-svg" viewBox="0 0 540 175" xmlns="http://www.w3.org/2000/svg">
-          <rect x="25" y="52" width="34" height="90" rx="3" fill="#93c5fd" opacity="0.7"/>
-          <rect x="66" y="34" width="42" height="108" rx="4" fill="#60a5fa" opacity="0.75"/>
-          <rect x="116" y="58" width="32" height="84" rx="3" fill="#93c5fd" opacity="0.65"/>
-          <rect x="392" y="42" width="40" height="100" rx="4" fill="#60a5fa" opacity="0.75"/>
-          <rect x="440" y="60" width="36" height="82" rx="3" fill="#93c5fd" opacity="0.7"/>
-          <rect x="484" y="48" width="34" height="94" rx="3" fill="#3b82f6" opacity="0.6"/>
-          <ellipse cx="90" cy="136" rx="75" ry="14" fill="#22c55e" opacity="0.75"/>
-          <ellipse cx="445" cy="136" rx="85" ry="14" fill="#16a34a" opacity="0.75"/>
-          <g transform="translate(115, 22) rotate(-8)">
-            <rect x="0" y="0" width="76" height="128" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
-            <rect x="5" y="8" width="66" height="110" rx="6" fill="#e0f2fe"/>
-            <path d="M14 25 L56 42 L26 68 L58 92" fill="none" stroke="#1d5fd6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="42" cy="36" r="6" fill="#2563eb"/>
-            <circle cx="48" cy="84" r="6" fill="#0284c7"/>
+        <svg viewBox="0 0 420 185" width="100%" height="100%">
+          <!-- Gedung / Area Kerja Latar Belakang -->
+          <rect x="26" y="42" width="38" height="108" rx="6" fill="#93c5fd" opacity="0.55" />
+          <rect x="70" y="24" width="46" height="126" rx="7" fill="#60a5fa" opacity="0.65" />
+          <rect x="122" y="54" width="36" height="96" rx="6" fill="#93c5fd" opacity="0.5" />
+          <rect x="272" y="34" width="44" height="116" rx="7" fill="#60a5fa" opacity="0.65" />
+          <rect x="322" y="58" width="36" height="92" rx="6" fill="#93c5fd" opacity="0.55" />
+          <rect x="364" y="44" width="32" height="106" rx="6" fill="#60a5fa" opacity="0.48" />
+
+          <!-- Jendela Area Kerja -->
+          <g fill="#e0f2fe" opacity="0.65">
+            <rect x="78" y="36" width="10" height="8" rx="2" /><rect x="96" y="36" width="10" height="8" rx="2" />
+            <rect x="78" y="52" width="10" height="8" rx="2" /><rect x="96" y="52" width="10" height="8" rx="2" />
+            <rect x="280" y="46" width="10" height="8" rx="2" /><rect x="298" y="46" width="10" height="8" rx="2" />
+            <rect x="280" y="62" width="10" height="8" rx="2" /><rect x="298" y="62" width="10" height="8" rx="2" />
           </g>
-          <g transform="translate(215, 52)">
-            <path d="M22 0 C10 0 0 10 0 22 C0 38 22 60 22 60 C22 60 44 38 44 22 C44 10 34 0 22 0 Z" fill="#1d5fd6"/>
-            <circle cx="22" cy="21" r="9" fill="#ffffff"/>
-            <circle cx="22" cy="21" r="4.5" fill="#0284c7"/>
+
+          <!-- Tanah / Area Lapangan Hijau -->
+          <ellipse cx="105" cy="148" rx="88" ry="13" fill="#16a34a" opacity="0.88" />
+          <ellipse cx="315" cy="148" rx="88" ry="13" fill="#16a34a" opacity="0.88" />
+
+          <!-- Satelit & Sinyal GPS -->
+          <g transform="translate(318, 12) rotate(-24)">
+            <rect x="0" y="8" width="18" height="10" rx="2" fill="#2563eb" />
+            <rect x="20" y="5" width="14" height="16" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="2" />
+            <rect x="36" y="8" width="18" height="10" rx="2" fill="#2563eb" />
           </g>
-          <g transform="translate(272, 68)">
-            <path d="M12 42 L22 18 C25 13 30 11 36 11 L82 11 C89 11 95 14 99 20 L114 38 L124 41 C128 43 130 47 130 52 L130 62 L6 62 L6 50 C6 45 9 43 12 42 Z" fill="#ffffff" stroke="#0f295c" stroke-width="2"/>
-            <path d="M28 16 L46 16 L46 34 L18 34 Z" fill="#bae6fd"/>
-            <path d="M52 16 L80 16 L90 34 L52 34 Z" fill="#bae6fd"/>
-            <rect x="44" y="40" width="38" height="11" rx="4" fill="#eff6ff" stroke="#1d5fd6" stroke-width="1.2"/>
-            <circle cx="63" cy="45.5" r="3.5" fill="#1d5fd6"/>
-            <circle cx="30" cy="62" r="13" fill="#1e293b" stroke="#94a3b8" stroke-width="3"/>
-            <circle cx="30" cy="62" r="5" fill="#e2e8f0"/>
-            <circle cx="104" cy="62" r="13" fill="#1e293b" stroke="#94a3b8" stroke-width="3"/>
-            <circle cx="104" cy="62" r="5" fill="#e2e8f0"/>
+          <path d="M312 36 Q304 46 314 54" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M304 42 Q294 54 306 64" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" />
+
+          <!-- HP Peta Rute Lokasi Map -->
+          <g transform="translate(56, 20) rotate(-7)">
+            <rect x="0" y="0" width="66" height="114" rx="13" fill="#0b1f44" />
+            <rect x="5" y="7" width="56" height="100" rx="9" fill="#f8fafc" />
+            <path d="M16 26 L44 38 L22 66 L46 84" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="44" cy="38" r="5" fill="#1d4ed8" />
+            <circle cx="22" cy="66" r="5" fill="#0284c7" />
+            <circle cx="46" cy="84" r="4.5" fill="#16a34a" />
           </g>
-          <g transform="translate(418, 12)">
-            <rect x="0" y="14" width="24" height="12" rx="2" transform="rotate(-28 12 20)" fill="#2563eb" stroke="#dbeafe" stroke-width="1.5"/>
-            <rect x="34" y="-4" width="24" height="12" rx="2" transform="rotate(-28 46 2)" fill="#2563eb" stroke="#dbeafe" stroke-width="1.5"/>
-            <rect x="22" y="4" width="16" height="12" rx="3" transform="rotate(-28 30 10)" fill="#f8fafc" stroke="#0f295c" stroke-width="1.5"/>
-            <path d="M16 34 Q24 44 36 42" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M10 40 Q22 54 40 50" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Pin Lokasi GPS -->
+          <g transform="translate(136, 54)">
+            <path d="M22 0 C10 0 0 10 0 22 C0 38 22 58 22 58 C22 58 44 38 44 22 C44 10 34 0 22 0 Z" fill="#1d4ed8" />
+            <circle cx="22" cy="21" r="10" fill="#ffffff" />
+            <circle cx="22" cy="21" r="5" fill="#0284c7" />
+          </g>
+
+          <!-- Motor Operasional Korlap -->
+          <g transform="translate(212, 82)">
+            <!-- Roda Belakang & Depan -->
+            <circle cx="18" cy="52" r="14" fill="#1e293b" />
+            <circle cx="18" cy="52" r="6" fill="#cbd5e1" />
+            <circle cx="82" cy="52" r="14" fill="#1e293b" />
+            <circle cx="82" cy="52" r="6" fill="#cbd5e1" />
+            <!-- Bodi Motor Operasional -->
+            <path d="M16 44 L36 30 L58 30 L72 44 L56 48 L22 48 Z" fill="#ffffff" stroke="#0b1f44" stroke-width="2.5" stroke-linejoin="round" />
+            <rect x="26" y="25" width="22" height="6" rx="3" fill="#0b1f44" />
+            <!-- Stang & Lampu Depan -->
+            <path d="M62 30 L70 14 L78 14" fill="none" stroke="#0b1f44" stroke-width="3.5" stroke-linecap="round" />
+            <circle cx="75" cy="22" r="4" fill="#38bdf8" />
+            <line x1="70" y1="18" x2="82" y2="52" stroke="#475569" stroke-width="3" stroke-linecap="round" />
+            <!-- Box / Emblem AMP pada Motor -->
+            <rect x="8" y="22" width="18" height="14" rx="3" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+            <text x="17" y="31.5" font-family="Arial,sans-serif" font-weight="900" font-size="6.5" fill="#ffffff" text-anchor="middle">AMP</text>
           </g>
         </svg>
       </div>
@@ -547,7 +540,7 @@
         <button type="button" class="btn-masuk" id="btnMasukSistem">➜ Login</button>
 
         <div class="login-error" id="loginErrorMsg"></div>
-        <div class="cloud-login-pill" id="cloudLoginStatus">☁️ Pratinjau Interaktif • 1 Admin &amp; 14 Korlap Aktif</div>
+        <div class="cloud-login-pill" id="cloudLoginStatus">☁️ Sistem Operasional Terpadu &bull; PT. Ardina Mulya Perkasa</div>
       </div>
     </div>
 
@@ -626,21 +619,6 @@
   <section id="appShell">
     <div id="adminToastStack" class="admin-toast-stack"></div>
     <div class="mobile-app-frame">
-      <div class="preview-sandbox-bar">
-        <span>🧪 <strong>Pratinjau Klik:</strong></span>
-        <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
-          <select id="previewRoleSwitcher" onchange="switchPreviewAccount(this.value)"></select>
-          <div class="preview-quick-pills">
-            <button type="button" class="preview-quick-btn" onclick="switchPreviewAccount('M.Soheh')">👑 Admin</button>
-            <button type="button" class="preview-quick-btn" onclick="switchPreviewAccount('Dede_Rusmana')">👷 Korlap</button>
-            <button type="button" class="preview-quick-btn" onclick="switchModule('mod-2')">📡 Radar</button>
-            <button type="button" class="preview-quick-btn" onclick="switchModule('mod-3')">📸 Absen</button>
-            <button type="button" class="preview-quick-btn" onclick="switchModule('mod-4')">📅 MCP</button>
-            <button type="button" class="preview-quick-btn" onclick="simulateKorlapPing()" style="background:#0284c7; color:#fff; border:none; border-radius:6px; padding:3px 7px; font-size:10px; font-weight:800; cursor:pointer;">🔔 Uji Notif</button>
-          </div>
-        </div>
-      </div>
-
       <header class="amp-topbar">
         <div class="amp-topbar-left">
           <img id="topbarLogoImg" class="amp-topbar-logo" alt="Logo AMP" />
@@ -1043,8 +1021,6 @@
   </section>
 
   <script>
-    const AMP_LOGO_DATA_URI = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' rx='28' fill='%230b1f44'/%3E%3Cpolygon points='100,12 122,70 180,42 140,92 188,130 130,130 140,188 100,146 60,188 70,130 12,130 60,92 20,42 78,70' fill='%231e3a8a' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='52' y='74' width='96' height='48' rx='10' fill='%2300a8ff'/%3E%3Ctext x='100' y='108' font-family='Arial,sans-serif' font-weight='900' font-size='32' fill='%23ffffff' text-anchor='middle'%3EAMP%3C/text%3E%3C/svg%3E";
-
     function generateAmpPngIcon(size) {
       const c = document.createElement("canvas");
       c.width = size;
@@ -1772,21 +1748,6 @@
       resBox.innerHTML = `✅ Kunci perangkat untuk <strong>${found.username}</strong> telah direset.`;
     }
 
-    function populatePreviewRoleSwitcher() {
-      const sel = document.getElementById("previewRoleSwitcher");
-      if (!sel) return;
-      sel.innerHTML = state.accounts.map((a) =>
-        `<option value="${a.id}" ${activeUser && activeUser.id === a.id ? "selected" : ""}>${a.role === "ADMIN" ? "👑 Admin" : "👷 Korlap"}: ${a.name} (${a.username})</option>`
-      ).join("");
-    }
-
-    function switchPreviewAccount(accId) {
-      const target = state.accounts.find((a) => a.id === accId);
-      if (!target) return;
-      activeUser = target;
-      activateAuthenticatedSession(false);
-    }
-
     function refreshUserHeaderUI() {
       if (!activeUser) return;
       document.getElementById("activeUserBadge").textContent = "👤 " + activeUser.username;
@@ -1797,7 +1758,6 @@
       if (avatarBox) {
         avatarBox.innerHTML = activeUser.photoDataUrl ? `<img src="${activeUser.photoDataUrl}" alt="Foto Profil" />` : "👤";
       }
-      populatePreviewRoleSwitcher();
     }
 
     function activateAuthenticatedSession(resetToMod1 = true) {
@@ -3178,14 +3138,15 @@
       renderSessionLog();
     }
 
-    document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
-    document.getElementById("topbarLogoImg").src = AMP_LOGO_DATA_URI;
+    const loginLogoEl = document.getElementById("loginLogoImg");
+    if (loginLogoEl && !loginLogoEl.getAttribute("src")) loginLogoEl.src = AMP_LOGO_DATA_URI;
+    document.getElementById("topbarLogoImg").src = "LOGO1.jpg";
+    document.getElementById("topbarLogoImg").onerror = function () { this.onerror = null; this.src = AMP_LOGO_DATA_URI; };
     updateNotifSoundButtonUI();
 
-    /* Auto-enter preview shell as Admin (M.Soheh) with full login screen & switcher accessible */
-    activeUser = state.accounts[0];
-    activateAuthenticatedSession(true);
-    startLiveGeolocation();
+    /* Mulai dari halaman Login resmi; masuk ke Dashboard hanya setelah autentikasi ID/Username & PIN */
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("appShell").style.display = "none";
   </script>
 </body>
 </html>
