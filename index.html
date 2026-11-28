@@ -207,6 +207,9 @@
     .btn-checkout { background: #ffffff; color: #b91c1c; border: 1.5px solid #b91c1c; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
     .btn-approve { background: #0b1f44; color: #ffffff; border: none; padding: 5px 9px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap; }
     .btn-approve.approved { background: #ffffff; color: #0b1f44; border: 1.5px solid #0b1f44; }
+    .btn-reject { background: #ffffff; color: #b91c1c; border: 1.5px solid #b91c1c; padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+    .btn-reject.rejected { background: #b91c1c; color: #ffffff; }
+    .btn-download-excel { background: #0f3d2e; color: #ffffff; border: none; padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; white-space: nowrap; }
 
     .absen-mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .absen-mode-btn { padding: 10px 10px; border-radius: 11px; border: 1.5px solid #0b1f44; background: #ffffff; color: #0b1f44; font-size: 12px; font-weight: 800; cursor: pointer; min-height: 42px; touch-action: manipulation; transition: all 0.14s ease; }
@@ -240,6 +243,8 @@
     .field-group input, .field-group select, .field-group textarea { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 13px; background: #ffffff; color: #0f172a; }
 
     .restricted-box { background: #ffffff; border: 1.5px solid #0b1f44; color: #0b1f44; border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.45; }
+
+    .admin-note-box { margin-top: 6px; padding: 6px 8px; border-radius: 8px; background: #eff6ff; border-left: 3px solid #0b1f44; font-size: 10.5px; color: #0b1f44; line-height: 1.35; }
 
     .bottom-nav-bar {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -621,20 +626,37 @@
           </div>
         </div>
 
+        <!-- ================= MODUL 6: MATERIAL REQUEST (MR) ================= -->
         <div id="mod-6" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 6 — Material Request (MR) &amp; Stok Operasional</div>
-            <div class="card-sub" style="margin-bottom:10px;">Pengajuan permintaan material (MR), catatan &amp; persetujuan Admin / Head of Ops</div>
+            <div class="card-title">Modul 6 — Material Request (MR)</div>
+            <div class="card-sub" style="margin-bottom:10px;">Upload Form Excel pengajuan MR oleh Korlap, download form oleh Admin / Head of Ops, serta catatan &amp; status persetujuan</div>
             <div class="form-grid-2" style="margin-bottom:12px;">
-              <div class="field-group"><label>Nama Material / Barang MR</label><input type="text" id="mrItemInput" placeholder="Contoh: Floor Cleaner / Trash Bag / APD" /></div>
-              <div class="field-group"><label>Jumlah &amp; Satuan</label><input type="text" id="mrQtyInput" placeholder="Contoh: 10 Jerigen / 5 Box" /></div>
-              <div class="field-group"><label>Catatan Kebutuhan MR</label><input type="text" id="mrNoteInput" placeholder="Catatan urgensi / pemakaian area" /></div>
+              <div class="field-group"><label>Nama Material / Judul Form MR</label><input type="text" id="mrItemInput" placeholder="Contoh: Pengajuan Form MR Kebersihan Nov 2026" /></div>
+              <div class="field-group"><label>Jumlah Item / Ringkasan</label><input type="text" id="mrQtyInput" placeholder="Contoh: 12 Item (Sesuai Form Excel)" /></div>
+              <div class="field-group"><label>Catatan Korlap</label><input type="text" id="mrNoteInput" placeholder="Catatan kebutuhan / urgensi di lapangan" /></div>
+              <div class="field-group">
+                <label>📊 Upload Form Excel MR (.xlsx / .xls / .csv)</label>
+                <input type="file" id="mrExcelInput" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" onchange="handleMrExcelUpload(event)" />
+                <div id="mrExcelPreviewText" style="margin-top:4px; font-size:10.5px; font-weight:700; color:#0b1f44;">Belum ada file Form Excel dipilih</div>
+              </div>
             </div>
-            <button type="button" class="btn-primary" style="margin-bottom:14px;" onclick="addMaterialRequest()">+ Ajukan Material Request (MR)</button>
-            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">📋 Daftar Pengajuan Material Request (MR)</div>
-            <div class="table-wrap" style="margin-bottom:14px;"><table><thead><tr><th>Tanggal &amp; Akun</th><th>Material &amp; Jumlah</th><th>Catatan</th><th>Approval</th></tr></thead><tbody id="mrRequestBody"></tbody></table></div>
-            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">📦 Stok Material &amp; Asset Terdaftar</div>
-            <div class="table-wrap"><table><thead><tr><th>Kode</th><th>Nama Material / Asset</th><th>Kategori</th><th>Stok</th><th>Satuan</th><th>Kondisi</th></tr></thead><tbody id="materialTableBody"></tbody></table></div>
+            <button type="button" class="btn-primary" style="margin-bottom:14px;" onclick="addMaterialRequest()">+ Submit / Ajukan Form Material Request (MR)</button>
+
+            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">📋 Daftar Pengajuan Form Material Request (MR)</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tanggal &amp; Akun</th>
+                    <th>Pengajuan &amp; Form Excel</th>
+                    <th>Catatan Korlap &amp; Admin</th>
+                    <th>Approval &amp; Unduh</th>
+                  </tr>
+                </thead>
+                <tbody id="mrRequestBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -850,7 +872,7 @@
       ]
     };
 
-    const STORAGE_KEY = "AMP_MONITORING_STATE_V6";
+    const STORAGE_KEY = "AMP_MONITORING_STATE_V7";
     const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
     const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
     const NOTIF_SOUND_PREF_KEY = "AMP_ADMIN_NOTIF_SOUND_ON";
@@ -884,6 +906,7 @@
 
     let draftFourStagePhotos = { temuan: "", before: "", progress: "", after: "" };
     let draftFindingPhoto = "", draftWpDoc = { name: "", dataUrl: "" }, draftWpPhoto = "";
+    let draftMrExcel = { name: "", dataUrl: "" };
 
     (function sanitizeAndMergeDefaultAccounts() {
       if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
@@ -954,19 +977,13 @@
         jobLogs: [{ id: "JOB-INIT-1", waktu: "08:05 WIB", korlapId: "Dede_Rusmana", korlap: "Dede Rusmana", area: "UPT Bekasi & ULTG Cikarang", uraian: "Pembersihan lobby, toilet & pengecekan area", sla: "99%", ket: "Sesuai SOP", approved: false, approvedBy: "", photos: { temuan: "", before: "", progress: "", after: "" } }],
         findings: [{ id: "FND-INIT-1", tgl: "2026-11-27", korlapId: "Dede_Rusmana", korlapName: "Dede Rusmana", lokasi: "UPT Bekasi & ULTG Cikarang", temuan: "Pembersihan daun gugur area halaman pagi hari", catatan: "Pembersihan rutin harian selesai", pic: "Dede Rusmana", status: "Selesai", photoDataUrl: "", approved: false, approvedBy: "" }],
         mrRequests: [], workPermits: [], crashPrograms: [],
-        materials: [
-          { kode: "MAT-01", nama: "Floor Cleaner Concentrate", kategori: "Chemical", stok: 45, satuan: "Jerigen (5L)", kondisi: "Baik" },
-          { kode: "MAT-02", nama: "Glass & Multi-Purpose Cleaner", kategori: "Chemical", stok: 32, satuan: "Botol / Jerigen", kondisi: "Baik" },
-          { kode: "APD-01", nama: "Safety Vest, Sarung Tangan & Sepatu Kerja", kategori: "K3 / APD", stok: 64, satuan: "Set", kondisi: "Terverifikasi" },
-          { kode: "ALT-01", nama: "Double Bucket Mop & Lobby Duster", kategori: "Peralatan", stok: 28, satuan: "Unit", kondisi: "Siap Pakai" }
-        ],
         supabase: { url: DEFAULT_SUPABASE_URL, key: DEFAULT_SUPABASE_KEY }
       };
     }
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("AMP_MONITORING_STATE_V5") || localStorage.getItem("AMP_MONITORING_STATE_V4");
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("AMP_MONITORING_STATE_V6") || localStorage.getItem("AMP_MONITORING_STATE_V5") || localStorage.getItem("AMP_MONITORING_STATE_V4");
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.accounts) && Array.isArray(parsed.mcpRows)) {
@@ -975,6 +992,7 @@
             if (!Array.isArray(parsed.mrRequests)) parsed.mrRequests = [];
             if (!Array.isArray(parsed.workPermits)) parsed.workPermits = [];
             if (!Array.isArray(parsed.crashPrograms)) parsed.crashPrograms = [];
+            delete parsed.materials;
             return parsed;
           }
         }
@@ -999,6 +1017,43 @@
         return `<button type="button" class="btn-approve ${isApp ? "approved" : ""}" onclick="${approveFnCall}">${label}</button>`;
       }
       return isApp ? `<span class="status-chip st-selesai">✅ Approved</span>` : `<span class="status-chip st-rencana">Menunggu Approve</span>`;
+    }
+
+    function renderMrDecisionAndDownloadCell(m) {
+      const status = m.decisionStatus || (m.approved ? "APPROVED" : "PENDING");
+      const byText = m.decisionBy ? ` (${m.decisionBy})` : "";
+      const downloadBtn = m.excelDataUrl
+        ? `<a href="${m.excelDataUrl}" download="${escapeHtmlAttr(m.excelName || "Form_MR.xlsx")}" class="btn-download-excel">⬇️ Unduh Form</a>`
+        : `<span style="font-size:10px; color:#64748b;">Tidak ada form</span>`;
+
+      if (isAdminUser(activeUser)) {
+        const isApp = status === "APPROVED";
+        const isRej = status === "REJECTED";
+        return `<div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <button type="button" class="btn-approve ${isApp ? "approved" : ""}" onclick="setMrDecision('${m.id}', 'APPROVED')">${isApp ? "✅ Approved" : "👍 Approve"}</button>
+            <button type="button" class="btn-reject ${isRej ? "rejected" : ""}" onclick="setMrDecision('${m.id}', 'REJECTED')">${isRej ? "❌ Ditolak" : "✖ Tolak"}</button>
+          </div>
+          ${downloadBtn}
+        </div>`;
+      }
+
+      let badgeHtml = `<span class="status-chip st-rencana">Menunggu Approve</span>`;
+      if (status === "APPROVED") badgeHtml = `<span class="status-chip st-selesai">✅ Disetujui${byText}</span>`;
+      else if (status === "REJECTED") badgeHtml = `<span class="status-chip st-kendala">❌ Tidak Disetujui${byText}</span>`;
+
+      const korlapFormTag = m.excelName
+        ? `<span style="font-size:10px; color:#0b1f44; font-weight:700;">📊 ${escapeHtmlText(m.excelName)}</span>`
+        : `<span style="font-size:10px; color:#64748b;">Tanpa form</span>`;
+
+      return `<div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">${badgeHtml}${korlapFormTag}</div>`;
+    }
+
+    function escapeHtmlText(str) {
+      return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    function escapeHtmlAttr(str) {
+      return String(str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function getSupabaseCredentials() {
@@ -1061,7 +1116,7 @@
       try {
         await client.from("amp_shared_state").upsert({
           id: "MAIN_OPERATIONAL_STATE",
-          payload: { mcpRows: state.mcpRows, jobLogs: state.jobLogs, findings: state.findings, mrRequests: state.mrRequests, workPermits: state.workPermits, crashPrograms: state.crashPrograms, materials: state.materials, attendanceLogs: (state.attendanceLogs || []).slice(0, 35), notifications: (state.notifications || []).slice(0, 60) },
+          payload: { mcpRows: state.mcpRows, jobLogs: state.jobLogs, findings: state.findings, mrRequests: state.mrRequests, workPermits: state.workPermits, crashPrograms: state.crashPrograms, attendanceLogs: (state.attendanceLogs || []).slice(0, 35), notifications: (state.notifications || []).slice(0, 60) },
           updated_by: activeUser ? activeUser.username : "SYSTEM", updated_at: new Date().toISOString()
         }, { onConflict: "id" });
       } catch (e) {}
@@ -1081,7 +1136,6 @@
         if (Array.isArray(p.mrRequests)) state.mrRequests = p.mrRequests;
         if (Array.isArray(p.workPermits)) state.workPermits = p.workPermits;
         if (Array.isArray(p.crashPrograms)) state.crashPrograms = p.crashPrograms;
-        if (Array.isArray(p.materials)) state.materials = p.materials;
         if (Array.isArray(p.attendanceLogs)) state.attendanceLogs = p.attendanceLogs;
         if (Array.isArray(p.notifications)) p.notifications.forEach((n) => receiveAdminNotification(n, false));
         saveStateLocalOnly();
@@ -1536,6 +1590,24 @@
       reader.readAsDataURL(file);
     }
 
+    function handleMrExcelUpload(ev) {
+      const file = ev && ev.target && ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const lower = file.name.toLowerCase();
+      if (!lower.endsWith(".xlsx") && !lower.endsWith(".xls") && !lower.endsWith(".csv")) {
+        alert("Pilih file Form Excel berformat .xlsx, .xls, atau .csv.");
+        ev.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        draftMrExcel = { name: file.name, dataUrl: e.target.result };
+        const el = document.getElementById("mrExcelPreviewText");
+        if (el) el.textContent = `📊 Terlampir: ${file.name}`;
+      };
+      reader.readAsDataURL(file);
+    }
+
     async function addJobLog() {
       const area = document.getElementById("jobAreaInput").value, desc = document.getElementById("jobDescInput").value.trim(), sla = document.getElementById("jobSlaInput").value || "95", note = document.getElementById("jobNoteInput").value.trim() || "-";
       if (!desc) { alert("Uraian pekerjaan wajib diisi."); return; }
@@ -1760,22 +1832,99 @@
 
     async function addMaterialRequest() {
       const itemName = document.getElementById("mrItemInput").value.trim(), qty = document.getElementById("mrQtyInput").value.trim(), note = document.getElementById("mrNoteInput").value.trim() || "-";
-      if (!itemName || !qty) { alert("Nama material dan jumlah wajib diisi."); return; }
-      state.mrRequests.unshift({ id: "MR-" + Date.now(), tgl: new Date().toISOString().slice(0, 10), korlapId: activeUser.id, korlapName: activeUser.name, area: activeUser.area, material: itemName, qty, catatan: note, approved: false, approvedBy: "" });
-      document.getElementById("mrItemInput").value = ""; document.getElementById("mrQtyInput").value = ""; document.getElementById("mrNoteInput").value = "";
-      saveState(); renderMrRequests();
-      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("MATERIAL REQUEST", `MR ${itemName} (${qty})`, `Area: ${activeUser.area}`);
+      if (!itemName || !qty) { alert("Nama material / judul form MR dan jumlah wajib diisi."); return; }
+      if (!draftMrExcel.dataUrl) { alert("Upload file Form Excel MR (.xlsx, .xls, atau .csv) terlebih dahulu."); return; }
+
+      state.mrRequests.unshift({
+        id: "MR-" + Date.now(),
+        tgl: new Date().toISOString().slice(0, 10),
+        korlapId: activeUser.id,
+        korlapName: activeUser.name,
+        area: activeUser.area,
+        material: itemName,
+        qty,
+        catatan: note,
+        adminCatatan: "",
+        adminCatatanBy: "",
+        excelName: draftMrExcel.name,
+        excelDataUrl: draftMrExcel.dataUrl,
+        decisionStatus: "PENDING",
+        approved: false,
+        decisionBy: "",
+        approvedBy: ""
+      });
+
+      draftMrExcel = { name: "", dataUrl: "" };
+      document.getElementById("mrItemInput").value = "";
+      document.getElementById("mrQtyInput").value = "";
+      document.getElementById("mrNoteInput").value = "";
+      document.getElementById("mrExcelInput").value = "";
+      document.getElementById("mrExcelPreviewText").textContent = "Belum ada file Form Excel dipilih";
+
+      saveState();
+      renderMrRequests();
+      renderReportSummary();
+      if (!isAdminUser(activeUser)) {
+        await broadcastKorlapActivity("MATERIAL REQUEST", `Form MR (${itemName} • ${qty})`, `File: ${state.mrRequests[0].excelName} • ${activeUser.area}`);
+      }
     }
 
-    function toggleApproveMr(id) { if (!isAdminUser(activeUser)) return; const item = state.mrRequests.find((m) => m.id === id); if (!item) return; item.approved = !item.approved; item.approvedBy = item.approved ? activeUser.username : ""; saveState(); renderMrRequests(); }
+    function setMrDecision(id, status) {
+      if (!isAdminUser(activeUser)) return;
+      const item = state.mrRequests.find((m) => m.id === id);
+      if (!item) return;
+      const current = item.decisionStatus || (item.approved ? "APPROVED" : "PENDING");
+      item.decisionStatus = current === status ? "PENDING" : status;
+      item.approved = item.decisionStatus === "APPROVED";
+      item.decisionBy = item.decisionStatus === "PENDING" ? "" : activeUser.username;
+      item.approvedBy = item.approved ? activeUser.username : "";
+      saveState();
+      renderMrRequests();
+    }
+
+    function updateMrAdminNote(id, noteVal) {
+      if (!isAdminUser(activeUser)) return;
+      const item = state.mrRequests.find((m) => m.id === id);
+      if (!item) return;
+      const cleanNote = String(noteVal || "").trim();
+      item.adminCatatan = cleanNote;
+      item.adminCatatanBy = cleanNote ? activeUser.username : "";
+      saveState();
+      renderMrRequests();
+    }
 
     function renderMrRequests() {
-      const body = document.getElementById("mrRequestBody"), list = isAdminUser(activeUser) ? state.mrRequests : state.mrRequests.filter((m) => m.korlapId === activeUser.id);
-      body.innerHTML = list.length ? list.map((m) => `<tr><td>${m.tgl}<br/><small><strong>${m.korlapName}</strong> • ${m.area}</small></td><td><strong>${m.material}</strong><br/><small>Jumlah: ${m.qty}</small></td><td>${m.catatan}</td><td>${renderApprovalCell(m, `toggleApproveMr('${m.id}')`)}</td></tr>`).join("") : `<tr><td colspan="4" style="text-align:center; padding:12px; color:#64748b;">Belum ada pengajuan Material Request (MR).</td></tr>`;
-    }
+      const body = document.getElementById("mrRequestBody");
+      const list = isAdminUser(activeUser) ? state.mrRequests : state.mrRequests.filter((m) => m.korlapId === activeUser.id);
+      if (!list.length) {
+        body.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:12px; color:#64748b;">Belum ada pengajuan Form Material Request (MR).</td></tr>`;
+        return;
+      }
 
-    function renderMaterials() {
-      document.getElementById("materialTableBody").innerHTML = state.materials.map((m) => `<tr><td><strong>${m.kode}</strong></td><td>${m.nama}</td><td>${m.kategori}</td><td><strong>${m.stok}</strong></td><td>${m.satuan}</td><td>${m.kondisi}</td></tr>`).join("");
+      body.innerHTML = list.map((m) => {
+        const excelBadge = m.excelName
+          ? `<div style="margin-top:4px; font-size:10.5px; color:#0f3d2e; font-weight:800;">📊 ${escapeHtmlText(m.excelName)}</div>`
+          : `<div style="margin-top:4px; font-size:10px; color:#64748b;">Tanpa lampiran Excel</div>`;
+
+        let noteHtml = `<small><strong>Korlap:</strong> ${escapeHtmlText(m.catatan || "-")}</small>`;
+        if (isAdminUser(activeUser)) {
+          noteHtml += `<input type="text" value="${escapeHtmlAttr(m.adminCatatan || "")}" placeholder="Tulis catatan Admin / Head of Ops untuk Korlap..." onchange="updateMrAdminNote('${m.id}', this.value)" style="margin-top:6px; width:100%; padding:5px 7px; border:1px solid #0b1f44; border-radius:6px; font-size:11px; background:#eff6ff;" />`;
+          if (m.adminCatatan) {
+            noteHtml += `<div class="admin-note-box">📝 <strong>Catatan Admin (${escapeHtmlText(m.adminCatatanBy || activeUser.username)}):</strong> ${escapeHtmlText(m.adminCatatan)}</div>`;
+          }
+        } else {
+          noteHtml += m.adminCatatan
+            ? `<div class="admin-note-box">📝 <strong>Catatan Admin / Head of Ops${m.adminCatatanBy ? " (" + escapeHtmlText(m.adminCatatanBy) + ")" : ""}:</strong> ${escapeHtmlText(m.adminCatatan)}</div>`
+            : `<div style="margin-top:5px; font-size:10px; color:#64748b;">Belum ada catatan dari Admin / Head of Ops.</div>`;
+        }
+
+        return `<tr>
+          <td>${escapeHtmlText(m.tgl)}<br/><small><strong>${escapeHtmlText(m.korlapName)}</strong><br/>${escapeHtmlText(m.area)}</small></td>
+          <td><strong>${escapeHtmlText(m.material)}</strong><br/><small>Jumlah: ${escapeHtmlText(m.qty)}</small>${excelBadge}</td>
+          <td>${noteHtml}</td>
+          <td>${renderMrDecisionAndDownloadCell(m)}</td>
+        </tr>`;
+      }).join("");
     }
 
     async function addWorkPermit() {
@@ -1792,7 +1941,7 @@
     function renderWorkPermits() {
       const body = document.getElementById("workPermitTableBody"), list = isAdminUser(activeUser) ? state.workPermits : state.workPermits.filter((w) => w.korlapId === activeUser.id);
       body.innerHTML = list.length ? list.map((w) => {
-        const docLink = w.docDataUrl ? `<a href="${w.docDataUrl}" download="${w.docName || "dokumen-wp"}" class="gmaps-link">📄 ${w.docName || "Unduh Dokumen"}</a>` : `<span style="font-size:10px;color:#64748b;">Tanpa dokumen</span>`;
+        const docLink = w.docDataUrl ? `<a href="${w.docDataUrl}" download="${escapeHtmlAttr(w.docName || "dokumen-wp")}" class="gmaps-link">📄 ${escapeHtmlText(w.docName || "Unduh Dokumen")}</a>` : `<span style="font-size:10px;color:#64748b;">Tanpa dokumen</span>`;
         const imgHtml = w.photoDataUrl ? `<img src="${w.photoDataUrl}" class="thumb-preview" alt="Progress WP" />` : "";
         return `<tr><td>${w.tgl}<br/><small><strong>${w.korlapName}</strong></small></td><td><strong>${w.wpType}</strong><br/><small>${w.lokasi}</small></td><td>${docLink}<br/>${imgHtml}</td><td>${w.catatan}</td><td>${renderApprovalCell(w, `toggleApproveWorkPermit('${w.id}')`)}</td></tr>`;
       }).join("") : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada pengajuan Work Permit High Rise.</td></tr>`;
@@ -1872,7 +2021,7 @@
     function renderAllViews() {
       updateDashboardKpis();
       if (isAdminUser(activeUser)) { updateRadarMarkersAndList(); renderAdminNotifFeed(); }
-      renderJobLogs(); renderManpowerTable(); renderMcpTable(); renderFindings(); renderMrRequests(); renderMaterials(); renderWorkPermits(); renderCrashPrograms(); renderReportSummary();
+      renderJobLogs(); renderManpowerTable(); renderMcpTable(); renderFindings(); renderMrRequests(); renderWorkPermits(); renderCrashPrograms(); renderReportSummary();
     }
 
     document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
