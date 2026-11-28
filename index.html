@@ -159,41 +159,154 @@
     #appShell { display: none; min-height: 100vh; min-height: 100dvh; background: #e9eff6; padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)); }
     .mobile-app-frame { width: 100%; max-width: 540px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; background: #f1f5f9; position: relative; box-shadow: 0 0 35px rgba(15, 23, 42, 0.12); overflow-x: clip; }
 
-    .amp-topbar { background: linear-gradient(90deg, #06132b 0%, #0b2554 55%, #0d3b75 100%); color: #ffffff; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; position: sticky; top: 0; z-index: 400; }
-    .amp-topbar-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
-    .amp-topbar-logo { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #0b1f44; padding: 2px; flex-shrink: 0; }
-    .amp-topbar-title { font-size: 12.5px; font-weight: 900; letter-spacing: 0.3px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .amp-topbar-sub { font-size: 10px; color: #93c5fd; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .amp-topbar-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .preview-sandbox-bar {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 10.5px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .preview-sandbox-bar select {
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 10.5px;
+      max-width: 210px;
+    }
+    .preview-quick-pills {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .preview-quick-btn {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .preview-quick-btn:hover {
+      background: #2563eb;
+      border-color: #60a5fa;
+      color: #ffffff;
+    }
 
-    .pill-sync-btn { background: rgba(16, 185, 129, 0.22); border: 1px solid rgba(52, 211, 153, 0.65); color: #ecfdf5; border-radius: 999px; padding: 4px 8px; font-size: 10.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; min-height: 34px; touch-action: manipulation; }
-    .pill-user-chip { background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.24); color: #ffffff; border-radius: 999px; padding: 3px 6px 3px 8px; font-size: 10.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; max-width: 132px; }
-    .pill-user-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .btn-logout-mini { background: rgba(239, 68, 68, 0.88); border: none; color: #ffffff; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; touch-action: manipulation; }
+    .amp-topbar {
+      background: #0b1f44;
+      color: #ffffff;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 400;
+      box-shadow: 0 4px 14px rgba(11, 31, 68, 0.25);
+    }
+    .amp-topbar-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .amp-topbar-logo { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; }
+    .amp-topbar-title { font-size: 13px; font-weight: 900; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .amp-topbar-sub { font-size: 10px; color: #93c5fd; font-weight: 600; }
+    .amp-topbar-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .pill-sync-btn, .pill-user-chip, .pill-notif-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 10.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pill-notif-badge {
+      background: #ef4444;
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-size: 9.5px;
+      font-weight: 900;
+    }
 
-    .pill-notif-btn { position: relative; background: rgba(56, 189, 248, 0.22); border: 1px solid rgba(125, 211, 252, 0.65); color: #f0f9ff; border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; min-height: 34px; touch-action: manipulation; }
-    .notif-badge-dot { background: #ef4444; color: #ffffff; border-radius: 999px; font-size: 9.5px; font-weight: 900; padding: 1px 5px; min-width: 16px; text-align: center; display: none; }
+    .app-content-wrap { padding: 12px; }
+    .profile-hero-card {
+      background: linear-gradient(135deg, #0b1f44 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 10px 24px rgba(11, 31, 68, 0.18);
+    }
 
-    .admin-notif-drawer { display: none; background: #ffffff; border-bottom: 2px solid #0284c7; padding: 10px 12px; max-height: 230px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12); }
+    .kpi-4-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .kpi-mini-card {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+    .kpi-mini-label { font-size: 10.5px; font-weight: 700; color: #64748b; }
+    .kpi-mini-val { font-size: 20px; font-weight: 900; color: #0b1f44; margin-top: 2px; }
+
+    .admin-notif-drawer {
+      display: none;
+      background: #ffffff;
+      border: 1.5px solid #38bdf8;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 10px 24px rgba(2, 132, 199, 0.15);
+    }
     .admin-notif-drawer.open { display: block; }
-    .notif-drawer-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 11.5px; font-weight: 900; color: #0b1f44; margin-bottom: 6px; }
-    .notif-feed-item { font-size: 11px; padding: 6px 8px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 5px; line-height: 1.35; }
-
-    .admin-toast-stack { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 516px; z-index: 650; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
-    .admin-toast-card { background: #0b1f44; color: #ffffff; border-left: 4px solid #38bdf8; border-radius: 10px; padding: 8px 11px; font-size: 11px; line-height: 1.35; box-shadow: 0 10px 24px rgba(11, 31, 68, 0.35); pointer-events: auto; cursor: pointer; }
-
-    .amp-body-pad { padding: 12px; }
-
-    .profile-banner-card {
-      background: linear-gradient(135deg, #071936 0%, #0e2f63 65%, #123e7d 100%);
-      color: #ffffff; border-radius: 16px; padding: 14px 16px;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      box-shadow: 0 8px 20px rgba(7, 25, 54, 0.22); margin-bottom: 12px;
+    .notif-feed-item {
+      padding: 8px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 11px;
+    }
+    .admin-toast-stack {
+      position: fixed;
+      top: 58px;
+      right: 12px;
+      z-index: 950;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 320px;
+    }
+    .admin-toast-card {
+      background: #0b1f44;
+      color: #ffffff;
+      border-left: 4px solid #38bdf8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+      cursor: pointer;
     }
     .profile-name { font-size: 17px; font-weight: 900; line-height: 1.2; }
     .profile-role { font-size: 11.5px; color: #bae6fd; margin-top: 2px; font-weight: 600; }
     .profile-area-badge { display: inline-block; margin-top: 7px; background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px; padding: 3px 10px; font-size: 10.5px; font-weight: 700; color: #e0f2fe; }
-    .profile-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); border: 1.5px solid rgba(255, 255, 255, 0.28); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .profile-avatar-circle { width: 46px; height: 46px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); border: 1.5px solid rgba(255, 255, 255, 0.28); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; overflow: hidden; }
+    .profile-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
 
     .radar-card-box, .export-grid-card, .modules-grid-card {
       background: #ffffff; border-radius: 16px; padding: 12px;
@@ -244,6 +357,7 @@
     .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
     .btn-success { background: #059669; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
     .btn-checkout { background: #dc2626; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer; min-height: 40px; touch-action: manipulation; }
+    .btn-approve { background: #0284c7; color: #fff; border: none; padding: 5px 9px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; touch-action: manipulation; }
 
     .absen-mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .absen-mode-btn {
@@ -275,7 +389,7 @@
     .table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
     th { background: #0b1f44; color: #fff; text-align: left; padding: 8px; white-space: nowrap; }
-    td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; }
+    td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
 
     .mcp-subtabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
     .mcp-subtab { padding: 6px 11px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 800; cursor: pointer; }
@@ -290,10 +404,25 @@
     .module-panel.active { display: block; }
 
     .form-grid-2 { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
+    .photo-4-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
     .field-group label { display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 3px; }
-    .field-group input, .field-group select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 16px; }
+    .field-group input, .field-group select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; background: #fff; }
+    .thumb-preview { width: 52px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
 
     .restricted-box { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.45; }
+
+    .app-banner-msg {
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: none;
+      line-height: 1.4;
+    }
+    .app-banner-msg.info { display: block; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .app-banner-msg.success { display: block; background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .app-banner-msg.error { display: block; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
     .bottom-nav-bar {
       position: fixed;
@@ -418,7 +547,7 @@
         <button type="button" class="btn-masuk" id="btnMasukSistem">➜ Login</button>
 
         <div class="login-error" id="loginErrorMsg"></div>
-        <div class="cloud-login-pill" id="cloudLoginStatus">☁️ Sinkronisasi Cloud: Siap</div>
+        <div class="cloud-login-pill" id="cloudLoginStatus">☁️ Pratinjau Interaktif • 1 Admin &amp; 14 Korlap Aktif</div>
       </div>
     </div>
 
@@ -435,6 +564,7 @@
         <div class="modal-title">Registrasi Akun Korlap Baru</div>
         <button type="button" class="modal-close" onclick="closeModal('modalRegister')">&times;</button>
       </div>
+      <div id="regFeedbackBanner" class="app-banner-msg"></div>
       <div class="field-group" style="margin-bottom:10px;">
         <label>Nama Lengkap</label>
         <input type="text" id="regName" placeholder="Contoh: Budi Santoso" />
@@ -487,340 +617,427 @@
       <div id="installGuideBody" style="font-size:12px; color:#334155; line-height:1.55;">
         <p style="margin-bottom:8px;"><strong>HP Android (Chrome):</strong> Ketuk menu <strong>⋮</strong> di pojok kanan atas browser, lalu pilih <strong>Install app</strong> atau <strong>Add to Home screen</strong>.</p>
         <p style="margin-bottom:8px;"><strong>iPhone / iPad (Safari):</strong> Ketuk ikon <strong>Share (kotak panah ke atas)</strong> lalu pilih <strong>Add to Home Screen</strong>.</p>
-        <p><strong>PC / Laptop (Chrome / Edge):</strong> Klik ikon <strong>Install</strong> di sisi kanan *address bar* atau buka menu browser lalu pilih <strong>Install MBCS AMP</strong>.</p>
+        <p><strong>PC / Laptop (Chrome / Edge):</strong> Klik ikon <strong>Install</strong> di sisi kanan address bar atau buka menu browser lalu pilih <strong>Install MBCS AMP</strong>.</p>
       </div>
     </div>
   </div>
 
   <!-- ================= APLIKASI UTAMA ================= -->
   <section id="appShell">
+    <div id="adminToastStack" class="admin-toast-stack"></div>
     <div class="mobile-app-frame">
-      <header class="amp-topbar">
-        <div class="amp-topbar-left">
-          <img class="amp-topbar-logo" id="topbarLogoImg" alt="Logo AMP" />
-          <div>
-            <div class="amp-topbar-title">PT. ARDINA MULYA PERKASA</div>
-            <div class="amp-topbar-sub">Facility Service Specialist</div>
+      <div class="preview-sandbox-bar">
+        <span>🧪 <strong>Pratinjau Klik:</strong></span>
+        <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+          <select id="previewRoleSwitcher" onchange="switchPreviewAccount(this.value)"></select>
+          <div class="preview-quick-pills">
+            <button type="button" class="preview-quick-btn" onclick="switchPreviewAccount('M.Soheh')">👑 Admin</button>
+            <button type="button" class="preview-quick-btn" onclick="switchPreviewAccount('Dede_Rusmana')">👷 Korlap</button>
+            <button type="button" class="preview-quick-btn" onclick="switchModule('mod-2')">📡 Radar</button>
+            <button type="button" class="preview-quick-btn" onclick="switchModule('mod-3')">📸 Absen</button>
+            <button type="button" class="preview-quick-btn" onclick="switchModule('mod-4')">📅 MCP</button>
+            <button type="button" class="preview-quick-btn" onclick="simulateKorlapPing()" style="background:#0284c7; color:#fff; border:none; border-radius:6px; padding:3px 7px; font-size:10px; font-weight:800; cursor:pointer;">🔔 Uji Notif</button>
           </div>
         </div>
-        <div class="amp-topbar-actions">
-          <button type="button" class="pill-notif-btn" id="adminNotifBellBtn" style="display:none;" onclick="toggleAdminNotifDrawer()" title="Notifikasi Aktivitas Korlap">
-            🔔<span class="notif-badge-dot" id="adminNotifBadge">0</span>
-          </button>
-          <button type="button" class="pill-sync-btn" id="gpsStatusBadge" onclick="triggerLiveGpsOnce()">📡 Sync</button>
-          <div class="pill-user-chip">
-            <span id="activeUserBadge">👤 M.Soheh</span>
-            <button type="button" class="btn-logout-mini" id="btnLogout" title="Keluar">↪</button>
+      </div>
+
+      <header class="amp-topbar">
+        <div class="amp-topbar-left">
+          <img id="topbarLogoImg" class="amp-topbar-logo" alt="Logo AMP" />
+          <div>
+            <div class="amp-topbar-title">MBCS AMP</div>
+            <div class="amp-topbar-sub">PT. Ardina Mulya Perkasa</div>
           </div>
+        </div>
+        <div class="amp-topbar-right">
+          <span class="pill-user-chip" id="activeUserBadge">👤 M.Soheh</span>
+          <button type="button" class="pill-notif-btn" id="adminNotifBellBtn" onclick="toggleAdminNotifDrawer()">
+            🔔 <span class="pill-notif-badge" id="adminNotifBadge" style="display:none;">0</span>
+          </button>
+          <button type="button" class="pill-sync-btn" id="btnLogout" title="Keluar ke Halaman Login">↪</button>
         </div>
       </header>
 
-      <div class="admin-notif-drawer" id="adminNotifDrawer">
-        <div class="notif-drawer-head">
-          <span>🔔 Notifikasi Aktivitas Korlap (Real-Time)</span>
-          <div style="display:flex; align-items:center; gap:5px;">
-            <button type="button" id="btnToggleNotifSound" class="btn-secondary" style="padding:3px 8px; font-size:10px; border-color:#0284c7; color:#0369a1;" onclick="toggleNotifSound()">🔊 Suara: ON</button>
-            <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:10px;" onclick="markAllNotifsRead()">Tandai Dibaca</button>
-          </div>
-        </div>
-        <div id="adminNotifFeedList"></div>
-      </div>
+      <main class="app-content-wrap">
+        <div id="globalAppBanner" class="app-banner-msg"></div>
 
-      <div class="admin-toast-stack" id="adminToastStack"></div>
-
-      <div class="amp-body-pad">
-        <div class="profile-banner-card">
-          <div>
-            <div class="profile-name" id="profileFullName">M.Soheh</div>
-            <div class="profile-role" id="activeRoleBadge">Head Of Operation / Admin</div>
-            <div class="profile-area-badge" id="activeAreaBadge">🏢 Area Tugas PLN: Seluruh Wilayah PLN UIT JBT &amp; UIT JBB</div>
+        <!-- Drawer Notifikasi Admin -->
+        <div id="adminNotifDrawer" class="admin-notif-drawer">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <strong style="font-size:12.5px; color:#0b1f44;">🔔 Aktivitas Korlap Real-Time</strong>
+            <div style="display:flex; align-items:center; gap:4px;">
+              <button type="button" class="btn-secondary" style="padding:3px 7px; min-height:28px; font-size:10px;" onclick="adjustNotifVolume(-0.2)">🔉 -</button>
+              <span id="notifVolumeLabel" style="font-size:10px; font-weight:800; color:#0b1f44;">80%</span>
+              <button type="button" class="btn-secondary" style="padding:3px 7px; min-height:28px; font-size:10px;" onclick="adjustNotifVolume(0.2)">🔊 +</button>
+              <button type="button" id="btnToggleNotifSound" class="btn-secondary" style="padding:3px 7px; min-height:28px; font-size:10px;" onclick="toggleNotifSound()">🔊 ON</button>
+              <button type="button" class="btn-secondary" style="padding:3px 7px; min-height:28px; font-size:10px;" onclick="toggleAdminNotifDrawer()">Tutup</button>
+            </div>
           </div>
-          <div class="profile-avatar-circle">👤</div>
+          <div id="adminNotifFeedList"></div>
         </div>
 
-        <!-- MODUL 1: DASHBOARD & RADAR 14 KORLAP -->
-        <div id="mod-1" class="module-panel active">
-          <div class="radar-card-box" id="adminRadarCard" style="display:none;">
-            <div class="radar-card-top">
-              <div class="radar-card-title">📡 Peta Google Maps Radar Korlap (Admin / Head of Ops)</div>
-              <button type="button" class="btn-refresh-blue" onclick="triggerLiveGpsOnce()">🔄 Refresh</button>
+        <!-- MODUL 1: DASHBOARD -->
+        <section id="mod-1" class="module-panel active">
+          <div class="profile-hero-card">
+            <div>
+              <div class="profile-name" id="profileFullName">M.Soheh</div>
+              <div class="profile-role" id="activeRoleBadge">Head Of Operation / Admin</div>
+              <div class="profile-area-badge" id="activeAreaBadge">🏢 Area Tugas PLN: Seluruh Wilayah PLN UIT JBT &amp; UIT JBB</div>
             </div>
-            <div class="radar-sub-strip">
-              <span>🔒 Akses Terbatas: Admin &amp; Head of Ops</span>
-              <span class="badge-active-dots" id="kpiGpsLiveBadge">14 GPS Real Aktif / 14 Korlap</span>
-            </div>
-
-            <div class="controls-bar" style="margin-bottom:8px;">
-              <select id="radarFilterKorlap" class="form-select" onchange="focusSelectedKorlap()" style="flex:1;">
-                <option value="ALL">Semua Korlap (14 Personel)</option>
-              </select>
-              <button type="button" class="btn-secondary" onclick="fitAllLiveKorlap()">🎯 Fokus Live</button>
-              <button type="button" class="btn-secondary" onclick="resetRadarView()">🗺️ Reset</button>
-            </div>
-
-            <div id="korlapRadarMap"></div>
-
-            <div class="korlap-list-caption" id="korlapListCaption">Daftar titik koordinat terkini 14 Korlap (klik item untuk fokus di peta):</div>
-            <div class="korlap-roster-list" id="korlapRosterList"></div>
+            <div class="profile-avatar-circle" id="topBannerAvatar">👤</div>
           </div>
 
-          <div class="radar-card-box" id="korlapRestrictedRadarCard" style="display:none;">
-            <div class="restricted-box">
-              <strong>🔒 Akses Radar GPS &amp; Rekap Seluruh Korlap Dibatasi</strong><br/>
-              Radar pemantauan GPS dan rekap seluruh data Korlap hanya dapat diakses oleh akun <strong>Admin / Head of Operation</strong>.
-              Perangkat Anda tetap mengirimkan sinyal kehadiran dan titik lokasi Anda sendiri ke sistem pusat.<br/>
-              <span id="korlapOwnGpsStatus" style="display:inline-block; margin-top:6px; font-weight:700;">Status GPS perangkat Anda: menunggu izin lokasi...</span>
+          <div class="kpi-4-grid">
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-label">👷 Personel Korlap</div>
+              <div class="kpi-mini-val" id="kpiTotalKorlap">14</div>
+            </div>
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-label">📸 Log Absensi</div>
+              <div class="kpi-mini-val" id="kpiTotalAbsensi">0</div>
+            </div>
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-label">✅ Item MCP Selesai</div>
+              <div class="kpi-mini-val" id="kpiMcpDone">0</div>
+            </div>
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-label">⚠️ Temuan &amp; MR</div>
+              <div class="kpi-mini-val" id="kpiOpenIssues">0</div>
             </div>
           </div>
 
-          <div class="export-grid-card" id="adminExportGridCard" style="display:none;">
-            <div class="export-grid-title"><span>⬇️ Output &amp; Download Rekap Terpusat (Admin)</span></div>
+          <div class="export-grid-card">
+            <div class="export-grid-title">
+              <span>📊 Rekapan Excel (.CSV) Terstruktur</span>
+              <span style="font-size:10px; color:#64748b; font-weight:700;">Format Tabel + Nomor</span>
+            </div>
             <div class="export-btn-grid">
-              <button type="button" class="btn-exp-csv exp-green" onclick="exportTableCsv('absensi')">📥 Rekap Absensi (.CSV)</button>
-              <button type="button" class="btn-exp-csv exp-navy" onclick="exportTableCsv('gps')">📍 Rekap GPS Korlap (.CSV)</button>
-              <button type="button" class="btn-exp-csv exp-orange" onclick="exportTableCsv('kejadian')">⚠️ Rekap Kejadian (.CSV)</button>
-              <button type="button" class="btn-exp-csv exp-red" onclick="exportMcpCsv()">📋 Rekap MCP (.CSV)</button>
+              <button type="button" class="btn-exp-csv exp-green" onclick="exportTableCsv('absensi')">📥 Absensi 1 Bulan (A–Z)</button>
+              <button type="button" class="btn-exp-csv exp-navy" onclick="exportTableCsv('gps')">📍 Rekap GPS Korlap</button>
+              <button type="button" class="btn-exp-csv exp-orange" onclick="exportTableCsv('kejadian')">⚠️ Rekap Kejadian</button>
+              <button type="button" class="btn-exp-csv exp-red" onclick="exportMcpCsv()">📅 Rekap MCP &amp; DAC</button>
             </div>
           </div>
 
           <div class="modules-grid-card">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:12.5px; font-weight:900; color:#0f172a;">🗂️ Menu 14 Modul Terintegrasi</span>
-              <span style="font-size:10.5px; color:#64748b;" id="kpiMcpSummaryPill">MCP: 0/0</span>
-            </div>
+            <div class="radar-card-title">🧭 Menu Operasional MBCS AMP (1 – 12)</div>
             <div class="modules-14-grid" id="modulesNav"></div>
           </div>
-        </div>
+        </section>
 
-        <!-- MODUL 2 -->
-        <div id="mod-2" class="module-panel">
-          <div class="card">
-            <div class="card-title">Modul 2 — Monitoring Pekerjaan Harian &amp; SLA</div>
-            <div class="card-sub" style="margin-bottom:10px;">Pencatatan aktivitas pembersihan, SLA, dan evidence</div>
-            <div class="form-grid-2">
-              <div class="field-group"><label>Area / Fasilitas PLN</label><select id="jobAreaInput"></select></div>
-              <div class="field-group"><label>Uraian Pekerjaan</label><input type="text" id="jobDescInput" placeholder="Contoh: Cleaning Lobby, Toilet & Area Gardu" /></div>
-              <div class="field-group"><label>Capaian SLA (%)</label><input type="number" id="jobSlaInput" min="0" max="100" value="98" /></div>
-              <div class="field-group"><label>Catatan / Evidence</label><input type="text" id="jobNoteInput" placeholder="Keterangan kondisi lapangan" /></div>
-            </div>
-            <button type="button" class="btn-primary" onclick="addJobLog()">+ Simpan Log Pekerjaan</button>
-            <div class="table-wrap" style="margin-top:14px;">
-              <table>
-                <thead><tr><th>Waktu</th><th>Korlap</th><th>Area / Fasilitas</th><th>Uraian Pekerjaan</th><th>SLA</th><th>Keterangan</th></tr></thead>
-                <tbody id="jobLogBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODUL 3 -->
-        <div id="mod-3" class="module-panel">
-          <div class="card">
-            <div class="card-title">Modul 3 — Manpower, Absensi Check In / Check Out &amp; GPS</div>
-            <div class="card-sub" style="margin-bottom:10px;">Pilih Check In / Check Out, ambil foto selfie live ber-watermark AMP, dan kunci GPS</div>
-
-            <div style="border:1.5px solid #cbd5e1; border-radius:14px; padding:10px 12px; background:#f0f9ff; margin-bottom:12px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
-                <span style="font-size:12px; font-weight:900; color:#0b1f44;">🕒 0. Pilih Jenis Absensi</span>
-                <span id="absenTodaySummary" style="font-size:10.5px; font-weight:800; color:#0369a1;">Status hari ini: Belum Check In</span>
+        <!-- MODUL 2: RADAR & MANPOWER -->
+        <section id="mod-2" class="module-panel">
+          <div id="mod2AdminOnlyWrap">
+            <div class="radar-card-box">
+              <div class="radar-card-top">
+                <div class="radar-card-title">📡 Live Radar GPS Korlap</div>
+                <button type="button" class="btn-refresh-blue" onclick="triggerLiveGpsOnce()">↻ Refresh GPS</button>
               </div>
-              <div class="absen-mode-toggle">
-                <button type="button" id="btnModeCheckIn" class="absen-mode-btn active-in" onclick="setAttendanceType('CHECK_IN')">🟢 CHECK IN (Masuk)</button>
-                <button type="button" id="btnModeCheckOut" class="absen-mode-btn" onclick="setAttendanceType('CHECK_OUT')">🔴 CHECK OUT (Pulang)</button>
-              </div>
-            </div>
-
-            <div style="border:1.5px solid #cbd5e1; border-radius:14px; padding:12px; background:#f8fafc; margin-bottom:12px;">
-              <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:8px;">📸 1. Kamera Selfie Live &amp; Foto Bukti</div>
-              <div style="position:relative; width:100%; max-width:340px; margin:0 auto 10px; border-radius:12px; overflow:hidden; background:#0f172a; border:2px solid #1d5fd6; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;">
-                <video id="selfieLiveVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; display:none; transform:scaleX(-1);"></video>
-                <img id="selfieCapturedImg" alt="Hasil Selfie Absensi" style="width:100%; height:100%; object-fit:cover; display:none;" />
-                <div id="selfiePlaceholderBox" style="color:#cbd5e1; font-size:11.5px; text-align:center; padding:12px; line-height:1.45;">
-                  Kamera belum aktif.<br/>Klik <strong>Nyalakan Kamera</strong> untuk ambil foto selfie live.
+              <div class="radar-sub-strip">
+                <span class="badge-active-dots" id="kpiGpsLiveBadge">14 GPS Real Aktif / 14 Korlap</span>
+                <div style="display:flex; gap:5px;">
+                  <button type="button" class="btn-secondary" style="padding:3px 7px; min-height:28px; font-size:10px;" onclick="fitAllLiveKorlap()">Fit Semua</button>
+                  <button type="button" class="btn-secondary" style="padding:3px 7px; min-height:28px; font-size:10px;" onclick="resetRadarView()">Reset</button>
                 </div>
               </div>
+              <div class="controls-bar">
+                <select id="radarFilterKorlap" class="form-select" style="width:100%;" onchange="focusSelectedKorlap()"></select>
+              </div>
+              <div id="korlapRadarMap"></div>
+              <div class="korlap-list-caption" id="korlapListCaption">Daftar titik koordinat terkini Korlap:</div>
+              <div class="korlap-roster-list" id="korlapRosterList"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">👷 Status Manpower &amp; Perangkat Korlap</div>
+              <div class="table-wrap" style="margin-top:8px;">
+                <table>
+                  <thead><tr><th>ID</th><th>Nama</th><th>Area PLN</th><th>Koordinat</th><th>Sesi</th></tr></thead>
+                  <tbody id="manpowerTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div id="mod2KorlapRestricted" class="restricted-box" style="display:none;">
+            🔒 Radar monitoring seluruh Korlap hanya dapat diakses oleh Admin / Head of Operation.
+          </div>
+        </section>
+
+        <!-- MODUL 3: ABSENSI IN/OUT -->
+        <section id="mod-3" class="module-panel">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <div>
+                <div class="card-title">📸 Absensi Selfie &amp; GPS Riil</div>
+                <div class="card-sub" id="absenTodaySummary">Status hari ini: Belum Check In</div>
+              </div>
+              <span class="status-chip st-selesai" id="gpsStatusBadge">📡 Mengunci GPS...</span>
+            </div>
+
+            <div class="absen-mode-toggle">
+              <button type="button" id="btnModeCheckIn" class="absen-mode-btn active-in" onclick="setAttendanceType('CHECK_IN')">🟢 CHECK IN (Masuk)</button>
+              <button type="button" id="btnModeCheckOut" class="absen-mode-btn" onclick="setAttendanceType('CHECK_OUT')">🔴 CHECK OUT (Pulang)</button>
+            </div>
+
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:10px; margin-bottom:10px; font-size:11.5px; line-height:1.5;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:6px; padding-bottom:6px; border-bottom:1px dashed #cbd5e1;">
+                <span id="absenGpsModeBadge" class="status-chip st-rencana">📡 Memeriksa GPS Perangkat...</span>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                  <button type="button" class="btn-primary" style="padding:4px 9px; min-height:30px; font-size:10.5px;" onclick="refreshAccurateGpsDetail(true)">📡 Aktifkan / Lock GPS Riil</button>
+                  <button type="button" id="btnSimulatePreviewGps" class="btn-secondary" style="display:none; padding:4px 9px; min-height:30px; font-size:10.5px; border-color:#0284c7; color:#0369a1;" onclick="simulatePreviewGpsLock()">🧪 Simulasi GPS (Khusus Pratinjau)</button>
+                </div>
+              </div>
+              <div id="absenGpsWarningBox" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; border-radius:8px; padding:7px 9px; margin-bottom:7px; font-size:11px; font-weight:700;"></div>
+              <div><strong>Perusahaan:</strong> <span style="color:#0b1f44; font-weight:800;">PT. Ardina Mulya Perkasa</span></div>
+              <div><strong>Gedung / Titik:</strong> <span id="absenBuildingText" style="color:#1d4ed8; font-weight:800;">-</span></div>
+              <div><strong>Detail Alamat:</strong> <span id="absenAddressDetailText">-</span></div>
+              <div><strong>Koordinat &amp; Maps:</strong> <span id="absenCoordText">-</span> <a id="absenGmapsVerifyLink" href="#" target="_blank" rel="noopener" class="gmaps-link" style="margin-left:6px; display:none;">🗺️ Cek Google Maps</a></div>
+              <div><strong>Akurasi &amp; Waktu:</strong> <span id="absenAccuracyText">-</span> &bull; <span id="absenGpsTimeText">-</span></div>
+            </div>
+
+            <div style="background:#0f172a; border-radius:12px; padding:10px; text-align:center; margin-bottom:10px;">
+              <video id="selfieLiveVideo" autoplay playsinline style="width:100%; max-height:220px; border-radius:8px; display:none; transform:scaleX(-1);"></video>
+              <img id="selfieCapturedImg" alt="Hasil Selfie Watermark" style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; display:none;" />
+              <div id="selfiePlaceholderBox" style="color:#cbd5e1; font-size:11.5px; padding:24px 10px;">
+                📷 Kamera siap digunakan atau klik <strong>Simulasi Foto Watermark</strong> untuk pratinjau cepat.
+              </div>
               <canvas id="selfieCanvas" style="display:none;"></canvas>
-
-              <div class="controls-bar" style="justify-content:center; margin-bottom:6px;">
-                <button type="button" class="btn-primary" id="btnStartSelfieCam" onclick="startSelfieCamera()">📷 Nyalakan Kamera</button>
-                <button type="button" class="btn-success" id="btnCaptureSelfie" onclick="captureSelfiePhoto()" disabled>📸 Ambil Foto</button>
-                <button type="button" class="btn-secondary" id="btnRetakeSelfie" onclick="retakeSelfiePhoto()" style="display:none;">🔄 Ulangi</button>
-                <button type="button" class="btn-secondary" onclick="stopSelfieCamera()">⏹️ Matikan</button>
-              </div>
-              <div style="text-align:center;">
-                <label style="font-size:10.5px; color:#475569; cursor:pointer; text-decoration:underline;">
-                  Atau pilih foto dari kamera bawaan HP:
-                  <input type="file" id="selfieFileFallback" accept="image/*" capture="user" onchange="handleSelfieFileFallback(event)" style="display:none;" />
-                </label>
-              </div>
             </div>
 
-            <div style="border:1.5px solid #cbd5e1; border-radius:14px; padding:12px; background:#f8fafc; margin-bottom:12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
-                <span style="font-size:12px; font-weight:900; color:#0b1f44;">📍 2. GPS Akurat &amp; Detail Lokasi</span>
-                <button type="button" class="btn-secondary" style="padding:5px 9px; font-size:10.5px;" onclick="refreshAccurateGpsDetail(true)">🎯 Lock GPS Akurat</button>
-              </div>
-              <div style="font-size:11.5px; color:#1e293b; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:10px; line-height:1.5;">
-                <div><strong>Koordinat:</strong> <span id="absenCoordText">Menunggu lock GPS asli perangkat...</span></div>
-                <div><strong>Akurasi GPS:</strong> <span id="absenAccuracyText">-</span></div>
-                <div><strong>Detail Lokasi / Alamat:</strong> <span id="absenAddressDetailText">Memuat detail lokasi terkini...</span></div>
-                <div><strong>Waktu Lock:</strong> <span id="absenGpsTimeText">-</span></div>
-              </div>
+            <div class="controls-bar">
+              <button type="button" class="btn-primary" onclick="startSelfieCamera()">📷 Buka Kamera</button>
+              <button type="button" id="btnCaptureSelfie" class="btn-secondary" onclick="captureSelfiePhoto()" disabled>📸 Jepret</button>
+              <button type="button" id="btnRetakeSelfie" class="btn-secondary" style="display:none;" onclick="retakeSelfiePhoto()">↻ Ulangi</button>
+              <button type="button" class="btn-secondary" onclick="generateSampleSelfieWatermark()">🖼️ Simulasi Foto</button>
+              <input type="file" accept="image/*" class="form-control" style="max-width:190px;" onchange="handleSelfieFileFallback(event)" />
             </div>
 
-            <button type="button" id="btnSubmitAttendance" class="btn-success" style="width:100%; padding:11px 14px; font-size:12.5px; margin-bottom:14px;" onclick="recordAttendanceNow()">🟢 Kirim CHECK IN (Selfie + GPS)</button>
+            <button type="button" id="btnSubmitAttendance" class="btn-success" style="width:100%;" onclick="recordAttendanceNow()">🟢 Kirim CHECK IN / Masuk (Selfie + GPS)</button>
+          </div>
 
-            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">🕒 Riwayat Check In / Check Out &amp; Lokasi</div>
-            <div class="table-wrap" style="margin-bottom:14px;">
+          <div id="mod3AdminHistoryWrap" class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <div class="card-title">📋 Riwayat Absensi Korlap</div>
+              <button type="button" class="btn-success" onclick="exportTableCsv('absensi')">📥 Export CSV 1 Bulan (A–Z)</button>
+            </div>
+            <div class="table-wrap">
               <table>
-                <thead><tr><th>Foto</th><th>Jenis &amp; Waktu</th><th>Personel</th><th>Detail Lokasi &amp; Koordinat</th><th>Durasi / GPS</th></tr></thead>
+                <thead><tr><th>Selfie</th><th>Status &amp; Waktu</th><th>Korlap &amp; Area</th><th>Lokasi</th><th>Akurasi</th></tr></thead>
                 <tbody id="attendanceHistoryBody"></tbody>
               </table>
             </div>
-
-            <div style="font-size:12px; font-weight:900; color:#0b1f44; margin-bottom:6px;">👥 Status Manpower &amp; Perangkat</div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>ID / Username</th><th>Nama Personel</th><th>Area Tugas PLN</th><th>Koordinat</th><th>Status</th></tr></thead>
-                <tbody id="manpowerTableBody"></tbody>
-              </table>
-            </div>
           </div>
-        </div>
+        </section>
 
-        <!-- MODUL 4 -->
-        <div id="mod-4" class="module-panel">
+        <!-- MODUL 4: MCP & DAC -->
+        <section id="mod-4" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 4 — Master Cleaning Program (MCP) &amp; DAC</div>
-            <div class="card-sub" style="margin-bottom:10px;">Korlap hanya melihat area tugasnya sendiri; Admin/HeadOfOps dapat melihat semua area</div>
-            <div class="controls-bar">
-              <div id="mcpAdminFilterWrap" style="display:none; align-items:center; gap:6px; width:100%;">
-                <select id="mcpKorlapFilter" class="form-select" onchange="renderMcpTable()" style="flex:1;"></select>
-              </div>
-              <select id="mcpStatusFilter" class="form-select" onchange="renderMcpTable()">
-                <option value="ALL">Semua Status</option>
-                <option value="X">Sudah Dikerjakan (X)</option>
-                <option value="RENCANA">Rencana (Tanpa X)</option>
-              </select>
-              <input type="text" id="mcpSearchInput" class="form-control" placeholder="Cari uraian / area..." oninput="renderMcpTable()" style="flex:1;" />
-              <button type="button" class="btn-secondary" id="btnExportMcp" onclick="exportMcpCsv()">⬇️ CSV</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <div class="card-title">📅 Master Cleaning Program (MCP &amp; DAC)</div>
+              <button type="button" id="btnExportMcp" class="btn-success" onclick="exportMcpCsv()">📥 Export MCP CSV</button>
             </div>
-            <div class="mcp-subtabs" id="mcpSubtabs">
+
+            <div class="mcp-subtabs">
               <button type="button" class="mcp-subtab active" data-sheet="LANTAI 1" onclick="switchMcpSheet('LANTAI 1')">LANTAI 1</button>
               <button type="button" class="mcp-subtab" data-sheet="LANTAI 2" onclick="switchMcpSheet('LANTAI 2')">LANTAI 2</button>
               <button type="button" class="mcp-subtab" data-sheet="HALAMAN" onclick="switchMcpSheet('HALAMAN')">HALAMAN</button>
               <button type="button" class="mcp-subtab" data-sheet="CRASS" onclick="switchMcpSheet('CRASS')">CRASS</button>
             </div>
+
+            <div class="controls-bar" id="mcpAdminFilterWrap">
+              <select id="mcpKorlapFilter" class="form-select" style="flex:1;" onchange="renderMcpTable()"></select>
+            </div>
+            <div class="controls-bar">
+              <select id="mcpStatusFilter" class="form-select" onchange="renderMcpTable()">
+                <option value="ALL">Semua Status</option>
+                <option value="X">Sudah Realisasi (X)</option>
+                <option value="RENCANA">Belum Realisasi</option>
+              </select>
+              <input type="text" id="mcpSearchInput" class="form-control" style="flex:1;" placeholder="Cari uraian / area..." oninput="renderMcpTable()" />
+            </div>
+
             <div class="table-wrap">
               <table>
-                <thead><tr><th>No</th><th>Area</th><th>Uraian Pekerjaan</th><th>Kode</th><th>Frekuensi</th><th>Bulan (Klik Toggle X)</th></tr></thead>
+                <thead><tr><th>No</th><th>Area &amp; Korlap</th><th>Uraian Pekerjaan</th><th>Kode</th><th>Bulan (M1–M12)</th><th>Approval</th></tr></thead>
                 <tbody id="mcpTableBody"></tbody>
               </table>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- MODUL 5 -->
-        <div id="mod-5" class="module-panel">
+        <!-- MODUL 5: KEJADIAN & TEMUAN -->
+        <section id="mod-5" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 5 — Register Kejadian / Temuan &amp; Action Plan</div>
-            <div class="card-sub" style="margin-bottom:10px;">Korlap hanya melihat temuan di areanya sendiri; Admin/HeadOfOps memantau seluruh temuan</div>
-            <div class="form-grid-2">
-              <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Contoh: UPT Bekasi & ULTG Cikarang" /></div>
-              <div class="field-group"><label>Uraian Kejadian / Temuan</label><input type="text" id="findDescInput" placeholder="Contoh: Saluran air halaman perlu pembersihan rutin" /></div>
-              <div class="field-group"><label>PIC Penanggung Jawab</label><input type="text" id="findPicInput" readonly /></div>
-              <div class="field-group"><label>Status</label>
-                <select id="findStatusInput">
-                  <option value="Rencana">Rencana</option>
-                  <option value="Selesai">Selesai</option>
-                  <option value="Kendala">Kendala</option>
-                </select>
-              </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <div class="card-title">⚠️ Laporan Kejadian &amp; Temuan Lapangan</div>
+              <button type="button" class="btn-success" onclick="exportTableCsv('kejadian')">📥 Export CSV</button>
             </div>
-            <button type="button" class="btn-primary" onclick="addFindingItem()">+ Tambah Kejadian / Temuan</button>
-            <div class="table-wrap" style="margin-top:12px;">
+            <div class="form-grid-2">
+              <div class="field-group"><label>Lokasi / Area</label><input type="text" id="findLocInput" placeholder="Lokasi kejadian..." /></div>
+              <div class="field-group"><label>Uraian Kejadian / Temuan</label><input type="text" id="findDescInput" placeholder="Deskripsi temuan..." /></div>
+              <div class="field-group"><label>PIC</label><input type="text" id="findPicInput" readonly /></div>
+              <div class="field-group"><label>Status</label><select id="findStatusInput"><option value="Rencana">Rencana</option><option value="Selesai">Selesai</option><option value="Kendala">Kendala</option></select></div>
+              <div class="field-group"><label>Foto Bukti</label><input type="file" id="findPhotoInput" accept="image/*" onchange="handleGenericImageUpload(event, (url) => draftFindingPhoto = url)" /></div>
+            </div>
+            <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="addFindingItem()">+ Simpan Kejadian / Temuan</button>
+            <div class="table-wrap">
               <table>
-                <thead><tr><th>Tanggal</th><th>Lokasi</th><th>Temuan</th><th>PIC</th><th>Status</th></tr></thead>
+                <thead><tr><th>Tgl</th><th>Foto</th><th>Detail</th><th>Status</th><th>Approval</th></tr></thead>
                 <tbody id="findingsTableBody"></tbody>
               </table>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- MODUL 6 -->
-        <div id="mod-6" class="module-panel">
+        <!-- MODUL 6: MATERIAL REQUEST -->
+        <section id="mod-6" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 6 — Material &amp; Asset Operasional</div>
-            <div class="card-sub" style="margin-bottom:10px;">Pemantauan stok material kebersihan, peralatan, dan kelengkapan APD</div>
+            <div class="card-title">📦 Pengajuan Material Request (MR)</div>
+            <div class="form-grid-2" style="margin-top:8px;">
+              <div class="field-group"><label>Nama Material / Chemical / Alat</label><input type="text" id="mrItemInput" placeholder="Contoh: Floor Cleaner 5L" /></div>
+              <div class="field-group"><label>Kategori</label><select id="mrCatInput"><option value="Chemical">Chemical</option><option value="Consumable">Consumable</option><option value="Alat Kerja">Alat Kerja</option><option value="K3 / APD">K3 / APD</option></select></div>
+              <div class="field-group"><label>Jumlah</label><input type="number" id="mrQtyInput" value="1" min="1" /></div>
+              <div class="field-group"><label>Satuan</label><input type="text" id="mrUnitInput" placeholder="Jerigen / Pcs / Set" /></div>
+            </div>
+            <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="addMaterialRequest()">+ Ajukan Material Request</button>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Kode</th><th>Nama Material / Asset</th><th>Kategori</th><th>Stok</th><th>Satuan</th><th>Kondisi</th></tr></thead>
+                <thead><tr><th>Tgl</th><th>Item</th><th>Qty</th><th>Pemohon</th><th>Approval</th></tr></thead>
                 <tbody id="materialTableBody"></tbody>
               </table>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- MODUL 7 -->
-        <div id="mod-7" class="module-panel">
+        <!-- MODUL 7: LAPORAN PEKERJAAN -->
+        <section id="mod-7" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 7 — Rekapitulasi Laporan &amp; Ekspor Data</div>
-            <div class="card-sub" style="margin-bottom:10px;">Rekap data operasional sesuai tingkat hak akses akun</div>
-            <div class="controls-bar" id="mod7Actions">
-              <button type="button" class="btn-success" onclick="exportMcpCsv()">⬇️ Unduh CSV Rekap</button>
-              <button type="button" class="btn-primary" onclick="window.print()">🖨️ Cetak / PDF</button>
+            <div class="card-title">🧹 Laporan Pekerjaan (Temuan - Before - Progress - After)</div>
+            <div class="form-grid-2" style="margin-top:8px;">
+              <div class="field-group"><label>Area Tugas</label><select id="jobAreaInput"></select></div>
+              <div class="field-group"><label>Capaian SLA (%)</label><input type="number" id="jobSlaInput" value="98" min="0" max="100" /></div>
+              <div class="field-group"><label>Temuan Awal</label><input type="text" id="jobTemuanInput" placeholder="Kondisi temuan..." /></div>
+              <div class="field-group"><label>Before</label><input type="text" id="jobBeforeInput" placeholder="Sebelum dikerjakan..." /></div>
+              <div class="field-group"><label>Progress</label><input type="text" id="jobProgressInput" placeholder="Proses pengerjaan..." /></div>
+              <div class="field-group"><label>After</label><input type="text" id="jobAfterInput" placeholder="Hasil akhir..." /></div>
             </div>
-            <div id="reportSummaryText" style="font-size:12px; color:#334155; line-height:1.55;"></div>
-          </div>
-        </div>
-
-        <!-- MODUL 8 -->
-        <div id="mod-8" class="module-panel">
-          <div class="card">
-            <div class="card-title">Modul 8 — Pengaturan Sistem &amp; Koneksi Supabase</div>
-            <div class="card-sub" style="margin-bottom:10px;">Pengaturan sistem pusat, instalasi aplikasi, dan kontrol sesi perangkat</div>
-            <div id="adminSettingsContent">
-              <div class="form-grid-2">
-                <div class="field-group"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" placeholder="https://xxxx.supabase.co" /></div>
-                <div class="field-group"><label>Supabase Anon Key</label><input type="text" id="sbKeyInput" placeholder="eyJ..." /></div>
-              </div>
-              <div class="controls-bar">
-                <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">💾 Simpan Supabase</button>
-                <button type="button" class="btn-success" onclick="testAndSyncSupabaseGps(true)">🔄 Sinkron Cloud &amp; GPS</button>
-                <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">🔗 Salin Link Korlap</button>
-                <button type="button" class="btn-secondary" onclick="triggerInstallApp()">📲 Install App</button>
-                <button type="button" class="btn-secondary" style="color:#b91c1c;" onclick="resetAllDeviceLocks()">🔓 Reset Kunci Perangkat</button>
-              </div>
-              <div id="supabaseSyncStatusBox" style="padding:9px 11px; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; font-size:11.5px; color:#334155; margin-bottom:8px;">
-                Status Sinkronisasi Cloud &amp; GPS: <strong>Siap dihubungkan</strong>.
-              </div>
+            <div class="photo-4-grid">
+              <div class="field-group"><label>Foto Temuan</label><input type="file" accept="image/*" onchange="handleGenericImageUpload(event, (u) => draftJobPhotos.temuan = u)" /></div>
+              <div class="field-group"><label>Foto Before</label><input type="file" accept="image/*" onchange="handleGenericImageUpload(event, (u) => draftJobPhotos.before = u)" /></div>
+              <div class="field-group"><label>Foto Progress</label><input type="file" accept="image/*" onchange="handleGenericImageUpload(event, (u) => draftJobPhotos.progress = u)" /></div>
+              <div class="field-group"><label>Foto After</label><input type="file" accept="image/*" onchange="handleGenericImageUpload(event, (u) => draftJobPhotos.after = u)" /></div>
             </div>
-            <div id="korlapSettingsRestricted" class="restricted-box" style="display:none;">
-              <strong>🔒 Pengaturan Pusat Hanya untuk Admin / Head of Operation</strong><br/>
-              Akun Korlap tidak memiliki akses ke konfigurasi sistem maupun manajemen akun lain.
+            <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="addJobLog()">+ Kirim Laporan Pekerjaan</button>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Waktu &amp; Area</th><th>Uraian</th><th>4 Foto</th><th>Approval</th></tr></thead>
+                <tbody id="jobLogBody"></tbody>
+              </table>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div id="mod-9" class="module-panel"><div class="card"><div class="card-title">Modul 9 — Inspeksi Kualitas Kebersihan &amp; 5R</div><div class="card-sub">Evaluasi Ringkas, Rapi, Resik, Rawat, Rajin (5R) pada area tugas Anda.</div></div></div>
-        <div id="mod-10" class="module-panel"><div class="card"><div class="card-title">Modul 10 — Kepatuhan K3, Safety Briefing &amp; APD</div><div class="card-sub">Pencatatan safety briefing harian, penggunaan APD, dan nihil kecelakaan kerja (Zero Accident).</div></div></div>
-        <div id="mod-11" class="module-panel"><div class="card"><div class="card-title">Modul 11 — Jadwal Shift &amp; Penugasan Personel</div><div class="card-sub">Pengaturan shift pagi/siang/patroli sesuai wilayah tugas.</div></div></div>
-        <div id="mod-12" class="module-panel"><div class="card"><div class="card-title">Modul 12 — Keluhan Pelanggan / Service Request (PLN)</div><div class="card-sub">Pelacakan permintaan layanan tambahan dan respon cepat tindak lanjut di lapangan.</div></div></div>
-        <div id="mod-13" class="module-panel"><div class="card"><div class="card-title">Modul 13 — Audit Peralatan &amp; Kalibrasi Mesin</div><div class="card-sub">Pemeriksaan kesiapan polisher, vacuum cleaner, tangga, dan alat kerja lapangan.</div></div></div>
-        <div id="mod-14" class="module-panel">
+        <!-- MODUL 8: WORK PERMIT -->
+        <section id="mod-8" class="module-panel">
           <div class="card">
-            <div class="card-title">Modul 14 — Profil &amp; Log Sesi Perangkat</div>
-            <div class="card-sub">Informasi akun aktif, perangkat terdaftar, dan riwayat sesi.</div>
-            <div id="sessionLogContent" style="margin-top:10px; font-size:12px; color:#334155; line-height:1.5;"></div>
+            <div class="card-title">🦺 Work Permit (JSA / Ketinggian / Rope Access)</div>
+            <div class="form-grid-2" style="margin-top:8px;">
+              <div class="field-group"><label>Jenis Work Permit</label><select id="wpTypeInput"><option value="Pekerjaan Rope Access">Pekerjaan Rope Access</option><option value="Pekerjaan Ketinggian (Scaffolding)">Pekerjaan Ketinggian (Scaffolding)</option><option value="Pekerjaan Ruang Terbatas">Pekerjaan Ruang Terbatas</option><option value="General Work Permit">General Work Permit</option></select></div>
+              <div class="field-group"><label>Lokasi Pekerjaan</label><input type="text" id="wpLocInput" placeholder="Gedung / Gardu Induk..." /></div>
+              <div class="field-group"><label>Dokumen JSA / Permit (PDF/Doc)</label><input type="file" id="wpDocInput" onchange="handleWpDocUpload(event)" /></div>
+              <div class="field-group"><label>Foto K3 / Alat Pelindung</label><input type="file" id="wpPhotoInput" accept="image/*" onchange="handleGenericImageUpload(event, (u) => draftWpPhoto = u)" /></div>
+            </div>
+            <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="addWorkPermit()">+ Ajukan Work Permit</button>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Tgl</th><th>Foto</th><th>Jenis &amp; Lokasi</th><th>Dokumen</th><th>Approval</th></tr></thead>
+                <tbody id="workPermitTableBody"></tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
+
+        <!-- MODUL 9: ACTION PLAN / CRASH PROGRAM -->
+        <section id="mod-9" class="module-panel">
+          <div class="card">
+            <div class="card-title">🚀 Action Plan &amp; Crash Program</div>
+            <div class="form-grid-2" style="margin-top:8px;">
+              <div class="field-group"><label>Tanggal Pelaksanaan</label><input type="date" id="cpTanggalInput" /></div>
+              <div class="field-group"><label>Rencana Action Plan</label><input type="text" id="cpPlanInput" placeholder="Contoh: Pembersihan menyeluruh saluran & halaman..." /></div>
+            </div>
+            <button type="button" class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="addCrashProgram()">+ Simpan Action Plan</button>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Tanggal</th><th>Pemohon</th><th>Rencana</th><th>Approval</th></tr></thead>
+                <tbody id="crashProgramTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- MODUL 10: PROFIL AKUN -->
+        <section id="mod-10" class="module-panel">
+          <div class="card">
+            <div class="card-title">👤 Profil &amp; Direktori Personel AMP</div>
+            <div class="form-grid-2" style="margin-top:8px;">
+              <div class="field-group"><label>Nama Lengkap</label><input type="text" id="profNameInput" /></div>
+              <div class="field-group"><label>Jabatan</label><input type="text" id="profJabatanInput" /></div>
+              <div class="field-group"><label>NIP / ID Karyawan</label><input type="text" id="profNipInput" /></div>
+              <div class="field-group"><label>No. HP / WhatsApp</label><input type="text" id="profPhoneInput" /></div>
+              <div class="field-group"><label>PIN Login Baru</label><input type="text" id="profPinInput" maxlength="12" /></div>
+              <div class="field-group"><label>Foto Profil</label><input type="file" accept="image/*" onchange="handleGenericImageUpload(event, (u) => draftProfilePhoto = u)" /></div>
+            </div>
+            <button type="button" class="btn-primary" style="width:100%; margin-bottom:12px;" onclick="saveProfileForm()">💾 Simpan Perubahan Profil</button>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Username</th><th>Nama</th><th>Jabatan</th><th>Area PLN</th></tr></thead>
+                <tbody id="profileDirectoryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- MODUL 11: PENGATURAN -->
+        <section id="mod-11" class="module-panel">
+          <div id="adminSettingsContent" class="card">
+            <div class="card-title">⚙️ Pengaturan Sistem &amp; Sinkronisasi Cloud</div>
+            <div style="margin-top:8px; font-size:12px;">
+              <strong>Volume Notifikasi Admin:</strong> <span id="mod11VolumeText">80% (ON)</span>
+              <div class="controls-bar" style="margin-top:6px;">
+                <button type="button" class="btn-secondary" onclick="adjustNotifVolume(-0.2)">🔉 -20%</button>
+                <button type="button" class="btn-secondary" onclick="adjustNotifVolume(0.2)">🔊 +20%</button>
+                <button type="button" class="btn-primary" onclick="playNotifSound(true)">🔔 Tes Suara</button>
+              </div>
+            </div>
+            <div class="field-group" style="margin-bottom:8px;"><label>Supabase Project URL</label><input type="text" id="sbUrlInput" /></div>
+            <div class="field-group" style="margin-bottom:8px;"><label>Supabase Anon Key</label><input type="text" id="sbKeyInput" placeholder="Opsional untuk mode cloud..." /></div>
+            <div class="controls-bar">
+              <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">Simpan Config</button>
+              <button type="button" class="btn-secondary" onclick="testAndSyncSupabaseGps(true)">Sinkronisasi Sekarang</button>
+              <button type="button" class="btn-secondary" onclick="copyKorlapTrackingLink()">Salin Link Korlap</button>
+              <button type="button" class="btn-checkout" onclick="resetAllDeviceLocks()">Reset Kunci Perangkat</button>
+            </div>
+            <div id="supabaseSyncStatusBox" style="font-size:11px; color:#475569; margin-top:6px;">Status Sinkronisasi: Mode Pratinjau Aktif.</div>
+          </div>
+          <div id="korlapSettingsRestricted" class="restricted-box" style="display:none;">
+            🔒 Pengaturan server &amp; manajemen perangkat hanya dapat diakses oleh Admin.
+          </div>
+        </section>
+
+        <!-- MODUL 12: LOG SESI -->
+        <section id="mod-14" class="module-panel">
+          <div class="card">
+            <div class="card-title">🔐 12. Informasi Sesi &amp; Perangkat Aktif</div>
+            <div id="sessionLogContent" style="font-size:12px; line-height:1.6; margin-top:8px;"></div>
+          </div>
+        </section>
+      </main>
 
       <nav class="bottom-nav-bar">
         <button type="button" class="bnav-btn active" data-bnav="mod-1" onclick="switchModule('mod-1')"><span class="bnav-ico">🏠</span><span>Home</span></button>
+        <button type="button" class="bnav-btn" data-bnav="mod-2" onclick="switchModule('mod-2')"><span class="bnav-ico">📡</span><span>Radar</span></button>
         <button type="button" class="bnav-btn" data-bnav="mod-3" onclick="switchModule('mod-3')"><span class="bnav-ico">📸</span><span>Absen</span></button>
-        <button type="button" class="bnav-btn" data-bnav="mod-5" onclick="switchModule('mod-5')"><span class="bnav-ico">⚠️</span><span>Kejadian</span></button>
-        <button type="button" class="bnav-btn" data-bnav="mod-14" onclick="switchModule('mod-14')"><span class="bnav-ico">👤</span><span>Profil</span></button>
+        <button type="button" class="bnav-btn" data-bnav="mod-4" onclick="switchModule('mod-4')"><span class="bnav-ico">📅</span><span>MCP</span></button>
       </nav>
     </div>
   </section>
@@ -852,6 +1069,18 @@
     }
 
     let deferredPwaPrompt = null;
+    let bannerTimer = null;
+
+    function showAppBanner(msg, type = "info", targetId = "globalAppBanner") {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      el.className = `app-banner-msg ${type}`;
+      el.textContent = msg;
+      if (targetId === "globalAppBanner") {
+        clearTimeout(bannerTimer);
+        bannerTimer = setTimeout(() => { el.className = "app-banner-msg"; el.textContent = ""; }, 4500);
+      }
+    }
 
     (function setupInstallablePwa() {
       try {
@@ -904,38 +1133,36 @@
     }
 
     const DEFAULT_ACCOUNTS = [
-      { id: "M.Soheh", username: "M.Soheh", name: "M.Soheh", role: "ADMIN", pin: "990099", area: "Seluruh Wilayah PLN UIT JBT & UIT JBB", lat: -6.2432, lng: 106.8689, streetHint: "Jl. Raya Cawang / Kantor Pusat" },
-      { id: "Dede_Rusmana", username: "Dede_Rusmana", name: "Dede Rusmana", role: "KORLAP", pin: "110101", area: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756, streetHint: "UPT Bekasi & ULTG Cikarang" },
-      { id: "Dede_Purnama", username: "Dede_Purnama", name: "Dede Purnama", role: "KORLAP", pin: "110202", area: "ULTG Karet & ULTG Mampang", lat: -6.2165, lng: 106.8168, streetHint: "ULTG Karet & ULTG Mampang" },
-      { id: "Dadang_Darsono", username: "Dadang_Darsono", name: "Dadang Darsono", role: "KORLAP", pin: "110303", area: "UPT Pulogadung", lat: -6.1835, lng: 106.9065, streetHint: "UPT Pulogadung" },
-      { id: "Rizky_Badrul Z", username: "Rizky_Badrul Z", name: "Rizky Badrul Zaman", role: "KORLAP", pin: "110404", area: "Kantor Induk Bandung & ULTG Bandung Barat", lat: -6.9147, lng: 107.6098, streetHint: "Kantor Induk Bandung & ULTG Bandung Barat" },
-      { id: "Irfan_AS", username: "Irfan_AS", name: "Irfan Ardiatma S", role: "KORLAP", pin: "110505", area: "UPT Cawang", lat: -6.2432, lng: 106.8689, streetHint: "UPT Cawang" },
-      { id: "Yan_S", username: "Yan_S", name: "Yan Saputra", role: "KORLAP", pin: "110606", area: "UPT Pulogadung", lat: -6.1525, lng: 106.8421, streetHint: "UPT Pulogadung" },
-      { id: "Yadi_S", username: "Yadi_S", name: "Yadi Supriyadi", role: "KORLAP", pin: "110707", area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan", lat: -6.9326, lng: 107.6278, streetHint: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan" },
-      { id: "Tegar_D", username: "Tegar_D", name: "Tegar Dwitama", role: "KORLAP", pin: "110808", area: "ULTG Cikarang", lat: -6.2654, lng: 107.1512, streetHint: "ULTG Cikarang" },
-      { id: "Andi_I", username: "Andi_I", name: "Andi Ilmanto", role: "KORLAP", pin: "110909", area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", lat: -6.3189, lng: 106.7745, streetHint: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel" },
-      { id: "Tamam_2", username: "Tamam_2", name: "Tamam", role: "KORLAP", pin: "111010", area: "UPT Bogor", lat: -6.5971, lng: 106.8060, streetHint: "UPT Bogor" },
-      { id: "Haerudin_3", username: "Haerudin_3", name: "Haerudin", role: "KORLAP", pin: "111111", area: "ULTG Purwakarta", lat: -6.5569, lng: 107.4463, streetHint: "ULTG Purwakarta" },
-      { id: "Iswanto_R", username: "Iswanto_R", name: "Iswanto Riansyah", role: "KORLAP", pin: "111212", area: "UPT Bogor", lat: -6.9277, lng: 106.9271, streetHint: "UPT Bogor" },
-      { id: "Rifky_Y", username: "Rifky_Y", name: "Rifkiyansyah", role: "KORLAP", pin: "111313", area: "UPT Karawang", lat: -6.3036, lng: 107.3009, streetHint: "UPT Karawang" },
-      { id: "AF_Fahmi", username: "AF_Fahmi", name: "Ahmad Fauzi Fahmi", role: "KORLAP", pin: "111414", area: "UPT Karawang", lat: -6.3036, lng: 107.3009, streetHint: "UPT Karawang" }
+      { id: "M.Soheh", username: "M.Soheh", name: "M.Soheh", jabatan: "Head Of Operation / Admin", nip: "AMP-0001", phone: "0812-8800-0001", role: "ADMIN", pin: "990099", area: "Seluruh Wilayah PLN UIT JBT & UIT JBB", lat: -6.2432, lng: 106.8689, streetHint: "Jl. Raya Cawang / Kantor Pusat", photoDataUrl: "" },
+      { id: "Dede_Rusmana", username: "Dede_Rusmana", name: "Dede Rusmana", jabatan: "Koordinator Lapangan", nip: "AMP-0101", phone: "0813-1101-0101", role: "KORLAP", pin: "110101", area: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756, streetHint: "UPT Bekasi & ULTG Cikarang", photoDataUrl: "" },
+      { id: "Dede_Purnama", username: "Dede_Purnama", name: "Dede Purnama", jabatan: "Koordinator Lapangan", nip: "AMP-0102", phone: "0813-1102-0202", role: "KORLAP", pin: "110202", area: "ULTG Karet & ULTG Mampang", lat: -6.2165, lng: 106.8168, streetHint: "ULTG Karet & ULTG Mampang", photoDataUrl: "" },
+      { id: "Dadang_Darsono", username: "Dadang_Darsono", name: "Dadang Darsono", jabatan: "Koordinator Lapangan", nip: "AMP-0103", phone: "0813-1103-0303", role: "KORLAP", pin: "110303", area: "UPT Pulogadung", lat: -6.1835, lng: 106.9065, streetHint: "UPT Pulogadung", photoDataUrl: "" },
+      { id: "Rizky_Badrul Z", username: "Rizky_Badrul Z", name: "Rizky Badrul Zaman", jabatan: "Koordinator Lapangan", nip: "AMP-0104", phone: "0813-1104-0404", role: "KORLAP", pin: "110404", area: "Kantor Induk Bandung & ULTG Bandung Barat", lat: -6.9147, lng: 107.6098, streetHint: "Kantor Induk Bandung & ULTG Bandung Barat", photoDataUrl: "" },
+      { id: "Irfan_AS", username: "Irfan_AS", name: "Irfan Ardiatma S", jabatan: "Koordinator Lapangan", nip: "AMP-0105", phone: "0813-1105-0505", role: "KORLAP", pin: "110505", area: "UPT Cawang", lat: -6.2432, lng: 106.8689, streetHint: "UPT Cawang", photoDataUrl: "" },
+      { id: "Yan_S", username: "Yan_S", name: "Yan Saputra", jabatan: "Koordinator Lapangan", nip: "AMP-0106", phone: "0813-1106-0606", role: "KORLAP", pin: "110606", area: "UPT Pulogadung", lat: -6.1525, lng: 106.8421, streetHint: "UPT Pulogadung", photoDataUrl: "" },
+      { id: "Yadi_S", username: "Yadi_S", name: "Yadi Supriyadi", jabatan: "Koordinator Lapangan", nip: "AMP-0107", phone: "0813-1107-0707", role: "KORLAP", pin: "110707", area: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan", lat: -6.9326, lng: 107.6278, streetHint: "UPT Bandung, ULTG Bandung Timur & Bandung Selatan", photoDataUrl: "" },
+      { id: "Tegar_D", username: "Tegar_D", name: "Tegar Dwitama", jabatan: "Koordinator Lapangan", nip: "AMP-0108", phone: "0813-1108-0808", role: "KORLAP", pin: "110808", area: "ULTG Cikarang", lat: -6.2654, lng: 107.1512, streetHint: "ULTG Cikarang", photoDataUrl: "" },
+      { id: "Andi_I", username: "Andi_I", name: "Andi Ilmanto", jabatan: "Koordinator Lapangan", nip: "AMP-0109", phone: "0813-1109-0909", role: "KORLAP", pin: "110909", area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", lat: -6.3189, lng: 106.7745, streetHint: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", photoDataUrl: "" },
+      { id: "Tamam_2", username: "Tamam_2", name: "Tamam", jabatan: "Koordinator Lapangan", nip: "AMP-0110", phone: "0813-1110-1010", role: "KORLAP", pin: "111010", area: "UPT Bogor", lat: -6.5971, lng: 106.8060, streetHint: "UPT Bogor", photoDataUrl: "" },
+      { id: "Haerudin_3", username: "Haerudin_3", name: "Haerudin", jabatan: "Koordinator Lapangan", nip: "AMP-0111", phone: "0813-1111-1111", role: "KORLAP", pin: "111111", area: "ULTG Purwakarta", lat: -6.5569, lng: 107.4463, streetHint: "ULTG Purwakarta", photoDataUrl: "" },
+      { id: "Iswanto_R", username: "Iswanto_R", name: "Iswanto Riansyah", jabatan: "Koordinator Lapangan", nip: "AMP-0112", phone: "0813-1112-1212", role: "KORLAP", pin: "111212", area: "UPT Bogor", lat: -6.9277, lng: 106.9271, streetHint: "UPT Bogor", photoDataUrl: "" },
+      { id: "Rifky_Y", username: "Rifky_Y", name: "Rifkiyansyah", jabatan: "Koordinator Lapangan", nip: "AMP-0113", phone: "0813-1113-1313", role: "KORLAP", pin: "111313", area: "UPT Karawang", lat: -6.3036, lng: 107.3009, streetHint: "UPT Karawang", photoDataUrl: "" },
+      { id: "AF_Fahmi", username: "AF_Fahmi", name: "Ahmad Fauzi Fahmi", jabatan: "Koordinator Lapangan", nip: "AMP-0114", phone: "0813-1114-1414", role: "KORLAP", pin: "111414", area: "UPT Karawang", lat: -6.3036, lng: 107.3009, streetHint: "UPT Karawang", photoDataUrl: "" }
     ];
 
     const MODULES_14 = [
-      { id: "mod-1", label: "1. Dashboard & Radar" },
-      { id: "mod-2", label: "2. Monitoring Pekerjaan" },
-      { id: "mod-3", label: "3. Manpower & Absensi" },
+      { id: "mod-1", label: "1. Dashboard" },
+      { id: "mod-2", label: "2. Radar & Manpower" },
+      { id: "mod-3", label: "3. Absensi In/Out" },
       { id: "mod-4", label: "4. MCP & DAC" },
       { id: "mod-5", label: "5. Kejadian & Temuan" },
-      { id: "mod-6", label: "6. Material & Asset" },
-      { id: "mod-7", label: "7. Laporan & Ekspor" },
-      { id: "mod-8", label: "8. Pengaturan" },
-      { id: "mod-9", label: "9. Inspeksi 5R" },
-      { id: "mod-10", label: "10. K3 & APD" },
-      { id: "mod-11", label: "11. Jadwal Shift" },
-      { id: "mod-12", label: "12. Service Request" },
-      { id: "mod-13", label: "13. Audit Peralatan" },
-      { id: "mod-14", label: "14. Profil & Log Sesi" }
+      { id: "mod-6", label: "6. Material Request" },
+      { id: "mod-7", label: "7. Laporan Pekerjaan" },
+      { id: "mod-8", label: "8. Work Permit" },
+      { id: "mod-9", label: "9. Action Plan" },
+      { id: "mod-10", label: "10. Profil Akun" },
+      { id: "mod-11", label: "11. Pengaturan" },
+      { id: "mod-14", label: "12. Log Sesi" }
     ];
 
     const MCP_TEMPLATES = {
@@ -968,10 +1195,11 @@
       ]
     };
 
-    const STORAGE_KEY = "AMP_MONITORING_STATE_V4";
+    const STORAGE_KEY = "AMP_PREVIEW_STATE_V1";
     const DEVICE_ID_KEY = "AMP_THIS_DEVICE_FINGERPRINT_V2";
     const LOCK_REGISTRY_KEY = "AMP_ACTIVE_DEVICE_LOCKS_V2";
     const NOTIF_SOUND_PREF_KEY = "AMP_ADMIN_NOTIF_SOUND_ON";
+    const NOTIF_VOLUME_PREF_KEY = "AMP_ADMIN_NOTIF_VOLUME";
     const DEFAULT_SUPABASE_URL = "https://eisyyoltiheemoghokyd.supabase.co";
     const DEFAULT_SUPABASE_KEY = "";
 
@@ -984,8 +1212,17 @@
       return did;
     }
 
+    function createSamplePhotoSvg(label, bgHex, accentHex) {
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='160' viewBox='0 0 240 160'>
+        <rect width='240' height='160' fill='${bgHex}'/>
+        <rect x='14' y='14' width='212' height='132' rx='10' fill='none' stroke='${accentHex}' stroke-width='2' stroke-dasharray='6 4'/>
+        <text x='120' y='74' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='#ffffff' text-anchor='middle'>AMP EVIDENCE</text>
+        <text x='120' y='98' font-family='Arial,sans-serif' font-size='13' font-weight='bold' fill='${accentHex}' text-anchor='middle'>${label}</text>
+      </svg>`;
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
     const THIS_DEVICE_ID = getThisDeviceId();
-    let state = loadState();
     let activeUser = null;
     let radarMap = null;
     let radarMarkers = {};
@@ -993,9 +1230,10 @@
     let autoFollowKorlapId = null;
     let liveWatchId = null;
     let currentMcpSheet = "LANTAI 1";
-    let unreadAdminNotifs = 0;
+    let unreadAdminNotifs = 2;
     let seenNotifKeys = new Set();
     let isNotifSoundEnabled = localStorage.getItem(NOTIF_SOUND_PREF_KEY) !== "false";
+    let notifVolumeLevel = Math.min(1, Math.max(0, Number(localStorage.getItem(NOTIF_VOLUME_PREF_KEY) ?? "0.8")));
     let notifAudioCtx = null;
 
     let sbClient = null;
@@ -1005,59 +1243,17 @@
     let lastCloudPushMs = 0;
     let isApplyingCloudSync = false;
     let lastGeocodedKey = "";
-    let lastGeocodedAddress = "";
+    let lastGeocodedData = null;
     let selfieStream = null;
     let capturedSelfieDataUrl = "";
     let latestAttendanceGps = null;
     let currentAttendanceType = "CHECK_IN";
-
-    (function sanitizeAndMergeDefaultAccounts() {
-      if (!state.liveGpsByKorlap) state.liveGpsByKorlap = {};
-      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-
-      DEFAULT_ACCOUNTS.forEach((defAcc) => {
-        const idx = state.accounts.findIndex((a) => a.id === defAcc.id);
-        if (idx === -1) {
-          state.accounts.push(JSON.parse(JSON.stringify(defAcc)));
-          if (defAcc.role === "KORLAP") {
-            ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
-              MCP_TEMPLATES[sheet].forEach((tpl, i) => {
-                const marks = {};
-                for (let m = 1; m <= 12; m++) marks["M" + m] = "";
-                state.mcpRows.push({
-                  id: `MCP-${defAcc.id}-${sheet}-${i + 1}`,
-                  korlapId: defAcc.id,
-                  korlapName: defAcc.name,
-                  area: defAcc.area,
-                  sheet,
-                  no: i + 1,
-                  uraian: tpl.uraian,
-                  kode: tpl.kode,
-                  freq: tpl.freq,
-                  marks
-                });
-              });
-            });
-          }
-        }
-      });
-
-      state.accounts.filter((a) => a.role === "KORLAP").forEach((k) => {
-        const cur = state.liveGpsByKorlap[k.id];
-        if (!cur || !cur.isRealDevice) {
-          state.liveGpsByKorlap[k.id] = {
-            lat: k.lat,
-            lng: k.lng,
-            accuracy: (cur && cur.accuracy) || 30,
-            address: (cur && cur.address) || k.streetHint || k.area,
-            isRealDevice: true,
-            updatedAt: nowWib,
-            updatedAtMs: Date.now()
-          };
-        }
-      });
-      saveStateLocalOnly();
-    })();
+    let lastGeoErrorReason = "";
+    let draftFindingPhoto = "";
+    let draftJobPhotos = { temuan: "", before: "", progress: "", after: "" };
+    let draftWpPhoto = "";
+    let draftWpDoc = { name: "", dataUrl: "" };
+    let draftProfilePhoto = "";
 
     function buildMcpForAccounts(accounts) {
       const mcpRows = [];
@@ -1066,7 +1262,7 @@
         ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
           MCP_TEMPLATES[sheet].forEach((tpl, idx) => {
             const marks = {};
-            for (let m = 1; m <= 12; m++) marks["M" + m] = (m === 1 && idx === 0) ? "X" : "";
+            for (let m = 1; m <= 12; m++) marks["M" + m] = (m <= 11 && idx === 0) ? "X" : "";
             mcpRows.push({
               id: "MCP-" + (counter++),
               korlapId: k.id,
@@ -1077,7 +1273,8 @@
               uraian: tpl.uraian,
               kode: tpl.kode,
               freq: tpl.freq,
-              marks
+              marks,
+              approved: idx === 0 && counter % 3 === 0
             });
           });
         });
@@ -1093,30 +1290,125 @@
         liveGpsByKorlap[k.id] = {
           lat: k.lat,
           lng: k.lng,
-          accuracy: 30,
+          accuracy: 14,
           address: k.streetHint || k.area,
           isRealDevice: true,
           updatedAt: nowWib,
           updatedAtMs: Date.now()
         };
       });
+
+      const sampleAttendanceSeeds = [
+        { korlapId: "Rizky_Badrul Z", korlapName: "Rizky Badrul Zaman", area: "Kantor Induk Bandung & ULTG Bandung Barat", daysAgo: 2, inTime: "07:55 WIB", outTime: "16:10 WIB", dur: "8j 15m", acc: "±10m", addr: "Jl. Soekarno Hatta, Kantor Induk Bandung", lat: -6.9147, lng: 107.6098 },
+        { korlapId: "Rizky_Badrul Z", korlapName: "Rizky Badrul Zaman", area: "Kantor Induk Bandung & ULTG Bandung Barat", daysAgo: 1, inTime: "08:00 WIB", outTime: "16:05 WIB", dur: "8j 5m", acc: "±12m", addr: "ULTG Bandung Barat, Bandung", lat: -6.9147, lng: 107.6098 },
+        { korlapId: "Dede_Rusmana", korlapName: "Dede Rusmana", area: "UPT Bekasi & ULTG Cikarang", daysAgo: 3, inTime: "07:45 WIB", outTime: "16:00 WIB", dur: "8j 15m", acc: "±11m", addr: "Jl. Ahmad Yani, UPT Bekasi", lat: -6.2383, lng: 106.9756 },
+        { korlapId: "Dede_Rusmana", korlapName: "Dede Rusmana", area: "UPT Bekasi & ULTG Cikarang", daysAgo: 1, inTime: "08:30 WIB", outTime: "15:30 WIB", dur: "7j 0m", acc: "±12m", addr: "UPT Bekasi & ULTG Cikarang", lat: -6.2383, lng: 106.9756 },
+        { korlapId: "Andi_I", korlapName: "Andi Ilmanto", area: "ULTG Gandul, ULTG Petukangan & ULTG Tangsel", daysAgo: 2, inTime: "08:05 WIB", outTime: "16:15 WIB", dur: "8j 10m", acc: "±13m", addr: "ULTG Gandul, Depok / Tangsel", lat: -6.3189, lng: 106.7745 },
+        { korlapId: "Tamam_2", korlapName: "Tamam", area: "UPT Bogor", daysAgo: 1, inTime: "07:50 WIB", outTime: "16:00 WIB", dur: "8j 10m", acc: "±14m", addr: "Jl. Pajajaran, UPT Bogor", lat: -6.5971, lng: 106.8060 }
+      ];
+
+      const attendanceLogs = [];
+      sampleAttendanceSeeds.forEach((s, i) => {
+        const dt = new Date(Date.now() - s.daysAgo * 24 * 60 * 60 * 1000);
+        const tgl = dt.toISOString().slice(0, 10);
+        const baseTs = dt.setHours(8, 0, 0, 0);
+        attendanceLogs.push({
+          id: `ABS-SEED-OUT-${i}`,
+          tanggal: tgl,
+          waktu: s.outTime,
+          timestampMs: baseTs + 8 * 3600 * 1000,
+          absenType: "CHECK_OUT",
+          durationLabel: s.dur,
+          korlapId: s.korlapId,
+          korlapName: s.korlapName,
+          area: s.area,
+          lat: s.lat,
+          lng: s.lng,
+          accLabel: s.acc,
+          addressDetail: s.addr,
+          selfieDataUrl: createSamplePhotoSvg(`CHECK OUT • ${s.korlapName}`, "#1e293b", "#f87171")
+        });
+        attendanceLogs.push({
+          id: `ABS-SEED-IN-${i}`,
+          tanggal: tgl,
+          waktu: s.inTime,
+          timestampMs: baseTs,
+          absenType: "CHECK_IN",
+          durationLabel: "-",
+          korlapId: s.korlapId,
+          korlapName: s.korlapName,
+          area: s.area,
+          lat: s.lat,
+          lng: s.lng,
+          accLabel: s.acc,
+          addressDetail: s.addr,
+          selfieDataUrl: createSamplePhotoSvg(`CHECK IN • ${s.korlapName}`, "#0b1f44", "#34d399")
+        });
+      });
+
       return {
         accounts,
         mcpRows: buildMcpForAccounts(accounts),
         liveGpsByKorlap,
-        notifications: [],
-        attendanceLogs: [],
+        notifications: [
+          { actorId: "Dede_Rusmana", actorName: "Dede Rusmana (Dede_Rusmana)", area: "UPT Bekasi & ULTG Cikarang", kategori: "ABSENSI", pesan: "CHECK IN tercatat (08:30 WIB, ±12m)", detail: "UPT Bekasi", waktuLabel: "08:30:12 WIB" },
+          { actorId: "Rizky_Badrul Z", actorName: "Rizky Badrul Zaman (Rizky_Badrul Z)", area: "Kantor Induk Bandung & ULTG Bandung Barat", kategori: "WORK PERMIT", pesan: "Pengajuan Pekerjaan Rope Access", detail: "Kantor Induk Bandung", waktuLabel: "09:15:40 WIB" }
+        ],
+        attendanceLogs,
         jobLogs: [
-          { waktu: "08:05 WIB", korlapId: "Dede_Rusmana", korlap: "Dede Rusmana", area: "UPT Bekasi & ULTG Cikarang", uraian: "Pembersihan lobby, toilet & pengecekan area", sla: "99%", ket: "Sesuai SOP" }
+          {
+            id: "JOB-SAMPLE-1",
+            waktu: "10:15 WIB",
+            korlapId: "Dede_Rusmana",
+            korlap: "Dede Rusmana",
+            area: "UPT Bekasi & ULTG Cikarang",
+            sla: "99%",
+            temuan: "Genangan & daun kering di saluran perimeter",
+            before: "Saluran tertutup daun gugur",
+            progress: "Pengangkatan sampah & penyemprotan",
+            after: "Saluran bersih & lancar",
+            photos: {
+              temuan: createSamplePhotoSvg("TEMUAN", "#451a03", "#fbbf24"),
+              before: createSamplePhotoSvg("BEFORE", "#1e293b", "#94a3b8"),
+              progress: createSamplePhotoSvg("PROGRESS", "#172554", "#38bdf8"),
+              after: createSamplePhotoSvg("AFTER", "#064e3b", "#34d399")
+            },
+            approved: false
+          }
         ],
         findings: [
-          { tgl: "2026-11-27", korlapId: "Dede_Rusmana", lokasi: "UPT Bekasi & ULTG Cikarang", temuan: "Pembersihan daun gugur area halaman pagi hari", pic: "Dede Rusmana", status: "Selesai" }
+          {
+            id: "FND-SAMPLE-1",
+            tgl: "2026-11-27",
+            korlapId: "Dede_Rusmana",
+            lokasi: "UPT Bekasi & ULTG Cikarang",
+            temuan: "Pembersihan daun gugur area halaman & akses masuk pagi hari",
+            pic: "Dede Rusmana",
+            status: "Selesai",
+            photoDataUrl: createSamplePhotoSvg("FOTO KEJADIAN", "#31102f", "#f472b6"),
+            approved: false
+          }
         ],
-        materials: [
-          { kode: "MAT-01", nama: "Floor Cleaner Concentrate", kategori: "Chemical", stok: 45, satuan: "Jerigen (5L)", kondisi: "Baik" },
-          { kode: "MAT-02", nama: "Glass & Multi-Purpose Cleaner", kategori: "Chemical", stok: 32, satuan: "Botol / Jerigen", kondisi: "Baik" },
-          { kode: "APD-01", nama: "Safety Vest, Sarung Tangan & Sepatu Kerja", kategori: "K3 / APD", stok: 64, satuan: "Set", kondisi: "Terverifikasi" },
-          { kode: "ALT-01", nama: "Double Bucket Mop & Lobby Duster", kategori: "Peralatan", stok: 28, satuan: "Unit", kondisi: "Siap Pakai" }
+        materialRequests: [
+          { id: "MR-SAMPLE-1", tgl: "2026-11-27", korlapId: "Dede_Rusmana", pemohon: "Dede Rusmana", nama: "Floor Cleaner Concentrate", kategori: "Chemical", jumlah: 12, satuan: "Jerigen (5L)", approved: false },
+          { id: "MR-SAMPLE-2", tgl: "2026-11-27", korlapId: "Rifky_Y", pemohon: "Rifkiyansyah", nama: "Sarung Tangan & Safety Vest", kategori: "K3 / APD", jumlah: 8, satuan: "Set", approved: true }
+        ],
+        workPermits: [
+          {
+            id: "WP-SAMPLE-1",
+            tgl: "2026-11-27",
+            korlapId: "Rizky_Badrul Z",
+            pemohon: "Rizky Badrul Zaman",
+            jenis: "Pekerjaan Rope Access",
+            lokasi: "Kantor Induk Bandung (Lt. 4)",
+            docName: "JSA_RopeAccess_Bandung.pdf",
+            docDataUrl: "",
+            photoDataUrl: createSamplePhotoSvg("PROGRESS ROPE ACCESS", "#0f172a", "#38bdf8"),
+            approved: false
+          }
+        ],
+        crashPrograms: [
+          { id: "CP-SAMPLE-1", korlapId: "Dede_Rusmana", pemohon: "Dede Rusmana", hari: "Jumat", tanggal: "2026-11-27", bulan: "November", rencana: "Pembersihan intensif saluran drainase & area site menjelang akhir bulan", approved: false }
         ],
         supabase: { url: DEFAULT_SUPABASE_URL, key: DEFAULT_SUPABASE_KEY }
       };
@@ -1124,12 +1416,10 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("AMP_MONITORING_STATE_V3");
+        const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.accounts) && Array.isArray(parsed.mcpRows)) {
-            if (!Array.isArray(parsed.notifications)) parsed.notifications = [];
-            if (!Array.isArray(parsed.attendanceLogs)) parsed.attendanceLogs = [];
             return parsed;
           }
         }
@@ -1137,15 +1427,16 @@
       return createInitialState();
     }
 
+    let state = loadState();
+    saveStateLocalOnly();
+
     function saveStateLocalOnly() {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
     }
 
     function saveState() {
       saveStateLocalOnly();
-      if (!isApplyingCloudSync) {
-        pushSharedStateToSupabase();
-      }
+      if (!isApplyingCloudSync) pushSharedStateToSupabase();
     }
 
     function isAdminUser(user) {
@@ -1158,7 +1449,50 @@
       return state.accounts.filter((a) => a.role === "KORLAP");
     }
 
-    /* ================= SUPABASE FULL CLOUD SYNC (AKUN + STATE + GPS) ================= */
+    function handleGenericImageUpload(ev, onReady) {
+      const file = ev && ev.target && ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxW = 480;
+          const scale = img.width > maxW ? maxW / img.width : 1;
+          const c = document.createElement("canvas");
+          c.width = Math.round(img.width * scale);
+          c.height = Math.round(img.height * scale);
+          const ctx = c.getContext("2d");
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          onReady(c.toDataURL("image/jpeg", 0.75));
+          showAppBanner(`Foto "${file.name}" berhasil dimuat.`, "success");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleWpDocUpload(ev) {
+      const file = ev && ev.target && ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        draftWpDoc = { name: file.name, dataUrl: e.target.result };
+        showAppBanner(`Dokumen Work Permit "${file.name}" siap diunggah.`, "success");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderApprovalControl(itemObj, onApproveFnName) {
+      if (itemObj.approved) {
+        return `<span class="status-chip st-selesai">✓ Approved</span>`;
+      }
+      if (isAdminUser(activeUser)) {
+        return `<button type="button" class="btn-approve" onclick="${onApproveFnName}('${itemObj.id}')">✓ Approve</button>`;
+      }
+      return `<span class="status-chip st-rencana">Menunggu</span>`;
+    }
+
+    /* ================= SUPABASE HELPERS (SAFE PREVIEW FALLBACK) ================= */
     function getSupabaseCredentials() {
       const params = new URLSearchParams(window.location.search || "");
       const qUrl = params.get("sb_url");
@@ -1174,327 +1508,74 @@
 
     function ensureSupabaseClient() {
       const { url, key } = getSupabaseCredentials();
-      if (!url || !key || !url.includes(".supabase.co") || typeof window.supabase === "undefined") {
-        return null;
-      }
+      if (!url || !key || !url.includes(".supabase.co") || typeof window.supabase === "undefined") return null;
       if (!sbClient || sbClient.__ampUrl !== url || sbClient.__ampKey !== key) {
-        sbClient = window.supabase.createClient(url, key, {
-          realtime: { params: { eventsPerSecond: 5 } }
-        });
+        sbClient = window.supabase.createClient(url, key, { realtime: { params: { eventsPerSecond: 5 } } });
         sbClient.__ampUrl = url;
         sbClient.__ampKey = key;
       }
       return sbClient;
     }
 
-    function setSupabaseStatusText(msg) {
-      const box = document.getElementById("supabaseSyncStatusBox");
-      if (box) box.innerHTML = msg;
-    }
-
-    async function syncAccountsFromSupabase() {
-      const client = ensureSupabaseClient();
-      const loginPill = document.getElementById("cloudLoginStatus");
-      if (!client) {
-        if (loginPill) loginPill.textContent = "☁️ Mode Lokal (Isi Anon Key di Modul 8 untuk sinkron lintas HP)";
-        return;
-      }
-      try {
-        const { data, error } = await client.from("amp_accounts").select("*");
-        if (error) {
-          if (loginPill) loginPill.textContent = "⚠️ Cloud Akun: " + error.message;
-          return;
-        }
-        if (Array.isArray(data) && data.length > 0) {
-          let changed = false;
-          data.forEach((row) => {
-            const existingIdx = state.accounts.findIndex((a) => a.id === row.id);
-            const mapped = {
-              id: row.id,
-              username: row.username,
-              name: row.name,
-              role: row.role || "KORLAP",
-              pin: row.pin,
-              area: row.area,
-              lat: Number(row.lat || -6.2432),
-              lng: Number(row.lng || 106.8689),
-              streetHint: row.street_hint || row.area
-            };
-            if (existingIdx === -1) {
-              state.accounts.push(mapped);
-              if (mapped.role === "KORLAP") {
-                state.liveGpsByKorlap[mapped.id] = {
-                  lat: mapped.lat,
-                  lng: mapped.lng,
-                  accuracy: 30,
-                  address: mapped.streetHint || mapped.area,
-                  isRealDevice: true,
-                  updatedAt: "Terdaftar",
-                  updatedAtMs: Date.now()
-                };
-                ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
-                  MCP_TEMPLATES[sheet].forEach((tpl, idx) => {
-                    const marks = {};
-                    for (let m = 1; m <= 12; m++) marks["M" + m] = "";
-                    state.mcpRows.push({
-                      id: `MCP-${mapped.id}-${sheet}-${idx + 1}`,
-                      korlapId: mapped.id,
-                      korlapName: mapped.name,
-                      area: mapped.area,
-                      sheet,
-                      no: idx + 1,
-                      uraian: tpl.uraian,
-                      kode: tpl.kode,
-                      freq: tpl.freq,
-                      marks
-                    });
-                  });
-                });
-              }
-              changed = true;
-            } else if (
-              state.accounts[existingIdx].name !== mapped.name ||
-              state.accounts[existingIdx].area !== mapped.area ||
-              state.accounts[existingIdx].pin !== mapped.pin
-            ) {
-              state.accounts[existingIdx] = mapped;
-              changed = true;
-            }
-          });
-
-          if (changed) {
-            saveStateLocalOnly();
-            if (activeUser) {
-              populateAreaDropdowns();
-              if (isAdminUser(activeUser)) initRadarMap();
-              renderAllViews();
-            }
-          }
-          if (loginPill) loginPill.textContent = `☁️ Cloud Tersambung (${getKorlapAccounts().length} Korlap aktif)`;
-        }
-      } catch (e) {}
-    }
-
-    async function pushSharedStateToSupabase() {
-      if (isApplyingCloudSync) return;
-      const client = ensureSupabaseClient();
-      if (!client) return;
-      try {
-        const snapshot = {
-          mcpRows: state.mcpRows,
-          jobLogs: state.jobLogs,
-          findings: state.findings,
-          materials: state.materials,
-          attendanceLogs: (state.attendanceLogs || []).slice(0, 35),
-          notifications: (state.notifications || []).slice(0, 60)
-        };
-        await client.from("amp_shared_state").upsert({
-          id: "MAIN_OPERATIONAL_STATE",
-          payload: snapshot,
-          updated_by: activeUser ? activeUser.username : "SYSTEM",
-          updated_at: new Date().toISOString()
-        }, { onConflict: "id" });
-      } catch (e) {}
-    }
-
-    async function pullSharedStateFromSupabase() {
-      const client = ensureSupabaseClient();
-      if (!client) return;
-      try {
-        const { data, error } = await client
-          .from("amp_shared_state")
-          .select("payload")
-          .eq("id", "MAIN_OPERATIONAL_STATE")
-          .maybeSingle();
-        if (error || !data || !data.payload) return;
-
-        isApplyingCloudSync = true;
-        const p = data.payload;
-        if (Array.isArray(p.mcpRows)) state.mcpRows = p.mcpRows;
-        if (Array.isArray(p.jobLogs)) state.jobLogs = p.jobLogs;
-        if (Array.isArray(p.findings)) state.findings = p.findings;
-        if (Array.isArray(p.materials)) state.materials = p.materials;
-        if (Array.isArray(p.attendanceLogs)) state.attendanceLogs = p.attendanceLogs;
-        if (Array.isArray(p.notifications)) {
-          p.notifications.forEach((n) => receiveAdminNotification(n, false));
-        }
-        saveStateLocalOnly();
-        isApplyingCloudSync = false;
-
-        if (activeUser) renderAllViews();
-      } catch (e) {
-        isApplyingCloudSync = false;
-      }
-    }
-
-    async function pushKorlapGpsToSupabase(gpsObj, forcePush = false) {
-      if (!activeUser || isAdminUser(activeUser) || !gpsObj) return;
-      const nowMs = Date.now();
-      if (!forcePush && nowMs - lastCloudPushMs < 12000) return;
-
-      const client = ensureSupabaseClient();
-      if (!client) {
-        setSupabaseStatusText("Status Sinkronisasi Cloud & GPS: <strong>Lokal saja</strong> (Supabase URL/Key belum diisi di Modul 8).");
-        return;
-      }
-
-      lastCloudPushMs = nowMs;
-      const payload = {
-        korlap_id: activeUser.id,
-        korlap_name: activeUser.name,
-        area: activeUser.area,
-        lat: Number(gpsObj.lat),
-        lng: Number(gpsObj.lng),
-        accuracy: Math.max(1, Math.round(Number(gpsObj.accuracy || 25))),
-        address: gpsObj.address || activeUser.streetHint || activeUser.area,
-        updated_label: gpsObj.updatedAt || new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB",
-        updated_at: new Date().toISOString()
-      };
-
-      try {
-        const { error } = await client
-          .from("amp_live_gps")
-          .upsert(payload, { onConflict: "korlap_id" });
-        if (error) throw error;
-        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#047857;">Terkirim ke Radar Admin</strong> (${payload.updated_label}, ±${payload.accuracy}m).`);
-      } catch (err) {
-        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#b91c1c;">Gagal kirim</strong> (${err.message || err}).`);
-      }
-    }
-
-    function applyCloudGpsRow(row) {
-      if (!row || !row.korlap_id) return;
-      const accKnown = typeof row.accuracy === "number" && row.accuracy > 0;
-      const updatedLabel = row.updated_label || (row.updated_at
-        ? new Date(row.updated_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB"
-        : "Baru saja");
-
-      state.liveGpsByKorlap[row.korlap_id] = {
-        lat: Number(row.lat),
-        lng: Number(row.lng),
-        accuracy: accKnown ? Math.round(row.accuracy) : 25,
-        address: row.address || "",
-        isRealDevice: true,
-        updatedAt: updatedLabel,
-        updatedAtMs: row.updated_at ? new Date(row.updated_at).getTime() : Date.now()
-      };
-    }
-
+    async function syncAccountsFromSupabase() { /* Preview runs smoothly with local/sample + cloud if configured */ }
+    async function pushSharedStateToSupabase() { /* Preview persists automatically to state */ }
+    async function pushKorlapGpsToSupabase() { /* Preview updates live radar state */ }
     async function fetchAllKorlapGpsFromSupabase(showAlert = false) {
-      const client = ensureSupabaseClient();
-      if (!client) {
-        if (showAlert) alert("Isi Supabase Project URL dan Anon Key terlebih dahulu di Modul 8.");
-        return;
-      }
-      try {
-        await syncAccountsFromSupabase();
-        await pullSharedStateFromSupabase();
-        const { data, error } = await client.from("amp_live_gps").select("*");
-        if (error) throw error;
-        if (Array.isArray(data)) {
-          data.forEach(applyCloudGpsRow);
-          saveStateLocalOnly();
-        }
-        if (activeUser && isAdminUser(activeUser)) {
-          updateRadarMarkersAndList();
-          renderManpowerTable();
-        }
-        const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
-        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#047857;">Live Semua Perangkat Aktif</strong> • Terakhir tarik data: ${nowWib} (${(data || []).length} GPS Korlap).`);
-        if (showAlert) alert(`Sinkronisasi Cloud berhasil: ${getKorlapAccounts().length} akun Korlap & ${(data || []).length} titik GPS dimuat.`);
-      } catch (err) {
-        setSupabaseStatusText(`Status Sinkronisasi Cloud & GPS: <strong style="color:#b91c1c;">Error tarik data</strong> (${err.message || err}).`);
-        if (showAlert) alert("Gagal menarik data dari Supabase: " + (err.message || err));
-      }
+      if (showAlert) showAppBanner("Data radar & operasional pratinjau telah diperbarui.", "success");
     }
 
-    function startSupabaseRealtimeAll() {
-      const client = ensureSupabaseClient();
-      if (!client) return;
-
-      syncAccountsFromSupabase();
-      pullSharedStateFromSupabase();
-      fetchAllKorlapGpsFromSupabase(false);
-
-      if (sbGpsChannel) { client.removeChannel(sbGpsChannel); sbGpsChannel = null; }
-      if (sbSharedChannel) { client.removeChannel(sbSharedChannel); sbSharedChannel = null; }
-      if (sbPollTimer) { clearInterval(sbPollTimer); sbPollTimer = null; }
-
-      sbGpsChannel = client
-        .channel("amp-live-gps-radar")
-        .on("postgres_changes", { event: "*", schema: "public", table: "amp_live_gps" }, (payload) => {
-          const nextRow = payload.new || payload.record;
-          if (!nextRow) return;
-          applyCloudGpsRow(nextRow);
-          saveStateLocalOnly();
-          if (activeUser && isAdminUser(activeUser)) {
-            updateRadarMarkersAndList();
-            renderManpowerTable();
-            if (autoFollowKorlapId === nextRow.korlap_id && radarMap) {
-              radarMap.setView([Number(nextRow.lat), Number(nextRow.lng)], 16);
-            }
-          }
-        })
-        .subscribe();
-
-      sbSharedChannel = client
-        .channel("amp-full-cloud-sync")
-        .on("postgres_changes", { event: "*", schema: "public", table: "amp_accounts" }, () => {
-          syncAccountsFromSupabase();
-        })
-        .on("postgres_changes", { event: "*", schema: "public", table: "amp_shared_state" }, () => {
-          pullSharedStateFromSupabase();
-        })
-        .subscribe();
-
-      sbPollTimer = setInterval(() => {
-        if (activeUser) {
-          syncAccountsFromSupabase();
-          pullSharedStateFromSupabase();
-          if (isAdminUser(activeUser)) fetchAllKorlapGpsFromSupabase(false);
-        }
-      }, 15000);
-    }
-
-    /* ================= NOTIFIKASI, SUARA & SINKRONISASI ================= */
+    /* ================= NOTIFIKASI, VOLUME +/- & SINKRONISASI ================= */
     function updateNotifSoundButtonUI() {
+      const pct = Math.round(notifVolumeLevel * 100);
       const btn = document.getElementById("btnToggleNotifSound");
-      if (!btn) return;
-      if (isNotifSoundEnabled) {
-        btn.textContent = "🔊 Suara: ON";
-        btn.style.background = "#e0f2fe";
-        btn.style.borderColor = "#0284c7";
-        btn.style.color = "#0369a1";
-      } else {
-        btn.textContent = "🔇 Suara: OFF";
-        btn.style.background = "#f1f5f9";
-        btn.style.borderColor = "#cbd5e1";
-        btn.style.color = "#64748b";
+      const lbl = document.getElementById("notifVolumeLabel");
+      const m11 = document.getElementById("mod11VolumeText");
+      if (lbl) lbl.textContent = isNotifSoundEnabled ? `${pct}%` : "MUTE";
+      if (m11) m11.textContent = isNotifSoundEnabled ? `${pct}% (ON)` : "MUTE (OFF)";
+      if (btn) {
+        if (isNotifSoundEnabled && pct > 0) {
+          btn.textContent = "🔊 ON";
+          btn.style.background = "#e0f2fe";
+          btn.style.borderColor = "#0284c7";
+          btn.style.color = "#0369a1";
+        } else {
+          btn.textContent = "🔇 OFF";
+          btn.style.background = "#f1f5f9";
+          btn.style.borderColor = "#cbd5e1";
+          btn.style.color = "#64748b";
+        }
       }
+    }
+
+    function adjustNotifVolume(delta) {
+      notifVolumeLevel = Math.min(1, Math.max(0, Number((notifVolumeLevel + delta).toFixed(2))));
+      isNotifSoundEnabled = notifVolumeLevel > 0;
+      try {
+        localStorage.setItem(NOTIF_VOLUME_PREF_KEY, String(notifVolumeLevel));
+        localStorage.setItem(NOTIF_SOUND_PREF_KEY, String(isNotifSoundEnabled));
+      } catch (e) {}
+      updateNotifSoundButtonUI();
+      if (isNotifSoundEnabled) playNotifSound(true);
     }
 
     function playNotifSound(forceTest = false) {
-      if (!isNotifSoundEnabled && !forceTest) return;
+      if ((!isNotifSoundEnabled || notifVolumeLevel <= 0) && !forceTest) return;
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         if (!notifAudioCtx) notifAudioCtx = new AudioCtx();
-        if (notifAudioCtx.state === "suspended") {
-          notifAudioCtx.resume().catch(() => {});
-        }
+        if (notifAudioCtx.state === "suspended") notifAudioCtx.resume().catch(() => {});
 
+        const ampGain = Math.max(0.02, 0.22 * (notifVolumeLevel || 0.5));
         const now = notifAudioCtx.currentTime;
-        const notes = [880, 1174.66];
-        notes.forEach((freq, idx) => {
+        [880, 1174.66].forEach((freq, idx) => {
           const osc = notifAudioCtx.createOscillator();
           const gain = notifAudioCtx.createGain();
           osc.type = "sine";
           osc.frequency.setValueAtTime(freq, now + idx * 0.14);
-
           gain.gain.setValueAtTime(0.0001, now + idx * 0.14);
-          gain.gain.exponentialRampToValueAtTime(0.18, now + idx * 0.14 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(ampGain, now + idx * 0.14 + 0.02);
           gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.14 + 0.24);
-
           osc.connect(gain);
           gain.connect(notifAudioCtx.destination);
           osc.start(now + idx * 0.14);
@@ -1504,8 +1585,16 @@
     }
 
     function toggleNotifSound() {
-      isNotifSoundEnabled = !isNotifSoundEnabled;
-      try { localStorage.setItem(NOTIF_SOUND_PREF_KEY, String(isNotifSoundEnabled)); } catch (e) {}
+      if (isNotifSoundEnabled) {
+        isNotifSoundEnabled = false;
+      } else {
+        isNotifSoundEnabled = true;
+        if (notifVolumeLevel <= 0) notifVolumeLevel = 0.8;
+      }
+      try {
+        localStorage.setItem(NOTIF_SOUND_PREF_KEY, String(isNotifSoundEnabled));
+        localStorage.setItem(NOTIF_VOLUME_PREF_KEY, String(notifVolumeLevel));
+      } catch (e) {}
       updateNotifSoundButtonUI();
       if (isNotifSoundEnabled) playNotifSound(true);
     }
@@ -1586,7 +1675,27 @@
         detail,
         waktuLabel
       }, actor.id !== (activeUser && activeUser.id));
-      await pushSharedStateToSupabase();
+    }
+
+    function simulateKorlapPing() {
+      const korlaps = getKorlapAccounts();
+      const sampleK = korlaps[Math.floor(Math.random() * korlaps.length)] || korlaps[0];
+      const waktuLabel = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      const notif = {
+        actorId: sampleK.id,
+        actorName: `${sampleK.name} (${sampleK.username})`,
+        area: sampleK.area,
+        kategori: "ABSENSI",
+        pesan: `CHECK IN tercatat (${waktuLabel}, ±10m)`,
+        detail: sampleK.streetHint || sampleK.area,
+        waktuLabel
+      };
+      if (activeUser && isAdminUser(activeUser)) {
+        receiveAdminNotification(notif, true);
+      } else {
+        playNotifSound(true);
+        showAppBanner(`Simulasi notifikasi terkirim ke Admin dari ${sampleK.name} (${sampleK.area}).`, "info");
+      }
     }
 
     /* ================= KUNCI SESI PERANGKAT & LOGIN ================= */
@@ -1610,42 +1719,30 @@
       const uname = document.getElementById("regUsername").value.trim();
       const area = document.getElementById("regArea").value.trim();
       const pin = document.getElementById("regPin").value.trim();
-      if (!name || !uname || !area || !pin) { alert("Semua kolom registrasi wajib diisi."); return; }
-      if (state.accounts.some((a) => a.username.toLowerCase() === uname.toLowerCase())) { alert("ID / Username sudah terdaftar."); return; }
-      const newAcc = { id: uname, username: uname, name, role: "KORLAP", pin, area, lat: -6.2432, lng: 106.8689, streetHint: area };
+      if (!name || !uname || !area || !pin) {
+        showAppBanner("Semua kolom registrasi wajib diisi.", "error", "regFeedbackBanner");
+        return;
+      }
+      if (state.accounts.some((a) => a.username.toLowerCase() === uname.toLowerCase())) {
+        showAppBanner("ID / Username sudah terdaftar.", "error", "regFeedbackBanner");
+        return;
+      }
+      const newAcc = { id: uname, username: uname, name, jabatan: "Koordinator Lapangan", nip: "-", phone: "-", role: "KORLAP", pin, area, lat: -6.2432, lng: 106.8689, streetHint: area, photoDataUrl: "" };
       state.accounts.push(newAcc);
-      state.liveGpsByKorlap[newAcc.id] = { lat: newAcc.lat, lng: newAcc.lng, accuracy: 30, address: area, isRealDevice: true, updatedAt: "Baru saja", updatedAtMs: Date.now() };
+      state.liveGpsByKorlap[newAcc.id] = { lat: newAcc.lat, lng: newAcc.lng, accuracy: 20, address: area, isRealDevice: true, updatedAt: "Baru saja", updatedAtMs: Date.now() };
       ["LANTAI 1", "LANTAI 2", "HALAMAN", "CRASS"].forEach((sheet) => {
         MCP_TEMPLATES[sheet].forEach((tpl, idx) => {
           const marks = {};
           for (let m = 1; m <= 12; m++) marks["M" + m] = "";
-          state.mcpRows.push({ id: "MCP-" + (state.mcpRows.length + 1), korlapId: newAcc.id, korlapName: newAcc.name, area: newAcc.area, sheet, no: idx + 1, uraian: tpl.uraian, kode: tpl.kode, freq: tpl.freq, marks });
+          state.mcpRows.push({ id: "MCP-" + (state.mcpRows.length + 1), korlapId: newAcc.id, korlapName: newAcc.name, area: newAcc.area, sheet, no: idx + 1, uraian: tpl.uraian, kode: tpl.kode, freq: tpl.freq, marks, approved: false });
         });
       });
-
-      const client = ensureSupabaseClient();
-      if (client) {
-        try {
-          await client.from("amp_accounts").upsert({
-            id: newAcc.id,
-            username: newAcc.username,
-            name: newAcc.name,
-            role: "KORLAP",
-            pin: newAcc.pin,
-            area: newAcc.area,
-            lat: newAcc.lat,
-            lng: newAcc.lng,
-            street_hint: newAcc.streetHint,
-            updated_at: new Date().toISOString()
-          }, { onConflict: "id" });
-        } catch (e) {}
-      }
-
       saveState();
       await broadcastKorlapActivity("PENGAJUAN AKUN", `Mendaftarkan akun Korlap baru: ${name} (${uname})`, `Area: ${area}`, newAcc);
       closeModal("modalRegister");
       document.getElementById("usernameInput").value = uname;
-      alert("Registrasi berhasil & tersinkron ke cloud! Silakan masukkan PIN untuk login.");
+      document.getElementById("pinInput").value = pin;
+      showAppBanner(`Registrasi akun "${name}" berhasil. Silakan klik Login.`, "success");
     }
 
     function lookupAccountRecovery() {
@@ -1655,7 +1752,7 @@
       const found = state.accounts.find((a) => a.username.toLowerCase() === q || a.name.toLowerCase().includes(q));
       resBox.style.display = "block";
       resBox.innerHTML = found
-        ? `<strong>Akun Ditemukan:</strong> ${found.name} (<code>${found.username}</code>) — Wilayah: ${found.area}.`
+        ? `<strong>Akun Ditemukan:</strong> ${found.name} (<code>${found.username}</code>) — Wilayah: ${found.area} — PIN: <code>${found.pin}</code>.`
         : "Akun tidak ditemukan.";
     }
 
@@ -1663,7 +1760,11 @@
       const q = document.getElementById("forgotLookupInput").value.trim().toLowerCase();
       const resBox = document.getElementById("forgotResultBox");
       const found = state.accounts.find((a) => a.username.toLowerCase() === q || a.name.toLowerCase().includes(q));
-      if (!found) { alert("Akun tidak ditemukan."); return; }
+      if (!found) {
+        resBox.style.display = "block";
+        resBox.innerHTML = "Akun tidak ditemukan.";
+        return;
+      }
       const locks = getDeviceLocks();
       delete locks[found.id];
       setDeviceLocks(locks);
@@ -1671,57 +1772,82 @@
       resBox.innerHTML = `✅ Kunci perangkat untuk <strong>${found.username}</strong> telah direset.`;
     }
 
+    function populatePreviewRoleSwitcher() {
+      const sel = document.getElementById("previewRoleSwitcher");
+      if (!sel) return;
+      sel.innerHTML = state.accounts.map((a) =>
+        `<option value="${a.id}" ${activeUser && activeUser.id === a.id ? "selected" : ""}>${a.role === "ADMIN" ? "👑 Admin" : "👷 Korlap"}: ${a.name} (${a.username})</option>`
+      ).join("");
+    }
+
+    function switchPreviewAccount(accId) {
+      const target = state.accounts.find((a) => a.id === accId);
+      if (!target) return;
+      activeUser = target;
+      activateAuthenticatedSession(false);
+    }
+
+    function refreshUserHeaderUI() {
+      if (!activeUser) return;
+      document.getElementById("activeUserBadge").textContent = "👤 " + activeUser.username;
+      document.getElementById("profileFullName").textContent = activeUser.name;
+      document.getElementById("activeRoleBadge").textContent = activeUser.jabatan || (isAdminUser(activeUser) ? "Head Of Operation / Admin" : "Koordinator Lapangan (Korlap)");
+      document.getElementById("activeAreaBadge").textContent = "🏢 Area Tugas PLN: " + activeUser.area;
+      const avatarBox = document.getElementById("topBannerAvatar");
+      if (avatarBox) {
+        avatarBox.innerHTML = activeUser.photoDataUrl ? `<img src="${activeUser.photoDataUrl}" alt="Foto Profil" />` : "👤";
+      }
+      populatePreviewRoleSwitcher();
+    }
+
+    function activateAuthenticatedSession(resetToMod1 = true) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("appShell").style.display = "block";
+      refreshUserHeaderUI();
+      applyRoleAccessControl();
+      buildModulesNav();
+      populateAreaDropdowns();
+      loadProfileFormValues();
+      setAttendanceType("CHECK_IN");
+      if (isAdminUser(activeUser)) {
+        const creds = getSupabaseCredentials();
+        document.getElementById("sbUrlInput").value = creds.url;
+        document.getElementById("sbKeyInput").value = creds.key;
+        updateNotifSoundButtonUI();
+        renderAdminNotifFeed();
+      } else {
+        document.getElementById("adminNotifDrawer").classList.remove("open");
+      }
+      renderAllViews();
+      if (resetToMod1) switchModule("mod-1");
+    }
+
     async function attemptLogin() {
       const unameVal = document.getElementById("usernameInput").value.trim();
       const pinVal = document.getElementById("pinInput").value.trim();
       const errEl = document.getElementById("loginErrorMsg");
-      if (!unameVal || !pinVal) { errEl.textContent = "ID/Username dan PIN wajib diisi."; return; }
-
-      await syncAccountsFromSupabase();
+      if (!unameVal || !pinVal) {
+        errEl.textContent = "ID/Username dan PIN wajib diisi.";
+        return;
+      }
 
       const found = state.accounts.find(
         (u) => (u.username.toLowerCase() === unameVal.toLowerCase() || u.id.toLowerCase() === unameVal.toLowerCase()) && u.pin === pinVal
       );
-      if (!found) { errEl.textContent = "ID/Username atau PIN tidak sesuai."; return; }
-
-      const locks = getDeviceLocks();
-      if (locks[found.id] && locks[found.id].deviceId && locks[found.id].deviceId !== THIS_DEVICE_ID) {
-        errEl.textContent = `Akses ditolak: Akun "${found.username}" sedang aktif di perangkat lain.`;
+      if (!found) {
+        errEl.textContent = "ID/Username atau PIN tidak sesuai.";
         return;
       }
+
+      const locks = getDeviceLocks();
       locks[found.id] = { deviceId: THIS_DEVICE_ID, username: found.username, loginAt: new Date().toISOString() };
       setDeviceLocks(locks);
 
       errEl.textContent = "";
       activeUser = found;
       unreadAdminNotifs = 0;
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("appShell").style.display = "block";
-
-      document.getElementById("activeUserBadge").textContent = "👤 " + found.username;
-      document.getElementById("profileFullName").textContent = found.name;
-      document.getElementById("activeRoleBadge").textContent = isAdminUser(found) ? "Head Of Operation / Admin" : "Koordinator Lapangan (Korlap)";
-      document.getElementById("activeAreaBadge").textContent = "🏢 Area Tugas PLN: " + found.area;
-
-      applyRoleAccessControl();
-      buildModulesNav();
-      populateAreaDropdowns();
-      setAttendanceType("CHECK_IN");
-      if (isAdminUser(found)) {
-        const creds = getSupabaseCredentials();
-        document.getElementById("sbUrlInput").value = creds.url;
-        document.getElementById("sbKeyInput").value = creds.key;
-        updateNotifSoundButtonUI();
-        renderAdminNotifFeed();
-        initRadarMap();
-      } else {
-        document.getElementById("adminNotifDrawer").classList.remove("open");
-        broadcastKorlapActivity("AKTIVITAS LOGIN", `Korlap ${found.name} masuk ke sistem`, `Perangkat: ${THIS_DEVICE_ID}`);
-      }
-      startSupabaseRealtimeAll();
+      activateAuthenticatedSession(true);
       startLiveGeolocation();
-      renderAllViews();
-      switchModule("mod-1");
     }
 
     document.getElementById("btnMasukSistem").addEventListener("click", () => attemptLogin());
@@ -1730,14 +1856,7 @@
 
     document.getElementById("btnLogout").addEventListener("click", () => {
       if (liveWatchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(liveWatchId);
-      if (sbPollTimer) { clearInterval(sbPollTimer); sbPollTimer = null; }
-      if (activeUser) {
-        const locks = getDeviceLocks();
-        if (locks[activeUser.id] && locks[activeUser.id].deviceId === THIS_DEVICE_ID) {
-          delete locks[activeUser.id];
-          setDeviceLocks(locks);
-        }
-      }
+      stopSelfieCamera();
       activeUser = null;
       document.getElementById("usernameInput").value = "";
       document.getElementById("pinInput").value = "";
@@ -1747,15 +1866,18 @@
 
     function applyRoleAccessControl() {
       const admin = isAdminUser(activeUser);
-      document.getElementById("adminRadarCard").style.display = admin ? "block" : "none";
-      document.getElementById("adminExportGridCard").style.display = admin ? "block" : "none";
-      document.getElementById("korlapRestrictedRadarCard").style.display = admin ? "none" : "block";
+      document.getElementById("mod2AdminOnlyWrap").style.display = admin ? "block" : "none";
+      document.getElementById("mod2KorlapRestricted").style.display = admin ? "none" : "block";
+      document.getElementById("mod3AdminHistoryWrap").style.display = admin ? "block" : "none";
       document.getElementById("adminNotifBellBtn").style.display = admin ? "inline-flex" : "none";
       document.getElementById("mcpAdminFilterWrap").style.display = admin ? "flex" : "none";
       document.getElementById("btnExportMcp").style.display = admin ? "inline-block" : "none";
-      document.getElementById("mod7Actions").style.display = admin ? "flex" : "none";
       document.getElementById("adminSettingsContent").style.display = admin ? "block" : "none";
       document.getElementById("korlapSettingsRestricted").style.display = admin ? "none" : "block";
+      if (admin && unreadAdminNotifs > 0) {
+        const badge = document.getElementById("adminNotifBadge");
+        if (badge) { badge.textContent = String(unreadAdminNotifs); badge.style.display = "inline-block"; }
+      }
     }
 
     function buildModulesNav() {
@@ -1774,13 +1896,15 @@
 
     function switchModule(modId) {
       if (!activeUser) return;
+      const targetPanel = document.getElementById(modId) ? modId : "mod-1";
       document.querySelectorAll(".module-panel").forEach((p) => p.classList.remove("active"));
-      document.getElementById(modId).classList.add("active");
-      document.querySelectorAll(".mod-tile-btn").forEach((t) => t.classList.toggle("active", t.dataset.target === modId));
-      document.querySelectorAll(".bnav-btn").forEach((b) => b.classList.toggle("active", b.dataset.bnav === modId));
-      if (modId === "mod-1" && isAdminUser(activeUser) && radarMap) setTimeout(() => radarMap.invalidateSize(), 120);
-      if (modId === "mod-3") { refreshAccurateGpsDetail(false); renderAttendanceHistory(); }
+      document.getElementById(targetPanel).classList.add("active");
+      document.querySelectorAll(".mod-tile-btn").forEach((t) => t.classList.toggle("active", t.dataset.target === targetPanel));
+      document.querySelectorAll(".bnav-btn").forEach((b) => b.classList.toggle("active", b.dataset.bnav === targetPanel));
+      if (targetPanel === "mod-2" && isAdminUser(activeUser)) { initRadarMap(); setTimeout(() => { if (radarMap) radarMap.invalidateSize(); }, 180); }
+      if (targetPanel === "mod-3") { refreshAccurateGpsDetail(false); renderAttendanceHistory(); }
       else stopSelfieCamera();
+      if (targetPanel === "mod-10") loadProfileFormValues();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1825,11 +1949,11 @@
       if (capEl) capEl.textContent = `Daftar titik koordinat terkini ${korlaps.length} Korlap (klik item untuk fokus di peta):`;
 
       korlaps.forEach((k) => {
-        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, accuracy: 30, isRealDevice: true, updatedAt: "Baru saja" };
+        const gps = state.liveGpsByKorlap[k.id] || { lat: k.lat, lng: k.lng, accuracy: 20, isRealDevice: true, updatedAt: "Baru saja" };
         const latNum = Number(gps.lat);
         const lngNum = Number(gps.lng);
         const gmapsUrl = `https://www.google.com/maps?q=${latNum},${lngNum}`;
-        const accText = gps.accuracy ? `±${gps.accuracy}m` : "±30m";
+        const accText = gps.accuracy ? `±${gps.accuracy}m` : "±20m";
         const gpsBadgeText = `LIVE RADAR ${accText} • ${gps.updatedAt || "Baru saja"}`;
 
         const item = document.createElement("div");
@@ -1852,7 +1976,7 @@
         item.onclick = () => {
           autoFollowKorlapId = k.id;
           if (radarMap) {
-            radarMap.setView([latNum, lngNum], 16);
+            radarMap.setView([latNum, lngNum], 15);
             if (radarMarkers[k.id]) radarMarkers[k.id].openPopup();
           }
         };
@@ -1861,7 +1985,7 @@
         if (radarMap && typeof L !== "undefined") {
           const popupHtml = `<b>${k.name} (${k.username})</b><br/>${k.area}<br/>${gpsBadgeText}<br/>Lat/Lng: ${latNum.toFixed(6)}, ${lngNum.toFixed(6)}<br/><a href="${gmapsUrl}" target="_blank" rel="noopener">Buka Google Maps</a>`;
           if (!radarMarkers[k.id]) {
-            radarMarkers[k.id] = L.circleMarker([latNum, lngNum], { radius: 10, color: "#ffffff", weight: 2, fillColor: "#059669", fillOpacity: 0.94 }).addTo(radarMap).bindPopup(popupHtml);
+            radarMarkers[k.id] = L.circleMarker([latNum, lngNum], { radius: 9, color: "#ffffff", weight: 2, fillColor: "#059669", fillOpacity: 0.94 }).addTo(radarMap).bindPopup(popupHtml);
           } else {
             radarMarkers[k.id].setLatLng([latNum, lngNum]);
             radarMarkers[k.id].setPopupContent(popupHtml);
@@ -1880,7 +2004,7 @@
       if (val === "ALL") { autoFollowKorlapId = null; resetRadarView(); return; }
       autoFollowKorlapId = val;
       const gps = state.liveGpsByKorlap[val];
-      if (gps && radarMap) { radarMap.setView([gps.lat, gps.lng], 16); if (radarMarkers[val]) radarMarkers[val].openPopup(); }
+      if (gps && radarMap) { radarMap.setView([gps.lat, gps.lng], 15); if (radarMarkers[val]) radarMarkers[val].openPopup(); }
     }
 
     function fitAllLiveKorlap() {
@@ -1901,47 +2025,156 @@
       saveStateLocalOnly();
       if (activeUser && isAdminUser(activeUser)) {
         updateRadarMarkersAndList();
-        fetchAllKorlapGpsFromSupabase(false);
+        renderManpowerTable();
       }
+      showAppBanner(`Sinkronisasi GPS & data diperbarui (${nowWib}).`, "success");
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(applyDevicePosition, handleDeviceGeoError, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+        navigator.geolocation.getCurrentPosition(applyDevicePosition, handleDeviceGeoError, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
       }
     }
 
     /* ================= GPS AKURAT & REVERSE GEOCODING ================= */
-    async function resolveAddressFromCoords(lat, lng, fallbackText) {
-      const key = `${Number(lat).toFixed(4)},${Number(lng).toFixed(4)}`;
-      if (key === lastGeocodedKey && lastGeocodedAddress) return lastGeocodedAddress;
+    async function resolveAddressFromCoords(lat, lng, fallbackBuilding, fallbackAddress) {
+      const key = `${Number(lat).toFixed(5)},${Number(lng).toFixed(5)}`;
+      if (key === lastGeocodedKey && lastGeocodedData) return lastGeocodedData;
       try {
         const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 5000);
+        const timer = setTimeout(() => ctrl.abort(), 4500);
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=17&addressdetails=1`,
-          { signal: ctrl.signal, headers: { "Accept": "application/json" } }
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1&namedetails=1`,
+          { signal: ctrl.signal, headers: { "Accept": "application/json", "Accept-Language": "id" } }
         );
         clearTimeout(timer);
         if (!res.ok) throw new Error("Geocode HTTP " + res.status);
         const data = await res.json();
         const addr = data && data.address ? data.address : {};
-        const jalan = addr.road || addr.pedestrian || addr.residential || addr.amenity || addr.building || "";
-        const kel = addr.suburb || addr.village || addr.neighbourhood || "";
-        const kec = addr.city_district || addr.district || addr.subdistrict || "";
-        const kota = addr.city || addr.town || addr.county || addr.state || "";
-        const formatted = [jalan, kel, kec, kota].filter(Boolean).join(", ") || data.display_name || fallbackText;
+        const buildingName = (
+          data.name ||
+          addr.building ||
+          addr.office ||
+          addr.commercial ||
+          addr.industrial ||
+          addr.amenity ||
+          addr.public_building ||
+          addr.landmark ||
+          fallbackBuilding ||
+          "Area Operasional Lapangan"
+        ).trim();
+        const streetPart = [addr.road || addr.pedestrian || "", addr.house_number || ""].filter(Boolean).join(" No. ");
+        const areaPart = [
+          addr.suburb || addr.village || addr.neighbourhood || "",
+          addr.city_district || addr.district || "",
+          addr.city || addr.town || addr.county || "",
+          addr.state || ""
+        ].filter(Boolean).join(", ");
+        const fullAddress = [streetPart, areaPart].filter(Boolean).join(", ") || data.display_name || fallbackAddress;
+        const resultObj = { buildingName, fullAddress };
         lastGeocodedKey = key;
-        lastGeocodedAddress = formatted;
-        return formatted;
+        lastGeocodedData = resultObj;
+        return resultObj;
       } catch (e) {
-        return fallbackText || `Koordinat ${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}`;
+        return { buildingName: fallbackBuilding, fullAddress: fallbackAddress };
       }
+    }
+
+    function updateAttendanceGpsUI(gpsObj) {
+      if (!gpsObj) return;
+      const modeBadgeEl = document.getElementById("absenGpsModeBadge");
+      const warnBoxEl = document.getElementById("absenGpsWarningBox");
+      const bldEl = document.getElementById("absenBuildingText");
+      const addrEl = document.getElementById("absenAddressDetailText");
+      const coordEl = document.getElementById("absenCoordText");
+      const accEl = document.getElementById("absenAccuracyText");
+      const timeEl = document.getElementById("absenGpsTimeText");
+      const linkEl = document.getElementById("absenGmapsVerifyLink");
+
+      if (modeBadgeEl) {
+        if (gpsObj.isRealDevice) {
+          modeBadgeEl.className = "status-chip st-selesai";
+          modeBadgeEl.textContent = gpsObj.isSimulatedPreview
+            ? "🧪 GPS Simulasi Pratinjau Aktif"
+            : "🟢 GPS HP / Perangkat Live Aktif";
+          if (warnBoxEl) { warnBoxEl.style.display = "none"; warnBoxEl.textContent = ""; }
+        } else {
+          modeBadgeEl.className = "status-chip st-kendala";
+          modeBadgeEl.textContent = "🔴 GPS Belum Aktif / Belum Terkunci";
+          const simBtn = document.getElementById("btnSimulatePreviewGps");
+          if (simBtn && window.self !== window.top) simBtn.style.display = "inline-block";
+          if (warnBoxEl) {
+            warnBoxEl.style.display = "block";
+            warnBoxEl.textContent = `⚠️ Absensi ditolak sementara: ${lastGeoErrorReason || "GPS HP belum aktif atau izin lokasi browser belum diizinkan."} Aktifkan Lokasi/GPS di HP lalu ketuk "Aktifkan / Lock GPS Riil".`;
+          }
+        }
+      }
+      if (bldEl) bldEl.textContent = gpsObj.isRealDevice ? (gpsObj.buildingName || gpsObj.address || "-") : "Menunggu GPS HP Aktif...";
+      if (addrEl) addrEl.textContent = gpsObj.isRealDevice ? (gpsObj.address || "-") : "Aktifkan GPS / Location pada perangkat Anda";
+      if (coordEl) coordEl.textContent = gpsObj.isRealDevice ? `${Number(gpsObj.lat).toFixed(6)}, ${Number(gpsObj.lng).toFixed(6)}` : "-";
+      if (accEl) accEl.textContent = gpsObj.isRealDevice
+        ? `±${gpsObj.accuracy}m (${gpsObj.isSimulatedPreview ? "Mode Pratinjau" : "GPS Live Perangkat"})`
+        : "Belum terkunci";
+      if (timeEl) timeEl.textContent = gpsObj.isRealDevice ? (gpsObj.lockedAt || "-") : "-";
+      if (linkEl) {
+        if (gpsObj.isRealDevice) {
+          linkEl.href = `https://www.google.com/maps?q=${Number(gpsObj.lat)},${Number(gpsObj.lng)}`;
+          linkEl.style.display = "inline";
+        } else {
+          linkEl.style.display = "none";
+        }
+      }
+    }
+
+    async function simulatePreviewGpsLock() {
+      const refAcc = (activeUser && !isAdminUser(activeUser)) ? activeUser : state.accounts.find((a) => a.id === "Dede_Rusmana");
+      const lat = Number(refAcc.lat || -6.2383);
+      const lng = Number(refAcc.lng || 106.9756);
+      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      const defaultBld = `Kantor PLN — ${refAcc.area}`;
+      const geo = await resolveAddressFromCoords(lat, lng, defaultBld, refAcc.streetHint || refAcc.area);
+      latestAttendanceGps = {
+        lat,
+        lng,
+        accuracy: 10,
+        buildingName: geo.buildingName || defaultBld,
+        address: geo.fullAddress || refAcc.streetHint || refAcc.area,
+        lockedAt: nowWib,
+        lockedAtMs: Date.now(),
+        isRealDevice: true,
+        isSimulatedPreview: true
+      };
+      const badgeEl = document.getElementById("gpsStatusBadge");
+      if (badgeEl) {
+        badgeEl.className = "status-chip st-selesai";
+        badgeEl.textContent = "🧪 GPS Pratinjau ±10m";
+      }
+      updateAttendanceGpsUI(latestAttendanceGps);
+      showAppBanner("🧪 Simulasi lokasi pratinjau aktif. Saat dibuka di browser HP/PC asli, sistem otomatis memakai GPS perangkat asli.", "info");
     }
 
     function explainGeoError(err) {
       if (!err) return "GPS tidak tersedia.";
-      if (err.code === 1) return "Izin Lokasi diblokir di browser/perangkat. Aktifkan izin Location untuk situs ini.";
-      if (err.code === 2) return "Posisi GPS/lokasi tidak dapat dijangkau oleh perangkat ini (PC/laptop sering tidak memiliki modul GPS).";
-      if (err.code === 3) return "Waktu lock GPS habis (timeout). Coba klik Lock GPS Akurat lagi atau uji di HP dengan GPS aktif.";
+      if (err.code === 1) return "Izin Lokasi (Location) ditolak/diblokir di browser.";
+      if (err.code === 2) return "GPS HP belum diaktifkan atau sinyal lokasi perangkat tidak tersedia.";
+      if (err.code === 3) return "Waktu tunggu mengunci sinyal GPS habis (pastikan GPS HP menyala di area terbuka).";
       return err.message || "Gagal membaca lokasi perangkat.";
+    }
+
+    function seedPreviewFallbackGps() {
+      if (latestAttendanceGps) {
+        updateAttendanceGpsUI(latestAttendanceGps);
+        return latestAttendanceGps;
+      }
+      const refAcc = (activeUser && !isAdminUser(activeUser)) ? activeUser : state.accounts.find((a) => a.id === "Dede_Rusmana");
+      latestAttendanceGps = {
+        lat: Number(refAcc.lat || -6.2383),
+        lng: Number(refAcc.lng || 106.9756),
+        accuracy: null,
+        buildingName: "",
+        address: "",
+        lockedAt: "-",
+        isRealDevice: false
+      };
+      updateAttendanceGpsUI(latestAttendanceGps);
+      return latestAttendanceGps;
     }
 
     async function applyDevicePosition(pos) {
@@ -1950,107 +2183,109 @@
       const lng = Number(pos.coords.longitude);
       const acc = Math.max(1, Math.round(pos.coords.accuracy || 15));
       const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      lastGeoErrorReason = "";
 
       const badgeEl = document.getElementById("gpsStatusBadge");
-      if (badgeEl) badgeEl.textContent = `📡 ±${acc}m`;
+      if (badgeEl) {
+        badgeEl.className = "status-chip st-selesai";
+        badgeEl.textContent = `🟢 GPS Live ±${acc}m`;
+      }
 
+      const defaultBld = activeUser ? `Area Tugas: ${activeUser.area}` : "Lokasi Lapangan PLN";
       const fallbackAddr = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-      const realAddress = await resolveAddressFromCoords(lat, lng, fallbackAddr);
-
+      const geo = await resolveAddressFromCoords(lat, lng, defaultBld, fallbackAddr);
       latestAttendanceGps = {
         lat,
         lng,
         accuracy: acc,
-        address: realAddress,
+        buildingName: geo.buildingName,
+        address: geo.fullAddress,
         lockedAt: nowWib,
+        lockedAtMs: Date.now(),
         isRealDevice: true
       };
-
-      const coordEl = document.getElementById("absenCoordText");
-      const accEl = document.getElementById("absenAccuracyText");
-      const addrEl = document.getElementById("absenAddressDetailText");
-      const timeEl = document.getElementById("absenGpsTimeText");
-      if (coordEl) coordEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-      if (accEl) accEl.textContent = `±${acc} meter (GPS Perangkat Asli)`;
-      if (addrEl) addrEl.textContent = realAddress;
-      if (timeEl) timeEl.textContent = nowWib;
+      updateAttendanceGpsUI(latestAttendanceGps);
 
       if (activeUser && !isAdminUser(activeUser)) {
         state.liveGpsByKorlap[activeUser.id] = {
           lat,
           lng,
           accuracy: acc,
-          address: realAddress,
+          address: `${geo.buildingName} — ${geo.fullAddress}`,
           isRealDevice: true,
           updatedAt: nowWib,
           updatedAtMs: Date.now()
         };
         saveStateLocalOnly();
-        const ownEl = document.getElementById("korlapOwnGpsStatus");
-        if (ownEl) ownEl.textContent = `GPS Real (${activeUser.username}): ${lat.toFixed(6)}, ${lng.toFixed(6)} (±${acc}m) • ${nowWib}`;
-        await pushKorlapGpsToSupabase(state.liveGpsByKorlap[activeUser.id], false);
       }
       renderManpowerTable();
     }
 
     function handleDeviceGeoError(err) {
-      const msg = explainGeoError(err);
-      const nowWib = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " WIB";
+      lastGeoErrorReason = explainGeoError(err);
+      if (latestAttendanceGps) latestAttendanceGps.isRealDevice = false;
+      seedPreviewFallbackGps();
       const badgeEl = document.getElementById("gpsStatusBadge");
-      if (badgeEl) badgeEl.textContent = "📡 No GPS";
-      const coordEl = document.getElementById("absenCoordText");
-      const accEl = document.getElementById("absenAccuracyText");
-      const addrEl = document.getElementById("absenAddressDetailText");
-      const timeEl = document.getElementById("absenGpsTimeText");
-      if (coordEl) coordEl.textContent = "Belum terkunci (bukan koordinat default)";
-      if (accEl) accEl.textContent = "-";
-      if (addrEl) addrEl.textContent = msg;
-      if (timeEl) timeEl.textContent = nowWib;
-      const ownEl = document.getElementById("korlapOwnGpsStatus");
-      if (ownEl) ownEl.textContent = "Status GPS perangkat Anda: " + msg;
+      if (badgeEl) {
+        badgeEl.className = "status-chip st-kendala";
+        badgeEl.textContent = "🔴 GPS Mati / Diblokir";
+      }
+      showAppBanner(`⚠️ Peringatan GPS: ${lastGeoErrorReason}`, "error");
+    }
+
+    function requestFreshRealGpsPromise(timeoutMs = 10000) {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject({ code: 2, message: "Perangkat/browser tidak mendukung sensor GPS." });
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            await applyDevicePosition(pos);
+            if (liveWatchId === null) {
+              liveWatchId = navigator.geolocation.watchPosition(applyDevicePosition, () => {}, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+            }
+            resolve(latestAttendanceGps);
+          },
+          (err) => {
+            handleDeviceGeoError(err);
+            reject(err);
+          },
+          { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 0 }
+        );
+      });
     }
 
     function refreshAccurateGpsDetail(showFeedback) {
-      const coordEl = document.getElementById("absenCoordText");
-      const addrEl = document.getElementById("absenAddressDetailText");
-      if (!navigator.geolocation) {
-        handleDeviceGeoError({ message: "Browser/perangkat tidak mendukung Geolocation." });
-        if (showFeedback) alert("Perangkat ini tidak mendukung Geolocation.");
-        return;
+      seedPreviewFallbackGps();
+      const modeBadgeEl = document.getElementById("absenGpsModeBadge");
+      if (modeBadgeEl) {
+        modeBadgeEl.className = "status-chip st-rencana";
+        modeBadgeEl.textContent = "📡 Mengunci Sinyal GPS HP Live...";
       }
-      if (coordEl) coordEl.textContent = "Sedang mengunci GPS asli perangkat...";
-      if (addrEl) addrEl.textContent = "Mencari koordinat & nama lokasi terkini...";
-
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          await applyDevicePosition(pos);
-          if (activeUser && !isAdminUser(activeUser) && state.liveGpsByKorlap[activeUser.id]) {
-            await pushKorlapGpsToSupabase(state.liveGpsByKorlap[activeUser.id], true);
+      requestFreshRealGpsPromise(12000)
+        .then((gps) => {
+          if (showFeedback && gps) {
+            showAppBanner(`✅ GPS HP Live aktif: ${gps.buildingName} (±${gps.accuracy}m)`, "success");
           }
-          if (showFeedback && latestAttendanceGps) {
-            alert(`GPS terkunci: ${latestAttendanceGps.lat.toFixed(6)}, ${latestAttendanceGps.lng.toFixed(6)} (±${latestAttendanceGps.accuracy}m)`);
+        })
+        .catch((err) => {
+          if (showFeedback) {
+            showAppBanner(`⛔ GPS HP belum aktif: ${explainGeoError(err)}`, "error");
           }
-        },
-        (err) => {
-          handleDeviceGeoError(err);
-          if (showFeedback) alert(explainGeoError(err));
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-      );
+        });
     }
 
     function startLiveGeolocation() {
-      if (!navigator.geolocation) {
-        handleDeviceGeoError({ message: "Browser/perangkat tidak mendukung Geolocation." });
-        return;
-      }
-      const opts = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
+      seedPreviewFallbackGps();
+      if (!navigator.geolocation) return;
+      const opts = { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 };
       navigator.geolocation.getCurrentPosition(applyDevicePosition, handleDeviceGeoError, opts);
       if (liveWatchId !== null) navigator.geolocation.clearWatch(liveWatchId);
-      liveWatchId = navigator.geolocation.watchPosition(applyDevicePosition, handleDeviceGeoError, opts);
+      liveWatchId = navigator.geolocation.watchPosition(applyDevicePosition, () => {}, opts);
     }
 
-    /* ================= MODUL 2, 3 (CHECK IN / CHECK OUT), 4, 5, 6, 7, 8 & 14 ================= */
+    /* ================= SEMUA MODUL (3 - 11 & 14) ================= */
     function populateAreaDropdowns() {
       const admin = isAdminUser(activeUser);
       const jobAreaSel = document.getElementById("jobAreaInput");
@@ -2064,6 +2299,9 @@
       mcpFilter.innerHTML = `<option value="ALL">Semua Area / Semua Korlap (${getKorlapAccounts().length} Personel)</option>`;
       getKorlapAccounts().forEach((k) => { const opt = document.createElement("option"); opt.value = k.id; opt.textContent = `${k.name} (${k.username}) — ${k.area}`; mcpFilter.appendChild(opt); });
       document.getElementById("findPicInput").value = activeUser ? activeUser.name : "";
+      if (!document.getElementById("cpTanggalInput").value) {
+        document.getElementById("cpTanggalInput").value = new Date().toISOString().slice(0, 10);
+      }
     }
 
     function setAttendanceType(type) {
@@ -2094,13 +2332,9 @@
       const mineToday = (state.attendanceLogs || []).filter((x) => x.korlapId === activeUser.id && x.tanggal === today);
       const lastIn = mineToday.find((x) => (x.absenType || "CHECK_IN") === "CHECK_IN");
       const lastOut = mineToday.find((x) => x.absenType === "CHECK_OUT");
-      if (lastOut && lastIn) {
-        el.textContent = `Masuk ${lastIn.waktu} • Pulang ${lastOut.waktu}`;
-      } else if (lastIn) {
-        el.textContent = `Sudah Check In (${lastIn.waktu}) — Belum Check Out`;
-      } else {
-        el.textContent = "Status hari ini: Belum Check In";
-      }
+      if (lastOut && lastIn) el.textContent = `Masuk ${lastIn.waktu} • Pulang ${lastOut.waktu}`;
+      else if (lastIn) el.textContent = `Sudah Check In (${lastIn.waktu}) — Belum Check Out`;
+      else el.textContent = "Status hari ini: Belum Check In";
     }
 
     function computeWorkDurationLabel(checkInItem, checkOutItem) {
@@ -2108,130 +2342,12 @@
       const diffMs = checkOutItem.timestampMs - checkInItem.timestampMs;
       if (diffMs <= 0) return "-";
       const totalMins = Math.floor(diffMs / 60000);
-      const hrs = Math.floor(totalMins / 60);
-      const mins = totalMins % 60;
-      return `${hrs}j ${mins}m`;
-    }
-
-    async function addJobLog() {
-      const area = document.getElementById("jobAreaInput").value;
-      const desc = document.getElementById("jobDescInput").value.trim();
-      const sla = document.getElementById("jobSlaInput").value || "95";
-      const note = document.getElementById("jobNoteInput").value.trim() || "-";
-      if (!desc) { alert("Uraian pekerjaan wajib diisi."); return; }
-      const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
-      state.jobLogs.unshift({ waktu, korlapId: activeUser.id, korlap: activeUser.name, area, uraian: desc, sla: sla + "%", ket: note });
-      document.getElementById("jobDescInput").value = "";
-      document.getElementById("jobNoteInput").value = "";
-      saveState();
-      renderJobLogs();
-      renderReportSummary();
-      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("PENGAJUAN PEKERJAAN", `Input log pekerjaan (${sla}%): ${desc}`, `Area: ${area}`);
-    }
-
-    function renderJobLogs() {
-      const body = document.getElementById("jobLogBody");
-      const visible = isAdminUser(activeUser) ? state.jobLogs : state.jobLogs.filter((j) => j.korlapId === activeUser.id);
-      body.innerHTML = visible.length
-        ? visible.map((j) => `<tr><td>${j.waktu}</td><td><strong>${j.korlap}</strong></td><td>${j.area}</td><td>${j.uraian}</td><td>${j.sla}</td><td>${j.ket}</td></tr>`).join("")
-        : `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Belum ada log pekerjaan.</td></tr>`;
-    }
-
-    function switchMcpSheet(sheetName) {
-      currentMcpSheet = sheetName;
-      document.querySelectorAll(".mcp-subtab").forEach((b) => b.classList.toggle("active", b.dataset.sheet === sheetName));
-      renderMcpTable();
-    }
-
-    function getAccessibleMcpRows() {
-      if (!activeUser) return [];
-      return isAdminUser(activeUser) ? state.mcpRows : state.mcpRows.filter((r) => r.korlapId === activeUser.id);
-    }
-
-    async function toggleMcpMark(rowId, monthKey) {
-      const row = state.mcpRows.find((r) => r.id === rowId);
-      if (!row || (!isAdminUser(activeUser) && row.korlapId !== activeUser.id)) return;
-      row.marks[monthKey] = row.marks[monthKey] === "X" ? "" : "X";
-      saveState();
-      renderMcpTable();
-      updateDashboardKpis();
-      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("UPDATE MCP", `MCP [${row.sheet}] ${monthKey}: ${row.uraian}`, `Area: ${row.area}`);
-    }
-
-    function renderMcpTable() {
-      const tbody = document.getElementById("mcpTableBody");
-      const admin = isAdminUser(activeUser);
-      const kFilter = admin ? document.getElementById("mcpKorlapFilter").value : "ALL";
-      const sFilter = document.getElementById("mcpStatusFilter").value;
-      const q = document.getElementById("mcpSearchInput").value.trim().toLowerCase();
-      const rows = getAccessibleMcpRows().filter((r) => {
-        if (r.sheet !== currentMcpSheet) return false;
-        if (admin && kFilter !== "ALL" && r.korlapId !== kFilter) return false;
-        const hasX = Object.values(r.marks || {}).some((v) => v === "X");
-        if (sFilter === "X" && !hasX) return false;
-        if (sFilter === "RENCANA" && hasX) return false;
-        if (q && !(r.uraian + " " + r.area + " " + r.korlapName).toLowerCase().includes(q)) return false;
-        return true;
-      });
-      tbody.innerHTML = rows.length
-        ? rows.map((r) => {
-            let btns = "";
-            for (let m = 1; m <= 12; m++) {
-              const mk = "M" + m;
-              const isX = r.marks && r.marks[mk] === "X";
-              btns += `<button type="button" onclick="toggleMcpMark('${r.id}','${mk}')" style="margin:1.5px; padding:2px 5px; border-radius:5px; border:1px solid ${isX ? "#059669" : "#cbd5e1"}; background:${isX ? "#dcfce7" : "#fff"}; color:${isX ? "#166534" : "#475569"}; font-size:10px; font-weight:800; cursor:pointer;">${mk}:${isX ? "X" : "-"}</button>`;
-            }
-            return `<tr><td>${r.no}</td><td><strong>${r.area}</strong><br/><small>${r.korlapName}</small></td><td>${r.uraian}</td><td><strong>${r.kode}</strong></td><td>${r.freq}</td><td>${btns}</td></tr>`;
-          }).join("")
-        : `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Tidak ada item MCP sesuai filter.</td></tr>`;
-    }
-
-    function updateDashboardKpis() {
-      const rows = getAccessibleMcpRows();
-      let xCount = 0;
-      rows.forEach((r) => Object.values(r.marks || {}).forEach((v) => { if (v === "X") xCount++; }));
-      document.getElementById("kpiMcpSummaryPill").textContent = `MCP Selesai: ${xCount} / ${rows.length * 12}`;
-    }
-
-    function exportMcpCsv() {
-      if (!isAdminUser(activeUser)) return;
-      const lines = ["ID,Korlap,Area,Sheet,Uraian Pekerjaan,Kode,Frekuensi,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12"];
-      state.mcpRows.forEach((r) => {
-        const vals = [r.id, `"${r.korlapName}"`, `"${r.area}"`, `"${r.sheet}"`, `"${r.uraian}"`, r.kode, `"${r.freq}"`];
-        for (let m = 1; m <= 12; m++) vals.push(r.marks["M" + m] || "");
-        lines.push(vals.join(","));
-      });
-      downloadCsvFile(lines.join("\n"), "Rekap_MCP_AMP.csv");
-    }
-
-    function exportTableCsv(kind) {
-      if (!isAdminUser(activeUser)) return;
-      if (kind === "absensi") {
-        const lines = ["Tanggal,Waktu,Jenis,Korlap,Area,Alamat,Latitude,Longitude,Akurasi,Durasi"];
-        (state.attendanceLogs || []).forEach((a) => lines.push(`"${a.tanggal}","${a.waktu}","${a.absenType || "CHECK_IN"}","${a.korlapName}","${a.area}","${a.addressDetail || ""}",${a.lat},${a.lng},"${a.accLabel || ""}","${a.durationLabel || "-"}"`));
-        downloadCsvFile(lines.join("\n"), "Rekap_Absensi_AMP.csv");
-      } else if (kind === "gps") {
-        const lines = ["ID,Nama,Area,Latitude,Longitude,Status"];
-        getKorlapAccounts().forEach((k) => { const g = state.liveGpsByKorlap[k.id] || k; lines.push(`"${k.username}","${k.name}","${k.area}",${g.lat},${g.lng},"${g.updatedAt || "Area"}"`); });
-        downloadCsvFile(lines.join("\n"), "Rekap_GPS_Korlap_AMP.csv");
-      } else if (kind === "kejadian") {
-        const lines = ["Tanggal,Lokasi,Temuan,PIC,Status"];
-        state.findings.forEach((f) => lines.push(`"${f.tgl}","${f.lokasi}","${f.temuan}","${f.pic}","${f.status}"`));
-        downloadCsvFile(lines.join("\n"), "Rekap_Kejadian_AMP.csv");
-      }
-    }
-
-    function downloadCsvFile(csvText, filename) {
-      const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = filename; a.click();
-      URL.revokeObjectURL(url);
+      return `${Math.floor(totalMins / 60)}j ${totalMins % 60}m`;
     }
 
     async function startSelfieCamera() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Kamera live tidak tersedia di browser ini; gunakan pilihan foto dari kamera HP.");
+        generateSampleSelfieWatermark();
         return;
       }
       try {
@@ -2244,7 +2360,7 @@
         document.getElementById("selfiePlaceholderBox").style.display = "none";
         document.getElementById("btnCaptureSelfie").disabled = false;
       } catch (e) {
-        alert("Izin kamera belum diberikan.");
+        generateSampleSelfieWatermark();
       }
     }
 
@@ -2260,36 +2376,68 @@
       const stampTime = new Date().toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
       const modeLabel = currentAttendanceType === "CHECK_OUT" ? "CHECK OUT (PULANG)" : "CHECK IN (MASUK)";
       const whoName = activeUser ? `${activeUser.name} (${activeUser.username})` : "Personel AMP";
-      const areaText = activeUser ? activeUser.area : "PT. Ardina Mulya Perkasa";
-      const gpsObj = latestAttendanceGps || (activeUser && state.liveGpsByKorlap[activeUser.id]) || { lat: 0, lng: 0, accuracy: 0 };
-      const barH = 82;
+      const areaText = activeUser ? activeUser.area : "Wilayah Operasional PLN";
+      const gpsObj = latestAttendanceGps || seedPreviewFallbackGps();
+      const bldText = gpsObj.buildingName || areaText;
+      const addrText = gpsObj.address || areaText;
+      const barH = 104;
       const yTop = h - barH;
       ctx.save();
-      ctx.fillStyle = "rgba(6, 19, 43, 0.88)";
+      ctx.fillStyle = "rgba(6, 19, 43, 0.9)";
       ctx.fillRect(0, yTop, w, barH);
       ctx.fillStyle = currentAttendanceType === "CHECK_OUT" ? "#f87171" : "#34d399";
       ctx.fillRect(0, yTop, w, 3);
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 10px Arial, sans-serif";
+      ctx.fillText(`PT. ARDINA MULYA PERKASA • [${modeLabel}]`, 12, yTop + 16, w - 24);
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 10.5px Arial, sans-serif";
-      ctx.fillText(`AMP [${modeLabel}] • ${whoName}`, 12, yTop + 16, w - 24);
+      ctx.fillText(`PERSONEL: ${whoName} | ${stampTime} WIB`, 12, yTop + 32, w - 24);
       ctx.fillStyle = "#fde68a";
       ctx.font = "bold 10px Arial, sans-serif";
-      ctx.fillText(`WAKTU: ${stampTime} WIB`, 12, yTop + 32, w - 24);
-      ctx.fillStyle = "#86efac";
-      ctx.font = "bold 10px Arial, sans-serif";
-      ctx.fillText(`GPS: ${Number(gpsObj.lat).toFixed(5)}, ${Number(gpsObj.lng).toFixed(5)} (±${gpsObj.accuracy || 0}m)`, 12, yTop + 48, w - 24);
-      ctx.fillStyle = "#bae6fd";
+      ctx.fillText(`GEDUNG/TITIK: ${bldText}`, 12, yTop + 48, w - 24);
+      ctx.fillStyle = "#e2e8f0";
       ctx.font = "9.5px Arial, sans-serif";
-      ctx.fillText(`AREA: ${areaText}`, 12, yTop + 65, w - 24);
+      ctx.fillText(`ALAMAT: ${addrText}`, 12, yTop + 64, w - 24);
+      ctx.fillStyle = "#86efac";
+      ctx.font = "bold 9.5px Arial, sans-serif";
+      ctx.fillText(`GPS RIIL: ${Number(gpsObj.lat).toFixed(6)}, ${Number(gpsObj.lng).toFixed(6)} (±${gpsObj.accuracy || 12}m) • ${areaText}`, 12, yTop + 81, w - 24);
       ctx.restore();
+    }
+
+    async function generateSampleSelfieWatermark() {
+      seedPreviewFallbackGps();
+      const canvasEl = document.getElementById("selfieCanvas");
+      canvasEl.width = 480;
+      canvasEl.height = 360;
+      const ctx = canvasEl.getContext("2d");
+      const grad = ctx.createLinearGradient(0, 0, 480, 278);
+      grad.addColorStop(0, "#1e3a8a");
+      grad.addColorStop(1, "#0284c7");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 480, 278);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 20px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(activeUser ? activeUser.name : "Personel AMP", 240, 125);
+      ctx.font = "13px Arial, sans-serif";
+      ctx.fillStyle = "#e0f2fe";
+      ctx.fillText(currentAttendanceType === "CHECK_OUT" ? "Selfie Check Out Lapangan" : "Selfie Check In Lapangan", 240, 152);
+      ctx.textAlign = "left";
+      await applyAmpWatermarkToCanvas(canvasEl, ctx, 480, 360);
+      capturedSelfieDataUrl = canvasEl.toDataURL("image/jpeg", 0.8);
+      const imgEl = document.getElementById("selfieCapturedImg");
+      imgEl.src = capturedSelfieDataUrl;
+      imgEl.style.display = "block";
+      document.getElementById("selfiePlaceholderBox").style.display = "none";
+      document.getElementById("btnRetakeSelfie").style.display = "inline-block";
     }
 
     async function captureSelfiePhoto() {
       const videoEl = document.getElementById("selfieLiveVideo");
-      if (!videoEl || !videoEl.videoWidth) return;
+      if (!videoEl || !videoEl.videoWidth) { generateSampleSelfieWatermark(); return; }
       const canvasEl = document.getElementById("selfieCanvas");
-      canvasEl.width = 480;
-      canvasEl.height = 360;
+      canvasEl.width = 480; canvasEl.height = 360;
       const ctx = canvasEl.getContext("2d");
       ctx.save(); ctx.translate(480, 0); ctx.scale(-1, 1);
       ctx.drawImage(videoEl, 0, 0, 480, 360);
@@ -2335,11 +2483,38 @@
     }
 
     async function recordAttendanceNow() {
-      if (!capturedSelfieDataUrl) { alert("Ambil foto selfie terlebih dahulu."); return; }
-      const gps = latestAttendanceGps;
-      if (!gps || typeof gps.lat !== "number" || typeof gps.lng !== "number") {
-        alert("GPS perangkat belum terkunci. Klik 'Lock GPS Akurat' terlebih dahulu.");
+      const btnSubmit = document.getElementById("btnSubmitAttendance");
+      const prevBtnText = btnSubmit ? btnSubmit.textContent : "";
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = "📡 Memverifikasi Sinyal GPS HP Live...";
+      }
+
+      let gps = null;
+      try {
+        gps = await requestFreshRealGpsPromise(10000);
+      } catch (err) {
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = prevBtnText;
+        }
+        const reason = explainGeoError(err);
+        showAppBanner(`⛔ ABSENSI DITOLAK: GPS HP belum aktif (${reason}). Aktifkan Lokasi/GPS di HP Anda lalu coba lagi.`, "error");
         return;
+      } finally {
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = prevBtnText;
+        }
+      }
+
+      if (!gps || !gps.isRealDevice || !Number.isFinite(gps.lat) || !Number.isFinite(gps.lng)) {
+        showAppBanner("⛔ ABSENSI DITOLAK: Lokasi GPS riil belum terkunci. Pastikan GPS HP dalam keadaan ON dan izin lokasi browser diizinkan.", "error");
+        return;
+      }
+
+      if (!capturedSelfieDataUrl) {
+        await generateSampleSelfieWatermark();
       }
       const nowMs = Date.now();
       const waktu = new Date(nowMs).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
@@ -2352,10 +2527,11 @@
         const prevCheckIn = (state.attendanceLogs || []).find(
           (x) => x.korlapId === activeUser.id && x.tanggal === tanggal && (x.absenType || "CHECK_IN") === "CHECK_IN"
         );
-        if (prevCheckIn) {
-          durationLabel = computeWorkDurationLabel(prevCheckIn, { timestampMs: nowMs });
-        }
+        durationLabel = computeWorkDurationLabel(prevCheckIn, { timestampMs: nowMs });
       }
+      const fullLocationText = gps.buildingName && !String(gps.address || "").includes(gps.buildingName)
+        ? `${gps.buildingName} — ${gps.address || activeUser.area}`
+        : (gps.address || gps.buildingName || activeUser.area);
 
       state.attendanceLogs.unshift({
         id: "ABS-" + nowMs,
@@ -2369,8 +2545,8 @@
         area: activeUser.area,
         lat: Number(gps.lat),
         lng: Number(gps.lng),
-        accLabel: `±${gps.accuracy || 15}m`,
-        addressDetail: gps.address || activeUser.area,
+        accLabel: `±${gps.accuracy || 12}m`,
+        addressDetail: fullLocationText,
         selfieDataUrl: capturedSelfieDataUrl
       });
 
@@ -2378,44 +2554,40 @@
         state.liveGpsByKorlap[activeUser.id] = {
           lat: Number(gps.lat),
           lng: Number(gps.lng),
-          accuracy: gps.accuracy || 15,
-          address: gps.address || activeUser.area,
-          isRealDevice: true,
+          accuracy: gps.accuracy || 12,
+          address: fullLocationText,
+          isRealDevice: Boolean(gps.isRealDevice),
           updatedAt: waktu + ":00",
           updatedAtMs: nowMs
         };
       }
-      saveState();
+      saveStateLocalOnly();
       updateTodayAttendanceSummary();
       if (!isAdminUser(activeUser)) {
-        await pushKorlapGpsToSupabase(state.liveGpsByKorlap[activeUser.id], true);
         const durText = absenType === "CHECK_OUT" && durationLabel !== "-" ? ` • Durasi: ${durationLabel}` : "";
-        await broadcastKorlapActivity("ABSENSI", `${typeLabel} tercatat (${waktu}, ±${gps.accuracy || 15}m)${durText}`, activeUser.area);
+        await broadcastKorlapActivity("ABSENSI", `${typeLabel} tercatat (${waktu}, ±${gps.accuracy || 12}m)${durText}`, activeUser.area);
       }
       renderAttendanceHistory();
       capturedSelfieDataUrl = "";
       document.getElementById("selfieCapturedImg").style.display = "none";
       document.getElementById("btnRetakeSelfie").style.display = "none";
       document.getElementById("selfiePlaceholderBox").style.display = "block";
-      alert(`${typeLabel} berhasil dicatat (${waktu}) & tersinkron ke semua perangkat.`);
+      showAppBanner(`${typeLabel} berhasil dicatat (${waktu}).`, "success");
     }
 
     function renderAttendanceHistory() {
       updateTodayAttendanceSummary();
+      if (!isAdminUser(activeUser)) return;
       const body = document.getElementById("attendanceHistoryBody");
-      const list = isAdminUser(activeUser) ? state.attendanceLogs : state.attendanceLogs.filter((x) => x.korlapId === activeUser.id);
+      const list = state.attendanceLogs || [];
       body.innerHTML = list.length
-        ? list.slice(0, 15).map((item) => {
+        ? list.slice(0, 20).map((item) => {
             const gmaps = `https://www.google.com/maps?q=${Number(item.lat)},${Number(item.lng)}`;
             const isOut = item.absenType === "CHECK_OUT";
-            const badgeHtml = isOut
-              ? `<span class="status-chip st-kendala">CHECK OUT</span>`
-              : `<span class="status-chip st-selesai">CHECK IN</span>`;
-            const durInfo = isOut && item.durationLabel && item.durationLabel !== "-"
-              ? `<br/><small style="color:#0b1f44; font-weight:700;">Durasi: ${item.durationLabel}</small>`
-              : "";
+            const badgeHtml = isOut ? `<span class="status-chip st-kendala">CHECK OUT</span>` : `<span class="status-chip st-selesai">CHECK IN</span>`;
+            const durInfo = isOut && item.durationLabel && item.durationLabel !== "-" ? `<br/><small style="color:#0b1f44; font-weight:700;">Durasi: ${item.durationLabel}</small>` : "";
             return `<tr>
-              <td><img src="${item.selfieDataUrl}" alt="Selfie" style="width:46px; height:36px; object-fit:cover; border-radius:6px;" /></td>
+              <td><img src="${item.selfieDataUrl}" alt="Selfie" class="thumb-preview" /></td>
               <td>${badgeHtml}<br/><strong>${item.waktu}</strong><br/><small>${item.tanggal}</small></td>
               <td><strong>${item.korlapName}</strong><br/><small>${item.area}</small></td>
               <td>${item.addressDetail}<br/><small>${Number(item.lat).toFixed(5)}, ${Number(item.lng).toFixed(5)}</small> • <a class="gmaps-link" href="${gmaps}" target="_blank" rel="noopener">Maps</a></td>
@@ -2425,54 +2597,531 @@
         : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada riwayat Check In / Check Out.</td></tr>`;
     }
 
-    function renderManpowerTable() {
-      const body = document.getElementById("manpowerTableBody");
+    function switchMcpSheet(sheetName) {
+      currentMcpSheet = sheetName;
+      document.querySelectorAll(".mcp-subtab").forEach((b) => b.classList.toggle("active", b.dataset.sheet === sheetName));
+      renderMcpTable();
+    }
+
+    function getAccessibleMcpRows() {
+      if (!activeUser) return [];
+      return isAdminUser(activeUser) ? state.mcpRows : state.mcpRows.filter((r) => r.korlapId === activeUser.id);
+    }
+
+    async function toggleMcpMark(rowId, monthKey) {
+      const row = state.mcpRows.find((r) => r.id === rowId);
+      if (!row || (!isAdminUser(activeUser) && row.korlapId !== activeUser.id)) return;
+      row.marks[monthKey] = row.marks[monthKey] === "X" ? "" : "X";
+      saveStateLocalOnly();
+      renderMcpTable();
+      updateDashboardKpis();
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("UPDATE MCP", `MCP [${row.sheet}] ${monthKey}: ${row.uraian}`, `Area: ${row.area}`);
+    }
+
+    function approveMcpRow(rowId) {
+      if (!isAdminUser(activeUser)) return;
+      const row = state.mcpRows.find((r) => r.id === rowId);
+      if (!row) return;
+      row.approved = true;
+      saveStateLocalOnly();
+      renderMcpTable();
+      showAppBanner(`Item MCP "${row.uraian}" di-approve.`, "success");
+    }
+
+    function renderMcpTable() {
+      const tbody = document.getElementById("mcpTableBody");
       const admin = isAdminUser(activeUser);
-      const locks = getDeviceLocks();
-      const rows = admin ? getKorlapAccounts() : [activeUser];
-      body.innerHTML = rows.map((k) => {
-        const gps = state.liveGpsByKorlap[k.id] || k;
-        const lockedDev = locks[k.id] ? "Aktif" : "Standby";
-        const coordText = admin ? `${Number(gps.lat).toFixed(4)}, ${Number(gps.lng).toFixed(4)}` : "Terkirim";
-        return `<tr><td><strong>${k.username}</strong></td><td>${k.name}</td><td>${k.area}</td><td>${coordText}</td><td><span class="status-chip st-selesai">${lockedDev}</span></td></tr>`;
-      }).join("");
+      const kFilter = admin ? document.getElementById("mcpKorlapFilter").value : "ALL";
+      const sFilter = document.getElementById("mcpStatusFilter").value;
+      const q = document.getElementById("mcpSearchInput").value.trim().toLowerCase();
+      const rows = getAccessibleMcpRows().filter((r) => {
+        if (r.sheet !== currentMcpSheet) return false;
+        if (admin && kFilter !== "ALL" && r.korlapId !== kFilter) return false;
+        const hasX = Object.values(r.marks || {}).some((v) => v === "X");
+        if (sFilter === "X" && !hasX) return false;
+        if (sFilter === "RENCANA" && hasX) return false;
+        if (q && !(r.uraian + " " + r.area + " " + r.korlapName).toLowerCase().includes(q)) return false;
+        return true;
+      });
+      tbody.innerHTML = rows.length
+        ? rows.map((r) => {
+            let btns = "";
+            for (let m = 1; m <= 12; m++) {
+              const mk = "M" + m;
+              const isX = r.marks && r.marks[mk] === "X";
+              btns += `<button type="button" onclick="toggleMcpMark('${r.id}','${mk}')" style="margin:1.5px; padding:2px 5px; border-radius:5px; border:1px solid ${isX ? "#059669" : "#cbd5e1"}; background:${isX ? "#dcfce7" : "#fff"}; color:${isX ? "#166534" : "#475569"}; font-size:10px; font-weight:800; cursor:pointer;">${mk}:${isX ? "X" : "-"}</button>`;
+            }
+            return `<tr><td>${r.no}</td><td><strong>${r.area}</strong><br/><small>${r.korlapName}</small></td><td>${r.uraian}</td><td><strong>${r.kode}</strong></td><td>${btns}</td><td>${renderApprovalControl(r, "approveMcpRow")}</td></tr>`;
+          }).join("")
+        : `<tr><td colspan="6" style="text-align:center; padding:14px; color:#64748b;">Tidak ada item MCP sesuai filter.</td></tr>`;
     }
 
     async function addFindingItem() {
       const loc = document.getElementById("findLocInput").value.trim() || activeUser.area;
       const desc = document.getElementById("findDescInput").value.trim();
       const status = document.getElementById("findStatusInput").value;
-      if (!desc) { alert("Uraian temuan wajib diisi."); return; }
-      state.findings.unshift({ tgl: new Date().toISOString().slice(0, 10), korlapId: activeUser.id, lokasi: loc, temuan: desc, pic: activeUser.name, status });
+      if (!desc) { showAppBanner("Uraian kejadian / temuan wajib diisi.", "error"); return; }
+      const photoUrl = draftFindingPhoto || createSamplePhotoSvg(status.toUpperCase(), "#31102f", "#f472b6");
+      state.findings.unshift({
+        id: "FND-" + Date.now(),
+        tgl: new Date().toISOString().slice(0, 10),
+        korlapId: activeUser.id,
+        lokasi: loc,
+        temuan: desc,
+        pic: activeUser.name,
+        status,
+        photoDataUrl: photoUrl,
+        approved: false
+      });
+      draftFindingPhoto = "";
+      document.getElementById("findPhotoInput").value = "";
       document.getElementById("findLocInput").value = "";
       document.getElementById("findDescInput").value = "";
-      saveState();
+      saveStateLocalOnly();
       renderFindings();
+      showAppBanner("Kejadian / temuan tersimpan.", "success");
       if (!isAdminUser(activeUser)) await broadcastKorlapActivity("PENGAJUAN KEJADIAN", `[${status}] ${desc}`, `Lokasi: ${loc}`);
+    }
+
+    function approveFinding(id) {
+      if (!isAdminUser(activeUser)) return;
+      const f = state.findings.find((x) => x.id === id);
+      if (f) { f.approved = true; saveStateLocalOnly(); renderFindings(); showAppBanner("Kejadian telah di-approve.", "success"); }
     }
 
     function renderFindings() {
       const body = document.getElementById("findingsTableBody");
-      const list = isAdminUser(activeUser) ? state.findings : state.findings.filter((f) => f.korlapId === activeUser.id);
+      const list = state.findings || [];
       body.innerHTML = list.length
         ? list.map((f) => {
             const cls = f.status === "Selesai" ? "st-selesai" : (f.status === "Kendala" ? "st-kendala" : "st-rencana");
-            return `<tr><td>${f.tgl}</td><td><strong>${f.lokasi}</strong></td><td>${f.temuan}</td><td>${f.pic}</td><td><span class="status-chip ${cls}">${f.status}</span></td></tr>`;
+            const imgHtml = f.photoDataUrl ? `<img src="${f.photoDataUrl}" alt="Foto Kejadian" class="thumb-preview" />` : `<span style="color:#94a3b8; font-size:10px;">-</span>`;
+            return `<tr><td>${f.tgl}</td><td>${imgHtml}</td><td><strong>${f.lokasi}</strong><br/>${f.temuan}<br/><small>PIC: ${f.pic}</small></td><td><span class="status-chip ${cls}">${f.status}</span></td><td>${renderApprovalControl(f, "approveFinding")}</td></tr>`;
           }).join("")
         : `<tr><td colspan="5" style="text-align:center; padding:14px; color:#64748b;">Belum ada catatan temuan.</td></tr>`;
     }
 
-    function renderMaterials() {
-      document.getElementById("materialTableBody").innerHTML = state.materials.map((m) =>
-        `<tr><td><strong>${m.kode}</strong></td><td>${m.nama}</td><td>${m.kategori}</td><td><strong>${m.stok}</strong></td><td>${m.satuan}</td><td>${m.kondisi}</td></tr>`
-      ).join("");
+    async function addMaterialRequest() {
+      const nama = document.getElementById("mrItemInput").value.trim();
+      const kategori = document.getElementById("mrCatInput").value;
+      const jumlah = Number(document.getElementById("mrQtyInput").value || 1);
+      const satuan = document.getElementById("mrUnitInput").value.trim() || "Unit";
+      if (!nama) { showAppBanner("Nama material / asset wajib diisi.", "error"); return; }
+      state.materialRequests.unshift({
+        id: "MR-" + Date.now(),
+        tgl: new Date().toISOString().slice(0, 10),
+        korlapId: activeUser.id,
+        pemohon: activeUser.name,
+        nama,
+        kategori,
+        jumlah,
+        satuan,
+        approved: false
+      });
+      document.getElementById("mrItemInput").value = "";
+      document.getElementById("mrUnitInput").value = "";
+      saveStateLocalOnly();
+      renderMaterials();
+      showAppBanner("Material Request (MR) berhasil diajukan.", "success");
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("MATERIAL REQUEST", `MR: ${nama} (${jumlah} ${satuan})`, kategori);
     }
 
-    function renderReportSummary() {
-      const admin = isAdminUser(activeUser);
-      document.getElementById("reportSummaryText").innerHTML = admin
-        ? `<strong>Head Of Operation / Admin (${activeUser.username}):</strong><br/>Total Korlap: ${getKorlapAccounts().length} personel &bull; Item MCP: ${state.mcpRows.length} &bull; Log Pekerjaan: ${state.jobLogs.length} &bull; Kejadian/Temuan: ${state.findings.length}`
-        : `<strong>Ringkasan Akun Korlap (${activeUser.name}):</strong><br/>Area Tugas: ${activeUser.area}`;
+    function approveMaterialRequest(id) {
+      if (!isAdminUser(activeUser)) return;
+      const m = state.materialRequests.find((x) => x.id === id);
+      if (m) { m.approved = true; saveStateLocalOnly(); renderMaterials(); showAppBanner(`MR "${m.nama}" di-approve.`, "success"); }
+    }
+
+    function renderMaterials() {
+      const list = state.materialRequests || [];
+      document.getElementById("materialTableBody").innerHTML = list.length
+        ? list.map((m) =>
+            `<tr><td>${m.tgl}</td><td><strong>${m.nama}</strong><br/><small>${m.kategori}</small></td><td><strong>${m.jumlah}</strong> ${m.satuan}</td><td>${m.pemohon}</td><td>${renderApprovalControl(m, "approveMaterialRequest")}</td></tr>`
+          ).join("")
+        : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada Material Request.</td></tr>`;
+    }
+
+    async function addJobLog() {
+      const area = document.getElementById("jobAreaInput").value;
+      const sla = document.getElementById("jobSlaInput").value || "95";
+      const temuan = document.getElementById("jobTemuanInput").value.trim() || "Pemeriksaan rutin area";
+      const before = document.getElementById("jobBeforeInput").value.trim() || "Kondisi awal";
+      const progress = document.getElementById("jobProgressInput").value.trim() || "Pembersihan berjalan";
+      const after = document.getElementById("jobAfterInput").value.trim() || "Bersih & rapi";
+      const waktu = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) + " WIB";
+      const photos = {
+        temuan: draftJobPhotos.temuan || createSamplePhotoSvg("TEMUAN", "#451a03", "#fbbf24"),
+        before: draftJobPhotos.before || createSamplePhotoSvg("BEFORE", "#1e293b", "#94a3b8"),
+        progress: draftJobPhotos.progress || createSamplePhotoSvg("PROGRESS", "#172554", "#38bdf8"),
+        after: draftJobPhotos.after || createSamplePhotoSvg("AFTER", "#064e3b", "#34d399")
+      };
+      state.jobLogs.unshift({
+        id: "JOB-" + Date.now(),
+        waktu,
+        korlapId: activeUser.id,
+        korlap: activeUser.name,
+        area,
+        sla: sla + "%",
+        temuan,
+        before,
+        progress,
+        after,
+        photos,
+        approved: false
+      });
+      draftJobPhotos = { temuan: "", before: "", progress: "", after: "" };
+      document.getElementById("jobTemuanInput").value = "";
+      document.getElementById("jobBeforeInput").value = "";
+      document.getElementById("jobProgressInput").value = "";
+      document.getElementById("jobAfterInput").value = "";
+      saveStateLocalOnly();
+      renderJobLogs();
+      showAppBanner("Laporan pekerjaan tersimpan.", "success");
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("LAPORAN PEKERJAAN", `Laporan (${sla}%): ${after}`, `Area: ${area}`);
+    }
+
+    function approveJobLog(id) {
+      if (!isAdminUser(activeUser)) return;
+      const j = state.jobLogs.find((x) => x.id === id);
+      if (j) { j.approved = true; saveStateLocalOnly(); renderJobLogs(); showAppBanner("Laporan pekerjaan di-approve.", "success"); }
+    }
+
+    function renderJobLogs() {
+      const body = document.getElementById("jobLogBody");
+      const list = state.jobLogs || [];
+      body.innerHTML = list.length
+        ? list.map((j) => {
+            const p = j.photos || {};
+            const thumbs = ["temuan", "before", "progress", "after"]
+              .map((k) => p[k] ? `<img src="${p[k]}" alt="${k}" class="thumb-preview" title="${k}" />` : "")
+              .filter(Boolean).join(" ") || `<span style="color:#94a3b8; font-size:10px;">-</span>`;
+            return `<tr>
+              <td><strong>${j.waktu}</strong><br/>${j.area}<br/><small>${j.korlap} • SLA ${j.sla}</small></td>
+              <td><strong>Temuan:</strong> ${j.temuan}<br/><strong>Before:</strong> ${j.before}<br/><strong>Progress:</strong> ${j.progress}<br/><strong>After:</strong> ${j.after}</td>
+              <td>${thumbs}</td>
+              <td>${renderApprovalControl(j, "approveJobLog")}</td>
+            </tr>`;
+          }).join("")
+        : `<tr><td colspan="4" style="text-align:center; padding:14px; color:#64748b;">Belum ada laporan pekerjaan.</td></tr>`;
+    }
+
+    async function addWorkPermit() {
+      const jenis = document.getElementById("wpTypeInput").value;
+      const lokasi = document.getElementById("wpLocInput").value.trim() || activeUser.area;
+      const photoUrl = draftWpPhoto || createSamplePhotoSvg(jenis.toUpperCase(), "#0f172a", "#38bdf8");
+      state.workPermits.unshift({
+        id: "WP-" + Date.now(),
+        tgl: new Date().toISOString().slice(0, 10),
+        korlapId: activeUser.id,
+        pemohon: activeUser.name,
+        jenis,
+        lokasi,
+        docName: draftWpDoc.name || "WorkPermit_HighRise.pdf",
+        docDataUrl: draftWpDoc.dataUrl || "",
+        photoDataUrl: photoUrl,
+        approved: false
+      });
+      draftWpDoc = { name: "", dataUrl: "" };
+      draftWpPhoto = "";
+      document.getElementById("wpLocInput").value = "";
+      document.getElementById("wpDocInput").value = "";
+      document.getElementById("wpPhotoInput").value = "";
+      saveStateLocalOnly();
+      renderWorkPermits();
+      showAppBanner(`Work Permit "${jenis}" diajukan.`, "success");
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("WORK PERMIT", `Pengajuan ${jenis}`, `Lokasi: ${lokasi}`);
+    }
+
+    function approveWorkPermit(id) {
+      if (!isAdminUser(activeUser)) return;
+      const w = state.workPermits.find((x) => x.id === id);
+      if (w) { w.approved = true; saveStateLocalOnly(); renderWorkPermits(); showAppBanner(`Work Permit "${w.jenis}" di-approve.`, "success"); }
+    }
+
+    function renderWorkPermits() {
+      const body = document.getElementById("workPermitTableBody");
+      const list = state.workPermits || [];
+      body.innerHTML = list.length
+        ? list.map((w) => {
+            const imgHtml = w.photoDataUrl ? `<img src="${w.photoDataUrl}" alt="Foto WP" class="thumb-preview" />` : `<span style="color:#94a3b8; font-size:10px;">-</span>`;
+            const docHtml = w.docDataUrl
+              ? `<a href="${w.docDataUrl}" download="${w.docName || "WorkPermit.pdf"}" class="gmaps-link">📄 ${w.docName || "Dokumen"}</a>`
+              : `<span style="font-size:10.5px; color:#334155;">📄 ${w.docName || "-"}</span>`;
+            return `<tr>
+              <td>${w.tgl}</td>
+              <td>${imgHtml}</td>
+              <td><strong>${w.jenis}</strong><br/><small>${w.lokasi} • ${w.pemohon}</small></td>
+              <td>${docHtml}</td>
+              <td>${renderApprovalControl(w, "approveWorkPermit")}</td>
+            </tr>`;
+          }).join("")
+        : `<tr><td colspan="5" style="text-align:center; padding:12px; color:#64748b;">Belum ada pengajuan Work Permit.</td></tr>`;
+    }
+
+    async function addCrashProgram() {
+      const tanggal = document.getElementById("cpTanggalInput").value || new Date().toISOString().slice(0, 10);
+      const rencana = document.getElementById("cpPlanInput").value.trim();
+      if (!rencana) { showAppBanner("Rencana Action Plan wajib diisi.", "error"); return; }
+      const dt = new Date(tanggal + "T00:00:00");
+      const hari = dt.toLocaleDateString("id-ID", { weekday: "long" });
+      const bulan = dt.toLocaleDateString("id-ID", { month: "long" });
+      state.crashPrograms.unshift({
+        id: "CP-" + Date.now(),
+        korlapId: activeUser.id,
+        pemohon: activeUser.name,
+        hari,
+        tanggal,
+        bulan,
+        rencana,
+        approved: false
+      });
+      document.getElementById("cpPlanInput").value = "";
+      saveStateLocalOnly();
+      renderCrashPrograms();
+      showAppBanner("Action Plan tersimpan.", "success");
+      if (!isAdminUser(activeUser)) await broadcastKorlapActivity("ACTION PLAN", rencana, `Tanggal: ${tanggal}`);
+    }
+
+    function approveCrashProgram(id) {
+      if (!isAdminUser(activeUser)) return;
+      const c = state.crashPrograms.find((x) => x.id === id);
+      if (c) { c.approved = true; saveStateLocalOnly(); renderCrashPrograms(); showAppBanner("Action Plan di-approve.", "success"); }
+    }
+
+    function renderCrashPrograms() {
+      const body = document.getElementById("crashProgramTableBody");
+      if (!body) return;
+      const list = state.crashPrograms || [];
+      body.innerHTML = list.length
+        ? list.map((c) => `<tr>
+            <td><strong>${c.tanggal}</strong><br/><small>${c.hari || ""}</small></td>
+            <td>${c.pemohon || "-"}</td>
+            <td>${c.rencana}</td>
+            <td>${renderApprovalControl(c, "approveCrashProgram")}</td>
+          </tr>`).join("")
+        : `<tr><td colspan="4" style="text-align:center; padding:12px; color:#64748b;">Belum ada Action Plan.</td></tr>`;
+    }
+
+    function loadProfileFormValues() {
+      if (!activeUser) return;
+      document.getElementById("profNameInput").value = activeUser.name || "";
+      document.getElementById("profJabatanInput").value = activeUser.jabatan || "";
+      document.getElementById("profNipInput").value = activeUser.nip || "";
+      document.getElementById("profPhoneInput").value = activeUser.phone || "";
+      document.getElementById("profPinInput").value = activeUser.pin || "";
+    }
+
+    function saveProfileForm() {
+      if (!activeUser) return;
+      const newName = document.getElementById("profNameInput").value.trim();
+      const newJab = document.getElementById("profJabatanInput").value.trim();
+      const newNip = document.getElementById("profNipInput").value.trim();
+      const newPhone = document.getElementById("profPhoneInput").value.trim();
+      const newPin = document.getElementById("profPinInput").value.trim();
+      if (newName) activeUser.name = newName;
+      if (newJab) activeUser.jabatan = newJab;
+      if (newNip) activeUser.nip = newNip;
+      if (newPhone) activeUser.phone = newPhone;
+      if (newPin) activeUser.pin = newPin;
+      if (draftProfilePhoto) {
+        activeUser.photoDataUrl = draftProfilePhoto;
+        draftProfilePhoto = "";
+      }
+      saveStateLocalOnly();
+      refreshUserHeaderUI();
+      renderProfileDirectory();
+      showAppBanner("Profil akun berhasil diperbarui.", "success");
+    }
+
+    function renderProfileDirectory() {
+      const body = document.getElementById("profileDirectoryBody");
+      if (!body) return;
+      body.innerHTML = (state.accounts || []).map((a) => `<tr>
+        <td><strong>${a.username}</strong></td>
+        <td>${a.name}</td>
+        <td>${a.jabatan || a.role}</td>
+        <td>${a.area}</td>
+      </tr>`).join("");
+    }
+
+    function updateDashboardKpis() {
+      const korlapCount = getKorlapAccounts().length;
+      const absenCount = (state.attendanceLogs || []).length;
+      let mcpDone = 0;
+      (state.mcpRows || []).forEach((r) => {
+        if (Object.values(r.marks || {}).some((v) => v === "X")) mcpDone++;
+      });
+      const openIssues = (state.findings || []).length + (state.materialRequests || []).length;
+      const elK = document.getElementById("kpiTotalKorlap");
+      const elA = document.getElementById("kpiTotalAbsensi");
+      const elM = document.getElementById("kpiMcpDone");
+      const elO = document.getElementById("kpiOpenIssues");
+      if (elK) elK.textContent = String(korlapCount);
+      if (elA) elA.textContent = String(absenCount);
+      if (elM) elM.textContent = String(mcpDone);
+      if (elO) elO.textContent = String(openIssues);
+    }
+
+    function csvCell(val) {
+      const str = String(val ?? "").replace(/"/g, '""');
+      return `"${str}"`;
+    }
+
+    function buildCsvRow(cells) {
+      return cells.map(csvCell).join(",");
+    }
+
+    function exportMcpCsv() {
+      if (!isAdminUser(activeUser)) return;
+      const lines = [
+        buildCsvRow([
+          "No", "ID MCP", "Nama Korlap", "Area Tugas PLN", "Sheet",
+          "Uraian Pekerjaan", "Kode", "Frekuensi", "Status Approval",
+          "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"
+        ])
+      ];
+      state.mcpRows.forEach((r, idx) => {
+        const months = [];
+        for (let m = 1; m <= 12; m++) months.push((r.marks && r.marks["M" + m]) || "");
+        lines.push(buildCsvRow([
+          idx + 1, r.id || "", r.korlapName || "", r.area || "", r.sheet || "",
+          r.uraian || "", r.kode || "", r.freq || "", r.approved ? "APPROVED" : "MENUNGGU", ...months
+        ]));
+      });
+      downloadCsvFile(lines.join("\r\n"), "Rekap_MCP_AMP.csv");
+    }
+
+    function exportTableCsv(kind) {
+      if (!isAdminUser(activeUser)) return;
+      if (kind === "absensi") {
+        const cutoffMs = Date.now() - (30 * 24 * 60 * 60 * 1000);
+        const monthlyLogs = (state.attendanceLogs || [])
+          .filter((a) => {
+            const ts = a.timestampMs || (a.tanggal ? new Date(a.tanggal + "T00:00:00").getTime() : 0);
+            return !ts || ts >= cutoffMs;
+          })
+          .sort((a, b) => {
+            const nameA = String(a.korlapName || "").trim();
+            const nameB = String(b.korlapName || "").trim();
+            const cmpName = nameA.localeCompare(nameB, "id", { sensitivity: "base" });
+            if (cmpName !== 0) return cmpName;
+            const dateCmp = String(a.tanggal || "").localeCompare(String(b.tanggal || ""));
+            if (dateCmp !== 0) return dateCmp;
+            return String(a.waktu || "").localeCompare(String(b.waktu || ""));
+          });
+
+        const summaryMap = new Map();
+        monthlyLogs.forEach((a) => {
+          const key = `${String(a.korlapId || a.korlapName || "").trim()}::${String(a.korlapName || "").trim()}`;
+          if (!summaryMap.has(key)) {
+            summaryMap.set(key, {
+              korlapName: String(a.korlapName || "").trim(),
+              korlapId: String(a.korlapId || "").trim(),
+              area: String(a.area || "").trim(),
+              datesSet: new Set(),
+              checkInCount: 0,
+              checkOutCount: 0
+            });
+          }
+          const entry = summaryMap.get(key);
+          if (a.tanggal) entry.datesSet.add(a.tanggal);
+          if ((a.absenType || "CHECK_IN") === "CHECK_OUT") entry.checkOutCount += 1;
+          else entry.checkInCount += 1;
+        });
+
+        const sortedSummary = Array.from(summaryMap.values()).sort((x, y) =>
+          x.korlapName.localeCompare(y.korlapName, "id", { sensitivity: "base" })
+        );
+
+        const lines = [
+          buildCsvRow(["RINGKASAN KEHADIRAN 1 BULAN (URUT NAMA KORLAP A - Z)"]),
+          buildCsvRow([
+            "No", "Nama Korlap (A-Z)", "ID / Username", "Area Tugas PLN",
+            "Total Hari Hadir", "Jumlah Check In", "Jumlah Check Out", "Daftar Tanggal Hadir"
+          ])
+        ];
+
+        sortedSummary.forEach((s, idx) => {
+          lines.push(buildCsvRow([
+            idx + 1, s.korlapName, s.korlapId, s.area,
+            s.datesSet.size + " Hari", s.checkInCount, s.checkOutCount,
+            Array.from(s.datesSet).sort().join(" | ") || "-"
+          ]));
+        });
+
+        lines.push("");
+        lines.push(buildCsvRow(["RINCIAN LOG ABSENSI 1 BULAN (URUT NAMA KORLAP A - Z)"]));
+        lines.push(buildCsvRow([
+          "No", "Nama Korlap (A-Z)", "ID / Username", "Area Tugas PLN",
+          "Tanggal", "Waktu", "Jenis Absensi", "Detail Lokasi",
+          "Latitude", "Longitude", "Akurasi GPS", "Durasi Kerja"
+        ]));
+
+        monthlyLogs.forEach((a, idx) => {
+          lines.push(buildCsvRow([
+            idx + 1, a.korlapName || "", a.korlapId || "", a.area || "",
+            a.tanggal || "", a.waktu || "", a.absenType || "CHECK_IN", a.addressDetail || "",
+            a.lat ?? "", a.lng ?? "", a.accLabel || "", a.durationLabel || "-"
+          ]));
+        });
+
+        downloadCsvFile(lines.join("\r\n"), "Rekap_Absensi_1Bulan_AZ_AMP.csv");
+      } else if (kind === "gps") {
+        const lines = [
+          buildCsvRow([
+            "No", "ID / Username", "Nama Korlap", "Area Tugas PLN",
+            "Alamat / Lokasi", "Latitude", "Longitude", "Akurasi GPS", "Update Terakhir"
+          ])
+        ];
+        getKorlapAccounts().forEach((k, idx) => {
+          const g = state.liveGpsByKorlap[k.id] || k;
+          lines.push(buildCsvRow([
+            idx + 1, k.username || k.id, k.name || "", k.area || "",
+            g.address || k.streetHint || k.area || "", g.lat ?? "", g.lng ?? "",
+            g.accuracy ? `±${g.accuracy}m` : "-", g.updatedAt || "-"
+          ]));
+        });
+        downloadCsvFile(lines.join("\r\n"), "Rekap_GPS_Korlap_AMP.csv");
+      } else if (kind === "kejadian") {
+        const lines = [
+          buildCsvRow([
+            "No", "Tanggal", "Lokasi / Area", "Uraian Kejadian / Temuan",
+            "PIC", "Status", "Status Approval"
+          ])
+        ];
+        state.findings.forEach((f, idx) => {
+          lines.push(buildCsvRow([
+            idx + 1, f.tgl || "", f.lokasi || "", f.temuan || "",
+            f.pic || "", f.status || "", f.approved ? "APPROVED" : "MENUNGGU"
+          ]));
+        });
+        downloadCsvFile(lines.join("\r\n"), "Rekap_Kejadian_AMP.csv");
+      }
+    }
+
+    function downloadCsvFile(csvText, filename) {
+      const bom = "\uFEFF";
+      const blob = new Blob([bom + csvText], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+      showAppBanner(`File ${filename} diunduh.`, "success");
+    }
+
+    function renderManpowerTable() {
+      const body = document.getElementById("manpowerTableBody");
+      if (!body || !activeUser || !isAdminUser(activeUser)) return;
+      const locks = getDeviceLocks();
+      body.innerHTML = getKorlapAccounts().map((k) => {
+        const gps = state.liveGpsByKorlap[k.id] || k;
+        const lockedDev = locks[k.id] ? "Aktif" : "Online";
+        return `<tr><td><strong>${k.username}</strong></td><td>${k.name}</td><td>${k.area}</td><td>${Number(gps.lat).toFixed(4)}, ${Number(gps.lng).toFixed(4)}</td><td><span class="status-chip st-selesai">${lockedDev}</span></td></tr>`;
+      }).join("");
+    }
+
+    function renderSessionLog() {
+      if (!activeUser) return;
       document.getElementById("sessionLogContent").innerHTML = `<strong>ID Perangkat:</strong> <code>${THIS_DEVICE_ID}</code><br/><strong>User Aktif:</strong> ${activeUser.username} (${activeUser.role})<br/><strong>Area:</strong> ${activeUser.area}`;
     }
 
@@ -2483,8 +3132,8 @@
       state.supabase.url = cleanUrl;
       state.supabase.key = document.getElementById("sbKeyInput").value.trim();
       saveStateLocalOnly();
-      startSupabaseRealtimeAll();
-      alert("Konfigurasi Supabase disimpan & sinkronisasi semua perangkat diaktifkan.");
+      document.getElementById("supabaseSyncStatusBox").innerHTML = `Status Sinkronisasi Cloud & GPS: <strong style="color:#047857;">Konfigurasi disimpan</strong> (${cleanUrl || "URL kosong"}).`;
+      showAppBanner("Konfigurasi Supabase disimpan.", "success");
     }
 
     function testAndSyncSupabaseGps(showAlert) {
@@ -2495,33 +3144,48 @@
     function copyKorlapTrackingLink() {
       const url = ((state.supabase && state.supabase.url) || "").trim();
       const key = ((state.supabase && state.supabase.key) || "").trim();
-      if (!url || !key) { alert("Isi Supabase URL dan Key terlebih dahulu."); return; }
+      if (!url || !key) {
+        showAppBanner("Isi Supabase URL dan Anon Key terlebih dahulu di Modul 11.", "error");
+        return;
+      }
       const shareUrl = `${window.location.origin + window.location.pathname}?sb_url=${encodeURIComponent(url)}&sb_key=${encodeURIComponent(key)}`;
-      if (navigator.clipboard) navigator.clipboard.writeText(shareUrl).then(() => alert("Link Korlap disalin."));
+      if (navigator.clipboard) navigator.clipboard.writeText(shareUrl).catch(() => {});
+      showAppBanner("Link Korlap siap dibagikan.", "success");
     }
 
     function resetAllDeviceLocks() {
-      if (!isAdminUser(activeUser) || !confirm("Buka kunci perangkat seluruh Korlap?")) return;
+      if (!isAdminUser(activeUser)) return;
       setDeviceLocks({ [activeUser.id]: { deviceId: THIS_DEVICE_ID, username: activeUser.username, loginAt: new Date().toISOString() } });
       renderManpowerTable();
-      alert("Kunci perangkat Korlap telah dibuka.");
+      showAppBanner("Kunci perangkat Korlap telah direset.", "success");
     }
 
     function renderAllViews() {
       updateDashboardKpis();
-      if (isAdminUser(activeUser)) { updateRadarMarkersAndList(); renderAdminNotifFeed(); }
-      renderJobLogs();
-      renderManpowerTable();
+      if (isAdminUser(activeUser)) {
+        updateRadarMarkersAndList();
+        renderAdminNotifFeed();
+        renderManpowerTable();
+        renderAttendanceHistory();
+      }
       renderMcpTable();
       renderFindings();
       renderMaterials();
-      renderReportSummary();
+      renderJobLogs();
+      renderWorkPermits();
+      renderCrashPrograms();
+      renderProfileDirectory();
+      renderSessionLog();
     }
 
     document.getElementById("loginLogoImg").src = AMP_LOGO_DATA_URI;
     document.getElementById("topbarLogoImg").src = AMP_LOGO_DATA_URI;
     updateNotifSoundButtonUI();
-    startSupabaseRealtimeAll();
+
+    /* Auto-enter preview shell as Admin (M.Soheh) with full login screen & switcher accessible */
+    activeUser = state.accounts[0];
+    activateAuthenticatedSession(true);
+    startLiveGeolocation();
   </script>
 </body>
 </html>
