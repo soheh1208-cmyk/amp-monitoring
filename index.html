@@ -776,21 +776,21 @@
 
     let deferredPwaPrompt = null;
 
-    (function setupInstallablePwa() {
-  try {
-    const appleIconLink = document.getElementById("pwaAppleIconLink");
-    if (appleIconLink) appleIconLink.href = "./icon-192.png";
+  (function setupInstallablePwa() {
+    try {
+      const appleIconLink = document.getElementById("pwaAppleIconLink");
+      if (appleIconLink) appleIconLink.href = "./icon-192.png";
 
-    if (
-      "serviceWorker" in navigator &&
-      (location.protocol === "https:" ||
-        location.hostname === "localhost" ||
-        location.hostname === "127.0.0.1")
-    ) {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
-    }
-  } catch (e) {}
-})();
+      if (
+        "serviceWorker" in navigator &&
+        (location.protocol === "https:" ||
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1")
+      ) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+    } catch (e) {}
+  })();
 
         const manifestObj = {
           name: "MBCS AMP — Monitoring Operasional", short_name: "MBCS AMP",
