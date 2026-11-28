@@ -794,7 +794,19 @@
 
         const manifestObj = {
           name: "MBCS AMP — Monitoring Operasional", short_name: "MBCS AMP",
-        const appleIconLink = document.getElementById("pwaAppleIconLink");
+       onst appleIconLink = document.getElementById("pwaAppleIconLink");
+      if (appleIconLink) appleIconLink.href = "./icon-192.png";
+
+      if (
+        "serviceWorker" in navigator &&
+        (location.protocol === "https:" ||
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1")
+      ) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+    } catch (e) {}
+  })();
       if (appleIconLink) appleIconLink.href = "./icon-192.png";
 
       if (
