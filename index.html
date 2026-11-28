@@ -794,9 +794,7 @@
 
         const manifestObj = {
           name: "MBCS AMP — Monitoring Operasional", short_name: "MBCS AMP",
-          description: "Aplikasi Absensi, Radar Korlap & Monitoring Operasional PT. Ardina Mulya Perkasa",
-          start_url: "./", scope: "./", display: "standalone",
-      const appleIconLink = document.getElementById("pwaAppleIconLink");
+        const appleIconLink = document.getElementById("pwaAppleIconLink");
       if (appleIconLink) appleIconLink.href = "./icon-192.png";
 
       if (
@@ -809,10 +807,7 @@
       }
     } catch (e) {}
   })();
-  }
-} catch (e) {}
-})();
-
+    
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault(); deferredPwaPrompt = e;
       const btn = document.getElementById("btnInstallPwaLogin");
