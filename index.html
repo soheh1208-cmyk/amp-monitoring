@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MBCS AMP" />
   <link id="pwaAppleIconLink" rel="apple-touch-icon" />
-  <link id="pwaManifestLink" rel="manifest" />
+  <link rel="manifest" href="./manifest.json" />
   <title>Monitoring Operasional MBCS AMP — PT. Ardina Mulya Perkasa</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -777,11 +777,20 @@
     let deferredPwaPrompt = null;
 
     (function setupInstallablePwa() {
-      try {
-        const icon192 = generateAmpPngIcon(192);
-        const icon512 = generateAmpPngIcon(512);
-        const appleIconLink = document.getElementById("pwaAppleIconLink");
-        if (appleIconLink) appleIconLink.href = icon192;
+  try {
+    const appleIconLink = document.getElementById("pwaAppleIconLink");
+    if (appleIconLink) appleIconLink.href = "./icon-192.png";
+
+    if (
+      "serviceWorker" in navigator &&
+      (location.protocol === "https:" ||
+        location.hostname === "localhost" ||
+        location.hostname === "127.0.0.1")
+    ) {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+  } catch (e) {}
+})();
 
         const manifestObj = {
           name: "MBCS AMP — Monitoring Operasional", short_name: "MBCS AMP",
